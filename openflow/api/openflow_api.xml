@@ -1,0 +1,1209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--qiulei start-->
+	<!-- 29-0 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_HELLO"/>
+	<!-- 29-1 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_ERROR"/>
+	<!-- 29-2 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_ECHO_REQUEST"/>
+	<!-- 29-3 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_ECHO_REPLY"/>
+	<!-- 29-4 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_EXPERIMENTER"/>
+	<!-- 29-5 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_FEATURES_REQUEST"/>
+	<!-- 29-6 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_FEATURES_REPLY"/>
+	<!-- 29-7 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_GET_CONFIG_REQUEST"/>
+	<!-- 29-8 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_GET_CONFIG_REPLY"/>
+	<!-- 29-9 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_SET_CONFIG"/>
+	<!-- 29-10 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_PACKET_IN"/>
+	<!-- 29-11 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_FLOW_REMOVED"/>
+	<!-- 29-12 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_PORT_STATUS"/>
+	<!-- 29-13 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_PACKET_OUT"/>
+	<!-- 29-14 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_FLOW_MOD"/>
+	<!-- 29-15 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_GROUP_MOD"/>
+	<!-- 29-16 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_PORT_MOD"/>
+	<!-- 29-17 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_TABLE_MOD"/>
+	<!-- 29-18 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST"/>
+	<!-- 29-19 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY"/>
+	<!-- 29-20 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_BARRIER_REQUEST"/>
+	<!-- 29-21 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_BARRIER_REPLY"/>
+	<!-- 29-22 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_QUEUE_GET_CONFIG_REQUEST"/>
+	<!-- 29-23 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_QUEUE_GET_CONFIG_REPLY"/>
+	<!-- 29-24 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_ROLE_REQUEST"/>
+	<!-- 29-25 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_ROLE_REPLY"/>
+	<!-- 29-26 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_GET_ASYNC_REQUEST"/>
+	<!-- 29-27 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_GET_ASYNC_REPLY"/>
+	<!-- 29-28 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_SET_ASYNC"/>
+	<!-- 29-29 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_METER_MOD"/>
+	
+	<!-- Request 13-0 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC"/>
+	<!-- Request 13-1 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW"/>
+	<!-- Request 13-2 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE"/>
+	<!-- Request 13-3 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE"/>
+	<!-- Request 13-4 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS"/>
+	<!-- Request 13-5 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE"/>
+	<!-- Request 13-6 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP"/>
+	<!-- Request 13-7 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC"/>
+	<!-- Request 13-8 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES"/>
+	<!-- Request 13-9 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER"/>
+	<!-- Request 13-10 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG"/>
+	<!-- Request 13-11 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES"/>
+	<!-- Request 13-12 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES"/>
+	<!-- Request 13-13 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC"/>
+
+	
+	<!-- Reply 13-0 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC"/>	
+	<!-- Reply 13-1 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW"/>	
+	<!-- Reply 13-2 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE"/>	
+	<!-- Reply 13-3 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE"/>	
+	<!-- Reply 13-4 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS"/>	
+	<!-- Reply 13-5 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE"/>	
+	<!-- Reply 13-6 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP"/>	
+	<!-- Reply 13-7 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC"/>	
+	<!-- Reply 13-8 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES"/>	
+	<!-- Reply 13-9 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER"/>	
+	<!-- Reply 13-10 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG"/>	
+	<!-- Reply 13-11 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES"/>	
+	<!-- Reply 13-12 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES"/>	
+	<!-- Reply 13-13 -->
+	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC"/>
+	<!--qiulei end-->
+	
+	<!--29-0 send HELLO message, 
+		strjson example:
+		
+		{
+		"xid":"1",
+		"elementtype":"1",
+		"elementlength":"1",
+		"elementbitmap":"1"
+		}
+		
+	qiulei, 2017/6/19 -->
+	
+	<function name="Send_OFPT13_HELLO">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_HELLO</log>
+		<log><![CDATA[Send_OFPT13_HELLO=<%=context.strjson.toString%>]]></log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_HELLO" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-1 send error message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_ERROR">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_ERROR</log>
+		<log><![CDATA[Send_OFPT13_ERROR=<%=context.strjson.toString%>]]></log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_ERROR" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-2 send echo_request message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_ECHO_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_ECHO_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_ECHO_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-3 send echo_reply message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_ECHO_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_ECHO_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_ECHO_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-4 send experimenter message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_EXPERIMENTER">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_EXPERIMENTER</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_EXPERIMENTER" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-5 send features_request message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_FEATURES_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_FEATURES_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_FEATURES_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-6 send features_reply message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_FEATURES_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_FEATURES_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_FEATURES_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-7 send GET_CONFIG_REQUEST message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_GET_CONFIG_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_GET_CONFIG_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_GET_CONFIG_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-8 send GET_CONFIG_REPLY message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_GET_CONFIG_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_GET_CONFIG_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_GET_CONFIG_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-9 send SET_CONFIG message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_SET_CONFIG">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_SET_CONFIG</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_SET_CONFIG" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-10 send PACKET_IN message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_PACKET_IN">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_PACKET_IN</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_IN" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-11 send FLOW_REMOVED message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_FLOW_REMOVED">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_FLOW_REMOVED</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_FLOW_REMOVED" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-12 send PORT_STATUS message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_PORT_STATUS">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_PORT_STATUS</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PORT_STATUS" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-13 send PACKET_OUT message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_PACKET_OUT">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_PACKET_OUT</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_OUT" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-14 send FLOW_MOD message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_FLOW_MOD">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_FLOW_MOD</log>
+		
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_FLOW_MOD" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-15 send GROUP_MOD message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_GROUP_MOD">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_GROUP_MOD</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_GROUP_MOD" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-16 send PORT_MOD message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_PORT_MOD">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_PORT_MOD</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PORT_MOD" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-17 send TABLE_MOD message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_TABLE_MOD">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_TABLE_MOD</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_TABLE_MOD" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-18 send MULTIPART_REQUEST message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-19 send MULTIPART_REPLY message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-20 send BARRIER_REQUEST message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_BARRIER_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_BARRIER_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_BARRIER_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-21 send BARRIER_REPLY message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_BARRIER_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_BARRIER_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_BARRIER_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-22 send QUEUE_GET_CONFIG_REQUEST message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_QUEUE_GET_CONFIG_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_QUEUE_GET_CONFIG_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_QUEUE_GET_CONFIG_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-23 send  message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_QUEUE_GET_CONFIG_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_QUEUE_GET_CONFIG_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_QUEUE_GET_CONFIG_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-24 send  message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_ROLE_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_ROLE_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_ROLE_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-25 send  message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_ROLE_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_ROLE_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_ROLE_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-26 send GET_ASYNC_REQUEST message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_GET_ASYNC_REQUEST">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_GET_ASYNC_REQUEST</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_GET_ASYNC_REQUEST" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-27 send GET_ASYNC_REPLY message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_GET_ASYNC_REPLY">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_GET_ASYNC_REPLY</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_GET_ASYNC_REPLY" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-28 send SET_ASYNC message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_SET_ASYNC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_SET_ASYNC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_SET_ASYNC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--29-29 send METER_MOD message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_METER_MOD">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_</log>
+		<log><![CDATA[meterbandlist=<%=context.meterbandlist.toJson()%>]]></log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_METER_MOD" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-0 send OFP13MP_DESC message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-1 send OFP13MP_FLOW message, qiulei, 2017/6/19 
+		strjson example:
+		{
+			"xid":"1",
+			"tableid":"1",
+			"outport":"1",
+			"outgroup":"1",
+			"cookie":"1",
+			"cookiemask":"1",
+			"match":{
+					"type":"1",
+					"matchfieldlist":[
+						{
+							"oxmclass":"0x8000",
+							"oxmfield":"5",
+							"hasmask":"false",
+							"ethtype":"0x0806"
+						},
+						{
+							"oxmclass":"0x8000",
+							"oxmfield":"3",
+							"hasmask":"true",
+							"dstmac":"00:0c:29:58:ef:2a",
+							"dstmacmask":"ff:ff:ff:00:00:00"
+						}
+					]
+				}
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-2 send OFP13MP_AGGREGATE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-3 send OFP13MP_TABLE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-4 send OFP13MP_PORT_STATS message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-5 send OFP13MP_QUEUE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-6 send OFP13MP_GROUP message, qiulei, 2017/6/19 
+		{
+			"xid":"1",
+			"groupid":"0xfffffffc"
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-7 send OFP13MP_GROUP_DESC message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-8 send OFP13MP_GROUP_FEATURES message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-9 send OFP13MP_METER message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-10 send OFP13MP_METER_CONFIG message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-11 send OFP13MP_METER_FEATURES message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-12 send OFP13MP_TABLE_FEATURES message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Request 13-13 send OFP13MP_PORT_DESC message, qiulei, 2017/6/19 -->
+	<!--
+		OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC
+		strjson example:
+		{
+			"xid":"1"
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC</log>
+		<log><![CDATA[strjson=<%=context.strjson.toJson()%>]]></log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	
+	<!--Reply 13-0 send OFP13MP_DESC message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_DESC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-1 send OFP13MP_FLOW message, qiulei, 2017/6/19 
+		strjson example:
+		{
+			"xid":"2",
+			"statslist":[
+				{
+					"tableid":"1",
+					"durationsec":"1",
+					"durationnsec":"1",
+					"priority":"1",
+					"idletimeout":"1",
+					"hardtimeout":"1",
+					"flags":"2",
+					"cookie":"3",
+					"packetcount":"4",
+					"bytecount":"5",
+					"match":{
+							"type":"1",
+							"matchfieldlist":[
+								{
+									"oxmclass":"0x8000",
+									"oxmfield":"5",
+									"hasmask":"false",
+									"ethtype":"0x0806"
+								},
+								{
+									"oxmclass":"0x8000",
+									"oxmfield":"3",
+									"hasmask":"true",
+									"dstmac":"00:0c:29:58:ef:2a",
+									"dstmacmask":"ff:ff:ff:00:00:00"
+								}
+							]
+						},
+					"instructionlist":[
+						{
+							"type":"4",
+							"actionlist":[
+								{
+									"type":"25",
+									"oxmclass":"0x8000",
+									"oxmfield":"3",
+									"hasmask":"false",
+									"dstmac":"00:0c:29:58:ef:22"
+								},
+								{
+									"type":"0",
+									"outport":"0xfffffffd",
+									"maxlen":"0xffff"
+								}
+							]
+						},
+						{
+							"type":"1",
+							"tableid":"1"
+						}
+					]
+				}
+			]
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_FLOW">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_FLOW</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-2 send OFP13MP_AGGREGATE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-3 send OFP13MP_TABLE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_TABLE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_TABLE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-4 send OFP13MP_PORT_STATS message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-5 send OFP13MP_QUEUE message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-6 send OFP13MP_GROUP message, qiulei, 2017/6/19 
+		strjson example:
+		{
+			"xid":"1",
+			"groupid":"1",
+			"statslist":[
+				{
+					"groupid":"1",
+					"refcount":"1",
+					"packetcount":"1",
+					"bytecount":"1",
+					"duretionsec":"1",
+					"durationnsec":"1",
+					"bucketcounterlist":[
+						{
+							"packetcount":"1",
+							"bytecount":"1"
+						},
+						{
+							"packetcount":"1",
+							"bytecount":"1"
+						}
+					]
+				}
+			]
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	
+	<!--Reply 13-7 send OFP13MP_GROUP_DESC message, qiulei, 2017/6/19 
+		strjson example:
+		{
+		"xid":"1",
+		"groupdesclist":[
+			{
+				"type":"1",
+				"groupid":"1",
+				"bucketlist":[
+					{
+						"weight":"1",
+						"watchport":"1",
+						"watchgroup":"22",
+						"actions":[
+							{
+								"type":"25",
+								"oxmclass":"0x8000",
+								"oxmfield":"3",
+								"hasmask":"false",
+								"dstmac":"00:0c:29:58:ef:22"
+							},
+							{
+								"type":"0",
+								"outport":"0xfffffffd",
+								"maxlen":"0xffff"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-8 send OFP13MP_GROUP_FEATURES message, qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-9 send OFP13MP_METER message, qiulei, 2017/6/19 
+		strjson example:
+		{
+			"flags" : "0",
+			"meterstatslist" : [
+				{
+					"meterid":"1",
+					"flowcount":"2",
+					"packetincount":"2",
+					"byteincount":"1",
+					"durationsec":"1",
+					"durationnsec":"1",
+					"bandstatslist":[
+						{
+							"packetbandcount":"1",
+							"bytebandcount":"2"
+						},
+						{
+							"packetbandcount":"3",
+							"bytebandcount":"4"
+						}
+					]
+				}
+			],
+			"type" : "9",
+			"xid":"<%=context.xid.toLong()%>"
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-10 send OFP13MP_METER_CONFIG message,
+		strjson example:	
+		{
+			"flags" : "0",
+			"meterconfiglist" : [
+				{
+					"flags":"1",
+					"meterid":"1",
+					"meterbandlist":[
+						{
+							"bandtype":"1",
+							"rate":"11",
+							"burstsize":"1024"
+						},
+						{
+							"bandtype":"2",
+							"rate":"11",
+							"preclevel":"1024"
+						}
+					]
+				}
+			],
+			"type" : "10",
+			"xid" : "0"
+		}
+	qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-11 send OFP13MP_METER_FEATURES message,
+		strjson example:
+		{
+			"flags" : "0",
+			"meterconfiglist" : [
+				{
+					"flags":"1",
+					"meterid":"1",
+					"meterbandlist":[
+						{
+							"bandtype":"1",
+							"rate":"11",
+							"burstsize":"1024"
+						},
+						{
+							"bandtype":"2",
+							"rate":"11",
+							"burstsize":"1024",
+							"preclevel":"34"
+						}
+					]
+				}
+			],
+			"type" : "10",
+			"xid":"1"
+		}
+	qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-12 send OFP13MP_TABLE_FEATURES message, 
+		strjson example:
+		"xid":"1",
+		"featuresrequestlist":[
+			{
+				"tableid":"0",
+				"name":"test",
+				"metadatamatch":"0xFFFFFFFFFFFFFFFF",
+				"metadatawrite":"0xFFFFFFFFFFFFFFFF",
+				"config":"1",
+				"maxentries":"255",
+				"tablefeatureproplist":[
+					{
+						"type":"8",
+						"oxmlist":[
+							{
+								"oxmclass":"0x8000",
+								"oxmfield":"5",
+								"hasmask":"false"
+							},
+							{
+								"oxmclass":"0x8000",
+								"oxmfield":"3",
+								"hasmask":"true"
+							}
+						]
+					}
+				]
+			},
+			{
+				"tableid":"0",
+				"name":"test",
+				"metadatamatch":"0xFFFFFFFFFFFFFFFF",
+				"metadatawrite":"0xFFFFFFFFFFFFFFFF",
+				"config":"1",
+				"maxentries":"255",
+				"tablefeatureproplist":[
+					{
+						"type":"0",
+						"instructlist":[
+							{
+								"type":"4"
+							},
+							{
+								"type":"1"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+	qiulei, 2017/6/19 -->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+	<!--Reply 13-13 send OFP13MP_PORT_DESC message, qiulei, 2017/6/19 -->
+	<!--
+		OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC
+		strjson example:
+		{
+		   "flags" : "0",
+		   "portlist" : [
+			  {
+				 "advertised" : "0",
+				 "config" : "0",
+				 "curr" : "0",
+				 "currspeed" : "0",
+				 "hwaddr" : "06:58:fc:0d:3c:47",
+				 "maxspeed" : "0",
+				 "name" : "s1",
+				 "peer" : "0",
+				 "protno" : "4294967294",
+				 "state" : "0",
+				 "supported" : "0"
+			  }
+		   ],
+		   "type" : "13",
+		   "xid" : "0"
+		}
+	-->
+	<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<variable name="openflowparams" type="params"/>
+        <log dest="stdout">Send_OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC</log>
+		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC" params="context.openflowparams">
+			<jsonsrc src="strjson"/>
+		</openflow>
+	</function>
+</starosxml>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<!--WebGUI-->
+	<function name="HandleAPI">
+		<parameters>
+			<parameter name="reqestpath" type="string"/>
+		</parameters>
+		<variable name="functionname" type="string"/>
+		<variable name="isHaveHandler" type="boolean"/>
+		<log>HandleAPI</log>
+		<log><![CDATA[HandleAPI request path <%=context.reqestpath.toString()%>]]></log>
+		<if cond="global.APIV1MapFunction.hasParam(context.reqestpath) == true">
+			<then>
+				<function>
+					<set name="functionname" value="global.APIV1MapFunction.getParam(context.reqestpath.toString())"/>
+					<function callback="functionname"/>
+				</function>
+			</then>
+			<else>
+				<function>
+					<log><![CDATA[Don't have the HandleAPI for requestpath= <%=context.reqestpath.toString()%>]]></log>
+				</function>
+			</else>
+		</if>
+	</function>
+</starosxml>

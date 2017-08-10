@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="SendBarrierRequest">
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_BARRIER_REQUEST">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="SendBarrierReply">
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_BARRIER_REPLY">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starosxml>

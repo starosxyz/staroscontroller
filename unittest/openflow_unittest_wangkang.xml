@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!-- wk -->
+	<function name="TestMPFlowRequest">
+		<log>"send OFP13MP_FLOW request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+				<parameter name="tableid" type="string" in="0"/>
+				<parameter name="outport" type="string" in="0"/>
+				<parameter name="outgroup" type="string" in="0"/>
+				<parameter name="cookie" type="string" in="0"/>
+				<parameter name="cookiemask" type="string" in="0"/>
+			</parameters>
+		</function>
+		<log>"wait OFP13MP_FLOW reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	
+	<!-- wk -->
+	<function name="TestMPAggregateRequest">
+		<log>"send OFP13MP_AGGREGATE request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+				<parameter name="tableid" type="string" in="0"/>
+				<parameter name="outport" type="string" in="0"/>
+				<parameter name="outgroup" type="string" in="0"/>
+				<parameter name="mcookie" type="string" in="0"/>
+				<parameter name="cookiemask" type="string" in="0"/>
+			</parameters>
+		</function>
+		<log>"wait OFP13MP_AGGREGATE reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	
+	<!-- wk -->
+	<function name="TestMPTableRequest">
+		<log>"send OFP13MP_TABLE request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+			</parameters>
+		</function>
+		<log>"wait OFP13MP_TABLE reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+</starosxml>

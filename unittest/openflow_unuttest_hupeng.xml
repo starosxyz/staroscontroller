@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--13-11 hu-->
+	<function name="TestMETER_FEATURES">
+		<log>"send METER_FEATURES_REQUEST loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<parameter name="maxmeter" type="string" in="0"/>
+				<parameter name="bandtypes" type="string" in="0"/>
+				<parameter name="capabilities" type="string" in="0"/>
+				<parameter name="maxbands" type="string" in="0"/>
+				<parameter name="maxcolor" type="string" in="0"/>
+			</parameters>
+		</function>
+		<log>"wait MMETER_FEATURES loadint..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	<!--13-12 hu-->
+		<function name="TestTABLE_FEATURES">
+		<log>"send METER_FEATURES_REQUEST loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<parameter name="featuresreplylist" type="string" in="0"/>
+			</parameters>
+		</function>
+		<log>"wait TABLE_FEATURES loadint..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	<!--13-13 hu-->
+	<function name="TestPORT_DESC">
+		<log>"send MULTIPART_REQUEST.OFP13MP_PORT_DESC loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+			</parameters>
+		</function>
+		<log>"wait PORT_DESC loadint..."</log>
+		<wait event="Send_OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+</starosxml>

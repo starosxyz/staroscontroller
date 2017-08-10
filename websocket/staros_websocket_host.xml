@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandlehostDataRequest">
+	<log>HandlehostDataRequest</log>
+	<!--hupeng 20170731-->
+		<variable name="outjson" type="string"/>
+		<function>
+		<log><![CDATA[hostContainer=<%=context.hostContainer.size()%>]]></log>
+		<log><![CDATA[hostContainer=<%=context.hostContainer.getValueByIndex(0).getValue('mac').toString()%>]]></log>
+		<script><![CDATA[
+				var json = new Object();
+				var myArray=new Array();                               
+				for(var i=0;i<context.hostContainer.size();i++)
+				{
+					context.print(i);
+					context.print('================start===================');
+					var host = context.hostContainer.getValueByIndex(i);									
+					var onearray = new Object();
+					onearray._iconid_type='hostIcon_endstation';
+					onearray.id=host.getValue('mac').toString()+"/"+host.getValue('vlan').toString();
+					onearray.mac=host.getValue('mac').toString();
+					onearray.vlan=host.getValue('vlan').toString();
+					onearray.ips=host.getValue('ip').toString();
+					onearray.location=host.getValue('deviceid').toString()+"/"+host.getValue('port').toString();	
+					myArray.push(onearray);
+				}
+				
+				json['event']='hostDataResponse';	
+				var payload = new Object();
+				payload['hosts']=myArray;
+				json['payload']=payload;
+				var strjson=JSON.stringify(json);
+				context.print(strjson);
+				context.outjson.setValue(strjson);
+			]]></script>
+		
+			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+			</websocket>		
+		</function>
+	
+	</function>
+</starosxml>

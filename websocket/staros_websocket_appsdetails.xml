@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandleappDetailsResponse">
+	<!--hupeng 20170731-->
+		<log><![CDATA[eventdata= <%=event.getParam('eventdata').toString()%>]]> </log>
+		<variable name="outjson" type="string" value=""/>
+		<function>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if (info.payload != null)
+				{
+					var processname=info.payload.id;
+					if (context.appsmanager.hasValue(processname)==true)
+					{
+						var processitem = context.appsmanager.getValue(processname);
+						var jsonroot = new Object();
+						var jsondetails = new Object();
+						var appsinfo=JSON.parse(processitem);
+						jsondetails['details']=appsinfo;
+						jsonroot['event']="appDetailsResponse";
+						jsonroot['payload']=jsondetails;
+						var strjson=JSON.stringify(jsonroot);
+						context.outjson.setValue(strjson);
+					}
+				}
+			]]></script>
+				<log><![CDATA[HandleappDetailsResponse send outjson= <%=context.outjson.toString()%>]]> </log>
+			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+				<jsonsrc src="outjson"/>
+			</websocket>	
+		</function>
+			
+	</function>
+</starosxml>

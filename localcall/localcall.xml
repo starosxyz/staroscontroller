@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--StarOS Entry-->
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<events>
+		<!--Session StarUp
+		<onevent event="sayhitomainsession">
+			<function>
+				<log>sayhitomainsession</log>
+				<raise name="'sayhimainsessionresponse'" sessionid="event.getParam('fromapp')"/>
+			</function>
+		</onevent>
+		-->
+		
+		<!-- qiulei 20170802 pm -->
+		<onevent event="registerSession">
+			<function>
+				<log>registerSession--qiulei 20170802</log>
+				<container name="OneSessionIdInfoContainer" type="hashmap" keytype="string" valuetype="string"/>
+				<raise name="'registerSessionResponse'" sessionid="event.getParam('fromapp')"/>
+				<insert name="sessionIdContainer" key="event.getParam('fromapp')" value="OneSessionIdInfoContainer"/>
+			</function>
+		</onevent>
+		<!-- qiulei 20170802 pm -->
+		<onevent event="unRegisterSession">
+			<function>
+				<log>unRegisterSession--qiulei 20170802</log>
+				<raise name="'unRegisterSessionResponse'" sessionid="event.getParam('fromapp')"/>
+				<remove name="sessionIdContainer" key="event.getParam('fromapp')"/>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

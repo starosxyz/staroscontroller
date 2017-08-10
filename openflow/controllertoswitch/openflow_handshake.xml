@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="OpenFlowFeaturesRequest">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowFeaturesRequest</log>
+		<variable name="jsonvariable" type="string"/>
+		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_FEATURES_REQUEST">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.jsonvariable.toString()"/>
+			</parameters>
+		</function>	
+		<wait event="openflow.OFPT13_FEATURES_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+			<function>
+				<log>Recieve Features Reply</log>
+				<log><![CDATA[Recieve Features Reply:=<%=event.getParam('eventdata').toString()%>]]></log>
+
+			</function>
+		</wait>
+	</function>
+</starosxml>
