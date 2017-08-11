@@ -1,5 +1,15 @@
-1. Install StarOS
+/*Staros 安装步骤*/
+1.	cd tools						--切换到tools目录下
+2.	./staros-install.sh uninstall	--卸载Staros的命令
+3.	./staros-install.sh install		--安装Staros的命令
+4.	dipcctl start					--启动Staros的命令
 
-
-
-3. edit scripts and start once
+/*staros-controller-1.0.0 编译步骤*/
+1.	cd staros-controller-1.0.0		--切换到staros-controller-1.0.0目录下
+2.	svn update						--更新staros-controller-1.0.0目录下
+3.	cd projects/					--切换到projects目录下
+4.	source env.sh					
+5.	make clean
+6.	make debug=0					--当debug=0的时候，编译出来的版本没有调试信息，
+									--当debug=1的时候编译出来的版本有调试信息，可以根据自身需求选择debug=0或者debug=1
+7.编译完成
