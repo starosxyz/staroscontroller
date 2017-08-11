@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="AddAppEvent" class="global.ApplicationManager">
+				<parameters>
+					<parameter name="id" type="string" in="'YY'"/>
+					<parameter name="version" type="string" in="'1.0.0'"/>
+					<parameter name="category" type="string" in="'sdfsdf'"/>
+					<parameter name="origin" type="string" in="'sdfsdf'"/>
+					<parameter name="title" type="string" in="'sdfsdf'"/>
+					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
+					<parameter name="url" type="string" in="'192.168.228.128'"/>
+					<parameter name="processname" type="string" in="'nullapp'"/>
+				</parameters>
+			</function>
+			<log>null app startup</log>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+		
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>
