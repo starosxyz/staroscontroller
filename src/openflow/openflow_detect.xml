@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			qiulei
+	Date:
+			2017-07-27
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<function name="MultiPartPortDescRequest">
+		<parameters>
+			<parameter name="switchdevice" type="hashmap"/>
+		</parameters>
+		<variable name="isstop" type="boolean" value="true"/>
+		<variable name="xid" type="long"/>
+		<!--qiulei-->
+		<variable name="flags" type="string"/>
+		<variable name="advertised" type="string"/>
+		<variable name="config" type="string"/>
+		<variable name="curr" type="string"/>
+		<variable name="currspeed" type="string"/>
+		<variable name="hwaddr" type="string"/>
+		<variable name="maxspeed" type="string"/>
+		<variable name="name" type="string"/>
+		<variable name="peer" type="string"/>
+		<variable name="portno" type="string"/>
+		<variable name="state" type="string"/>
+		<variable name="supported" type="string"/>
+		<variable name="port" type="object"/>
+
+		<container name="portinfo" type="hashmap" keytype="string" valuetype="string"/>
+		<container name="switchportinfo" type="hashmap" keytype="string" valuetype="hashmap"/>
+		
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<function>
+			<log dest="stdout">OpenFlowMultiPartPortDescRequest</log>
+			<variable name="strjson" type="string"/>
+			<reference variable="strjson">
+				<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.xid.toLong()%>"
+						}
+				]]></jsonbody>
+			</reference>
+			<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
+				<parameters>
+					<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+					<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+				</parameters>
+			</function>
+			<if cond="context.portContainer.hasValue(context.switchdevice.getValue('datapathid').toString())==true">
+				<then>
+					<function>
+						<lookup name="portContainer" key="context.switchdevice.getValue('datapathid').toString()" output="context.switchportinfo"/>
+					</function>
+				</then>
+				<else>
+					<function>
+						<insert name="portContainer" key="context.switchdevice.getValue('datapathid').toString()" value="context.switchportinfo"/>
+					</function>
+				</else>
+			</if>
+			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="context.transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
+				<function>
+				
+					<!--parse JSONString-->
+					<script><![CDATA[							
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						
+						for(var i=0;i<info.portlist.length;i++)
+						{
+							//yijian add for null var
+							var ofport = context.createContainer("hashmap","string","string");
+							if (ofport != null)
+							{
+								ofport.addValue('advertised', info.portlist[i].advertised);
+								ofport.addValue('portno', info.portlist[i].portno);
+								ofport.addValue('config', info.portlist[i].config);
+								ofport.addValue('curr', info.portlist[i].curr);
+								ofport.addValue('currspeed', info.portlist[i].currspeed);
+								ofport.addValue('hwaddr', info.portlist[i].hwaddr);
+								ofport.addValue('maxspeed', info.portlist[i].maxspeed);
+								ofport.addValue('name', info.portlist[i].name);
+								ofport.addValue('peer', info.portlist[i].peer);
+								ofport.addValue('state', info.portlist[i].state);
+								ofport.addValue('supported', info.portlist[i].supported);
+								context.switchportinfo.addValue(info.portlist[i].portno, ofport);
+							}
+						}
+					]]></script>
+				</function>
+			</wait>
+			<log>OpenFlowMultiPartPortDescRequest end</log>
+		</function>
+	</function>
+	
+	<!--qiulei  0719 start -->
+	<function name="printAllPort">
+		<container name="switchport" type="hashmap" keytype="string" valuetype="hashmap"/>
+		<for var="i" from="0" to="context.portContainer.size()-1">
+			<log><![CDATA[openflowdeviceLength=<%=context.portContainer.size()%>]]></log>
+			<function>
+				<set name="switchport" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+				<function name="printAllPortofDevice">
+					<parameters>
+						<parameter name="portdevice" type="hashmap" in="switchport"/>
+					</parameters>
+				</function>
+			</function>		
+		</for>
+	</function>
+	<function name="printAllPortofDevice">
+		<parameters>
+			<parameter name="portdevice" type="hashmap"/>
+		</parameters>
+		<container name="openflowport" type="hashmap" keytype="string" valuetype="string"/>
+		<for var="i" from="0" to="context.portdevice.size()-1">
+			<log><![CDATA[portLength=<%=context.portdevice.size()%>]]></log>
+			<function>
+				<set name="openflowport" value="context.portdevice.getValueByIndex(context.i.toLong())"/>
+				<!--print -->
+				
+				<log><![CDATA[advertised=<%=context.openflowport.getValue('advertised')%>]]></log>
+				<log><![CDATA[config=<%=context.openflowport.getValue('config')%>]]></log>
+				<log><![CDATA[curr=<%=context.openflowport.getValue('curr')%>]]></log>
+				<log><![CDATA[currspeed=<%=context.openflowport.getValue('currspeed')%>]]></log>
+				<log><![CDATA[hwaddr=<%=context.openflowport.getValue('hwaddr')%>]]></log>
+				<log><![CDATA[maxspeed=<%=context.openflowport.getValue('maxspeed')%>]]></log>
+				<log><![CDATA[name=<%=context.openflowport.getValue('name')%>]]></log>
+				<log><![CDATA[peer=<%=context.openflowport.getValue('peer')%>]]></log>
+				<log><![CDATA[portno=<%=context.openflowport.getValue('portno')%>]]></log>
+				<log><![CDATA[state=<%=context.openflowport.getValue('state')%>]]></log>
+				<log><![CDATA[supported=<%=context.openflowport.getValue('supported')%>]]></log>
+			</function>
+		</for>
+	</function>
+	<!--qiulei  0719 end-->
+	
+	
+	<!--qiulei  0807 18:00-->
+	<function name="OpenFlowKeepAliveDetect">
+		<parameters>
+			<parameter name="switchdevice" type="hashmap"/>
+		</parameters>
+		
+		<variable name="requestcount" type="long"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+				{ "xid":"<%=context.echorequestxid.toLong()%>" }
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_ECHO_REQUEST">
+			<parameters>
+				<parameter name="transportid" type="string" in="context.switchdevice.getValue('transportid')"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+		<set name="requestcount" value="context.switchdevice.getValue('requestcount')"/>
+		<set name="requestcount" value="requestcount+1"/>
+		<insert name="switchdevice" key="'requestcount'" value="requestcount"/>
+		
+		<if cond="context.requestcount.toLong()>10">
+			<then>
+				<!--20170808 qiulei am-->
+				<function name="removeDevice">
+					<parameters>
+						<parameter name="datapathid" type="string" in="context.switchdevice.getValue('datapathid')"/>
+					</parameters>
+				</function>
+				
+				<openflow name="openflowserverobj" method="DISCONNECTED" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
+			</then>
+		</if>
+	</function>
+	
+	
+	<!--将要循环发送的函数放在SendMultipartMessage中,执行定时器,
+		定时器就会执行SendMultipartMessage函数,
+		进而调用要发送的OpenFlowMultiPartPortDescRequest函数-->
+	<function name="OpenFlowDetect">
+		<container name="thisswitch" type="hashmap" keytype="string" valuetype="string"/>
+		<variable name="transportid" type="string"/>
+		<for var="i" from="0" to="context.deviceContainer.size()-1">
+			<log><![CDATA[deviceLength=<%=context.deviceContainer.size()%>]]></log>
+			<function>
+				<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+				<set name="transportid" value="context.thisswitch.getValue('transportid').toString()"/>
+				<if cond="context.thisswitch!=null">
+					<then>
+						<function name="MultiPartPortDescRequest">
+							<parameters>
+								<parameter name="switchdevice" type="hashmap" in="context.thisswitch"/>
+							</parameters>
+						</function>
+						
+						<!--function name="unInstallDefaultFlow">
+							<parameters>
+								<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+							</parameters>
+						</function-->
+						
+						<!--20160721 qiulei start-->
+						<!--function name="UnInstallFlowTableRequest">
+							<parameters>
+								<parameter name="transportid" type="string" in="context.transportid.toString()/>
+								<parameter name="resourceid" type="string" in="context.sresourceid.toString()"/>
+							</parameters>
+						</function-->
+						<!--20160721 qiulei end-->
+					</then>
+				</if>
+			</function>
+		</for>
+		
+		<!--
+		<function name="printAllPort"/>
+		-->
+		
+	</function>
+</starosxml>

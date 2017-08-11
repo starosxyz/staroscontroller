@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="eventdata" type="messageblock"/>
+			<variable name="strdata" type="string"/>
+			<variable name="strtest" type="string"/>
+			<variable name="tomainsessionparam" type="params"/>
+			<function>
+				<log>discovery session.startup</log>
+				<set name="strtest" value="'hello i am from starlang'"/>
+				<remotecall method="TestDisoveryRemoteCall"/>
+				<wait event="ResponseEvent" timeout="1000">
+					<function>
+						<set name="eventdata" value="event.getMessageBlock()"/>
+						<set name="strdata" value="context.eventdata.toString()"/>
+						<log>discovery get response from Process</log>
+						<log><![CDATA[eventdata= <%=context.strdata.toString()%>]]> </log>
+					</function>
+				</wait>
+				<remotecall method="TestDisoveryRemoteCall">
+					<messageblock data="context.eventdata"/>
+				</remotecall>
+				<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+				<!--qiulei 20170802 pm  <insert name="sessionIdContainer" value=""/>-->
+				<!--<raise name="'sayhitomainsession'" params="tomainsessionparam" sessionid="context.getMainSessionId()"/>-->
+				<raise name="'registerSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+				<!--
+				<wait event="sayhimainsessionresponse" timeout="1000">
+					<function>
+						<log>sayhimainsessionresponse</log>
+					</function>
+				</wait>
+				-->
+				<!-- qiulei 20170802 pm -->
+				<wait event="registerSessionResponse" timeout="1000">
+					<function>
+						<log>registerSessionResponse--qiulei 20170802</log>
+					</function>
+				</wait>
+				
+				
+				
+			</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+		
+			<!-- qiulei 20170802 pm -->
+			<variable name="tomainsessionparam" type="params"/>
+			<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+			<raise name="'unRegisterSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

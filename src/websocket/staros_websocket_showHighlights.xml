@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<function name="HandleShowHighlights">
+		<variable name="trafficType" type="string"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam("eventdata").toString());
+			var type = info.payload.trafficType;
+			context.trafficType.setValue(type);
+		]]></script>
+		
+		<function name="showHighlight"/>		
+	</function>
+	
+	<function name="showHighlight">			
+		<variable name="binvalidlink" type="string" value="false"/>		
+		<variable name="linkarray" type="string"/>
+		<function>
+				<script><![CDATA[					
+					var json = new Object();
+					var myArray=new Array();
+			
+					for (var i = 0; i < context.openflowserverobj.getDeviceCount(); i++)
+						{
+							var srcdevice = context.openflowserverobj.getDeviceByIndex(i);
+							if (srcdevice != null)
+							{
+								for (var j = 0; j < context.openflowserverobj.getDeviceCount(); j++)
+								{
+									var dstdevice = context.openflowserverobj.getDeviceByIndex(j);
+									if (srcdevice != dstdevice)
+									{
+
+										var strlink = context.openflowserverobj.getShortestPath(srcdevice.getParam('datapathid').toString(), dstdevice.getParam('datapathid'));
+										context.print("srcdevice.datapathid =" + srcdevice.getParam('datapathid').toString());
+										context.print("dstdevice.datapathid =" + dstdevice.getParam('datapathid').toString());
+										if (strlink.length > 0)
+										{
+											var info = JSON.parse(strlink);
+											if (info.paths.length == 1)
+											{
+												context.binvalidlink.setValue("true");										
+												if (context.trafficType.toString() == "portStatsPktSec")
+												{
+													var dstport = info.paths[0].dst.port;				
+													var srcport = info.paths[0].src.port;
+													var onearray = new Object();
+													onearray.id = "of:" + srcdevice.getParam('datapathid').toString() + '/' + srcport +"-of:" + dstdevice.getParam('datapathid').toString() + '/' + dstport;
+													onearray.label = "4pps";
+													onearray.css = "secondary port-traffic-green";
+													myArray.push(onearray);	
+												}												
+											}
+											else 
+											{
+												context.binvalidlink.setValue("false");
+											}
+										}
+										else 
+										{
+											context.binvalidlink.setValue("false");
+										}
+									}
+								}
+							}					
+						}
+					json['event'] = "showHighlights";							
+						var payload = new Object();
+						var devices = new Array();	
+						devices.push();
+						payload['devices'] = devices;	
+						var hosts = new Array();
+						hosts.push();
+						payload['hosts'] = hosts;	
+						payload['links'] = myArray;			
+						json['payload'] = payload;				
+						var strjson=JSON.stringify(json);				
+						context.linkarray.setValue(strjson);				
+						context.print(strjson);
+		
+				]]></script>
+			</function>
+			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+				<jsonsrc src="linkarray"/>
+			</websocket>
+	</function>
+</starosxml>

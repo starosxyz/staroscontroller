@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="SendOpenFlowMod">
+		<parameters>
+			<parameter name="transportid" type="string"/>
+			<parameter name="strjson" type="string"/>
+		</parameters>
+		<log dest="stdout">OpenFlowMod</log>
+		<variable name="openflowparams" type="params"/>
+		<set name="openflowparams" paramname="transportid" value="event.getParam('transportid').toString()"/>
+		<openflow name="openflowserverobj" method="openflow.OFPT13_FLOW_MOD" params="context.openflowparams">
+			<jsonsrc src="context.strjson.toString()"/>
+		</openflow>
+	</function>
+	<function name="OpenFlowMod">
+		<log dest="stdout">OpenFlowMod</log>
+		<variable name="strjson" type="string"/>
+		<variable name="xid" type="long" value="context.openflowxidbase.toLong()+1" />
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"3000",
+						"hardtimeout":"3000",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x0806"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"true",
+										"dstmac":"00:0c:29:58:ef:2a",
+										"dstmacmask":"ff:ff:ff:00:00:00"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"25",
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"false",
+										"dstmac":"00:0c:29:58:ef:22"
+									},
+									{
+										"type":"0",
+										"outport":"0xfffffffd",
+										"maxlen":"0xffff"
+									}
+								]
+							},
+							{
+								"type":"1",
+								"tableid":"1"
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="SendOpenFlowMod">
+			<parameters>
+				<parameter name="transportid" type="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="contex.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="OpenFlowRemoveMod">
+		<log dest="stdout">OpenFlowRemoveMod</log>
+		<variable name="strjson" type="string"/>
+		<variable name="xid" type="long" value="context.openflowxidbase.toLong()+1" />
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"3",
+						"idletimeout":"3000",
+						"hardtimeout":"3000",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x0806"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"true",
+										"dstmac":"00:0c:29:58:ef:2a",
+										"dstmacmask":"ff:ff:ff:00:00:00"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"25",
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"false",
+										"dstmac":"00:0c:29:58:ef:22"
+									},
+									{
+										"type":"0",
+										"outport":"0xfffffffd",
+										"maxlen":"0xffff"
+									}
+								]
+							},
+							{
+								"type":"1",
+								"tableid":"1"
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="SendOpenFlowMod">
+			<parameters>
+				<parameter name="transportid" type="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="contex.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="TestOpenFlowRemoveMod">
+		<variable name="isstop" type="boolean" value="true"/>
+		<function>
+			<while cond="context.isstop.toBoolean()==true">
+				<function name="OpenFlowMod"/>
+				<function name="OpenFlowRemoveMod"/>
+				<wait event="openflow.OFPT13_FLOW_REMOVED" transportid="event.getParam('transportid').toString()">
+					<function>
+						<log> hahahah</log>
+						<log><![CDATA[OFPT13_FLOW_REMOVED=<%=event.getParam('eventdata').toString()%>]]></log>
+					</function>
+				</wait>
+			</while>
+		</function>
+	</function>
+</starosxml>

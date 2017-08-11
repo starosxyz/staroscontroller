@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_cluster.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_topo.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_bootstrap.xml"/>
+	<!--qiulei 20170728-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_devicedata.xml"/>
+	<!--YY 20170728-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_links.xml"/>
+	<!--YY 20170731-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_requestDetails.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_showHighlights.xml"/>
+	<!--yijian-->
+	<!--hupeng 20170802-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_appsdetails.xml"/>
+	<!--hupeng 20170804-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_host.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_apps.xml"/>
+	<!--YY 20170802-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_clientManager.xml"/>
+	<variable name="WebSocketHandlerMap" type="params" global="true"/>
+	<function name="InitWebSocketHandlerMap">
+		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
+		<set name="WebSocketHandlerMap" paramname="requestSummary" value="'HandleRequestSummary'"/>
+		<set name="WebSocketHandlerMap" paramname="topoSelectOverlay" value="'HandletopoSelectOverlay'"/>
+		<set name="WebSocketHandlerMap" paramname="topoStart" value="'HandletopoStart'"/>
+		<set name="WebSocketHandlerMap" paramname="updatePrefReq" value="'HandleUpdatePrefReq'"/>
+		<set name="WebSocketHandlerMap" paramname="bootstrap" value="'HandleBootStrap'"/>
+		<!--qiulei 20170728-->
+		<set name="WebSocketHandlerMap" paramname="deviceDataRequest" value="'Handledevicedata'"/>
+		
+		<!--YY 20170728-->
+		<set name="WebSocketHandlerMap" paramname="linkDataRequest" value="'HandleLinkDataReq'"/>
+		<!--YY 20170731-->
+		<set name="WebSocketHandlerMap" paramname="requestDetails" value="'HandleDetailsReq'"/>	
+		<!--hupeng 20170731-->
+		<set name="WebSocketHandlerMap" paramname="requestAllTraffic" value="'HandleShowHighlights'"/>	
+		<!--qiulei 20170731-->
+		<set name="WebSocketHandlerMap" paramname="deviceDetailsRequest" value="'HandleDeviceDetailsReq'"/>
+		<!--yijian 20170801-->
+		<set name="WebSocketHandlerMap" paramname="appDataRequest" value="'HandleAppDataRequest'"/>
+		<!--hupeng 20170801-->
+		<set name="WebSocketHandlerMap" paramname="appDetailsRequest" value="'HandleappDetailsResponse'"/>
+		<!--yijian 20170802-->
+		<set name="WebSocketHandlerMap" paramname="appManagementRequest" value="'HandleappManagementRequest'"/>
+		<!--hupeng 20170803-->
+		<set name="WebSocketHandlerMap" paramname="hostDataRequest" value="'HandlehostDataRequest'"/>
+	</function>
+</starosxml>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+        <function name="HandleGetDevices">
+		<variable name="httpparam" type="params"/>
+		<variable name="sendstrjson" type="string"/>
+                <log>HandleGetDevices</log>
+                <script><![CDATA[
+                                var json = new Object();
+                                var myArray=new Array();                               
+                                for(var i=0;i<context.openflowserverobj.getDeviceCount();i++)
+                                {
+									context.print(i);
+									context.print('================start===================');
+									var devices = context.openflowserverobj.getDeviceByIndex(i);									
+									if( devices == null)
+									{
+											context.print('device is null');
+									}
+									else
+									{
+											context.print('device is not null');
+									}
+									var onearray = new Object();
+									if ((devices.hasParam('auxiliaryid')==true) &&
+										(devices.hasParam('buffers')==true) &&
+										(devices.hasParam('capabilities')==true) &&
+										(devices.hasParam('datapathid')==true) &&
+										(devices.hasParam('tables')==true) &&
+										(devices.hasParam('xid')==true))
+									{
+										onearray.auxiliaryid = devices.getParam('auxiliaryid').toString();
+										onearray.buffers = devices.getParam('buffers').toString();
+										onearray.capabilities = devices.getParam('capabilities').toString();
+										onearray.datapathid = devices.getParam('datapathid').toString();
+										onearray.tables = devices.getParam('tables').toString();
+										onearray.xid = devices.getParam('xid').toString();
+										myArray.push(onearray);
+									}
+									else 
+									{
+										context.print('no param');
+									}
+                                }
+                                json['devices'] = myArray;
+								var strjson=JSON.stringify(json);
+								context.print(strjson);
+								context.sendstrjson.setValue(strjson);
+                ]]></script>
+				<set name="httpparam" paramname="Server" value="'StarOS'"/>
+				<set name="httpparam" paramname="Connection" value="'Close'"/>
+				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+					<jsonsrc src="sendstrjson"/>
+				</restful>
+				<restful name="restfulserver" action="Disconnect" transportid="event.getParam('transportid').toString()"/>
+        </function>
+</starosxml>

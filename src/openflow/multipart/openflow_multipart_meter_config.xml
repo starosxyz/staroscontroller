@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="OpenFlowMultiPartMeterConfigRequest">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowMultiPartMeterConfigRequest</log>
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"meterid":"0xffffffff"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="OpenFlowMultiPartMeterConfigReply">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowMultiPartMeterConfigReply</log>
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+				{
+					"flags" : "0",
+					"meterconfiglist" : [
+						{
+							"flags":"1",
+							"meterid":"1",
+							"meterbandlist":[
+								{
+									"bandtype":"1",
+									"rate":"11",
+									"burstsize":"1024"
+								},
+								{
+									"bandtype":"2",
+									"rate":"11",
+									"burstsize":"1024",
+									"preclevel":"34"
+								}
+							]
+						}
+					],
+					"type" : "10",
+					"xid":"<%=context.xid.toLong()%>"
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="TestOpenFlowMultiPartMeterConfigRequest">
+		<variable name="isstop" type="boolean" value="true"/>
+		<variable name="xid" type="long"/>
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<function>
+			<function name="OpenFlowMultiPartMeterConfigRequest">
+				<parameters>
+					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()"  xid="context.xid.toLong()">
+				<function>
+					<log><![CDATA[OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG=<%=event.getParam('eventdata').toString()%>]]></log>
+				</function>
+			</wait>
+		</function>
+	</function>
+	<function name="TestOpenFlowMultiPartMeterConfigReply">
+		<variable name="xid" type="long"/>
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<function>
+			<function name="OpenFlowMultiPartMeterConfigReply">
+				<parameters>
+					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+		</function>
+	</function>
+</starosxml>

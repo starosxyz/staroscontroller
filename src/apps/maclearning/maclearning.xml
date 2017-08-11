@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="eventdata" type="messageblock"/>
+			<variable name="strdata" type="string"/>
+			<variable name="strtest" type="string"/>
+			<variable name="tomainsessionparam" type="params"/>
+			<function>
+				<log>tunpeer session.startup</log>
+				<set name="strtest" value="'hello i am from starlang'"/>
+				<remotecall method="TestTunpeerRemoteCall"/>
+				<wait event="ResponseEvent" timeout="1000">
+					<function>
+						<set name="eventdata" value="event.getMessageBlock()"/>
+						<set name="strdata" value="context.eventdata.toString()"/>
+						<log>tunpeer get response from Process</log>
+						<log><![CDATA[eventdata= <%=context.strdata.toString()%>]]> </log>
+					</function>
+				</wait>
+				<remotecall method="TestTunpeerRemoteCall">
+					<messageblock data="context.eventdata"/>
+				</remotecall>
+				<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+				<!-- qiulei 20170803 am -->
+				<raise name="'registerSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+				
+				<!-- qiulei 20170803 am -->
+				<wait event="registerSessionResponse" timeout="1000">
+					<function>
+						<log>registerSessionResponse_Tunpeer--qiulei 20170803</log>
+					</function>
+				</wait>
+				
+				
+				
+			</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+			
+			<log>tunpeer ~bundleapp.shutdown qiulei 20170803</log>
+			<!-- qiulei 20170803 am -->
+			<variable name="tomainsessionparam" type="params"/>
+			<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+			<raise name="'unRegisterSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+	<!--
+	<events>
+		<onevent event="session.startup">
+			<function>
+				<log>session.startup</log>
+			</function>
+		</onevent>
+		<onevent event="~session.shutdown">
+			<function>
+				<log>~session.shutdown</log>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+	-->
+</starosxml>

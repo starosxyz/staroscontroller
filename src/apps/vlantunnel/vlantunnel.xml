@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="eventdata" type="messageblock"/>
+			<variable name="strdata" type="string"/>
+			<variable name="strtest" type="string"/>
+			<variable name="xid" type="string"/>
+			
+			<variable name="tomainsessionparam" type="params"/>
+			<function>
+				<log>vlan tunnel session.startup</log>
+				<set name="strtest" value="'hello i am from starlang'"/>
+				<log><![CDATA[test xid= <%=context.xid.toString()%>]]> </log>
+				<remotecall method="TestVlanTunnelRemoteCall"/>
+				<wait event="ResponseEvent" timeout="1000">
+					<function>
+						<set name="eventdata" value="event.getMessageBlock()"/>
+						<set name="strdata" value="context.eventdata.toString()"/>
+						<log>vlan tunnel  get response from Process</log>
+						<log><![CDATA[eventdata= <%=context.strdata.toString()%>]]> </log>
+					</function>
+				</wait>
+				<remotecall method="TestVlanTunnelRemoteCall">
+					<messageblock data="context.eventdata"/>
+				</remotecall>
+				
+				<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+				<!-- qiulei 20170803 am -->
+				<raise name="'registerSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+				
+				<!-- qiulei 20170803 am -->
+				<wait event="registerSessionResponse" timeout="1000">
+					<function>
+						<log>registerSessionResponse_Vlantunnel--qiulei 20170803</log>
+					</function>
+				</wait>
+			</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+			<function>
+				<log>vlan tunnel  ~bundleapp.shutdown</log>
+				<!-- qiulei 20170803 am -->
+				<variable name="tomainsessionparam" type="params"/>
+				<set name="tomainsessionparam" paramname="fromapp" value="context.getCurrentBundleId()"/>
+				<raise name="'unRegisterSession'" params="tomainsessionparam" sessionid="context.getMainBundleId()"/>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<container name="hostContainer" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
+	<function name="addHost">
+		<parameters>
+			<parameter name="mac" type="string"/>		
+			<parameter name="ip" type="string"/>	
+			<parameter name="vlan" type="string"/>
+			<parameter name="deviceid" type="string"/>	
+			<parameter name="port" type="string"/>				
+		</parameters>
+			<container name="onehostinfo" type="hashmap" keytype="string" valuetype="string"/>
+			<container name="onehostinfo2" type="hashmap" keytype="string" valuetype="string"/>
+			<insert name="onehostinfo" key="'mac'" value="context.mac.toString()"/>
+			<insert name="onehostinfo" key="'ip'" value="context.ip.toString()"/>
+			<insert name="onehostinfo" key="'vlan'" value="context.vlan.toString()"/>
+			<insert name="onehostinfo" key="'deviceid'" value="context.deviceid.toString()"/>
+			<insert name="onehostinfo" key="'port'" value="context.port.toString()"/>
+		
+		<if cond="context.hostContainer.hasValue(context.mac.toString())==false">
+			<then>
+				<function>
+					<insert name="hostContainer" key="context.mac.toString()" value="context.onehostinfo"/>
+					<log><![CDATA[mac=<%=context.mac.toString()%>]]></log>
+					<log><![CDATA[ip=<%=context.ip.toString()%>]]></log>
+					<log><![CDATA[vlan=<%=context.vlan.toString()%>]]></log>
+					<log><![CDATA[deviceid=<%=context.deviceid.toString()%>]]></log>
+					<log><![CDATA[port=<%=context.port.toString()%>]]></log>
+				</function>
+			</then>
+			<else>
+				<log>do not addsame</log>
+			</else>
+		</if>
+		<lookup name="hostContainer" key="context.mac.toString()" output="context.onehostinfo2"/>
+		<log><![CDATA[mac=<%=context.onehostinfo2.getValue('mac').toString()%>]]></log>
+		<log><![CDATA[ip=<%=context.onehostinfo2.getValue('ip').toString()%>]]></log>
+		<log><![CDATA[vlan=<%=context.onehostinfo2.getValue('vlan').toString()%>]]></log>
+		<log><![CDATA[deviceid=<%=context.onehostinfo2.getValue('deviceid').toString()%>]]></log>
+		<log><![CDATA[port=<%=context.onehostinfo2.getValue('port').toString()%>]]></log>
+	</function>
+
+	<function name="addhostest">
+		<function name="addHost">
+			<parameters>
+				<parameter name="mac" type="string" in="'00:00:00:01:01:01'"/>		
+				<parameter name="ip" type="string"  in="'10.1.1.1'"/>	
+				<parameter name="vlan" type="string"  in="'None'"/>
+				<parameter name="deviceid" type="string"  in="'of:1'"/>	
+				<parameter name="port" type="string"  in="'2'"/>				
+			</parameters>
+		</function>
+		<function name="addHost">
+			<parameters>
+				<parameter name="mac" type="string" in="'00:00:00:01:01:02'"/>		
+				<parameter name="ip" type="string"  in="'10.1.1.2'"/>	
+				<parameter name="vlan" type="string"  in="'None'"/>
+				<parameter name="deviceid" type="string"  in="'of:3'"/>	
+				<parameter name="port" type="string"  in="'3'"/>				
+			</parameters>
+		</function>
+		<function name="printhostmanager"/>
+	</function>
+	<function name="printhostmanager">
+		<container name="onehostinfo" type="hashmap" keytype="string" valuetype="string"/>
+		<for var="i" from="0" to="context.hostContainer.size()-1">
+			<function>
+				<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
+				<log><![CDATA[onehostinfo mac <%=context.onehostinfo.getValue('mac').toString()%>]]> </log>
+			</function>
+		</for>
+	</function>
+</starosxml>

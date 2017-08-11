@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="OpenFlowHello">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowHello</log>
+		<variable name="jsonvariable" type="string"/>
+		<log><![CDATA[OpenFlowHello xid=<%=context.xid.toLong()%>]]></log>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"elementtype":"1",
+						"elementlength":"8",
+						"elementbitmap":"16"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_HELLO">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.jsonvariable.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+</starosxml>

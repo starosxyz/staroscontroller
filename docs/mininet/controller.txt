@@ -1,0 +1,6 @@
+sudo mn --custom test.py --topo mytopo  --switch ovs,protocols=OpenFlow13 --controller=remote,ip=192.168.186.138,port=6633 --mac
+
+sudo mn --topo single,3 --switch ovs,protocols=OpenFlow13 --controller=remote,ip=192.168.186.138,port=6633 --mac
+
+
+sudo mn --topo linear,4 --switch ovs,protocols=OpenFlow13 --controller=remote,ip=192.168.186.138,port=6633 --mac

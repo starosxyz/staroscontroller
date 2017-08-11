@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandleAppDataRequest">
+	<!--hupeng 20170731-->
+		<variable name="outjson" type="string"/>
+		<function>
+			<script><![CDATA[
+					var json = new Object();
+					var payload = new Object();
+					var apps = new Array();
+					json['event'] = "appDataResponse";
+					for(var i=0;i<context.appsmanager.size();i++){
+						var oneapps = new Object();
+						var values=context.appsmanager.getValueByIndex(i).toString();	
+						var oneappsinfo = JSON.parse(values);
+						//context.print(values);
+						//oneapps=values;
+						apps.push(oneappsinfo);
+					}
+					payload['apps'] = apps;	
+					json['payload'] = payload;	
+					var strjson=JSON.stringify(json);
+					context.outjson.setValue(strjson);
+					context.print(strjson);
+				]]></script>
+					
+		</function>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>		
+	</function>
+	<function name="HandleappManagementRequest">
+	<!--hupeng 20170731-->
+		<variable name="name" type="string"/>
+		<variable name="action" type="string"/>
+		<function>
+			<script><![CDATA[
+					var info = JSON.parse(event.getParam('eventdata').toString());
+					context.action.setValue(info.payload.action);
+					context.action.setValue(info.payload.name);
+			]]></script>
+			<remotecall method="appManagementRequest">
+					<applicationdata>
+						<![CDATA[ 
+						<%=event.getParam('eventdata').toString()%>
+						]]>
+					</applicationdata>
+			</remotecall>
+			<wait event="appManagementRequest.result" timeout="1000">
+				<function>
+					<log>appManagementRequest result</log>
+				</function>
+			</wait>
+		</function>
+		
+	</function>
+</starosxml>

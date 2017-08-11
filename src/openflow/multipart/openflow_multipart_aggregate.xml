@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="OpenFlowMultiPartAggregateRequest">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowMultiPartAggregateRequest</log>
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"tableid":"1",
+						"outport":"1",
+						"outgroup":"1",
+						"cookie":"1",
+						"cookiemask":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x0806"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"true",
+										"dstmac":"00:0c:29:58:ef:2a",
+										"dstmacmask":"ff:ff:ff:00:00:00"
+									}
+								]
+							}
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="OpenFlowMultiPartAggregateReply">
+		<parameters>
+			<parameter name="xid" type="long"/>
+		</parameters>
+		<log dest="stdout">OpenFlowMultiPartAggregateReply</log>
+		<variable name="strjson" type="string"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>",
+						"packetcount":"1",
+						"bytecount":"1",
+						"flowcount":"1"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="TestOpenFlowMultiPartAggregateRequest">
+		<variable name="isstop" type="boolean" value="true"/>
+		<variable name="xid" type="long"/>
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartAggregateRequest xid=<%=context.xid.toLong()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartAggregateRequest">
+				<parameters>
+					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+				<function>
+					<log><![CDATA[OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE=<%=event.getParam('eventdata').toString()%>]]></log>
+				</function>
+			</wait>
+		</function>
+	</function>
+	<function name="TestOpenFlowMultiPartAggregateReply">
+		<variable name="isstop" type="boolean" value="true"/>
+		<variable name="xid" type="long"/>
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartAggregateReply xid=<%=context.xid.toLong()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartAggregateReply">
+				<parameters>
+					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+		</function>
+	</function>
+</starosxml>
