@@ -462,7 +462,7 @@
 				<script><![CDATA[
 									var info = JSON.parse(event.getParam("eventdata").toString());
 									context.jsontype.setValue(info.event);
-						]]>
+								]]>
 				</script>
 				<if cond="context.jsontype.toString() == 'clusterDataRequest'">
 					<then>
