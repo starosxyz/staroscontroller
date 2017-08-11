@@ -3,28 +3,13 @@
 	<function name="HandleAppDataRequest">
 	<!--hupeng 20170731-->
 		<variable name="outjson" type="string"/>
-		<function>
-			<script><![CDATA[
-					var json = new Object();
-					var payload = new Object();
-					var apps = new Array();
-					json['event'] = "appDataResponse";
-					for(var i=0;i<context.appsmanager.size();i++){
-						var oneapps = new Object();
-						var values=context.appsmanager.getValueByIndex(i).toString();	
-						var oneappsinfo = JSON.parse(values);
-						//context.print(values);
-						//oneapps=values;
-						apps.push(oneappsinfo);
-					}
-					payload['apps'] = apps;	
-					json['payload'] = payload;	
-					var strjson=JSON.stringify(json);
-					context.outjson.setValue(strjson);
-					context.print(strjson);
-				]]></script>
-					
+		<function name="GetAppJsonString" class="ApplicationManager">
+			<parameters>
+				<!--appjson is return value-->
+				<parameter name="appjson" type="string" out="context.outjson"/>
+			</parameters>
 		</function>
+			<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>		

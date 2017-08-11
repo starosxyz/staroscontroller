@@ -8,7 +8,6 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_app.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_topology.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/setting/setting.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/apps_manager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/device_manager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/port_manager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CFlowManager.xml"/>
@@ -19,7 +18,6 @@
 	<variable name="restfulserver" type="object" global="true"/>
 	<container name="flowmodcontaier" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
 	<container name="websocketclients" type="list" valuetype="string" global="true"/>
-	<container name="appsmanager" type="hashmap" keytype="string" valuetype="string" global="true"/>
 	<!--qiulei 20170802-->
 	<container name="sessionIdContainer" type="hashmap" keytype="long" valuetype="hashmap" global="true"/>
 	<variable name="flowmanager" type="class"/>
@@ -48,11 +46,25 @@
 			<!--Add API Handler Init-->
 			
 			<function name="InitAPIMapFunction"/>
+			<!--Add API Handler Init-->
+			<function name="InitGlobalResource">
 			<!--hu peng 2017/07/28  change setting-->
 			<function name="InitSetting"/>
 			<function name="InitWebSocketHandlerMap"/>
 			<!--Start GUI and Restful API Service-->
 			<function name="Restfulserver"/>
+				<function name="AddAppEvent" class="ApplicationManager">
+				<parameters>
+					<parameter name="id" type="string" in="'sdfsdf'"/>
+					<parameter name="version" type="string" in="'1.0.0'"/>
+					<parameter name="category" type="string" in="'sdfsdf'"/>
+					<parameter name="origin" type="string" in="'sdfsdf'"/>
+					<parameter name="title" type="string" in="'sdfsdf'"/>
+					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
+					<parameter name="url" type="string" in="'192.168.2.165'"/>
+					<parameter name="processname" type="string" in="'ddd'"/>
+				</parameters>
+			</function>
 			<!--Start OpenFlow Controller protocol-->
 			<function name="startopenflow"/>
 			<function name="testcallback"/>

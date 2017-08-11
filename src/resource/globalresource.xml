@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CFlowManager.xml"/>
+	<variable name="ApplicationManager" type="class" global="true"/>
+	<variable name="FlowManager" type="class" global="true"/>
+	<!--qiulei 20170811-->
+	<variable name="ClusterManager" type="class" global="true"/>
+	<variable name="DeviceManager" type="class" global="true"/>
+	
+	<function name="InitGlobalResource">
+		<log>InitGlobalResource</log>
+		<new name="ApplicationManager" class="CApplicationManager"/>
+		<new name="FlowManager" class="CFlowManager"/>
+		
+		<!--qiulei 20170811-->
+		<new name="ClusterManager" class="CClusterManager"/>
+		<new name="DeviceManager" class="CDeviceManager"/>
+	</function>
+</starosxml>
