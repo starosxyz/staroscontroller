@@ -85,7 +85,7 @@ function install_rpm() {
 		if [ -f ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm ];then
 			rpm -ihv ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/starcore/raw/master/starcore-$STAROS_VERSION-1.x86_64.rpm
+			wget -P ../package/centos/ https://github.com/starosxyz/starcore/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
 			rpm -ihv ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm
 		fi
 	fi
