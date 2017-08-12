@@ -8,20 +8,27 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_app.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_topology.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/setting/setting.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/device_manager.xml"/>
+	<!--qiulei 20170811-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CDeviceManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/port_manager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CFlowManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/localcall/localcall.xml"/>
 	<!--hupeng 20170804-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/host_manager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/globalresource.xml"/>
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 	<container name="flowmodcontaier" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
 	<container name="websocketclients" type="list" valuetype="string" global="true"/>
-	<!--qiulei 20170802-->
+		<!--qiulei 20170802-->
 	<container name="sessionIdContainer" type="hashmap" keytype="long" valuetype="hashmap" global="true"/>
 	<variable name="flowmanager" type="class"/>
+	<variable name="nullbundleappid" type="long"/>
 	<logconfig dest="stdout|file" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<function name="startnullapp">
+		<set name="nullbundleappid" value="context.newBundleId()"/>
+		<createbundle bundleid="nullbundleappid" src="/opt/staros.xyz/staroscontroller/starlang/apps/nullapp/nullapp.xml"/>
+	</function>
 	<events>
 		<!--Session StarUp-->
 		<onevent event="bundleapp.startup">
@@ -45,30 +52,18 @@
 			<new name="flowmanager" class="CFlowManager"/>
 			<!--Add API Handler Init-->
 			
-			<function name="InitAPIMapFunction"/>
-			<!--Add API Handler Init-->
-			<function name="InitGlobalResource">
+<function name="InitGlobalResource"/>
+						<function name="InitAPIMapFunction"/>
 			<!--hu peng 2017/07/28  change setting-->
 			<function name="InitSetting"/>
 			<function name="InitWebSocketHandlerMap"/>
 			<!--Start GUI and Restful API Service-->
 			<function name="Restfulserver"/>
-				<function name="AddAppEvent" class="ApplicationManager">
-				<parameters>
-					<parameter name="id" type="string" in="'sdfsdf'"/>
-					<parameter name="version" type="string" in="'1.0.0'"/>
-					<parameter name="category" type="string" in="'sdfsdf'"/>
-					<parameter name="origin" type="string" in="'sdfsdf'"/>
-					<parameter name="title" type="string" in="'sdfsdf'"/>
-					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
-					<parameter name="url" type="string" in="'192.168.2.165'"/>
-					<parameter name="processname" type="string" in="'ddd'"/>
-				</parameters>
-			</function>
-			<!--Start OpenFlow Controller protocol-->
+				<!--Start OpenFlow Controller protocol-->
 			<function name="startopenflow"/>
 			<function name="testcallback"/>
 			<function name="addhostest"/>
+		  <function name="startnullapp"/>
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->
