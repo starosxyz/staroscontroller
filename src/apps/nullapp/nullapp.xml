@@ -8,9 +8,10 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
+	<variable name="applicationmgr" reference="global.ApplicationManager"/>
 	<events>
 		<onevent event="bundleapp.startup">
-			<function name="AddAppEvent" class="global.ApplicationManager">
+			<function name="AddAppEvent" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'YY'"/>
 					<parameter name="version" type="string" in="'1.0.0'"/>
