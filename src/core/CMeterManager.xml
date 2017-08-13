@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CMeter">
+	</class>
+	<class name="CMeterManager">
+		<private>
+			<container name="merterContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+		<public>
+			<!--
+				Install Flow.
+				1)use DataPathId find the flowcontainer
+				2)Alloc a Resource id
+				3)use the resourceid as key add value to flowcontainer
+				4)Send FlowMod message to Device
+				5)return the resource id
+			-->
+			<function name="InstallFlowTableRequest">
+				<parameters>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="strjson" type="string"/>
+					<parameter name="resourceid" type="string"/>
+				</parameters>
+				<container name="switchflowdevice" type="hashmap" keytype="string" valuetype="string"/>
+				<variable name="sresourceid" type="string"/>
+				<variable name="transportid" type="string"/>
+				<set name="sresourceid" value="context.allocResourceId()"/>
+				<!--qiulei modify 20170807-->
+				<if cond="context.flowsContainer.hasValue(context.datapathid.toString())==true">
+					<then>
+						<lookup name="flowsContainer" key="context.datapathid.toString()" output="context.switchflowdevice"/>
+					</then>
+					<else>
+						<insert name="flowsContainer" key="context.datapathid.toString()" value="context.switchflowdevice"/>
+					</else>
+				</if>
+				<insert name="switchflowdevice" key="context.sresourceid.toString()" value="context.strjson.toString()"/>
+				<function name="GetTransportIdFromDevice">
+					<parameters>
+						<parameter name="datapathid" type="string" in="context.datapathid"/>
+						<parameter name="transportid" type="string" out="context.transportid"/>
+					</parameters>
+				</function>
+				<function name="Send_OFPT13_FLOW_MOD">
+					<parameters>
+						<parameter name="transportid" type="string" in="context.transportid"/>
+						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+					</parameters>
+				</function>
+				<set name="resourceid" value="context.sresourceid.toString()"/>
+			</function>
+			<!--
+				Uninstall Flow.
+				1)use DataPathId find the flowcontainer
+				2)use resourcedi find the flow json string
+				3)Modify the Json String 
+				4)Send FlowMod message to Device
+				5)Delete the flow from flowcontainer
+			-->
+			<function name="UnInstallFlowTableRequest">
+				<parameters>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="resourceid" type="string"/>
+				</parameters>
+				<variable name="transportid" type="string"/>
+				<container name="switchflows" type="hashmap" keytype="string" valuetype="string"/>
+				<variable name="flowmodjson" type="string"/>
+				<variable name="sendflowmodjson" type="string"/>
+				<if cond="context.flowsContainer.hasValue(context.datapathid.toString()) ==true">
+					<then>
+						<function>
+							<lookup name="flowmodcontaier" key="context.datapathid.toString()" output="context.switchflows"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>UnInstallFlowTableRequest exit</log>
+							<exit/>
+						</function>
+					</else>
+				</if>
+				<if cond="context.switchflows.hasValue(context.resourceid.toString()) == true">
+					<then>
+						<function>
+							<lookup name="switchflows" key="context.resourceid.toString()" output="context.flowmodjson"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>UnInstallFlowTableRequest exit2</log>
+							<exit/>
+						</function>
+					</else>
+				</if>
+				<log><![CDATA[flowmodjson=<%=context.flowmodjson.toString()%>]]></log>
+				<script><![CDATA[
+						var info = JSON.parse(context.flowmodjson.toString());
+						info.command='3';
+						var strjson=JSON.stringify(info);
+						context.sendflowmodjson.setValue(strjson);
+				]]></script>
+				<function name="GetTransportIdFromDevice">
+					<parameters>
+						<parameter name="datapathid" type="string" in="context.datapathid"/>
+						<parameter name="transportid" type="string" out="context.transportid"/>
+					</parameters>
+				</function>
+				<function name="Send_OFPT13_FLOW_MOD">
+					<parameters>
+						<parameter name="datapathid" type="string" in="context.datapathid"/>
+						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
+					</parameters>
+				</function>
+				<remove name="switchflows" key="context.resourceid.toString()"/>
+			</function>
+		</public>
+	</class>
+</starosxml>
