@@ -1,38 +1,132 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CApplication">
+		<private>
+			<variable name="pathname" type="string" />
+			<variable name="id" type="string" />
+			<variable name="bundleid" type="long" />
+			<variable name="state" type="string" />
+			<variable name="_iconid_state" type="string" />
+			<variable name="icon" type="string" />
+			<variable name="version" type="string" />
+			<variable name="category" type="string" />
+			<variable name="origin" type="string" />
+			<variable name="title" type="string" />
+			<variable name="desc" type="string" />
+			<variable name="url" type="string" />
+			<variable name="readme" type="string" />
+			<variable name="role" type="string" />
+			<container name="required_apps" type="list" />
+			<container name="features" type="list" />
+			<container name="permissions" type="list" />
+		</private>
+		<public>
+			<function name="CApplication">
+				<parameters>
+					<parameter name="app_id" type="string"/>
+					<parameter name="app_version" type="string"/>
+					<parameter name="app_category" type="string"/>
+					<parameter name="app_origin" type="string"/>
+					<parameter name="app_title" type="string"/>
+					<parameter name="app_desc" type="string"/>		
+					<parameter name="app_url" type="string"/>
+				</parameters>
+				<set name="thisclass.id" value="context.app_id.toString()"/>
+				<set name="thisclass.version" value="context.app_id.toString()"/>
+				<set name="thisclass.category" value="context.app_id.toString()"/>
+				<set name="thisclass.origin" value="context.app_id.toString()"/>
+				<set name="thisclass.title" value="context.app_id.toString()"/>
+				<set name="thisclass.desc" value="context.app_id.toString()"/>
+				<set name="thisclass.url" value="context.app_id.toString()"/>
+			</function>
+			<function name="ActiveApplication">
+				<set name="bundleid" value="context.newBundleId()"/>
+				<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
+				<set name="thisclass.state" value="'INSTALLED'"/>
+				<set name="thisclass._iconid_state" value="'appInactive'"/>
+			</function>
+			<function name="DeactiveApplication">
+				<destroybundle bundleid="bundleid"/>
+				<set name="thisclass.state" value="'INSTALLED'"/>
+				<set name="thisclass._iconid_state" value="'appInactive'"/>
+			</function>
+			<function name="ToJson">
+				<parameters>
+					<!--appjson is return value-->
+					<parameter name="appjson" type="string"/>
+				</parameters>
+				<variable name="values" type="string" />
+				<reference variable="values">
+				<jsonbody><![CDATA[ 
+					{
+						"state":"<%=thisclass.state.toString()%>",
+						"_iconid_state":"<%=thisclass._iconid_state.toString()%>",
+						"id":"<%=thisclass.id.toString()%>",
+						"icon":"<%=thisclass.icon.toString()%>",
+						"version":"<%=thisclass.version.toString()%>",
+						"category":"<%=thisclass.category.toString()%>",
+						"origin":"<%=thisclass.origin.toString()%>",
+						"title":"<%=thisclass.title.toString()%>",
+						"desc":"<%=thisclass.desc.toString()%>",
+						"url":"<%=thisclass.url.toString()%>",
+						"readme":"<%=thisclass.readme.toString()%>",
+						"role":"<%=thisclass.role.toString()%>",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+				]]></jsonbody>
+				<set name="appjson" value="context.values.toString()"/>
+			</function>
+		</public>
+	</class>
 	<class name="CApplicationManager">
-	<log>####################CApplicationManager##################</log>
-			<private>
-			<container name="appsContainer" type="hashmap" keytype="string" valuetype="string"/>
-			</private>
+		<private>
+			<container name="appsContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
 		<public>
 			<function name="CApplicationManager">
 				<log> i am CApplicationManager contructio function</log>
 			</function>
-				<function name="GetAppJsonString">
-					<log>####################GetAppJsonString##################</log>
-						<parameters>
-						<!--appjson is return value-->
-						<parameter name="appjson" type="string"/>
-						</parameters>
-						<script><![CDATA[
-								var json = new Object();
-								var payload = new Object();
-								var apps = new Array();
-								json['event'] = "appDataResponse";
-								for(var i=0;i<context.appsContainer.size();i++){
-									var oneapps = new Object();
-									var values=context.appsContainer.getValueByIndex(i).toString();	
-									var oneappsinfo = JSON.parse(values);
-									//context.print(values);
-									//oneapps=values;
-									apps.push(oneappsinfo);
-								}
-								payload['apps'] = apps;	
-								json['payload'] = payload;	
-								var strjson=JSON.stringify(json);
-								context.appjson.setValue(strjson);
-							]]></script>	
+			<function name="GetAppJsonString">
+				<parameters>
+					<!--appjson is return value-->
+					<parameter name="appjson" type="string"/>
+				</parameters>
+				<variable name="oneapp" type="class" />
+				<container name="allapplist" type="list" valuetype="string" />
+				<variable name="appstring" type="string"/>
+				<for var="i" from="0" to="context.appsContainer.size()-1">
+					<log><![CDATA[portLength=<%=context.appsContainer.size()%>]]></log>
+					<function>
+						<set name="oneapp" value="context.appsContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="ToString" class="oneapp">
+							<parameters>
+								<parameter name="appjson" type="string" out="context.appstring"/>
+							</parameters>
+						</function>
+						<insert name="allapplist" value="context.appstring.toString()"/>
+					</function>
+				</for>
+				<log>####################GetAppJsonString##################</log>
+				<script><![CDATA[
+						var json = new Object();
+						var payload = new Object();
+						var apps = new Array();
+						json['event'] = "appDataResponse";
+						for(var i=0;i<context.allapplist.size();i++){
+							var oneapps = new Object();
+							var values=context.allapplist.getValueByIndex(i).toString();	
+							var oneappsinfo = JSON.parse(values);
+							//context.print(values);
+							//oneapps=values;
+							apps.push(oneappsinfo);
+						}
+						payload['apps'] = apps;	
+						json['payload'] = payload;	
+						var strjson=JSON.stringify(json);
+						context.appjson.setValue(strjson);
+					]]></script>	
 					
 			</function>
 			
@@ -66,124 +160,61 @@
 			</function>
 			
 			<function name="AddAppEvent">
+				<variable name="oneapp" type="class" />
 				<log>####################AddAppEvent##################</log>
+				<parameters>
+					<parameter name="id" type="string"/>
+					<parameter name="version" type="string"/>
+					<parameter name="category" type="string"/>
+					<parameter name="origin" type="string"/>
+					<parameter name="title" type="string"/>
+					<parameter name="desc" type="string"/>		
+					<parameter name="url" type="string"/>
+					<parameter name="processname" type="string"/>
+				</parameters>
+				<new name="oneapp" class="CApplication">
 					<parameters>
-						<parameter name="id" type="string"/>
-						<parameter name="version" type="string"/>
-						<parameter name="category" type="string"/>
-						<parameter name="origin" type="string"/>
-						<parameter name="title" type="string"/>
-						<parameter name="desc" type="string"/>		
-						<parameter name="url" type="string"/>
-						<parameter name="processname" type="string"/>
-					</parameters>
-						<variable name="keys" type="string" />
-						<variable name="values" type="string" />
-						<set name="keys" value="context.processname.toString()"/>
-						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
-						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
-						<reference variable="values">
-							<jsonbody><![CDATA[ 
-							{
-								"state":"ACTIVE",
-								"_iconid_state":"active",
-								"id":"<%=context.processname.toString()%>",
-								"icon":"org.onosproject.drivers",
-								"version":"<%=context.version.toString()%>",
-								"category":"<%=context.category.toString()%>",
-								"origin":"<%=context.origin.toString()%>",
-								"title":"<%=context.title.toString()%>",
-								"desc":"<%=context.desc.toString()%>",
-								"url":"<%=context.url.toString()%>",
-								"readme":"",
-								"role":"",
-								"required_apps":[],
-								"features":[],
-								"permissions":[]
-							}
-						]]></jsonbody>
-				</reference>
-				<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
+						<parameter name="app_id" type="string" in="context.id.toString()"/>
+						<parameter name="app_version" type="string" in="context.version.toString()"/>
+						<parameter name="app_category" type="string" in="context.category.toString()"/>
+						<parameter name="app_origin" type="string" in="context.origin.toString()"/>
+						<parameter name="app_title" type="string" in="context.title.toString()"/>
+						<parameter name="app_desc" type="string" in="context.desc.toString()"/>		
+						<parameter name="app_url" type="string" in="context.url.toString()"/>
+					</parameters> 
+				</new>
+				<remove name="appsContainer" key="context.id.toString()"/>
+				<insert name="appsContainer" key="context.id.toString()" value="context.oneapp"/>
 			</function>
 		
-		<function name="AppDeactiveEvent">
-			<log>####################AppDeactiveEvent##################</log>
+			<function name="AppDeactiveEvent">
 				<parameters>
 					<parameter name="id" type="string"/>
-					<parameter name="version" type="string"/>
-					<parameter name="category" type="string"/>
-					<parameter name="origin" type="string"/>
-					<parameter name="title" type="string"/>
-					<parameter name="desc" type="string"/>		
-					<parameter name="url" type="string"/>
 				</parameters>
-						<variable name="keys" type="string" />
-						<variable name="values" type="string" />
-						<set name="keys" value="context.processname.toString()"/>
-						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
-						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
-						<reference variable="values">
-							<jsonbody><![CDATA[ 
-							{
-								"state":"INSTALLED",
-								"_iconid_state":"appInactive",
-								"id":"<%=context.id.toString()%>",
-								"icon":"org.onosproject.drivers",
-								"version":"<%=context.version.toString()%>",
-								"category":"<%=context.category.toString()%>",
-								"origin":"<%=context.origin.toString()%>",
-								"title":"<%=context.title.toString()%>",
-								"desc":"<%=context.desc.toString()%>",
-								"url":"<%=context.url.toString()%>",
-								"readme":"",
-								"role":"",
-								"required_apps":[],
-								"features":[],
-								"permissions":[]
-						}
-					]]></jsonbody>
-			</reference>
-			<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
-		</function>
-		<function name="AppActiveEvent">
-				<log>####################AppActiveEvent##################</log>
+				<variable name="oneapp" type="class" />
+				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
+					<then>
+						<function>
+							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
+							<function name="DeactiveApplication" class="oneapp"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			<function name="AppActiveEvent">
 				<parameters>
 					<parameter name="id" type="string"/>
-					<parameter name="version" type="string"/>
-					<parameter name="category" type="string"/>
-					<parameter name="origin" type="string"/>
-					<parameter name="title" type="string"/>
-					<parameter name="desc" type="string"/>		
-					<parameter name="url" type="string"/>
 				</parameters>
-					<variable name="keys" type="string" />
-						<variable name="values" type="string" />
-						<set name="keys" value="context.processname.toString()"/>
-						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
-						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
-						<reference variable="values">
-							<jsonbody><![CDATA[ 
-							{
-								"state":"ACTIVE",
-								"_iconid_state":"active",
-								"id":"<%=context.id.toString()%>",
-								"icon":"org.onosproject.drivers",
-								"version":"<%=context.version.toString()%>",
-								"category":"<%=context.category.toString()%>",
-								"origin":"<%=context.origin.toString()%>",
-								"title":"<%=context.title.toString()%>",
-								"desc":"<%=context.desc.toString()%>",
-								"url":"<%=context.url.toString()%>",
-								"readme":"",
-								"role":"",
-								"required_apps":[],
-								"features":[],
-								"permissions":[]
-						}
-					]]></jsonbody>
-			</reference>
-				<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
-		</function>
+				<variable name="oneapp" type="class" />
+				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
+					<then>
+						<function>
+							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
+							<function name="ActiveApplication" class="oneapp"/>
+						</function>
+					</then>
+				</if>
+			</function>
 		</public>
 	</class>
 </starosxml>
