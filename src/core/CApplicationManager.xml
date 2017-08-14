@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CApplicationManager">
+	<log>####################CApplicationManager##################</log>
+			<private>
+			<container name="appsContainer" type="hashmap" keytype="string" valuetype="string"/>
+			</private>
+		<public>
+			<function name="CApplicationManager">
+				<log> i am CApplicationManager contructio function</log>
+			</function>
+				<function name="GetAppJsonString">
+					<log>####################GetAppJsonString##################</log>
+						<parameters>
+						<!--appjson is return value-->
+						<parameter name="appjson" type="string"/>
+						</parameters>
+						<script><![CDATA[
+								var json = new Object();
+								var payload = new Object();
+								var apps = new Array();
+								json['event'] = "appDataResponse";
+								for(var i=0;i<context.appsContainer.size();i++){
+									var oneapps = new Object();
+									var values=context.appsContainer.getValueByIndex(i).toString();	
+									var oneappsinfo = JSON.parse(values);
+									//context.print(values);
+									//oneapps=values;
+									apps.push(oneappsinfo);
+								}
+								payload['apps'] = apps;	
+								json['payload'] = payload;	
+								var strjson=JSON.stringify(json);
+								context.appjson.setValue(strjson);
+							]]></script>	
+					
+			</function>
+			
+			<function name="GetAppdetalJsonString">
+					<log>####################GetAppJsonString##################</log>
+						<parameters>
+						<!--appdetaljson is return value-->
+						<parameter name="appdetailjson" type="string"/>
+						</parameters>
+						
+						<script><![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							if (info.payload != null)
+							{
+								var processname=info.payload.id;
+								if (context.appsContainer.hasValue(processname)==true)
+								{
+									var processitem = context.appsContainer.getValue(processname);
+									var jsonroot = new Object();
+									var jsondetails = new Object();
+									var appsinfo=JSON.parse(processitem);
+									jsondetails['details']=appsinfo;
+									jsonroot['event']="appDetailsResponse";
+									jsonroot['payload']=jsondetails;
+									var strjson=JSON.stringify(jsonroot);
+									context.appdetailjson.setValue(strjson);
+								}
+							}
+						]]></script>
+					
+			</function>
+			
+			<function name="AddAppEvent">
+				<log>####################AddAppEvent##################</log>
+					<parameters>
+						<parameter name="id" type="string"/>
+						<parameter name="version" type="string"/>
+						<parameter name="category" type="string"/>
+						<parameter name="origin" type="string"/>
+						<parameter name="title" type="string"/>
+						<parameter name="desc" type="string"/>		
+						<parameter name="url" type="string"/>
+						<parameter name="processname" type="string"/>
+					</parameters>
+						<variable name="keys" type="string" />
+						<variable name="values" type="string" />
+						<set name="keys" value="context.processname.toString()"/>
+						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
+						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
+						<reference variable="values">
+							<jsonbody><![CDATA[ 
+							{
+								"state":"ACTIVE",
+								"_iconid_state":"active",
+								"id":"<%=context.processname.toString()%>",
+								"icon":"org.onosproject.drivers",
+								"version":"<%=context.version.toString()%>",
+								"category":"<%=context.category.toString()%>",
+								"origin":"<%=context.origin.toString()%>",
+								"title":"<%=context.title.toString()%>",
+								"desc":"<%=context.desc.toString()%>",
+								"url":"<%=context.url.toString()%>",
+								"readme":"",
+								"role":"",
+								"required_apps":[],
+								"features":[],
+								"permissions":[]
+							}
+						]]></jsonbody>
+				</reference>
+				<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
+			</function>
+		
+		<function name="AppDeactiveEvent">
+			<log>####################AppDeactiveEvent##################</log>
+				<parameters>
+					<parameter name="id" type="string"/>
+					<parameter name="version" type="string"/>
+					<parameter name="category" type="string"/>
+					<parameter name="origin" type="string"/>
+					<parameter name="title" type="string"/>
+					<parameter name="desc" type="string"/>		
+					<parameter name="url" type="string"/>
+				</parameters>
+						<variable name="keys" type="string" />
+						<variable name="values" type="string" />
+						<set name="keys" value="context.processname.toString()"/>
+						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
+						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
+						<reference variable="values">
+							<jsonbody><![CDATA[ 
+							{
+								"state":"INSTALLED",
+								"_iconid_state":"appInactive",
+								"id":"<%=context.id.toString()%>",
+								"icon":"org.onosproject.drivers",
+								"version":"<%=context.version.toString()%>",
+								"category":"<%=context.category.toString()%>",
+								"origin":"<%=context.origin.toString()%>",
+								"title":"<%=context.title.toString()%>",
+								"desc":"<%=context.desc.toString()%>",
+								"url":"<%=context.url.toString()%>",
+								"readme":"",
+								"role":"",
+								"required_apps":[],
+								"features":[],
+								"permissions":[]
+						}
+					]]></jsonbody>
+			</reference>
+			<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
+		</function>
+		<function name="AppActiveEvent">
+				<log>####################AppActiveEvent##################</log>
+				<parameters>
+					<parameter name="id" type="string"/>
+					<parameter name="version" type="string"/>
+					<parameter name="category" type="string"/>
+					<parameter name="origin" type="string"/>
+					<parameter name="title" type="string"/>
+					<parameter name="desc" type="string"/>		
+					<parameter name="url" type="string"/>
+				</parameters>
+					<variable name="keys" type="string" />
+						<variable name="values" type="string" />
+						<set name="keys" value="context.processname.toString()"/>
+						<log><![CDATA[ProcessName= <%=context.processname.toString()%>]]></log>
+						<log><![CDATA[version= <%=context.version.toString()%>]]></log>
+						<reference variable="values">
+							<jsonbody><![CDATA[ 
+							{
+								"state":"ACTIVE",
+								"_iconid_state":"active",
+								"id":"<%=context.id.toString()%>",
+								"icon":"org.onosproject.drivers",
+								"version":"<%=context.version.toString()%>",
+								"category":"<%=context.category.toString()%>",
+								"origin":"<%=context.origin.toString()%>",
+								"title":"<%=context.title.toString()%>",
+								"desc":"<%=context.desc.toString()%>",
+								"url":"<%=context.url.toString()%>",
+								"readme":"",
+								"role":"",
+								"required_apps":[],
+								"features":[],
+								"permissions":[]
+						}
+					]]></jsonbody>
+			</reference>
+				<insert name="appsContainer" key="context.keys.toString()" value="context.values.toString()"/>
+		</function>
+		</public>
+	</class>
+</starosxml>

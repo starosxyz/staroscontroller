@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CPortManager">
+		<private>
+			<container name="portContainer" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
+		</private>
+		<public>
+			<function name="addPort">
+				<parameters>
+					<parameter name="portobject" type="hashmap"/>			
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				
+				<log>###########################################################################</log>
+				<log><![CDATA[portobject.portno=<%=context.portobject.getValue('portno').toString()%>]]></log>
+				<log>###########################################################################</log>
+				
+				<container name="switchports" type="hashmap" keytype="string" valuetype="hashmap"/>			
+				<lookup name="portContainer" key="context.datapathid.toString()" output="context.switchports"/>
+				<if cond="context.switchports == null">
+					<then>						
+						<insert name="switchports" key="context.portobject.getValue('portno').toString()" value="context.portobject"/>				
+						<insert name="portContainer" key="context.datapathid.toString()" value="context.switchports"/>
+					</then>
+				</if>
+			</function>
+		</public>
+	</class>
+</starosxml>

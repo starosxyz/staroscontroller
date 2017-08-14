@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CFlowManager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CApplicationManager.xml"/>
+	<!--Group Resource -->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CFlowManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CApplicationManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CMeterManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CGroupManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<variable name="FlowManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
 	<variable name="ClusterManager" type="class" global="true"/>
 	<variable name="DeviceManager" type="class" global="true"/>
-	
+	<variable name="MeterManager" type="class" global="true"/>
+	<variable name="GroupManager" type="class" global="true"/>
+	<variable name="PortManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>
 		<new name="ApplicationManager" class="CApplicationManager"/>
@@ -16,5 +22,9 @@
 		<!--qiulei 20170811-->
 		<new name="ClusterManager" class="CClusterManager"/>
 		<new name="DeviceManager" class="CDeviceManager"/>
+		<!--yijian 20170814-->
+		<new name="MeterManager" class="CMeterManager"/>
+		<new name="GroupManager" class="CGroupManager"/>
+		<new name="PortManager" class="CPortManager"/>
 	</function>
 </starosxml>
