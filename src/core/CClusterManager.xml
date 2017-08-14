@@ -3,7 +3,7 @@
 	<!-- qiulei 20170807 pm-->
 	<class name="CClusterManager">
 		<private>
-			<container name="InstanceContainer" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
+			<container name="InstanceContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
 		</private>
 	
 		<public>

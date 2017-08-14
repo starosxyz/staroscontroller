@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CWebSocketClient">
+		<private>
+			<container name="clientContainer" type="hashmap" keytype="string" valuetype="string"/>
+		</private>
+		<public>
+			<function name="addWebSocket">
+				<parameters>
+					<parameter name="transportid" type="string"/>			
+				</parameters>
+				<if cond="context.clientContainer.hasValue(context.transportid.toString()) != true">
+					<then>
+						<function>
+							<insert name="clientContainer" key="context.transportid.toString()" value="context.transportid.toString()"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>addWebSocket already have the websocket</log>
+						</function>
+					</else>
+				</if>
+			</function>
+			<function name="RemoveWebSocket">
+				<parameters>
+					<parameter name="transportid" type="string"/>			
+				</parameters>
+				<if cond="context.clientContainer.hasValue(context.transportid.toString())">
+					<then>						
+						<remove name="clientContainer" key="context.transportid.toString()"/>				
+					</then>
+				</if>
+			</function>
+		</public>
+	</class>
+</starosxml>

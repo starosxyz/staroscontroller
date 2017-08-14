@@ -9,20 +9,13 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_topology.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/setting/setting.xml"/>
 	<!--qiulei 20170811-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CDeviceManager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/port_manager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/CFlowManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/localcall/localcall.xml"/>
-	<!--hupeng 20170804-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/host_manager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/globalresource.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/global_resource.xml"/>
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
-	<container name="flowmodcontaier" type="hashmap" keytype="string" valuetype="hashmap" global="true"/>
 	<container name="websocketclients" type="list" valuetype="string" global="true"/>
 		<!--qiulei 20170802-->
 	<container name="sessionIdContainer" type="hashmap" keytype="long" valuetype="hashmap" global="true"/>
-	<variable name="flowmanager" type="class"/>
 	<variable name="nullbundleappid" type="long"/>
 	<logconfig dest="stdout|file" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<function name="startnullapp">

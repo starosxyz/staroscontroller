@@ -6,6 +6,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CMeterManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CGroupManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CHostManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CWebSocketManager.xml"/>
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<variable name="FlowManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
@@ -14,6 +16,7 @@
 	<variable name="MeterManager" type="class" global="true"/>
 	<variable name="GroupManager" type="class" global="true"/>
 	<variable name="PortManager" type="class" global="true"/>
+	<variable name="WebSocketManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>
 		<new name="ApplicationManager" class="CApplicationManager"/>
@@ -26,5 +29,7 @@
 		<new name="MeterManager" class="CMeterManager"/>
 		<new name="GroupManager" class="CGroupManager"/>
 		<new name="PortManager" class="CPortManager"/>
+		<new name="HostManager" class="CHostManager"/>
+		<new name="WebSocketManager" class="CWebSocketManager"/>
 	</function>
 </starosxml>
