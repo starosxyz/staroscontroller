@@ -116,16 +116,7 @@
 				<log><![CDATA[peeripaddr=<%=context.peeripaddr.toString()%>]]></log>
 				<log dest="stdout">openflow.Disconnected</log>
 				<!--YY 2017-08-03-->
-				<if cond="context.openflowdevice != null">
-					<then>
-						<function name="switchOffline">
-							<parameters>
-								<parameter name="device" type="object" in="context.openflowdevice"/>			
-							</parameters>
-						</function>
-					</then>
-				</if>
-				<function name="removeDeviceByTransportId">
+				<function name="removeDeviceByTransportId" class="DeviceManager">
 					<parameters>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
 					</parameters>

@@ -9,6 +9,7 @@
 				<parameters>
 					<parameter name="transportid" type="string"/>			
 				</parameters>
+				<log><![CDATA[addWebSocket size=<%=context.clientContainer.size()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString()) != true">
 					<then>
 						<function>
@@ -26,11 +27,27 @@
 				<parameters>
 					<parameter name="transportid" type="string"/>			
 				</parameters>
+				<log><![CDATA[RemoveWebSocket size=<%=context.clientContainer.size()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString())">
 					<then>						
 						<remove name="clientContainer" key="context.transportid.toString()"/>				
 					</then>
 				</if>
+			</function>
+			<function name="SendToAllClient">
+				<parameters>
+					<parameter name="strjson" type="string"/>			
+				</parameters>
+				<log><![CDATA[SendToAllClient strjson =<%=context.strjson.toString()%>]]></log>
+				<variable name="client" type="string"/>
+				<for var="i" from="0" to="context.clientContainer.size()-1">
+					<function>
+						<set name="client" value="context.clientContainer.getValueByIndex(context.i.toLong())"/>
+						<websocket name="restfulserver" method="SendText" transportid="context.client.toString()">
+							<jsonsrc src="strjson"/>
+						</websocket>
+					</function>
+				</for>
 			</function>
 		</public>
 	</class>

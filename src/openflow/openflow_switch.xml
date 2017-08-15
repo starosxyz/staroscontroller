@@ -11,14 +11,29 @@
 	<function name="SendOpenFlowFeatures">
 		<log dest="stdout">SendOpenFlowFeatures</log>
 		
+		<variable name="mfrdesc" type="string"/>
+		<variable name="swdesc" type="string"/>
+		<variable name="serialnum" type="string"/>
+		<variable name="dpdesc" type="string"/>
+		<variable name="hwdesc" type="string"/>
+		<variable name="transportid" type="string"/>
+		<variable name="localipaddr" type="string"/>
+		<variable name="peeripaddr" type="string"/>
+		<variable name="masterid" type="string"/>
+		<variable name="type" type="string"/>
+		<variable name="online" type="string"/>
+		<variable name="protocol" type="string"/>
 		<variable name="auxiliaryid" type="string"/>
 		<variable name="buffers" type="string"/>
 		<variable name="capabilities" type="string"/>
 		<variable name="datapathid" type="string"/>
 		<variable name="tables" type="string"/>
 		<variable name="xid" type="long"/>
-		<container name="thisswitch" type="hashmap" keytype="string" valuetype="string"/>
-		
+		<variable name="openflowdevice" type="object"/>
+		<set name="openflowdevice" value="context.openflowserverobj.getDevice(event.getParam('transportid').toString())"/>
+		<set name="localipaddr" value="context.openflowdevice.getParam('localipaddr').toString()"/>
+		<set name="peeripaddr" value="context.openflowdevice.getParam('peeripaddr').toString()"/>
+		<set name="masterid" value="context.openflowdevice.getParam('masterid').toString()"/>
 		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
 		<variable name="jsonvariable" type="string"/>
@@ -43,13 +58,12 @@
 				<script>
 					<![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.thisswitch.addValue('auxiliaryid', info.auxiliaryid);
-							context.thisswitch.addValue('buffers', info.buffers);
-							context.thisswitch.addValue('capabilities', info.capabilities);
-							context.thisswitch.addValue('datapathid', info.datapathid);
-							context.thisswitch.addValue('tables', info.tables);
-							context.thisswitch.addValue('id', 'of:' + info.datapathid);
-							context.thisswitch.addValue('transportid', event.getParam('transportid').toString());
+							context.auxiliaryid.setValue(info.auxiliaryid);
+							context.buffers.setValue(info.buffers);
+							context.capabilities.setValue(info.capabilities);
+							context.datapathid.setValue(info.datapathid);
+							context.tables.setValue(info.tables);
+							context.transportid.setValue(event.getParam('transportid').toString());
 					]]>
 				</script>				
 				
@@ -76,21 +90,32 @@
 				<script>
 					<![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.thisswitch.addValue('mfrdesc', info.mfrdesc);
-							context.thisswitch.addValue('swdesc', info.swdesc);	
-							context.thisswitch.addValue('serialnum', info.serialnum);	
-							context.thisswitch.addValue('dpdesc', info.dpdesc);	
-							context.thisswitch.addValue('hwdesc', info.hwdesc);								
+							context.mfrdesc.setValue(info.mfrdesc);
+							context.swdesc.setValue(info.swdesc);	
+							context.serialnum.setValue(info.serialnum);	
+							context.dpdesc.setValue(info.dpdesc);	
+							context.hwdesc.setValue(info.hwdesc);								
 					]]>
 				</script>
 				
 			</function>
 		</wait>
 		
-		<function name="addDevice">
+		<function name="addDevice" class="DeviceManager">
 			<parameters>
-				<parameter name="datapathid" type="string" in="context.thisswitch.getValue('datapathid').toString()"/>		
-				<parameter name="deviceobject" type="hashmap" in="context.thisswitch"/>			
+				<parameter name="mfrdesc" type="string" in="context.mfrdesc.toString()"/>
+				<parameter name="swdesc" type="string" in="context.swdesc.toString()"/>
+				<parameter name="serialnum" type="string" in="context.serialnum.toString()"/>
+				<parameter name="dpdesc" type="string" in="context.dpdesc.toString()"/>
+				<parameter name="hwdesc" type="string" in="context.hwdesc.toString()"/>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+				<parameter name="localipaddr" type="string" in="context.localipaddr.toString()"/>
+				<parameter name="peeripaddr" type="string" in="context.peeripaddr.toString()"/>
+				<parameter name="masterid" type="string" in="context.masterid.toString()"/>	
+				<parameter name="type" type="string" in="'switch'"/>
+				<parameter name="online" type="string" in="'true'"/>
+				<parameter name="protocol" type="string" in="'OF_13'"/>					
 			</parameters>
 		</function>
 		
@@ -107,113 +132,6 @@
 	
 	<function name="OpenFlowFeatures">
 		<function name="SendOpenFlowFeatures"/>	
-	</function>
-	
-	<function name="switchOnline">
-		<parameters>
-			<parameter name="device" type="object"/>			
-		</parameters>
-		
-		<variable name="onlinejson" type="string"/>
-		<variable name="isTorF" type="string" value="false"/>
-		<script><![CDATA[
-			if (context.device.hasParam('datapathid'))
-			{
-				context.isTorF.setValue("true");				
-				var json = new Object();
-				json['event'] = "updateDevice";
-				var payload = new Object();			
-				payload['id'] = "of:" + context.device.getParam('datapathid').toString();
-				payload['type'] = "switch";
-				payload['online'] = "true";
-				payload['master'] = context.device.getParam('masterid').toString();
-				var onearray = new Array();
-				onearray.push("");
-				onearray.push("of:" + context.device.getParam('datapathid').toString());
-				onearray.push("of:" + context.device.getParam('datapathid').toString());
-				payload['labels'] = onearray;
-				var twoarray = new Object();
-				twoarray['managementAddress'] = context.device.getParam('localipaddr').toString();
-				twoarray['protocol'] = "OF_13";
-				twoarray['channelId'] = context.device.getParam('peeripaddr').toString();
-				payload['props'] = twoarray;
-				var threearray = new Object();
-				threearray['x'] = 0;
-				threearray['y'] = 0;
-				var three_one_array = new Object();
-				three_one_array['lng'] = 0;
-				three_one_array['lat'] = 0;
-				threearray['equivLoc'] = three_one_array;
-				payload['metaUi'] = threearray;
-				json['payload'] = payload;			
-				var strjson = JSON.stringify(json);
-				context.onlinejson.setValue(strjson);
-			}
-		]]></script>
-		<if cond="context.isTorF.toString() == 'true'">
-			<then>			
-				<function name="sendtoAllWebsocketclient">
-					<parameters>
-						<parameter name="jsonbody" type="string" in="context.onlinejson.toString()"/>
-					</parameters>
-				</function>
-			</then>
-		</if>
-	</function>
-	
-	<function name="switchOffline">
-		<parameters>
-			<parameter name="device" type="object"/>			
-		</parameters>
-		
-		<variable name="offlinejson" type="string"/>
-		<variable name="isTorF" type="string" value="false"/>
-		<script><![CDATA[
-			if (context.device.hasParam('datapathid'))
-			{
-				context.isTorF.setValue("true");		
-				var json = new Object();
-				json['event'] = "updateDevice";
-				var payload = new Object();
-				payload['id'] = "of:" + context.device.getParam('datapathid').toString();
-				payload['type'] = "switch";
-				payload['online'] = "false";
-				payload['master'] = context.device.getParam('masterid').toString();
-				var onearray = new Array();
-				onearray.push("");
-				onearray.push("of:" + context.device.getParam('datapathid').toString());
-				onearray.push("of:" + context.device.getParam('datapathid').toString());
-				payload['labels'] = onearray;
-				
-				var twoarray = new Object();
-				twoarray['managementAddress'] = context.device.getParam('localipaddr').toString();
-				twoarray['protocol'] = "OF_13";
-				twoarray['channelId'] = context.device.getParam('peeripaddr').toString();
-				payload['props'] = twoarray;
-				
-				var threearray = new Object();
-				threearray['x'] = 0;
-				threearray['y'] = 0;
-				var three_one_array = new Object();
-				three_one_array['lng'] = 0;
-				three_one_array['lat'] = 0;
-				threearray['equivLoc'] = three_one_array;
-				payload['metaUi'] = threearray;
-				json['payload'] = payload;
-				
-				var strjson = JSON.stringify(json);
-				context.offlinejson.setValue(strjson);
-			}
-		]]></script>
-		<if cond="context.isTorF.toString() == 'true'">
-			<then>			
-				<function name="sendtoAllWebsocketclient">
-					<parameters>
-						<parameter name="jsonbody" type="string" in="context.onlinejson.toString()"/>
-					</parameters>
-				</function>
-			</then>
-		</if>
 	</function>
 	
 </starosxml>
