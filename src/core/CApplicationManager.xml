@@ -23,40 +23,86 @@
 		<public>
 			<function name="CApplication">
 				<parameters>
-					<parameter name="app_id" type="string"/>
-					<parameter name="app_version" type="string"/>
-					<parameter name="app_category" type="string"/>
-					<parameter name="app_origin" type="string"/>
-					<parameter name="app_title" type="string"/>
-					<parameter name="app_desc" type="string"/>		
-					<parameter name="app_url" type="string"/>
-					<parameter name="app_bundleid" type="long"/>
+					<parameter name="appid" type="string"/>
+					<parameter name="appversion" type="string"/>
+					<parameter name="appcategory" type="string"/>
+					<parameter name="apporigin" type="string"/>
+					<parameter name="apptitle" type="string"/>
+					<parameter name="appdesc" type="string"/>		
+					<parameter name="appurl" type="string"/>
+					<parameter name="appbundleid" type="long"/>
 				</parameters>
-				<set name="thisclass.id" value="context.app_id.toString()"/>
-				<set name="thisclass.version" value="context.app_id.toString()"/>
-				<set name="thisclass.category" value="context.app_id.toString()"/>
-				<set name="thisclass.origin" value="context.app_id.toString()"/>
-				<set name="thisclass.title" value="context.app_id.toString()"/>
-				<set name="thisclass.desc" value="context.app_id.toString()"/>
-				<set name="thisclass.url" value="context.app_id.toString()"/>
-				<set name="thisclass.bundleid" value="context.app_bundleid.toString()"/>
+				<set name="thisclass.id" value="context.appid.toString()"/>
+				<set name="thisclass.version" value="context.appversion.toString()"/>
+				<set name="thisclass.category" value="context.appcategory.toString()"/>
+				<set name="thisclass.origin" value="context.apporigin.toString()"/>
+				<set name="thisclass.title" value="context.apptitle.toString()"/>
+				<set name="thisclass.desc" value="context.appdesc.toString()"/>
+				<set name="thisclass.url" value="context.appurl.toString()"/>
+				<set name="thisclass.bundleid" value="context.appbundleid.toString()"/>
+				<set name="thisclass.state" value="'ACTIVE'"/>
+				<set name="thisclass._iconid_state" value="'active'"/>
+				<log><![CDATA[app_id=<%=context.appid.toString()%>]]></log>
+				<log><![CDATA[app_version=<%=context.appversion.toString()%>]]></log>
+				<log><![CDATA[app_category=<%=context.appcategory.toString()%>]]></log>
+				<log><![CDATA[app_origin=<%=context.apporigin.toString()%>]]></log>
+				<log><![CDATA[app_title=<%=context.apptitle.toString()%>]]></log>
+				<log><![CDATA[app_desc=<%=context.appdesc.toString()%>]]></log>
+				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
+				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
+			</function>
+			<function name="SetApplicationInfo">
+				<parameters>
+					<parameter name="appid" type="string"/>
+					<parameter name="appversion" type="string"/>
+					<parameter name="appcategory" type="string"/>
+					<parameter name="apporigin" type="string"/>
+					<parameter name="apptitle" type="string"/>
+					<parameter name="appdesc" type="string"/>		
+					<parameter name="appurl" type="string"/>
+					<parameter name="appbundleid" type="long"/>
+					<parameter name="apppath" type="string"/>
+				</parameters>
+				<set name="thisclass.id" value="context.appid.toString()"/>
+				<set name="thisclass.version" value="context.appversion.toString()"/>
+				<set name="thisclass.category" value="context.appcategory.toString()"/>
+				<set name="thisclass.origin" value="context.apporigin.toString()"/>
+				<set name="thisclass.title" value="context.apptitle.toString()"/>
+				<set name="thisclass.desc" value="context.appdesc.toString()"/>
+				<set name="thisclass.url" value="context.appurl.toString()"/>
+				<set name="thisclass.bundleid" value="context.appbundleid.toString()"/>
+				<set name="thisclass.pathname" value="context.apppath.toString()"/>
+				<log><![CDATA[app_id=<%=context.appid.toString()%>]]></log>
+				<log><![CDATA[app_version=<%=context.appversion.toString()%>]]></log>
+				<log><![CDATA[app_category=<%=context.appcategory.toString()%>]]></log>
+				<log><![CDATA[app_origin=<%=context.apporigin.toString()%>]]></log>
+				<log><![CDATA[app_title=<%=context.apptitle.toString()%>]]></log>
+				<log><![CDATA[app_desc=<%=context.appdesc.toString()%>]]></log>
+				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
+				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
+				<log><![CDATA[pathname=<%=context.apppath.toString()%>]]></log>
 			</function>
 			<function name="ActiveApplication">
+				<parameters>
+					<parameter name="app_path" type="string"/>
+				</parameters>
 				<set name="bundleid" value="context.newBundleId()"/>
-				<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
-				<set name="thisclass.state" value="'INSTALLED'"/>
-				<set name="thisclass._iconid_state" value="'appInactive'"/>
+				<log><![CDATA[ActiveApplication=<%=context.app_path.toString()%>]]></log>
+				<createbundle bundleid="bundleid" src="context.app_path.toString()"/>
+				<set name="thisclass.state" value="'ACTIVE'"/>
+				<set name="thisclass._iconid_state" value="'active'"/>
 			</function>
 			<function name="DeactiveApplication">
 				<destroybundle bundleid="bundleid"/>
 				<set name="thisclass.state" value="'INSTALLED'"/>
 				<set name="thisclass._iconid_state" value="'appInactive'"/>
 			</function>
-			<function name="ToJson">
+			<function name="ToJsonString">
 				<parameters>
 					<!--appjson is return value-->
 					<parameter name="appjson" type="string"/>
 				</parameters>
+				<log>ToJsonString</log>
 				<variable name="values" type="string" />
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
@@ -86,23 +132,31 @@
 	<class name="CApplicationManager">
 		<private>
 			<container name="appsContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<container name="appsPaths" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
 		<public>
 			<function name="CApplicationManager">
 				<log> i am CApplicationManager contructio function</log>
 				<container name="listdir" type="list" valuetype="string"/>
 				<variable name="appname" type="string"/>
+				<variable name="appdir" type="string"/>
 				<variable name="bundleid" type="long"/>
-				<readir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
+				<variable name="pathname" type="string"/>
+				<variable name="appparam" type="params"/>
+				<readdir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
 				<log><![CDATA[dirlist size = '<%=context.listdir.size()%>']]></log>
 				<for var="i" from="0" to="context.listdir.size()-1">
 					<set name="appname" value="context.listdir.getValueByIndex(context.i.toLong())"/>
-					<set name="pathname" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/'+context.appname.toString()+'.xml'"/>
-					<log><![CDATA[pathname=<%=context.pathname.toString()%>]]></log>
-					<if cond="context.isDir(context.pathname.toString())">
+					<log><![CDATA[appname=<%=context.appname.toString()%>]]></log>
+					<set name="appdir" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()"/>
+					<if cond="context.isDir(context.appdir.toString())">
 						<then>
+							<set name="pathname" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/'+context.appname.toString()+'.xml'"/>
+							<log><![CDATA[pathname=<%=context.pathname.toString()%>]]></log>
 							<set name="bundleid" value="context.newBundleId()"/>
+							<set name="appparam" paramname="pathname" value="context.pathname.toString()"/>
 							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
+							<insert name="appsPaths" key="context.appname.toString()" value="context.pathname.toString()"/>
 						</then>
 					</if>
 				</for>
@@ -112,14 +166,14 @@
 					<!--appjson is return value-->
 					<parameter name="appjson" type="string"/>
 				</parameters>
-				<variable name="oneapp" type="class" />
+				<variable name="jsononeapp" type="class" />
 				<container name="allapplist" type="list" valuetype="string" />
 				<variable name="appstring" type="string"/>
 				<for var="i" from="0" to="context.appsContainer.size()-1">
 					<log><![CDATA[portLength=<%=context.appsContainer.size()%>]]></log>
 					<function>
-						<set name="oneapp" value="context.appsContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="ToString" class="oneapp">
+						<set name="jsononeapp" value="context.appsContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="ToJsonString" class="context.jsononeapp">
 							<parameters>
 								<parameter name="appjson" type="string" out="context.appstring"/>
 							</parameters>
@@ -162,7 +216,7 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.app_id.toString()" output="context.oneapp"/>
-							<function name="ToJson" class="oneapp">
+							<function name="ToJsonString" class="oneapp">
 								<parameters>
 									<!--appjson is return value-->
 									<parameter name="appjson" type="string" out="context.appstringjson"/>
@@ -171,7 +225,7 @@
 							<script><![CDATA[
 								var jsonroot = new Object();
 								var jsondetails = new Object();
-								var appsinfo=JSON.parse(appstringjson);
+								var appsinfo=JSON.parse(context.appstringjson.toString());
 								jsondetails['details']=appsinfo;
 								jsonroot['event']="appDetailsResponse";
 								jsonroot['payload']=jsondetails;
@@ -195,17 +249,19 @@
 					<parameter name="desc" type="string"/>		
 					<parameter name="url" type="string"/>
 					<parameter name="bundleid" type="long"/>
+					<parameter name="path" type="string"/>
 				</parameters>
 				<new name="oneapp" class="CApplication">
 					<parameters>
-						<parameter name="app_id" type="string" in="context.id.toString()"/>
-						<parameter name="app_version" type="string" in="context.version.toString()"/>
-						<parameter name="app_category" type="string" in="context.category.toString()"/>
-						<parameter name="app_origin" type="string" in="context.origin.toString()"/>
-						<parameter name="app_title" type="string" in="context.title.toString()"/>
-						<parameter name="app_desc" type="string" in="context.desc.toString()"/>		
-						<parameter name="app_url" type="string" in="context.url.toString()"/>
-						<parameter name="app_bundleid" type="long" in="context.bundleid.toString()"/>
+						<parameter name="appid" type="string" in="context.id.toString()"/>
+						<parameter name="appversion" type="string" in="context.version.toString()"/>
+						<parameter name="appcategory" type="string" in="context.category.toString()"/>
+						<parameter name="apporigin" type="string" in="context.origin.toString()"/>
+						<parameter name="apptitle" type="string" in="context.title.toString()"/>
+						<parameter name="appdesc" type="string" in="context.desc.toString()"/>		
+						<parameter name="appurl" type="string" in="context.url.toString()"/>
+						<parameter name="appbundleid" type="long" in="context.bundleid.toLong()"/>
+						<parameter name="apppath" type="string" in="context.path.toLong()"/>
 					</parameters> 
 				</new>
 				<remove name="appsContainer" key="context.id.toString()"/>
@@ -231,11 +287,31 @@
 					<parameter name="id" type="string"/>
 				</parameters>
 				<variable name="oneapp" type="class" />
+				<variable name="apppath" type="string" />
+				<variable name="strkey" type="string" />
+				<variable name="strvalue" type="string" />
+				<set name="apppath" value="context.appsPaths.getValue(context.id.toString()).toString()"/>
+				<log><![CDATA[AppActiveEvent apppath=<%=context.apppath.toString()%>]]></log>
+				<log><![CDATA[AppActiveEvent id=<%=context.id.toString()%>]]></log>
+				<log><![CDATA[AppActiveEvent appsPaths size=<%=context.appsPaths.size()%>]]></log>
+				<for var="i" from="0" to="context.appsPaths.size()-1">
+					<log><![CDATA[appsPaths=<%=context.appsPaths.size()%>]]></log>
+					<function>
+						<set name="strkey" value="context.appsPaths.getKeyByIndex(context.i.toLong())"/>
+						<set name="strvalue" value="context.appsPaths.getValueByIndex(context.i.toLong())"/>
+						<log><![CDATA[strkey=<%=context.strkey.toString()%>]]></log>
+						<log><![CDATA[strvalue=<%=context.strvalue.toString()%>]]></log>
+					</function>
+				</for>
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-							<function name="ActiveApplication" class="oneapp"/>
+							<function name="ActiveApplication" class="oneapp">
+								<parameters>
+									<parameter name="app_path" type="string" in="context.apppath.toString()"/>
+								</parameters>
+							</function>
 						</function>
 					</then>
 				</if>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<class name="CWebSocketClient">
+	<class name="CWebSocketManager">
 		<private>
 			<container name="clientContainer" type="hashmap" keytype="string" valuetype="string"/>
 		</private>

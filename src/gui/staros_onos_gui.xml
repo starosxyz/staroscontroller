@@ -188,14 +188,24 @@
 			<function>			
 				<log level="1"><![CDATA[ websocketopen event <%=event.getName()%>]]> </log>				
 				<log level="1"><![CDATA[ websocketopen transportid <%=event.getParam("transportid").toString()%>]]> </log>
-				<insert name="websocketclients" value="event.getParam('transportid').toString()"/>
+				<!--insert name="websocketclients" value="event.getParam('transportid').toString()"/-->
+				<function name="addWebSocket" class="WebSocketManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+					</parameters>
+				</function>
 			</function>
 		</onevent>
 		<onevent event="websocketdisconnect">
 			<function>
 				<log level="1"><![CDATA[ websocketdisconnect event <%=event.getName()%>]]> </log>
 				<log level="1"><![CDATA[ websocketdisconnect transportid <%=event.getParam("transportid").toString()%>]]> </log>
-				<remove name="websocketclients" value="event.getParam('transportid').toString()"/>
+				<!--remove name="websocketclients" value="event.getParam('transportid').toString()"/-->
+				<function name="RemoveWebSocket" class="WebSocketManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+					</parameters>
+				</function>
 			</function>
 		</onevent>
 		<onevent event="websocketdata">

@@ -26,18 +26,18 @@
 			]]></script>
 			<if cond="context.action.toString() == 'deactivate'">
 				<then>
-					<function name="AppActiveEvent" class="ApplicationManager">
+					<function name="AppDeactiveEvent" class="ApplicationManager">
 						<parameters>
 							<!--appjson is return value-->
-							<parameter name="id" type="string" out="context.name"/>
+							<parameter name="id" type="string" in="context.name"/>
 						</parameters>
 					</function>
 				</then>
 				<elseif cond="context.action.toString() == 'activate'">
-					<function name="AppDeactiveEvent" class="ApplicationManager">
+					<function name="AppActiveEvent" class="ApplicationManager">
 						<parameters>
 							<!--appjson is return value-->
-							<parameter name="id" type="string" out="context.name"/>
+							<parameter name="id" type="string" in="context.name"/>
 						</parameters>
 					</function>
 				</elseif>
