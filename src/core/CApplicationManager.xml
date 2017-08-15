@@ -16,9 +16,9 @@
 			<variable name="url" type="string" />
 			<variable name="readme" type="string" />
 			<variable name="role" type="string" />
-			<container name="required_apps" type="list" />
-			<container name="features" type="list" />
-			<container name="permissions" type="list" />
+			<container name="required_apps" type="list"  valuetype="string"/>
+			<container name="features" type="list" valuetype="string"/>
+			<container name="permissions" type="list" valuetype="string"/>
 		</private>
 		<public>
 			<function name="CApplication">
@@ -30,6 +30,7 @@
 					<parameter name="app_title" type="string"/>
 					<parameter name="app_desc" type="string"/>		
 					<parameter name="app_url" type="string"/>
+					<parameter name="app_bundleid" type="long"/>
 				</parameters>
 				<set name="thisclass.id" value="context.app_id.toString()"/>
 				<set name="thisclass.version" value="context.app_id.toString()"/>
@@ -38,6 +39,7 @@
 				<set name="thisclass.title" value="context.app_id.toString()"/>
 				<set name="thisclass.desc" value="context.app_id.toString()"/>
 				<set name="thisclass.url" value="context.app_id.toString()"/>
+				<set name="thisclass.bundleid" value="context.app_bundleid.toString()"/>
 			</function>
 			<function name="ActiveApplication">
 				<set name="bundleid" value="context.newBundleId()"/>
@@ -57,25 +59,26 @@
 				</parameters>
 				<variable name="values" type="string" />
 				<reference variable="values">
-				<jsonbody><![CDATA[ 
-					{
-						"state":"<%=thisclass.state.toString()%>",
-						"_iconid_state":"<%=thisclass._iconid_state.toString()%>",
-						"id":"<%=thisclass.id.toString()%>",
-						"icon":"<%=thisclass.icon.toString()%>",
-						"version":"<%=thisclass.version.toString()%>",
-						"category":"<%=thisclass.category.toString()%>",
-						"origin":"<%=thisclass.origin.toString()%>",
-						"title":"<%=thisclass.title.toString()%>",
-						"desc":"<%=thisclass.desc.toString()%>",
-						"url":"<%=thisclass.url.toString()%>",
-						"readme":"<%=thisclass.readme.toString()%>",
-						"role":"<%=thisclass.role.toString()%>",
-						"required_apps":[],
-						"features":[],
-						"permissions":[]
-					}
-				]]></jsonbody>
+					<jsonbody><![CDATA[ 
+						{
+							"state":"<%=thisclass.state.toString()%>",
+							"_iconid_state":"<%=thisclass._iconid_state.toString()%>",
+							"id":"<%=thisclass.id.toString()%>",
+							"icon":"<%=thisclass.icon.toString()%>",
+							"version":"<%=thisclass.version.toString()%>",
+							"category":"<%=thisclass.category.toString()%>",
+							"origin":"<%=thisclass.origin.toString()%>",
+							"title":"<%=thisclass.title.toString()%>",
+							"desc":"<%=thisclass.desc.toString()%>",
+							"url":"<%=thisclass.url.toString()%>",
+							"readme":"<%=thisclass.readme.toString()%>",
+							"role":"<%=thisclass.role.toString()%>",
+							"required_apps":[],
+							"features":[],
+							"permissions":[]
+						}
+					]]></jsonbody>
+				</reference>
 				<set name="appjson" value="context.values.toString()"/>
 			</function>
 		</public>
@@ -87,6 +90,22 @@
 		<public>
 			<function name="CApplicationManager">
 				<log> i am CApplicationManager contructio function</log>
+				<container name="listdir" type="list" valuetype="string"/>
+				<variable name="appname" type="string"/>
+				<variable name="bundleid" type="long"/>
+				<readir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
+				<log><![CDATA[dirlist size = '<%=context.listdir.size()%>']]></log>
+				<for var="i" from="0" to="context.listdir.size()-1">
+					<set name="appname" value="context.listdir.getValueByIndex(context.i.toLong())"/>
+					<set name="pathname" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/'+context.appname.toString()+'.xml'"/>
+					<log><![CDATA[pathname=<%=context.pathname.toString()%>]]></log>
+					<if cond="context.isDir(context.pathname.toString())">
+						<then>
+							<set name="bundleid" value="context.newBundleId()"/>
+							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
+						</then>
+					</if>
+				</for>
 			</function>
 			<function name="GetAppJsonString">
 				<parameters>
@@ -131,32 +150,37 @@
 			</function>
 			
 			<function name="GetAppdetalJsonString">
-					<log>####################GetAppJsonString##################</log>
-						<parameters>
-						<!--appdetaljson is return value-->
-						<parameter name="appdetailjson" type="string"/>
-						</parameters>
-						
-						<script><![CDATA[
-							var info = JSON.parse(event.getParam('eventdata').toString());
-							if (info.payload != null)
-							{
-								var processname=info.payload.id;
-								if (context.appsContainer.hasValue(processname)==true)
-								{
-									var processitem = context.appsContainer.getValue(processname);
-									var jsonroot = new Object();
-									var jsondetails = new Object();
-									var appsinfo=JSON.parse(processitem);
-									jsondetails['details']=appsinfo;
-									jsonroot['event']="appDetailsResponse";
-									jsonroot['payload']=jsondetails;
-									var strjson=JSON.stringify(jsonroot);
-									context.appdetailjson.setValue(strjson);
-								}
-							}
-						]]></script>
-					
+				<log>####################GetAppJsonString##################</log>
+				<parameters>
+					<!--appdetaljson is return value-->
+					<parameter name="appdetailjson" type="string"/>
+					<parameter name="app_id" type="string"/>
+				</parameters>
+				<variable name="oneapp" type="class" />
+				<variable name="appstringjson" type="string" />
+				<if cond="thisclass.appsContainer.hasValue(context.app_id.toString())">
+					<then>
+						<function>
+							<lookup name="appsContainer" key="context.app_id.toString()" output="context.oneapp"/>
+							<function name="ToJson" class="oneapp">
+								<parameters>
+									<!--appjson is return value-->
+									<parameter name="appjson" type="string" out="context.appstringjson"/>
+								</parameters>
+							</function>
+							<script><![CDATA[
+								var jsonroot = new Object();
+								var jsondetails = new Object();
+								var appsinfo=JSON.parse(appstringjson);
+								jsondetails['details']=appsinfo;
+								jsonroot['event']="appDetailsResponse";
+								jsonroot['payload']=jsondetails;
+								var strjson=JSON.stringify(jsonroot);
+								context.appdetailjson.setValue(strjson);
+							]]></script>
+						</function>
+					</then>
+				</if>
 			</function>
 			
 			<function name="AddAppEvent">
@@ -170,7 +194,7 @@
 					<parameter name="title" type="string"/>
 					<parameter name="desc" type="string"/>		
 					<parameter name="url" type="string"/>
-					<parameter name="processname" type="string"/>
+					<parameter name="bundleid" type="long"/>
 				</parameters>
 				<new name="oneapp" class="CApplication">
 					<parameters>
@@ -181,6 +205,7 @@
 						<parameter name="app_title" type="string" in="context.title.toString()"/>
 						<parameter name="app_desc" type="string" in="context.desc.toString()"/>		
 						<parameter name="app_url" type="string" in="context.url.toString()"/>
+						<parameter name="app_bundleid" type="long" in="context.bundleid.toString()"/>
 					</parameters> 
 				</new>
 				<remove name="appsContainer" key="context.id.toString()"/>

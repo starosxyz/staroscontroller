@@ -10,9 +10,6 @@
 	<!--YY 20170731-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_requestDetails.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_showHighlights.xml"/>
-	<!--yijian-->
-	<!--hupeng 20170802-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_appsdetails.xml"/>
 	<!--hupeng 20170804-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_host.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_apps.xml"/>
@@ -40,7 +37,7 @@
 		<!--yijian 20170801-->
 		<set name="WebSocketHandlerMap" paramname="appDataRequest" value="'HandleAppDataRequest'"/>
 		<!--hupeng 20170801-->
-		<set name="WebSocketHandlerMap" paramname="appDetailsRequest" value="'HandleappDetailsResponse'"/>
+		<set name="WebSocketHandlerMap" paramname="appDetailsRequest" value="'HandleappDetailsRequest'"/>
 		<!--yijian 20170802-->
 		<set name="WebSocketHandlerMap" paramname="appManagementRequest" value="'HandleappManagementRequest'"/>
 		<!--hupeng 20170803-->

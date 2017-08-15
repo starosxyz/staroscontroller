@@ -9,7 +9,7 @@
 				<parameter name="appjson" type="string" out="context.outjson"/>
 			</parameters>
 		</function>
-			<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
+		<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>		
@@ -22,21 +22,52 @@
 			<script><![CDATA[
 					var info = JSON.parse(event.getParam('eventdata').toString());
 					context.action.setValue(info.payload.action);
-					context.action.setValue(info.payload.name);
+					context.name.setValue(info.payload.name);
 			]]></script>
-			<remotecall method="appManagementRequest">
-					<applicationdata>
-						<![CDATA[ 
-						<%=event.getParam('eventdata').toString()%>
-						]]>
-					</applicationdata>
-			</remotecall>
-			<wait event="appManagementRequest.result" timeout="1000">
-				<function>
-					<log>appManagementRequest result</log>
-				</function>
-			</wait>
+			<if cond="context.action.toString() == 'deactivate'">
+				<then>
+					<function name="AppActiveEvent" class="ApplicationManager">
+						<parameters>
+							<!--appjson is return value-->
+							<parameter name="id" type="string" out="context.name"/>
+						</parameters>
+					</function>
+				</then>
+				<elseif cond="context.action.toString() == 'activate'">
+					<function name="AppDeactiveEvent" class="ApplicationManager">
+						<parameters>
+							<!--appjson is return value-->
+							<parameter name="id" type="string" out="context.name"/>
+						</parameters>
+					</function>
+				</elseif>
+			</if>
 		</function>
 		
+	</function>
+	<function name="HandleappDetailsRequest">
+	<!--hupeng 20170731-->
+		<variable name="outjson" type="string" value=""/>
+		<variable name="processname" type="string" value=""/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam('eventdata').toString());
+			if (info.payload != null)
+			{
+				var processname=info.payload.id;
+				context.processname.setValue(processname);
+			}
+		]]></script>
+		<function name="GetAppdetalJsonString" class="ApplicationManager">
+			<parameters>
+				<!--appjson is return value-->
+				<parameter name="appdetailjson" type="string" out="context.outjson"/>
+				<parameter name="app_id" type="string" in="context.processname"/>
+			</parameters>
+		</function>
+		<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>	
+			
 	</function>
 </starosxml>

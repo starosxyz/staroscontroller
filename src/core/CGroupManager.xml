@@ -101,7 +101,7 @@
 				OFPGT_INDIRECT = 2, /* Indirect group. */
 				OFPGT_FF = 3, /* Fast failover group. */
 			-->
-			<function name="testaddgroup"/>			
+			<function name="testaddgroup">			
 				<parameters>
 						<parameter name="datapathid" type="string"/>
 				</parameters>
@@ -141,7 +141,7 @@
 				<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>
 				
 			</function>
-			<function name="testremovegroup"/>			
+			<function name="testremovegroup">			
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 				</parameters>

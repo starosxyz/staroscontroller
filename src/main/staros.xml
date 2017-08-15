@@ -13,15 +13,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/global_resource.xml"/>
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
-	<container name="websocketclients" type="list" valuetype="string" global="true"/>
-		<!--qiulei 20170802-->
-	<container name="sessionIdContainer" type="hashmap" keytype="long" valuetype="hashmap" global="true"/>
-	<variable name="nullbundleappid" type="long"/>
+
 	<logconfig dest="stdout|file" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
-	<function name="startnullapp">
-		<set name="nullbundleappid" value="context.newBundleId()"/>
-		<createbundle bundleid="nullbundleappid" src="/opt/staros.xyz/staroscontroller/starlang/apps/nullapp/nullapp.xml"/>
-	</function>
 	<events>
 		<!--Session StarUp-->
 		<onevent event="bundleapp.startup">
@@ -42,11 +35,9 @@
 			</remotecall>
 			<wait event="hellorequest" timeout="1000"/>
 			<!--Init Flow Manager -->
-			<new name="flowmanager" class="CFlowManager"/>
-			<!--Add API Handler Init-->
 			
-<function name="InitGlobalResource"/>
-						<function name="InitAPIMapFunction"/>
+			<function name="InitGlobalResource"/>
+			<function name="InitAPIMapFunction"/>
 			<!--hu peng 2017/07/28  change setting-->
 			<function name="InitSetting"/>
 			<function name="InitWebSocketHandlerMap"/>
@@ -55,8 +46,8 @@
 				<!--Start OpenFlow Controller protocol-->
 			<function name="startopenflow"/>
 			<function name="testcallback"/>
-			<function name="addhostest"/>
-		  <function name="startnullapp"/>
+			<!--function name="addhostest"/-->
+			<!--function name="startnullapp"/-->
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->

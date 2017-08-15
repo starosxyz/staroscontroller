@@ -95,7 +95,7 @@
 				</function>
 				<remove name="switchmeter" key="context.resourceid.toString()"/>
 			</function>
-			<function name="testaddmeter"/>			
+			<function name="testaddmeter">			
 				<parameters>
 						<parameter name="datapathid" type="string"/>
 				</parameters>
@@ -127,7 +127,7 @@
 				<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>
 				
 			</function>
-			<function name="testremovemeter"/>			
+			<function name="testremovemeter">			
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
