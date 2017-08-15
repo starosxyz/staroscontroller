@@ -10,6 +10,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CWebSocketManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CClusterManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDeviceManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<variable name="FlowManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
@@ -20,6 +21,7 @@
 	<variable name="PortManager" type="class" global="true"/>
 	<variable name="HostManager" type="class" global="true"/>
 	<variable name="WebSocketManager" type="class" global="true"/>
+	<variable name="gInstanceManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>
 		<new name="ApplicationManager" class="CApplicationManager"/>
@@ -33,5 +35,6 @@
 		<new name="PortManager" class="CPortManager"/>
 		<new name="HostManager" class="CHostManager"/>
 		<new name="WebSocketManager" class="CWebSocketManager"/>
+		<new name="gInstanceManager" class="CInstanceManager"/>
 	</function>
 </starosxml>

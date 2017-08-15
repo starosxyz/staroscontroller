@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<events>
+		<onevent event="AddAppEvent">
+		<variable name="keys" type="string" />
+		<variable name="values" type="string" />
+		<set name="keys" value="event.getParam('processname').toString()"/>
+		<log><![CDATA[ProcessName= <%=event.getParam('processname').toString()%>]]></log>
+		<log><![CDATA[version= <%=event.getParam('Version').toString()%>]]></log>
+		<reference variable="values">
+				<jsonbody><![CDATA[ 
+					{
+						"state":"ACTIVE",
+						"_iconid_state":"active",
+						"id":"<%=event.getParam('processname').toString()%>",
+						"icon":"org.onosproject.drivers",
+						"version":"<%=event.getParam('Version').toString()%>",
+						"category":"<%=event.getParam('Category').toString()%>",
+						"origin":"<%=event.getParam('Origin').toString()%>",
+						"title":"<%=event.getParam('Title').toString()%>",
+						"desc":"<%=event.getParam('Desc').toString()%>",
+						"url":"<%=event.getParam('URL').toString()%>",
+						"readme":"",
+						"role":"",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+				]]></jsonbody>
+		</reference>
+			<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+		
+			<function>
+				<log>AddAppEvent</log>
+			</function>
+
+		</onevent>
+		<onevent event="AppDeactiveEvent">
+		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
+		<variable name="keys" type="string" />
+		<variable name="values" type="string" />
+		<set name="keys" value="event.getParam('processname').toString()"/>
+		<reference variable="values">
+			<jsonbody><![CDATA[ 
+					{
+						"state":"INSTALLED",
+						"_iconid_state":"appInactive",
+						"id":"<%=event.getParam('processname').toString()%>",
+						"icon":"org.onosproject.drivers",
+						"version":"<%=event.getParam('Version').toString()%>",
+						"category":"<%=event.getParam('Category').toString()%>",
+						"origin":"<%=event.getParam('Origin').toString()%>",
+						"title":"<%=event.getParam('Title').toString()%>",
+						"desc":"<%=event.getParam('Desc').toString()%>",
+						"url":"<%=event.getParam('URL').toString()%>",
+						"readme":"",
+						"role":"",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+			]]></jsonbody>
+		</reference>
+		<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+		  <function>
+			<log>AppDeactiveEvent</log>
+		  </function>
+		</onevent>
+		<!--Session Shutdown-->
+		<onevent event="AppActiveEvent">
+		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
+		<variable name="keys" type="string" />
+		<variable name="values" type="string" />
+		<set name="keys" value="event.getParam('processname').toString()"/>
+		<reference variable="values">
+			<jsonbody><![CDATA[ 
+					{
+						"state":"ACTIVE",
+						"_iconid_state":"active",
+						"id":"<%=event.getParam('processname').toString()%>",
+						"icon":"org.onosproject.drivers",
+						"version":"<%=event.getParam('Version').toString()%>",
+						"category":"<%=event.getParam('Category').toString()%>",
+						"origin":"<%=event.getParam('Origin').toString()%>",
+						"title":"<%=event.getParam('Title').toString()%>",
+						"desc":"<%=event.getParam('Desc').toString()%>",
+						"url":"<%=event.getParam('URL').toString()%>",
+						"readme":"",
+						"role":"",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+			]]></jsonbody>
+		</reference>
+		<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+		  <function>
+			<log>AppActiveEvent</log>
+		  </function>
+		</onevent>
+	</events>
+</starosxml>

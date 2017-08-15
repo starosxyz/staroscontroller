@@ -2,7 +2,7 @@
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CDeviceManager">
 		<private>
-			<container name="deviceContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+			<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
 		</private>
 		
 		<public>

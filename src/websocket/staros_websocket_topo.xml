@@ -34,25 +34,11 @@
 	<function name="SendAddInstance">
 		<variable name="sendstrjson" type="string"/>
 		<function>
-			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
-				<jsonbody>
-				<![CDATA[
-					{
-						"event":"addInstance",
-						"payload":
-							{
-								"id":"192.168.186.130",
-								"ip":"192.168.186.130",
-								"online":true,
-								"ready":true,
-								"uiAttached":true,
-								"switches":<%=context.openflowserverobj.getDeviceCount()%>,
-								"labels":["192.168.186.130","192.168.186.130"]
-							}
-					}
-				]]>
-				</jsonbody>
-			</websocket>
+			<function name="AddInstanceRequest" class="gInstanceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>						
+				</parameters>
+			</function>
 		</function>
 	</function>
 	<function name="SendAddAllLink">
