@@ -1,28 +1,158 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<class name="CPortManager">
+	<class name="CPort">
 		<private>
-			<container name="portContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+			<variable name="m_type" type="string" />
+			<variable name="m_speed" type="string" />
+			<variable name="m_enabled" type="string" />
+			<variable name="m_name" type="string" />
+			<variable name="m_flags" type="string"/>
+			<variable name="m_advertised" type="string"/>
+			<variable name="m_config" type="string"/>
+			<variable name="m_curr" type="string"/>
+			<variable name="m_currspeed" type="string"/>
+			<variable name="m_hwaddr" type="string"/>
+			<variable name="m_maxspeed" type="string"/>
+			<variable name="m_peer" type="string"/>
+			<variable name="m_state" type="string"/>
+			<variable name="m_supported" type="string"/>
+			<variable name="m_portno" type="string"/>
+			<variable name="m_elinks_dest" type="string"/>
 		</private>
 		<public>
+			<function name="CPort">
+				<parameters>
+					<parameter name="advertised" type="string"/>			
+					<parameter name="portno" type="string"/>
+					<parameter name="config" type="string"/>			
+					<parameter name="curr" type="string"/>
+					<parameter name="currspeed" type="string"/>	
+					<parameter name="hwaddr" type="string"/>
+					<parameter name="maxspeed" type="string"/>	
+					<parameter name="name" type="string"/>	
+					<parameter name="peer" type="string"/>
+					<parameter name="state" type="string"/>	
+					<parameter name="supported" type="string"/>
+				</parameters>
+				<set name="thisclass.m_advertised" value="context.advertised.toString()"/>
+				<set name="thisclass.m_portno" value="context.portno.toString()"/>
+				<set name="thisclass.m_config" value="context.config.toString()"/>
+				<set name="thisclass.m_curr" value="context.curr.toString()"/>
+				<set name="thisclass.m_currspeed" value="context.currspeed.toString()"/>
+				<set name="thisclass.m_hwaddr" value="context.hwaddr.toString()"/>
+				<set name="thisclass.m_name" value="context.name.toString()"/>
+				<set name="thisclass.m_peer" value="context.peer.toString()"/>
+				<set name="thisclass.m_state" value="context.state.toString()"/>
+				<set name="thisclass.m_supported" value="context.supported.toString()"/>
+				<set name="thisclass.m_type" value="'Copper'"/>
+				<if cond="thisclass.m_state.toString() !='0'">
+					<then>
+						<function>
+							<set name="thisclass.m_enabled" value="'false'"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<set name="thisclass.m_enabled" value="'true'"/>
+						</function>
+					</else>
+				</if>
+			</function>
+			<function name="ForDeviceDetailReqJson">
+				<parameters>
+					<parameter name="outjson" type="string"/>
+				</parameters>
+				<log>CPort ForDeviceDetailReqJson</log>
+				<script><![CDATA[
+					var onearray = new Object();
+					if (thisclass.m_portno.toString() == 4294967294){ 						
+						onearray.id = "Local";						
+					}else{
+						onearray.id=thisclass.m_portno;
+					}
+					onearray.type=thisclass.m_type;
+					onearray.speed=thisclass.m_currspeed;
+					onearray.enabled=thisclass.m_enabled;
+					onearray.name=thisclass.m_name;
+					onearray.elinks_dest="";
+					var strjson = JSON.stringify(onearray);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+	<class name="CPortManager">
+		<private>
+			<container name="portContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+		<public>
+			<function name="CPortManager">
+				<log>CPortManager is create</log>
+			</function>
 			<function name="addPort">
 				<parameters>
-					<parameter name="portobject" type="hashmap"/>			
-					<parameter name="datapathid" type="string"/>
+					<parameter name="advertised" type="string"/>			
+					<parameter name="portno" type="string"/>
+					<parameter name="config" type="string"/>			
+					<parameter name="curr" type="string"/>
+					<parameter name="currspeed" type="string"/>	
+					<parameter name="hwaddr" type="string"/>
+					<parameter name="maxspeed" type="string"/>	
+					<parameter name="name" type="string"/>	
+					<parameter name="peer" type="string"/>
+					<parameter name="state" type="string"/>	
+					<parameter name="supported" type="string"/>		
 				</parameters>
-				
-				<log>###########################################################################</log>
-				<log><![CDATA[portobject.portno=<%=context.portobject.getValue('portno').toString()%>]]></log>
-				<log>###########################################################################</log>
-				
-				<container name="switchports" type="hashmap" keytype="string" valuetype="hashmap"/>			
-				<lookup name="portContainer" key="context.datapathid.toString()" output="context.switchports"/>
-				<if cond="context.switchports == null">
-					<then>						
-						<insert name="switchports" key="context.portobject.getValue('portno').toString()" value="context.portobject"/>				
-						<insert name="portContainer" key="context.datapathid.toString()" value="context.switchports"/>
-					</then>
-				</if>
+				<variable name="portobj" type="class" />
+				<new name="portobj" class="CPort">
+					<parameters>
+						<parameter name="advertised" type="string" in="context.advertised.toString()"/>			
+						<parameter name="portno" type="string" in="context.portno.toString()"/>
+						<parameter name="config" type="string" in="context.config.toString()"/>			
+						<parameter name="curr" type="string" in="context.curr.toString()"/>
+						<parameter name="currspeed" type="string" in="context.currspeed.toString()"/>	
+						<parameter name="hwaddr" type="string" in="context.hwaddr.toString()"/>
+						<parameter name="maxspeed" type="string" in="context.maxspeed.toString()"/>	
+						<parameter name="name" type="string" in="context.name.toString()"/>	
+						<parameter name="peer" type="string" in="context.peer.toString()"/>
+						<parameter name="state" type="string" in="context.state.toString()"/>	
+						<parameter name="supported" type="string" in="context.supported.toString()"/>		
+					</parameters>
+				</new>
+				<insert name="portContainer" key="context.portno.toString()" value="context.portobj"/>
+			</function>
+			<function name="ForDeviceDetailReqJson">
+				<parameters>
+					<parameter name="outjson" type="string"/>
+				</parameters>
+				<log>CDevice ForDeviceDetailReqJson</log>
+				<variable name="portobj" type="class" />
+				<container name="jsonlist" type="list" valuetype="string"/>
+				<variable name="strjson" type="string" />
+				<for var="i" from="0" to="context.portContainer.size()-1">
+					<function>
+						<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="ForDeviceDetailReqJson" class="context.portobj">
+							<parameters>
+								<parameter name="outjson" type="string" out="context.strjson"/>
+							</parameters>
+							<insert name="jsonlist" value="context.strjson.toString()"/>
+						</function>
+					</function>
+				</for>
+				<script><![CDATA[
+					var portsArray=new Array();                               
+					for(var i=0;i<context.jsonlist.size();i++)
+					{
+						//context.print(i);
+						context.print('================start===================');
+						var port = context.jsonlist.getValueByIndex(i);	
+						var info = JSON.parse(port);						
+						portsArray.push(info);
+					}
+					var strjson=JSON.stringify(portsArray);
+					context.outjson.setValue(strjson);
+				]]></script>
 			</function>
 		</public>
 	</class>

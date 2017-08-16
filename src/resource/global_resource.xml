@@ -5,7 +5,6 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CApplicationManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CMeterManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CGroupManager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CHostManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CWebSocketManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CClusterManager.xml"/>
@@ -32,7 +31,6 @@
 		<!--yijian 20170814-->
 		<new name="MeterManager" class="CMeterManager"/>
 		<new name="GroupManager" class="CGroupManager"/>
-		<new name="PortManager" class="CPortManager"/>
 		<new name="HostManager" class="CHostManager"/>
 		<new name="WebSocketManager" class="CWebSocketManager"/>
 		<new name="gInstanceManager" class="CInstanceManager"/>

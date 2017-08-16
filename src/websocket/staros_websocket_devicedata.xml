@@ -12,107 +12,18 @@
 	<!--qiulei 20170803  pm funcition:HandleDeviceDetailsReq-->
 	<function name="HandleDeviceDetailsReq">
 		<log>==============qiulei==HandleDeviceDetailsReq==20170803=================</log>
-		<variable name="sendstrjson" type="string"/>
-		<container name="swtichdevice" type="hashmap" keytype="string" valuetype="string"/>
-		<container name="switchport" type="hashmap" keytype="string" valuetype="hashmap"/>
 		<variable name="datapathid" type="string"/>
-		
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());
 			var  dataid = info.payload.id;
 			var final_id=dataid.split(":")[1];
 			context.datapathid.setValue(final_id);
 		]]></script>
-		
-		<set name="swtichdevice" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-		<set name="switchport" value="context.portContainer.getValue(context.datapathid.toString())"/>
-		
-			<script><![CDATA[
-				var portsArray=new Array();                               
-				for(var i=0;i<context.switchport.size();i++)
-				{
-					//context.print(i);
-					context.print('================start===================');
-					var port = context.switchport.getValueByIndex(i);									
-					if( port == null)
-					{
-							context.print('port is null');
-					}
-					else
-					{
-							context.print('port is not null');
-					}
-					var onearray = new Object();
-					if (port.hasValue('advertised')==true)
-					{
-						if (port.getValue('portno').toString() == 4294967294){ 						
-							onearray.id = "Local";						
-						}else{
-							onearray.id=port.getValue('portno').toString();
-						}
-						//context.print(onearray.id);
-						onearray.type="";
-						onearray.speed=port.getValue('currspeed').toString();
-						onearray.enabled="";
-						onearray.name=port.getValue('name').toString();
-						onearray.elinks_dest="";
-						
-						portsArray.push(onearray);
-					}
-					else 
-					{
-						context.print('no param');
-					}
-				}
-				
-				var details=new Object();
-					details['id']=context.swtichdevice.getValue('id');
-					details['name']=context.swtichdevice.getValue('id');
-					details['type']=context.swtichdevice.getValue('type');
-					details['_iconid_type']='devIcon_SWITCH';
-					details['mfr']=context.swtichdevice.getValue('mfrdesc');
-					details['hw']=context.swtichdevice.getValue('hwdesc');
-					details['sw']=context.swtichdevice.getValue('swdesc');
-					details['serial']=context.swtichdevice.getValue('serial');
-					details['chassisid']=context.swtichdevice.getValue('chassisId');
-					details['masterid']=context.swtichdevice.getValue('masterid');
-					details['protocol']='OF_13';
-					details['ports']=portsArray;
-				
-				var annotations=new Object();
-					annotations['managementAddress']=context.swtichdevice.getValue('localipaddr');
-					annotations['protocol']='OF_13';
-					annotations['channelId']=context.swtichdevice.getValue('peeripaddr');
-					
-				var device=new Object();
-					device['id']=context.swtichdevice.getValue('id');
-					device['type']=context.swtichdevice.getValue('type');
-					device['available']=context.swtichdevice.getValue('available');
-					device['role']=context.swtichdevice.getValue('role');
-					device['mfr']=context.swtichdevice.getValue('mfrdesc');
-					device['hw']=context.swtichdevice.getValue('hwdesc');
-					device['sw']=context.swtichdevice.getValue('swdesc');
-					device['serial']=context.swtichdevice.getValue('serial');
-					device['driver']=context.swtichdevice.getValue('driver');
-					device['chassisId']=context.swtichdevice.getValue('chassisId');
-					
-					device['annotations']=annotations;
-				
-				var payload = new Object();
-					payload['details']=details;
-					payload['device']=device;
-					
-				var json = new Object();
-					json['event']='deviceDetailsResponse';
-					json['payload']=payload;
-				
-				var strjson=JSON.stringify(json);
-				context.print('$$$$$$$$$$$$$$$-------startPrin 20170803--------$$$$$$$$$$$$$$$');
-				context.print(strjson);
-				context.sendstrjson.setValue(strjson);
-			]]></script>
-		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
-			<jsonsrc src="sendstrjson"/>
-		</websocket>
+		<function name="DeviceDetailsReqJson" class="DeviceManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function>
 	</function>
 </starosxml>

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
+	<class name="CDevice">
+		<private>
+			<variable name="m_mfrdesc" type="string"/>
+			<variable name="m_swdesc" type="string"/>
+			<variable name="m_serialnum" type="string"/>
+			<variable name="m_dpdesc" type="string"/>
+			<variable name="m_hwdesc" type="string"/>
+			<variable name="m_transportid" type="string"/>
+			<variable name="m_localipaddr" type="string"/>
+			<variable name="m_peeripaddr" type="string"/>
+			<variable name="m_masterid" type="string"/>
+			<variable name="m_type" type="string"/>
+			<variable name="m_online" type="string"/>
+			<variable name="m_protocol" type="string"/>
+			<variable name="m_auxiliaryid" type="string"/>
+			<variable name="m_buffers" type="string"/>
+			<variable name="m_capabilities" type="string"/>
+			<variable name="m_datapathid" type="string"/>
+			<variable name="m_tables" type="string"/>
+			<variable name="m_ports" type="class"/>
+		</private>
+		<public>
+			<function name="CDevice">
+				<parameters>
+					<parameter name="mfrdesc" type="string"/>
+					<parameter name="swdesc" type="string"/>
+					<parameter name="serialnum" type="string"/>
+					<parameter name="dpdesc" type="string"/>
+					<parameter name="hwdesc" type="string"/>
+					<parameter name="transportid" type="string"/>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="localipaddr" type="string"/>
+					<parameter name="peeripaddr" type="string"/>
+					<parameter name="masterid" type="string"/>	
+					<parameter name="type" type="string"/>
+					<parameter name="online" type="string"/>
+					<parameter name="protocol" type="string"/>
+				</parameters>
+				<set name="thisclass.m_mfrdesc" value="context.mfrdesc.toString()"/>
+				<set name="thisclass.m_swdesc" value="context.swdesc.toString()"/>
+				<set name="thisclass.m_serialnum" value="context.serialnum.toString()"/>
+				<set name="thisclass.m_dpdesc" value="context.dpdesc.toString()"/>
+				<set name="thisclass.m_hwdesc" value="context.hwdesc.toString()"/>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<set name="thisclass.m_datapathid" value="context.datapathid.toString()"/>
+				<set name="thisclass.m_localipaddr" value="context.localipaddr.toString()"/>
+				<set name="thisclass.m_peeripaddr" value="context.peeripaddr.toString()"/>
+				<set name="thisclass.m_masterid" value="context.masterid.toString()"/>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_online" value="context.online.toString()"/>
+				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
+				<log><![CDATA[m_mfrdesc=<%=thisclass.m_mfrdesc.toString()%>]]></log>
+				<log><![CDATA[m_swdesc=<%=thisclass.m_swdesc.toString()%>]]></log>
+				<log><![CDATA[m_serialnum=<%=thisclass.m_serialnum.toString()%>]]></log>
+				<log><![CDATA[m_dpdesc=<%=thisclass.m_dpdesc.toString()%>]]></log>
+				<log><![CDATA[m_hwdesc=<%=thisclass.m_hwdesc.toString()%>]]></log>
+				<log><![CDATA[m_transportid=<%=thisclass.m_transportid.toString()%>]]></log>
+				<log><![CDATA[m_datapathid=<%=thisclass.m_datapathid.toString()%>]]></log>
+				<log><![CDATA[m_localipaddr=<%=thisclass.m_localipaddr.toString()%>]]></log>
+				<log><![CDATA[m_peeripaddr=<%=thisclass.m_peeripaddr.toString()%>]]></log>
+				<log><![CDATA[m_masterid=<%=thisclass.m_masterid.toString()%>]]></log>
+				<log><![CDATA[m_type=<%=thisclass.m_type.toString()%>]]></log>
+				<log><![CDATA[m_online=<%=thisclass.m_online.toString()%>]]></log>
+				<!--new portmgr -->
+				<new name="m_ports" class="CPortManager"/>
+			</function>
+			<function name="addPort">
+				<parameters>
+					<parameter name="advertised" type="string"/>			
+					<parameter name="portno" type="string"/>
+					<parameter name="config" type="string"/>			
+					<parameter name="curr" type="string"/>
+					<parameter name="currspeed" type="string"/>	
+					<parameter name="hwaddr" type="string"/>
+					<parameter name="maxspeed" type="string"/>	
+					<parameter name="name" type="string"/>	
+					<parameter name="peer" type="string"/>
+					<parameter name="state" type="string"/>	
+					<parameter name="supported" type="string"/>
+				</parameters>
+				<function name="addPort" class="m_ports">
+					<parameters>
+						<parameter name="advertised" type="string" in="context.advertised.toString()"/>			
+						<parameter name="portno" type="string" in="context.portno.toString()"/>
+						<parameter name="config" type="string" in="context.config.toString()"/>			
+						<parameter name="curr" type="string" in="context.curr.toString()"/>
+						<parameter name="currspeed" type="string" in="context.currspeed.toString()"/>	
+						<parameter name="hwaddr" type="string" in="context.hwaddr.toString()"/>
+						<parameter name="maxspeed" type="string" in="context.maxspeed.toString()"/>	
+						<parameter name="name" type="string" in="context.name.toString()"/>	
+						<parameter name="peer" type="string" in="context.peer.toString()"/>
+						<parameter name="state" type="string" in="context.state.toString()"/>	
+						<parameter name="supported" type="string" in="context.supported.toString()"/>		
+					</parameters>
+				</function>
+			</function>
+			<function name="GetDatapathId">
+				<parameters>
+					<parameter name="outdatapathid" type="string"/>
+				</parameters>
+				<log><![CDATA[GetDatapathId m_datapathid=<%=thisclass.m_datapathid.toString()%>]]></log>
+				<set name="outdatapathid" value="thisclass.m_datapathid.toString()"/>
+			</function>
+			<function name="GetTransportId">
+				<parameters>
+					<parameter name="outtransport" type="string"/>
+				</parameters>
+				<variable name="onlinejson" type="string" value="'test'"/>
+				<set name="outtransport" value="thisclass.m_transportid.toString()"/>
+			</function>
+			<function name="GetDeviceInfoJson">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="deviceinfojson" type="string"/>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.available='true';
+						onearray._iconid_available='active';
+						onearray.name="of:"+thisclass.m_datapathid.toString();
+						onearray.id="of:"+thisclass.m_datapathid.toString();
+						onearray.masterid=thisclass.m_masterid.toString();
+						onearray.num_ports=0;
+						onearray.mfr=thisclass.m_mfrdesc.toString();
+						onearray.hw=thisclass.m_hwdesc.toString();
+						onearray.sw=thisclass.m_swdesc.toString();
+						onearray.protocol=thisclass.m_protocol.toString();
+						onearray.chassisid="";
+						onearray.serial=thisclass.m_serialnum.toString();			
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			<function name="GetDeviceInfoForDetailRequest">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="deviceinfojson" type="string"/>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.available=thisclass.m_online.toString();
+						onearray.id="of:"+thisclass.m_datapathid.toString();
+						onearray.type=thisclass.m_type.toString();
+						onearray.role="MASTER";
+						onearray.mfr=thisclass.m_mfrdesc.toString();
+						onearray.hw=thisclass.m_hwdesc.toString();
+						onearray.sw=thisclass.m_swdesc.toString();
+						onearray.protocol=thisclass.m_protocol.toString();
+						onearray.driver="ovs";
+						onearray.serial=thisclass.m_serialnum.toString();	
+
+						var twoarray = new Object();
+						twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+						twoarray['protocol'] = thisclass.m_protocol.toString();
+						twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+						onearray.annotations=twoarray;
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			<function name="GetDeviceDetailInfoForDetailRequest">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="deviceinfojson" type="string"/>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.id="of:"+thisclass.m_datapathid.toString();
+						onearray.name="of:"+thisclass.m_datapathid.toString();
+						onearray.type=thisclass.m_type.toString();
+						onearray.role="MASTER";
+						onearray._iconid_type="devIcon_SWITCH";
+						onearray.mfr=thisclass.m_mfrdesc.toString();
+						onearray.hw=thisclass.m_hwdesc.toString();
+						onearray.sw=thisclass.m_swdesc.toString();
+						onearray.protocol=thisclass.m_protocol.toString();
+						onearray.chassisid=2;
+						onearray.masterid=thisclass.m_masterid.toString();
+						onearray.serial=thisclass.m_serialnum.toString();	
+						
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			<function name="ToOnlineJson">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="onlinejson" type="string"/>
+				<script><![CDATA[
+						var json = new Object();
+						json['event'] = "updateDevice";
+						var payload = new Object();			
+						payload['id'] = "of:" + thisclass.m_datapathid.toString();
+						payload['type'] = thisclass.m_type.toString();
+						payload['online'] = thisclass.m_online.toString();
+						payload['master'] = thisclass.m_masterid.toString();
+						var onearray = new Array();
+						onearray.push("");
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						payload['labels'] = onearray;
+						var twoarray = new Object();
+						twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+						twoarray['protocol'] = thisclass.m_protocol.toString();
+						twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+						payload['props'] = twoarray;
+						var threearray = new Object();
+						threearray['x'] = 0;
+						threearray['y'] = 0;
+						var three_one_array = new Object();
+						three_one_array['lng'] = 0;
+						three_one_array['lat'] = 0;
+						threearray['equivLoc'] = three_one_array;
+						payload['metaUi'] = threearray;
+						json['payload'] = payload;			
+						var strjson = JSON.stringify(json);
+						context.onlinejson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.onlinejson.toString()"/>
+			</function>
+			<function name="ToOfflineJson">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="offlinejson" type="string"/>
+				<script><![CDATA[
+						var json = new Object();
+						json['event'] = "updateDevice";
+						var payload = new Object();
+						payload['id'] = "of:" + thisclass.m_datapathid.toString();
+						payload['type'] = thisclass.m_type.toString();
+						payload['online'] = "false";
+						payload['master'] = thisclass.m_masterid.toString();
+						var onearray = new Array();
+						onearray.push("");
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						payload['labels'] = onearray;
+						
+						var twoarray = new Object();
+						twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+						twoarray['protocol'] = "OF_13";
+						twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+						payload['props'] = twoarray;
+						
+						var threearray = new Object();
+						threearray['x'] = 0;
+						threearray['y'] = 0;
+						var three_one_array = new Object();
+						three_one_array['lng'] = 0;
+						three_one_array['lat'] = 0;
+						threearray['equivLoc'] = three_one_array;
+						payload['metaUi'] = threearray;
+						json['payload'] = payload;
+						
+						var strjson = JSON.stringify(json);
+						context.offlinejson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.offlinejson.toString()"/>
+			</function>
+			<function name="ToAddDeviceJson">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="adddevicejson" type="string"/>
+				<reference variable="adddevicejson">
+					<jsonbody>
+						<![CDATA[
+							{
+								"event":"addDevice",
+								"payload":
+								{
+									"id":"of:<%=thisclass.m_datapathid.toString()%>",
+									"type":"switch",
+									"online":true,
+									"master":"<%=thisclass.m_masterid.toString()%>",
+									"labels":
+										[
+										"","of:<%=thisclass.m_datapathid.toString()%>",
+										"of:<%=thisclass.m_datapathid.toString()%>"
+										],
+									"props":
+										{
+											"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
+											"protocol":"OF_13",
+											"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
+										},
+									"metaUi":
+									{
+										"equivLoc":
+											{
+											"lng":-98.18860657853635,
+											"lat":43.492555430485986
+											}
+									}
+								}
+							}	
+						]]>
+					</jsonbody>
+				</reference>
+				<set name="strjson" value="context.adddevicejson.toString()"/>
+			</function>
+			<function name="MultiPartPortDescRequest">
+				<variable name="strjson" type="string"/>
+				<variable name="xid" type="long"/>
+				<variable name="replyjson" type="string"/>
+				<container name="portinfo" type="hashmap" keytype="string" valuetype="string"/>
+				<container name="deviceportinfo" type="list" valuetype="hashmap"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<function>
+					<log dest="stdout">OpenFlowMultiPartPortDescRequest</log>
+
+					<reference variable="strjson">
+						<jsonbody><![CDATA[ 
+								{
+									"xid":"<%=context.xid.toLong()%>"
+								}
+						]]></jsonbody>
+					</reference>
+					<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
+						<parameters>
+							<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+							<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+						</parameters>
+					</function>
+					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
+						<function>
+							<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+						</function>
+					</wait>
+					<log>OpenFlowMultiPartPortDescRequest end</log>
+					<!--parse JSONString-->
+					<script><![CDATA[							
+						var info = JSON.parse(context.replyjson.toString());
+						//var switchportinfo = context.createContainer("list","hashmap");
+						context.print(info.portlist.length);
+
+					]]></script>
+
+					<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
+					<for var="i" from="0" to="context.deviceportinfo.size()-1">
+						<function>
+							<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
+							<function name="AddPort">
+								<parameters>
+									<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
+									<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>
+									<parameter name="config" type="string" in="context.portinfo.getValue('config').toString()"/>			
+									<parameter name="curr" type="string" in="context.portinfo.getValue('curr').toString()"/>
+									<parameter name="currspeed" type="string" in="context.portinfo.getValue('currspeed').toString()"/>	
+									<parameter name="hwaddr" type="string" in="context.portinfo.getValue('hwaddr').toString()"/>
+									<parameter name="maxspeed" type="string" in="context.portinfo.getValue('maxspeed').toString()"/>	
+									<parameter name="name" type="string" in="context.portinfo.getValue('name').toString()"/>	
+									<parameter name="peer" type="string" in="context.portinfo.getValue('peer').toString()"/>
+									<parameter name="state" type="string" in="context.portinfo.getValue('state').toString()"/>	
+									<parameter name="supported" type="string" in="context.portinfo.getValue('supported').toString()"/>
+								</parameters>
+							</function>
+						</function>
+					</for>
+				</function>
+			</function>
+			<function name="ForDeviceDetailReqJson">
+				<parameters>
+					<parameter name="outjson" type="string"/>
+				</parameters>
+				<variable name="deviceportjson" type="string"/>
+				<variable name="detailjson" type="string"/>
+				<log>CDevice ForDeviceDetailReqJson</log>
+				<function name="ForDeviceDetailReqJson" class="thisclass.m_ports">
+					<parameters>
+						<parameter name="outjson" type="string" out="deviceportjson"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+					var portsArray = JSON.parse(context.deviceportjson.toString());                              
+					var details=new Object();
+						details['id']='of:'+thisclass.m_datapathid.toString();
+						details['name']='of:'+thisclass.m_datapathid.toString();
+						details['type']=thisclass.m_type.toString();
+						details['_iconid_type']='devIcon_SWITCH';
+						details['mfr']=thisclass.m_mfrdesc.toString();
+						details['hw']=thisclass.m_hwdesc.toString();
+						details['sw']=thisclass.m_swdesc.toString();
+						details['serial']=thisclass.m_serialnum.toString();
+						details['chassisid']="";
+						details['masterid']=thisclass.m_masterid.toString();
+						details['protocol']=thisclass.m_protocol.toString();
+						details['ports']=portsArray;
+					
+					var annotations=new Object();
+						annotations['managementAddress'] = thisclass.m_localipaddr.toString();
+						annotations['protocol'] = thisclass.m_protocol.toString();
+						annotations['channelId'] = thisclass.m_peeripaddr.toString();
+						
+					var device=new Object();
+						device['id']='of:'+thisclass.m_datapathid.toString();
+						device['type']=thisclass.m_type.toString();
+						device['available']="true";
+						device['role']="MASTER";
+						device['mfr']=thisclass.m_mfrdesc.toString();
+						device['hw']=thisclass.m_hwdesc.toString();
+						device['sw']=thisclass.m_swdesc.toString();
+						device['serial']=thisclass.m_serialnum.toString();
+						device['driver']="ovs";
+						device['chassisId']="";
+						
+						device['annotations']=annotations;
+					
+					var payload = new Object();
+						payload['details']=details;
+						payload['device']=device;
+						
+					var json = new Object();
+						json['event']='deviceDetailsResponse';
+						json['payload']=payload;
+					
+					var strjson=JSON.stringify(json);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starosxml>
