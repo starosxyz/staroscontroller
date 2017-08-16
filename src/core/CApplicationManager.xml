@@ -51,6 +51,13 @@
 				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
 				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
 			</function>
+			<function name="GetApplicationId">
+				<parameters>
+					<parameter name="outappid" type="string"/>
+				</parameters>
+				<log><![CDATA[GetApplicationId id=<%=thisclass.id.toString()%>]]></log>
+				<set name="outappid" value="thisclass.id.toString()"/>
+			</function>
 			<function name="SetApplicationInfo">
 				<parameters>
 					<parameter name="appid" type="string"/>
@@ -251,6 +258,7 @@
 					<parameter name="bundleid" type="long"/>
 					<parameter name="path" type="string"/>
 				</parameters>
+				<variable name="appidout" type="string"/>
 				<new name="oneapp" class="CApplication">
 					<parameters>
 						<parameter name="appid" type="string" in="context.id.toString()"/>
@@ -266,6 +274,12 @@
 				</new>
 				<remove name="appsContainer" key="context.id.toString()"/>
 				<insert name="appsContainer" key="context.id.toString()" value="context.oneapp"/>
+				<function name="GetApplicationId" class="oneapp">
+					<parameters>
+						<parameter name="outappid" type="string" out="context.appidout"/>
+					</parameters>
+				</function>
+				<log><![CDATA[appidout id=<%=context.appidout.toString()%>]]></log>
 			</function>
 		
 			<function name="AppDeactiveEvent">

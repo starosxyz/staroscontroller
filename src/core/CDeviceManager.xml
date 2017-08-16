@@ -65,9 +65,42 @@
 			</function>
 			<function name="GetDatapathId">
 				<parameters>
-					<parameter name="returndatapathid" type="string"/>
+					<parameter name="outdatapathid" type="string"/>
 				</parameters>
-				<set name="returndatapathid" value="thisclass.m_datapathid.toString()"/>
+				<log><![CDATA[GetDatapathId m_datapathid=<%=thisclass.m_datapathid.toString()%>]]></log>
+				<set name="outdatapathid" value="thisclass.m_datapathid.toString()"/>
+			</function>
+			<function name="GetTransportId">
+				<parameters>
+					<parameter name="outtransport" type="string"/>
+				</parameters>
+				<variable name="onlinejson" type="string" value="'test'"/>
+				<set name="outtransport" value="thisclass.m_transportid.toString()"/>
+			</function>
+			<function name="GetDeviceInfoJson">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="deviceinfojson" type="string"/>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.available='true';
+						onearray._iconid_available='active';
+						onearray.name="of:"+thisclass.m_datapathid.toString();
+						onearray.id="of:"+thisclass.m_datapathid.toString();
+						onearray.masterid=thisclass.m_masterid.toString();
+						onearray.num_ports=0;
+						onearray.mfr=thisclass.m_mfrdesc.toString();
+						onearray.hw=thisclass.m_hwdesc.toString();
+						onearray.sw=thisclass.m_swdesc.toString();
+						onearray.protocol=thisclass.m_protocol.toString();
+						onearray.chassisid="";
+						onearray.serial=thisclass.m_serialnum.toString();			
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
 			</function>
 			<function name="ToOnlineJson">
 				<parameters>
@@ -213,6 +246,7 @@
 					<parameter name="protocol" type="string"/>					
 				</parameters>
 				<variable name="deviceobject" type="class"/>
+				<variable name="outtransid" type="string"/>
 				<new name="deviceobject" class="CDevice">
 					<parameters>
 						<parameter name="mfrdesc" type="string" in="context.mfrdesc.toString()"/>
@@ -237,11 +271,18 @@
 						<parameter name="strjson" type="string" out="onlinejson"/>
 					</parameters>
 				</function>
+				<log><![CDATA[onlinejson =<%=context.onlinejson.toString()%>]]></log>
 				<function name="SendToAllClient" class="WebSocketManager">
 					<parameters>
 						<parameter name="strjson" type="string" in="context.onlinejson.toString()"/>
 					</parameters>
 				</function>
+				<function name="GetTransportId" class="deviceobject">
+					<parameters>
+						<parameter name="outtransport" type="string" out="outtransid"/>
+					</parameters>
+				</function>
+				<log><![CDATA[addDevice outtransid =<%=context.outtransid.toString()%>]]></log>
 			</function>
 				
 			<function name="findDevice">
@@ -291,12 +332,24 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
+				<variable name="devicetransportid" type="string"/>
+				<variable name="devicedatapathid" type="string"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<if cond="context.deviceinfo.getValue('datapathid').toString() == context.datapathid.toString()">
+						<function name="GetDatapathId" class="deviceinfo">
+							<parameters>
+								<parameter name="returndatapathid" type="string" out="devicedatapathid"/>
+							</parameters>
+						</function>
+						<if cond="context.devicedatapathid.toString() == context.datapathid.toString()">
 							<then>
-								<set name="transportid" value="context.deviceinfo.getValue('transportid').toString()"/>
+								<function name="GetTransportId" class="deviceinfo">
+									<parameters>
+										<parameter name="returndatapathid" type="string" out="devicetransportid"/>
+									</parameters>
+								</function>
+								<set name="transportid" value="context.devicetransportid.toString()"/>
 								<exit/>
 							</then>
 						</if>
@@ -308,22 +361,35 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
-				<variable name="datapathid" type="string"/>
+				<variable name="devicetransportid" type="string"/>
+				<variable name="devicedatapathid" type="string"/>
+				<log><![CDATA[removeDeviceByTransportId device size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[transportid=<%=context.transportid.toString()%>]]></log>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>			
 						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<if cond="context.deviceinfo.getValue('transportid').toString() == context.transportid.toString()">
+						<function name="GetTransportId" class="deviceinfo">
+							<parameters>
+								<parameter name="outtransport" type="string" out="context.devicetransportid"/>
+							</parameters>
+						</function>
+						<log><![CDATA[devicetransportid =<%=context.devicetransportid.toString()%>]]></log>
+						<if cond="context.devicetransportid.toString() == context.transportid.toString()">
 							<then>
-								<set name="datapathid" value="context.deviceinfo.getValue('datapathid').toString()"/>
+								<function name="GetDatapathId" class="deviceinfo">
+									<parameters>
+										<parameter name="outdatapathid" type="string" out="context.devicedatapathid"/>
+									</parameters>
+								</function>
+								<function name="removeDevice">
+									<parameters>
+										<parameter name="datapathid" type="string" in="context.devicedatapathid.toString()"/>
+									</parameters>
+								</function>
 							</then>
 						</if>
 					</function>
 				</for>
-				<function name="removeDevice">
-					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-					</parameters>
-				</function>
 			</function>
 			<function name="SendAddAllDeviceToWebClient">
 				<parameters>
@@ -364,7 +430,7 @@
 						<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
 						<function name="GetDatapathId" class="srcdevice">
 							<parameters>
-								<parameter name="returndatapathid" type="string" out="srcdevicedpid"/>
+								<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 							</parameters>
 						</function>
 						<function>
@@ -372,7 +438,7 @@
 								<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
 								<function name="GetDatapathId" class="dstdevice">
 									<parameters>
-										<parameter name="returndatapathid" type="string" out="dstdevicedpid"/>
+										<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 									</parameters>
 								</function>
 								<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
@@ -434,6 +500,54 @@
 						</function>
 					</function>
 				</for>
+			</function>
+			<function name="SendDeviceInfoToWebClient">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<variable name="jsonstr" type="string"/>
+				<variable name="sendjsonstr" type="string"/>
+				<variable name="switchdevice" type="class"/>
+				<container name="deviceinfolist" type="list" valuetype="string"/>
+				
+				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">
+					<function>
+						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="GetDeviceInfoJson" class="context.switchdevice">
+							<parameters>
+								<parameter name="strjson" type="string" out="jsonstr"/>
+							</parameters>
+						</function>
+						<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array();  
+					
+					for(var i=0;i<context.deviceinfolist.size();i++)
+					{									
+						var onearray = JSON.parse(context.deviceinfolist.getValueByIndex(i));
+						myArray.push(onearray);
+					}
+					json['event']='deviceDataResponse';
+					
+					var payload = new Object();
+					payload['devices']=myArray;
+					
+					var annots = new Object();
+					annots['no_rows_msg']='No devices found';
+					payload['annots']=annots;
+					json['payload']=payload;
+					var strjson=JSON.stringify(json);
+					context.sendjsonstr.setValue(strjson);
+				]]></script>
+				<log><![CDATA[SendDeviceInfoToWebClient transportid=<%=context.transportid.toString()%>]]></log>
+				<log><![CDATA[SendDeviceInfoToWebClient sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
+				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+					<jsonsrc src="sendjsonstr"/>
+				</websocket>
 			</function>
 		</public>
 	</class>

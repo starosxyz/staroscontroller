@@ -3,75 +3,11 @@
 	<!--qiulei 20170803  pm funcition:Handledevicedata-->
 	<function name="Handledevicedata">
 		<log>==============qiulei==Handledevicedata==20170803=================</log>
-		<variable name="sendstrjson" type="string"/>
-			<script><![CDATA[
-				var json = new Object();
-				var myArray=new Array();  
-				
-				for(var i=0;i<context.deviceContainer.size();i++)
-				{
-					context.print(i);
-					context.print('================start===================');
-					var devices = context.deviceContainer.getValueByIndex(i);									
-					if( devices == null)
-					{
-							context.print('device is null');
-					}
-					else
-					{
-							context.print('device is not null');
-					}
-					var onearray = new Object();
-					if (devices.hasValue('datapathid')==true)
-					{
-						onearray.available='true';
-						onearray._iconid_available='active';
-						onearray.name="of:"+devices.getValue('datapathid').toString();
-						onearray.id="of:"+devices.getValue('datapathid').toString();
-						onearray.masterid=devices.getValue('masterid').toString();
-						var switchport = context.portContainer.getValue(devices.getValue('datapathid').toString());
-						if (switchport != null)
-						{
-							onearray.num_ports=switchport.size();
-						}
-						else
-						{
-							onearray.num_ports=0;
-						}
-						
-						
-						onearray.mfr=devices.getValue('mfrdesc').toString();
-						onearray.hw=devices.getValue('hwdesc').toString();
-						onearray.sw=devices.getValue('swdesc').toString();
-						onearray.protocol="OF_13";
-						onearray.chassisid="";
-						onearray.serial=devices.getValue('serialnum').toString();
-						
-						myArray.push(onearray);
-					}
-					else 
-					{
-						context.print('no param');
-					}
-				}
-				json['event']='deviceDataResponse';
-				
-				var payload = new Object();
-				payload['devices']=myArray;
-				
-				var annots = new Object();
-				annots['no_rows_msg']='No devices found';
-				payload['annots']=annots;
-				json['payload']=payload;
-				
-				var strjson=JSON.stringify(json);
-				context.print('$$$$$$$$$$$$$$$-------startPrin-20170728-------$$$$$$$$$$$$$$$');
-				context.print(strjson);
-				context.sendstrjson.setValue(strjson);
-			]]></script>
-		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
-			<jsonsrc src="sendstrjson"/>
-		</websocket>
+		<function name="SendDeviceInfoToWebClient" class="DeviceManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+			</parameters>
+		</function>
 	</function>
 	<!--qiulei 20170803  pm funcition:HandleDeviceDetailsReq-->
 	<function name="HandleDeviceDetailsReq">
