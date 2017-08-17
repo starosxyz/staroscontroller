@@ -52,19 +52,6 @@
 				<set name="thisclass.m_type" value="context.type.toString()"/>
 				<set name="thisclass.m_online" value="context.online.toString()"/>
 				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
-				<log><![CDATA[m_mfrdesc=<%=thisclass.m_mfrdesc.toString()%>]]></log>
-				<log><![CDATA[m_swdesc=<%=thisclass.m_swdesc.toString()%>]]></log>
-				<log><![CDATA[m_serialnum=<%=thisclass.m_serialnum.toString()%>]]></log>
-				<log><![CDATA[m_dpdesc=<%=thisclass.m_dpdesc.toString()%>]]></log>
-				<log><![CDATA[m_hwdesc=<%=thisclass.m_hwdesc.toString()%>]]></log>
-				<log><![CDATA[m_transportid=<%=thisclass.m_transportid.toString()%>]]></log>
-				<log><![CDATA[m_datapathid=<%=thisclass.m_datapathid.toString()%>]]></log>
-				<log><![CDATA[m_localipaddr=<%=thisclass.m_localipaddr.toString()%>]]></log>
-				<log><![CDATA[m_peeripaddr=<%=thisclass.m_peeripaddr.toString()%>]]></log>
-				<log><![CDATA[m_masterid=<%=thisclass.m_masterid.toString()%>]]></log>
-				<log><![CDATA[m_type=<%=thisclass.m_type.toString()%>]]></log>
-				<log><![CDATA[m_online=<%=thisclass.m_online.toString()%>]]></log>
-				<!--new portmgr -->
 				<new name="m_ports" class="CPortManager"/>
 			</function>
 			<function name="addPort">
@@ -315,7 +302,7 @@
 				<variable name="xid" type="long"/>
 				<variable name="replyjson" type="string"/>
 				<container name="portinfo" type="hashmap" keytype="string" valuetype="string"/>
-				<container name="deviceportinfo" type="list" valuetype="hashmap"/>
+				<container name="deviceportinfo" type="hashmap" keytype="string" valuetype="hashmap"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<function>
 					<log dest="stdout">OpenFlowMultiPartPortDescRequest</log>
@@ -342,16 +329,34 @@
 					<!--parse JSONString-->
 					<script><![CDATA[							
 						var info = JSON.parse(context.replyjson.toString());
-						//var switchportinfo = context.createContainer("list","hashmap");
 						context.print(info.portlist.length);
-
+						for(var i=0;i<info.portlist.length;i++)
+						{
+							//yijian add for null var
+							var ofport = context.createContainer("hashmap","string","string");
+							if (ofport != null)
+							{
+								ofport.addValue('advertised', info.portlist[i].advertised);
+								ofport.addValue('portno', info.portlist[i].portno);
+								ofport.addValue('config', info.portlist[i].config);
+								ofport.addValue('curr', info.portlist[i].curr);
+								ofport.addValue('currspeed', info.portlist[i].currspeed);
+								ofport.addValue('hwaddr', info.portlist[i].hwaddr);
+								ofport.addValue('maxspeed', info.portlist[i].maxspeed);
+								ofport.addValue('name', info.portlist[i].name);
+								ofport.addValue('peer', info.portlist[i].peer);
+								ofport.addValue('state', info.portlist[i].state);
+								ofport.addValue('supported', info.portlist[i].supported);
+								context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
+							}
+						}
 					]]></script>
 
 					<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
 					<for var="i" from="0" to="context.deviceportinfo.size()-1">
 						<function>
 							<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
-							<function name="AddPort">
+							<function name="addPort">
 								<parameters>
 									<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
 									<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>

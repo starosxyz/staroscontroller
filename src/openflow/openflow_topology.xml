@@ -29,9 +29,9 @@
 			]]></script>
 			</function>
 			
-			<function name="sendtoAllWebsocketclient">
+			<function name="SendToAllClient" class="WebSocketManager">
 				<parameters>
-					<parameter name="jsonbody" type="string" in="context.removedata.toString()"/>
+					<parameter name="strjson" type="string" in="context.removedata.toString()"/>
 				</parameters>
 			</function>
 		</onevent>
@@ -68,9 +68,9 @@
 			]]></script>
 			<if cond="context.isTorF.toString() == 'true'">
 				<then>					
-					<function name="sendtoAllWebsocketclient">
+					<function name="SendToAllClient" class="WebSocketManager">
 						<parameters>
-							<parameter name="jsonbody" type="string" in="context.adddata.toString()"/>
+							<parameter name="strjson" type="string" in="context.adddata.toString()"/>
 						</parameters>
 					</function>
 				</then>

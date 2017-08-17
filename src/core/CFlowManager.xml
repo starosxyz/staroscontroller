@@ -33,7 +33,7 @@
 					</else>
 				</if>
 				<insert name="switchflowdevice" key="context.sresourceid.toString()" value="context.strjson.toString()"/>
-				<function name="GetTransportIdFromDevice">
+				<function name="GetTransportIdFromDevice"class="DeviceManager">
 					<parameters>
 						<parameter name="datapathid" type="string" in="context.datapathid"/>
 						<parameter name="transportid" type="string" out="context.transportid"/>
@@ -97,7 +97,7 @@
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
-				<function name="GetTransportIdFromDevice">
+				<function name="GetTransportIdFromDevice"class="DeviceManager">
 					<parameters>
 						<parameter name="datapathid" type="string" in="context.datapathid"/>
 						<parameter name="transportid" type="string" out="context.transportid"/>
