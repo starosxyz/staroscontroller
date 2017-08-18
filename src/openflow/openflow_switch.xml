@@ -128,6 +128,22 @@
 			</parameters>
 		</function>
 		
+		<!--qiulei 20170818 pm 发送测试报文 group-->
+		
+		<function name="testaddgroup" class="CGroupManager">			
+			<parameters>
+					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+				
+		</function>
+		<function name="testremovegroup" class="CGroupManager">			
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function>
+	
+		
+		
 	</function>
 	
 	<function name="OpenFlowFeatures">
