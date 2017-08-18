@@ -439,7 +439,7 @@
 			</function>
 			<function name="SendDetails">
 				<parameters>
-					<parameter name="datapathid" type="string"/>
+					
 					<parameter name="transportid" type="string"/>
 				</parameters>							
 				<variable name="portnum" type="string"/>

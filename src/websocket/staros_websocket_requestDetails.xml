@@ -23,20 +23,21 @@
 		<set name="switchport" value="context.portContainer.getValue(context.datapathid.toString())"/>
 		<function name="SendDetails">	
 			<parameters>
-				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+				<!--parameter name="datapathid" type="string" in="context.datapathid.toString()"/>				
 				<parameter name="deviceobject" type="hashmap" in="context.switchdevice"/>	
-				<parameter name="portobject" type="hashmap" in="context.switchport"/>				
+				<parameter name="portobject" type="hashmap" in="context.switchport"/-->		
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 			</parameters>
 		</function>
 	</function>
 	
 	<function name="SendDetails">
 		<parameters>
-			<parameter name="datapathid" type="string"/>
-			<parameter name="deviceobject" type="hashmap"/>	
-			<parameter name="portobject" type="hashmap"/>				
+			<parameter name="transportid" type="string"/>
+			<!--parameter name="deviceobject" type="hashmap"/>	
+			<parameter name="portobject" type="hashmap"/-->				
 		</parameters>
-		<variable name="detailarray" type="string"/>
+		<!--variable name="detailarray" type="string"/>
 		<function>
 			<script><![CDATA[
 			var json = new Object();						
@@ -99,6 +100,6 @@
 		</function>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="detailarray"/>
-		</websocket>
+		</websocket-->
 	</function>
 </starosxml>
