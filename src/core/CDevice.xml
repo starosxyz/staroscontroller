@@ -106,6 +106,15 @@
 					<parameter name="strjson" type="string"/>
 				</parameters>
 				<variable name="deviceinfojson" type="string"/>
+				
+				<!--qiulei 20170818-->
+				<variable name="portCount" type="long"/>
+				<function name="GetPortNumberSize" class="thisclass.m_ports">
+					<parameters>
+						<parameter name="portnumber" type="long" out="context.portCount"/>
+					</parameters>
+				</function>
+				
 				<script><![CDATA[
 						var onearray = new Object();
 						onearray.available='true';
@@ -113,7 +122,8 @@
 						onearray.name="of:"+thisclass.m_datapathid.toString();
 						onearray.id="of:"+thisclass.m_datapathid.toString();
 						onearray.masterid=thisclass.m_masterid.toString();
-						onearray.num_ports=0;
+						//-------------qiulei 20170818------------
+						onearray.num_ports=context.portCount.toLong();
 						onearray.mfr=thisclass.m_mfrdesc.toString();
 						onearray.hw=thisclass.m_hwdesc.toString();
 						onearray.sw=thisclass.m_swdesc.toString();
@@ -448,9 +458,6 @@
 						<parameter name="portnumber" type="long" out="context.portnum"/>
 					</parameters>
 				</function>
-				<log>============================================================================================</log>
-				<log><![CDATA[context.portnum.size() size=<%=context.portnum.toString()%>]]></log>
-				<log>============================================================================================</log>
 				<variable name="detailarray" type="string"/>
 				<function>
 					<script><![CDATA[
