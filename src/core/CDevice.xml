@@ -443,7 +443,7 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>							
 				<variable name="portnum" type="string"/>
-				<function name="GetPortNumber" class="PortManager">
+				<function name="GetPortNumberSize" class="PortManager">
 					<parameters>
 						<parameter name="portnumber" type="string" out="context.portnum"/>
 					</parameters>

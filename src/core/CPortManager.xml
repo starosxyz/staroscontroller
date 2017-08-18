@@ -82,12 +82,7 @@
 			<log><![CDATA[ForDeviceDetailReqJson outdetail=<%=context.outdetail.toString()%>]]></log>
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
-			<function name="GetPortNumber">
-				<parameters>
-					<parameter name="portnumber" type="string"/>
-				</parameters>
-				<set name="portnumber" value="thisclass.m_portno.toString()"/>
-			</function>
+			
 		</public>
 	</class>
 	<class name="CPortManager">
@@ -165,6 +160,14 @@
 					context.outjson.setValue(strjson);
 				]]></script>
 			</function>
+			
+			<function name="GetPortNumberSize">
+				<parameters>
+					<parameter name="portnumber" type="string"/>
+				</parameters>										
+				<set name="portnumber" value="thisclass.portContainer.size()"/>										
+			</function>
+			
 		</public>
 	</class>
 </starosxml>
