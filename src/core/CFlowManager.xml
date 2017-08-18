@@ -14,6 +14,7 @@
 				5)return the resource id
 			-->
 			<function name="InstallFlowTableRequest">
+				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CFlowManager InstallFlowTableRequest %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 					<parameter name="strjson" type="string"/>
@@ -40,6 +41,9 @@
 					</parameters>
 				</function>
 				<function name="Send_OFPT13_FLOW_MOD">
+				
+				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CFlowManager InstallFlowTableRequest Send_OFPT13_FLOW_MOD%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
+				
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
@@ -56,6 +60,9 @@
 				5)Delete the flow from flowcontainer
 			-->
 			<function name="UnInstallFlowTableRequest">
+				
+				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CFlowManager UnInstallFlowTableRequest%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
+				
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 					<parameter name="resourceid" type="string"/>
@@ -104,6 +111,9 @@
 					</parameters>
 				</function>
 				<function name="Send_OFPT13_FLOW_MOD">
+					
+				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% CFlowManager UnInstallFlowTableRequest Send_OFPT13_FLOW_MOD%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
+				
 					<parameters>
 						<parameter name="datapathid" type="string" in="context.datapathid"/>
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
