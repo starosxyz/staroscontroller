@@ -59,7 +59,7 @@
 					<parameter name="advertised" type="string"/>			
 					<parameter name="portno" type="string"/>
 					<parameter name="config" type="string"/>			
-					<parameter name="curr" type="string"/
+					<parameter name="curr" type="string"/>
 					
 					
 					
