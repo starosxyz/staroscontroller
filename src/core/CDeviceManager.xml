@@ -484,6 +484,7 @@
 						</function>
 					</then>
 				</if>
+			</function>
 		</public>
 	</class>
 </starosxml>
