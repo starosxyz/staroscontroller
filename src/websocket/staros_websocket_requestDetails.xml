@@ -27,7 +27,7 @@
 				<parameter name="deviceobject" type="hashmap" in="context.switchdevice"/>	
 				<parameter name="portobject" type="hashmap" in="context.switchport"/-->		
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="datapathid" type="hashmap" in="context.datapathid.toString()"/>	
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>	
 			</parameters>
 		</function>
 	</function>
