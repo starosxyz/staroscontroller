@@ -9,6 +9,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CWebSocketManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CClusterManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDeviceManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDevice.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<variable name="FlowManager" type="class" global="true"/>
