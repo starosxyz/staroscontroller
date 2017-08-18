@@ -25,12 +25,15 @@
 		<log>InitGlobalResource</log>
 		<new name="ApplicationManager" class="CApplicationManager"/>
 		<new name="FlowManager" class="CFlowManager"/>
-		<!--qiulei 20170811-->
-		<new name="ClusterManager" class="CClusterManager"/>
-		<new name="DeviceManager" class="CDeviceManager"/>
 		<!--yijian 20170814-->
 		<new name="MeterManager" class="CMeterManager"/>
 		<new name="GroupManager" class="CGroupManager"/>
+		
+		
+		<!--qiulei 20170811-->
+		<new name="ClusterManager" class="CClusterManager"/>
+		<new name="DeviceManager" class="CDeviceManager"/>
+		
 		<new name="HostManager" class="CHostManager"/>
 		<new name="WebSocketManager" class="CWebSocketManager"/>
 		<new name="gInstanceManager" class="CInstanceManager"/>
