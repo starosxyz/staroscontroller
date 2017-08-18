@@ -162,7 +162,7 @@
 			
 			<function name="GetPortNumberSize">
 				<parameters>
-					<parameter name="portnumber" type="string"/>
+					<parameter name="portnumber" type="long"/>
 				</parameters>										
 				<log>============================================================================================</log>
 				<log><![CDATA[context.portContainer.size() size=<%=context.portContainer.size()%>]]></log>

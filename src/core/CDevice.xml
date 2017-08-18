@@ -442,10 +442,10 @@
 					
 					<parameter name="transportid" type="string"/>
 				</parameters>							
-				<variable name="portnum" type="string"/>
-				<function name="GetPortNumberSize" class="PortManager">
+				<variable name="portnum" type="long"/>
+				<function name="GetPortNumberSize" class="thiclass.m_ports">
 					<parameters>
-						<parameter name="portnumber" type="string" out="context.portnum"/>
+						<parameter name="portnumber" type="long" out="context.portnum"/>
 					</parameters>
 				</function>
 				<log>============================================================================================</log>
@@ -479,7 +479,7 @@
 							twoarray['-'] = "";
 							twoarray['Latitude'] = null;
 							twoarray['Longitude'] = null;
-							twoarray['Ports'] = context.portnum.toString();
+							twoarray['Ports'] = context.portnum.toLong();
 							twoarray['Flows'] = 4;
 							twoarray['Tunnels'] = 0;
 						
