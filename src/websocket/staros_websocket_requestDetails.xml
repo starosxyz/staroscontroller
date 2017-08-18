@@ -101,6 +101,6 @@
 		</function>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="detailarray"/>
-		</websocket-->
-	</function>
+		</websocket>
+	</function-->
 </starosxml>
