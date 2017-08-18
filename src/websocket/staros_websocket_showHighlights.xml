@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDeviceManager.xml"/>
 	<function name="HandleShowHighlights">
 		<variable name="trafficType" type="string"/>
 		<script><![CDATA[
@@ -14,9 +13,6 @@
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 				<parameter name="trafficType" type="string" in="context.trafficType.toString()"/>
 			</parameters>
-			<log><![CDATA[sendhighlights!!!!!!!!!!!!!!!!!!! trafficType= <%=context.trafficType.toString()%>]]></log>
-			<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
 		</function>	
 	</function>
-	
 </starosxml>
