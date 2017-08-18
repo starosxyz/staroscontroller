@@ -509,6 +509,7 @@
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 					<jsonsrc src="detailarray"/>
 				</websocket>
+			</function>
 		</public>
 	</class>
 </starosxml>
