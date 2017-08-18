@@ -97,7 +97,7 @@
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
-				<function name="GetTransportIdFromDevice"class="DeviceManager">
+				<function name="GetTransportIdFromDevice" class="DeviceManager">
 					<parameters>
 						<parameter name="datapathid" type="string" in="context.datapathid"/>
 						<parameter name="transportid" type="string" out="context.transportid"/>
