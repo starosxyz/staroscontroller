@@ -530,12 +530,10 @@
 			
 			<!--hupeng 20170818-->
 			
-				<function name="sendhighlights">
-				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
-				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
-				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
+			<function name="sendhighlights">
 				<parameters>
 					<parameter name="transportid" type="string"/>
+					<parameter name="trafficType" type="string"/>
 				</parameters>
 				<variable name="binvalidlink" type="boolean" value="false"/>
 				<variable name="srcdevicedpid" type="string"/>
@@ -545,6 +543,7 @@
 				<container name="linklist" type="list" valuetype="string"/>
 				<variable name="srcdevice" type="class"/>
 				<variable name="dstdevice" type="class"/>
+				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
 				<function>					
 					<for var="i" from="0" to="context.deviceContainer.size()-1">			
 						<function>
@@ -567,23 +566,19 @@
 											<function>
 												<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>									
 												<script><![CDATA[
-												if (srcdevice != dstdevice)
-												{
 														if (context.strlink.toString().length>0)
 														{
 															var info = JSON.parse(context.strlink.toString());
 															if (info.paths.length == 1)
 															{
 																context.binvalidlink.setValue("true");										
-																if ((context.trafficType.toString()).equals("portStatsPktSec"))
+																if (context.trafficType.toString()=="portStatsPktSec")
 																{
-																	var array = new Object();
 																	var onearray = new Object();
-																	onearray.id = "of:" + context.srcdevicedpid.toString()  + "/" + info.paths[0].src.port +"-of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].src.port;
+																	onearray.id = "of:" + context.srcdevicedpid.toString()  + "/" + info.paths[0].src.port +"-of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].dst.port;
 																	onearray.label = "4pps";
-																	onearray.css = "secondary port-traffic-green";
-																	array.push(onearray);	
-																	var strjson=JSON.stringify(array);
+																	onearray.css = "secondary port-traffic-green";	
+																	var strjson=JSON.stringify(onearray);
 																	context.linklist.addValue(strjson);
 																}
 																
@@ -597,7 +592,6 @@
 														{
 															context.binvalidlink.setValue('false');
 														}
-												}
 												
 												]]></script>
 												
@@ -621,10 +615,8 @@
 						json['event'] = "showHighlights";							
 						var payload = new Object();
 						var devices = new Array();	
-						devices.push()
 						payload['devices'] = devices;	
 						var hosts = new Array();
-						hosts.push();
 						payload['hosts'] = hosts;
 						payload['links'] = myArray;						
 						json['payload'] = payload;				
@@ -635,11 +627,11 @@
 						
 					]]></script>
 				</function>
-						<function>
+					<function>
 							<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 								<jsonsrc src="linkarray"/>
 							</websocket>
-						</function>
+					</function>
 					
 			</function>
 			
