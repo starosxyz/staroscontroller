@@ -59,10 +59,13 @@
 					<parameter name="advertised" type="string"/>			
 					<parameter name="portno" type="string"/>
 					<parameter name="config" type="string"/>			
-					<parameter name="curr" type="string"/>
+					<parameter name="curr" type="string"/
+					
+					
+					
 					<parameter name="currspeed" type="string"/>	
 					<parameter name="hwaddr" type="string"/>
-					<parameter name="maxspeed" type="string"/>	
+					<parameter name="maxspeed" type="string"/>
 					<parameter name="name" type="string"/>	
 					<parameter name="peer" type="string"/>
 					<parameter name="state" type="string"/>	
@@ -434,6 +437,78 @@
 					context.outjson.setValue(strjson);
 				]]></script>
 			</function>
+			<function name="SendDetails">
+				<parameters>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="transportid" type="string"/>
+				</parameters>							
+				<variable name="portnum" type="string"/>
+				<function name="GetPortNumber" class="PortManager">
+					<parameters>
+						<parameter name="portnumber" type="string" out="context.portnum"/>
+					</parameters>
+				</function>
+				<variable name="detailarray" type="string"/>
+				<function>
+					<script><![CDATA[
+						var oneArray = new Array();			
+							oneArray.push("URI");
+							oneArray.push("Vendor");
+							oneArray.push("H/W Version");
+							oneArray.push("S/W Version");
+							oneArray.push("Serial #");
+							oneArray.push("Protocol");
+							oneArray.push("-");
+							oneArray.push("Latitude");
+							oneArray.push("Longitude");
+							oneArray.push("-");
+							oneArray.push("Ports");
+							oneArray.push("Flows");
+							oneArray.push("Tunnels");
+						
+						var twoarray = new Object();				
+							twoarray['URI'] = "of:" + thisclass.m_datapathid.toString();
+							twoarray['Vendor'] = thisclass.m_mfrdesc.toString();
+							twoarray['H/W Version'] = thisclass.m_hwdesc.toString();
+							twoarray['S/W Version'] = thisclass.m_swdesc.toString();
+							twoarray['Serial #'] = thisclass.m_serialnum.toString();
+							twoarray['Protocol'] = "OF_13";
+							twoarray['-'] = "";
+							twoarray['Latitude'] = null;
+							twoarray['Longitude'] = null;
+							twoarray['Ports'] = context.portnum.toString();
+							twoarray['Flows'] = 4;
+							twoarray['Tunnels'] = 0;
+						
+						var threeArray = new Array();
+							threeArray.push("showDeviceView");
+							threeArray.push("showFlowView");
+							threeArray.push("showPortView");
+							threeArray.push("showGroupView");
+							threeArray.push("showMeterView");
+							threeArray.push("showDeviceFlows");
+							threeArray.push("showRelatedTraffic");
+							
+						var payload = new Object();
+							payload['title'] = "of:" + thisclass.m_datapathid.toString();
+							payload['type'] = "switch";
+							payload['id'] = "of:" + thisclass.m_datapathid.toString();
+							payload['propOrder'] = oneArray;
+							payload['props'] = twoarray;
+							payload['buttons'] = threeArray;
+						
+						var json = new Object();						
+							json['event'] = "showDetails";
+							json['payload'] = payload;
+							
+						var strjson=JSON.stringify(json);
+						context.detailarray.setValue(strjson);
+					
+					]]></script>
+				</function>
+				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+					<jsonsrc src="detailarray"/>
+				</websocket>
 		</public>
 	</class>
 </starosxml>
