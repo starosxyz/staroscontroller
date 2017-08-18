@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDeviceManager.xml"/>
 <!--
 	Author:
 			YY
@@ -9,84 +10,10 @@
 			Nanjing StarOS Inc. All rights reserved.
 -->
 	<function name="HandleLinkDataReq">
-		<function name="SendLinks"/>		
-	</function>
-	
-	<function name="SendLinks">
-		<variable name="binvalidlink" type="boolean" value="false"/>
-		
-		<variable name="linkarray" type="string"/>
-		<function>
-			<script><![CDATA[				
-				var json = new Object();
-				var myArray=new Array();
-				for (var i = 0; i < context.deviceContainer.size(); i++)
-				{
-					var srcdevice = context.deviceContainer.getValueByIndex(i);
-					if (srcdevice != null)
-					{
-						for (var j = 0; j < context.deviceContainer.size(); j++)
-						{
-							var dstdevice = context.deviceContainer.getValueByIndex(j);
-							if (srcdevice != dstdevice)
-							{
-
-								var strlink = context.openflowserverobj.getShortestPath(srcdevice.getValue('datapathid').toString(), dstdevice.getValue('datapathid'));
-								context.print("srcdevice.datapathid =" + srcdevice.getValue('datapathid').toString());
-								context.print("dstdevice.datapathid =" + dstdevice.getValue('datapathid').toString());
-								if (strlink.length > 0)
-								{
-									var info = JSON.parse(strlink);
-									if (info.paths.length == 1)
-									{
-										context.binvalidlink.setValue(true);										
-										var dstport = info.paths[0].dst.port;				
-										var srcport = info.paths[0].src.port;
-										var onearray = new Object();
-										onearray.one = "of:" + srcdevice.getValue('datapathid').toString() + '/' + srcport;
-										onearray.two = "of:" + dstdevice.getValue('datapathid').toString() + '/' + dstport;
-										onearray.type = "Direct";
-										onearray._iconid_state = "active";
-										onearray.direction = "A &harr; B";
-										onearray.durable = "false";
-										myArray.push(onearray);																
-									}
-									else 
-									{
-										context.binvalidlink.setValue(false);
-									}
-								}
-								else 
-								{
-									context.binvalidlink.setValue(false);
-								}
-							}
-						}
-					}					
-				}				
-				json['event'] = "linkDataResponse";							
-				var payload = new Object();
-				payload['links'] = myArray;				
-				var annots_arr = new Array();
-				var paytwoarray = new Object();
-				paytwoarray.no_rows_msg = "No links found";
-				annots_arr.push(paytwoarray);
-				payload['annots'] = annots_arr;	
-				json['payload'] = payload;				
-				var strjson=JSON.stringify(json);				
-				context.linkarray.setValue(strjson);				
-				context.print(strjson);
-				context.binvalidlink.setValue(true);
-			]]></script>
+		<function name="SendLinks" class="DeviceManager">	
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				</parameters>
 		</function>
-		<if cond="context.binvalidlink.toBoolean()==true">
-			<then>
-				<function>
-					<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
-						<jsonsrc src="linkarray"/>
-					</websocket>
-				</function>
-			</then>
-		</if>
 	</function>
 </starosxml>
