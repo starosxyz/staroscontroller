@@ -443,7 +443,7 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>							
 				<variable name="portnum" type="long"/>
-				<function name="GetPortNumberSize" class="thiclass.m_ports">
+				<function name="GetPortNumberSize" class="thisclass.m_ports">
 					<parameters>
 						<parameter name="portnumber" type="long" out="context.portnum"/>
 					</parameters>
