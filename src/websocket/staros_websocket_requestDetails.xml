@@ -31,13 +31,13 @@
 		</function>
 	</function>
 	
-	<function name="SendDetails">
+	<!--function name="SendDetails">
 		<parameters>
 			<parameter name="transportid" type="string"/>
-			<!--parameter name="deviceobject" type="hashmap"/>	
-			<parameter name="portobject" type="hashmap"/-->				
+			<parameter name="deviceobject" type="hashmap"/>	
+			<parameter name="portobject" type="hashmap"/>				
 		</parameters>
-		<!--variable name="detailarray" type="string"/>
+		<variable name="detailarray" type="string"/>
 		<function>
 			<script><![CDATA[
 			var json = new Object();						
