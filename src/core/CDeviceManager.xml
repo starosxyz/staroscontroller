@@ -111,17 +111,28 @@
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
 				<variable name="devicetransportid" type="string"/>
-				<if cond="context.deviceContainer.hasValue(context.datapathid.toString()) ==true">
-					<then>
-						<set name="deviceinfo" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-						<function name="GetTransportId" class="deviceinfo">
+				<variable name="devicedatapathid" type="string"/>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">
+					<function>
+						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="GetDatapathId" class="deviceinfo">
 							<parameters>
-								<parameter name="outtransport" type="string" out="devicetransportid"/>
+								<parameter name="returndatapathid" type="string" out="devicedatapathid"/>
 							</parameters>
 						</function>
-					</then>
-				</if>
-				<set name="transportid" value="context.devicetransportid.toString()"/>
+						<if cond="context.devicedatapathid.toString() == context.datapathid.toString()">
+							<then>
+								<function name="GetTransportId" class="deviceinfo">
+									<parameters>
+										<parameter name="returndatapathid" type="string" out="devicetransportid"/>
+									</parameters>
+								</function>
+								<set name="transportid" value="context.devicetransportid.toString()"/>
+								<exit/>
+							</then>
+						</if>
+					</function>
+				</for>
 			</function>
 			<function name="removeDeviceByTransportId">
 				<parameters>
@@ -512,6 +523,127 @@
 				</if>
 			</function>
 			<!--Send Request Device Detail information -->
+			
+			
+			
+			
+			
+			<!--hupeng 20170818-->
+			
+				<function name="sendhighlights">
+				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<variable name="binvalidlink" type="boolean" value="false"/>
+				<variable name="srcdevicedpid" type="string"/>
+				<variable name="dstdevicedpid" type="string"/>
+				<variable name="strlink" type="string" value=""/>	
+				<variable name="linkarray" type="string"/>				
+				<container name="linklist" type="list" valuetype="string"/>
+				<variable name="srcdevice" type="class"/>
+				<variable name="dstdevice" type="class"/>
+				<function>					
+					<for var="i" from="0" to="context.deviceContainer.size()-1">			
+						<function>
+							<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+							<function name="GetDatapathId" class="srcdevice">
+								<parameters>
+									<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
+								</parameters>
+							</function>
+							<function>
+								<for var="j" from="0" to="context.deviceContainer.size()-1">
+									<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
+									<function name="GetDatapathId" class="dstdevice">
+										<parameters>
+											<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
+										</parameters>
+									</function>
+									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
+										<then>
+											<function>
+												<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>									
+												<script><![CDATA[
+												if (srcdevice != dstdevice)
+												{
+														if (context.strlink.toString().length>0)
+														{
+															var info = JSON.parse(context.strlink.toString());
+															if (info.paths.length == 1)
+															{
+																context.binvalidlink.setValue("true");										
+																if ((context.trafficType.toString()).equals("portStatsPktSec"))
+																{
+																	var array = new Object();
+																	var onearray = new Object();
+																	onearray.id = "of:" + context.srcdevicedpid.toString()  + "/" + info.paths[0].src.port +"-of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].src.port;
+																	onearray.label = "4pps";
+																	onearray.css = "secondary port-traffic-green";
+																	array.push(onearray);	
+																	var strjson=JSON.stringify(array);
+																	context.linklist.addValue(strjson);
+																}
+																
+															}
+															else 
+															{	
+																context.binvalidlink.setValue('false');
+															}
+														}
+														else 
+														{
+															context.binvalidlink.setValue('false');
+														}
+												}
+												
+												]]></script>
+												
+											</function>
+										</then>
+									</if>
+								</for>
+							</function>
+						</function>
+					</for>
+					<log><![CDATA[linklist size=<%=context.linklist.size()%>]]></log>
+					<script><![CDATA[				
+						var json = new Object();
+						var myArray=new Array();
+						for(var i=0;i<context.linklist.size();i++)
+						{
+							var onestrjson = context.linklist.getValueByIndex(i);
+							var jsoninfo = JSON.parse(onestrjson);
+							myArray.push(jsoninfo);
+						}
+						json['event'] = "showHighlights";							
+						var payload = new Object();
+						var devices = new Array();	
+						devices.push()
+						payload['devices'] = devices;	
+						var hosts = new Array();
+						hosts.push();
+						payload['hosts'] = hosts;
+						payload['links'] = myArray;						
+						json['payload'] = payload;				
+						var strjson=JSON.stringify(json);				
+						context.linkarray.setValue(strjson);				
+						context.print(strjson);
+						
+						
+					]]></script>
+				</function>
+						<function>
+							<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+								<jsonsrc src="linkarray"/>
+							</websocket>
+						</function>
+					
+			</function>
+			
+
 			<function name="SendDetails">	
 				<parameters>	
 					<parameter name="transportid" type="string"/>
