@@ -13,9 +13,6 @@
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 				<parameter name="trafficType" type="string" in="context.trafficType.toString()"/>
 			</parameters>
-			<log><![CDATA[sendhighlights!!!!!!!!!!!!!!!!!!! trafficType= <%=context.trafficType.toString()%>]]></log>
-			<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
 		</function>	
 	</function>
-	
 </starosxml>
