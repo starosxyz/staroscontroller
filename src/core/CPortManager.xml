@@ -150,8 +150,7 @@
 					var portsArray=new Array();                               
 					for(var i=0;i<context.jsonlist.size();i++)
 					{
-						//context.print(i);
-						context.print('================start===================');
+						//context.print(i);			
 						var port = context.jsonlist.getValueByIndex(i);	
 						var info = JSON.parse(port);						
 						portsArray.push(info);
@@ -165,7 +164,10 @@
 				<parameters>
 					<parameter name="portnumber" type="string"/>
 				</parameters>										
-				<set name="portnumber" value="thisclass.portContainer.size()"/>										
+				<log>============================================================================================</log>
+				<log><![CDATA[context.portContainer.size() size=<%=context.portContainer.size()%>]]></log>
+				<log>============================================================================================</log>
+				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 			
 		</public>

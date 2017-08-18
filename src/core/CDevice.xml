@@ -448,6 +448,9 @@
 						<parameter name="portnumber" type="string" out="context.portnum"/>
 					</parameters>
 				</function>
+				<log>============================================================================================</log>
+				<log><![CDATA[context.portnum.size() size=<%=context.portnum.toString()%>]]></log>
+				<log>============================================================================================</log>
 				<variable name="detailarray" type="string"/>
 				<function>
 					<script><![CDATA[
