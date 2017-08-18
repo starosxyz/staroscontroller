@@ -522,6 +522,20 @@
 					</then>
 				</if>
 			</function>
+			<!--Send Request Device Detail information -->
+			<function name="SendDetails">	
+				<parameters>	
+					<parameter name="transportid" type="string"/>
+					<parameter name="datapathid" type="string"/>	
+				</parameters>
+				<variable name="deviceobject" type="class"/>
+				<set name="deviceobject" value="thisclass.deviceContainer.getValue(context.datapathid.toString())"/>
+				<function name="SendDetails" class="deviceobject">
+					<parameters>
+						<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+					</parameters>	
+				</function>
+			</function>
 		</public>
 	</class>
 </starosxml>
