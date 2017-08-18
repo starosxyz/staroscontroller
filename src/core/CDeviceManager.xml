@@ -447,8 +447,8 @@
 															if (info.paths.length == 1)
 															{
 																var array = new Object();
-																array.one = "of:" + context.srcdevicedpid.toString() + "/" + srcport;
-																array.two = "of:" + context.dstdevicedpid.toString() + "/" + dstport;
+																array.one = "of:" + context.srcdevicedpid.toString() + "/" + info.paths[0].src.port;
+																array.two = "of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].dst.port;
 																array.type = "Direct";
 																array._iconid_state = "active";
 																array.direction = "A &harr; B";
