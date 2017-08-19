@@ -36,7 +36,7 @@
 			<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  InstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
-						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 					</parameters>
 				</function>
 				<set name="resourceid" value="context.sresourceid.toString()"/>
