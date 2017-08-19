@@ -110,7 +110,7 @@
 						<parameter name="datapathid" type="string"/>
 				</parameters>
 				<variable name="modstrjson" type="string"/>
-				<variable name="resourceid" type="string" value=""/>
+				<variable name="returnresourceid" type="string"/>
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
@@ -139,10 +139,10 @@
 					<parameters>
 						<parameter name="datapathid" type="string" in="context.datapathid"/>
 						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="resourceid" type="string" out="context.resourceid"/>
+						<parameter name="resourceid" type="string" out="returnresourceid"/>
 					</parameters>
 				</function>
-				<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>
+				<log><![CDATA[InstallFlowTableRequest returnresourceid=<%=context.returnresourceid.toString()%>]]></log>
 				
 			</function>
 			<function name="testremovegroup">			
