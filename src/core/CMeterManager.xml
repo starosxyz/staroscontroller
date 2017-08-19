@@ -84,7 +84,7 @@
 					<jsonbody><![CDATA[ 
 						{
 							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
-							"command":"1",
+							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
 							"flag":"1",
 							"meterid":"1",
 							"meterbandlist":[
