@@ -109,29 +109,20 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
-				<variable name="devicetransportid" type="string"/>
 				<variable name="devicedatapathid" type="string"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
-					<function>
-						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="GetDatapathId" class="deviceinfo">
-							<parameters>
-								<parameter name="returndatapathid" type="string" out="devicedatapathid"/>
-							</parameters>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<function>
+							<set name="deviceinfo" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+							<function name="GetTransportId" class="deviceinfo">
+								<parameters>
+									<parameter name="outtransport" type="string" out="devicedatapathid"/>
+								</parameters>
+							</function>
+							<set name="transportid" value="context.devicedatapathid.toString()"/>
 						</function>
-						<if cond="context.devicedatapathid.toString() == context.datapathid.toString()">
-							<then>
-								<function name="GetTransportId" class="deviceinfo">
-									<parameters>
-										<parameter name="returndatapathid" type="string" out="devicetransportid"/>
-									</parameters>
-								</function>
-								<set name="transportid" value="context.devicetransportid.toString()"/>
-								<exit/>
-							</then>
-						</if>
-					</function>
-				</for>
+					</then>
+				</if>
 			</function>
 			<function name="removeDeviceByTransportId">
 				<parameters>
