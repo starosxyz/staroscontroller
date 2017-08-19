@@ -332,6 +332,28 @@
 		</openflow>
 	</function>
 	<!--29-15 send GROUP_MOD message, qiulei, 2017/6/19 -->
+	<!--
+		{
+			"xid":"1",
+			"command":"0",
+			"grouptype":"1",
+			"groupid":"1",
+			"bucketlist":[
+				{
+					"weight":"1",
+					"watchport":"1000",
+					"watchgroup":"1000",
+					"actions":[
+						{
+							"type":"0",
+							"outport":"0xfffffffd",
+							"maxlen":"0xffff"
+						}
+					]
+				}
+			]
+		}
+	-->
 	<function name="Send_OFPT13_GROUP_MOD">
 		<parameters>
 			<parameter name="transportid" type="string"/>
@@ -514,14 +536,27 @@
 		</openflow>
 	</function>
 	<!--29-29 send METER_MOD message, qiulei, 2017/6/19 -->
+	<!--
+		{
+			"command":"1",
+			"flag":"1",
+			"meterid":"1",
+			"meterbandlist":[
+				{
+					"bandtype":"1",
+					"rate":"1000",
+					"burstsize":"1000"
+				}
+			]
+		}	
+	-->
 	<function name="Send_OFPT13_METER_MOD">
 		<parameters>
 			<parameter name="transportid" type="string"/>
 			<parameter name="strjson" type="string"/>
 		</parameters>
 		<variable name="openflowparams" type="params"/>
-        <log dest="stdout">Send_</log>
-		<log><![CDATA[meterbandlist=<%=context.meterbandlist.toJson()%>]]></log>
+        <log dest="stdout">Send_OFPT13_METER_MOD</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
 		<openflow name="openflowserverobj" method="openflow.OFPT13_METER_MOD" params="context.openflowparams">
 			<jsonsrc src="strjson"/>

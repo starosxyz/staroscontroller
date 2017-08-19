@@ -1,45 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<variable name="testresourceid" type="string"/>
 	<class name="CGroupManager">
 		<private>
-			<container name="groupContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+			<container name="groupContainer" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
 		<public>
 			<function name="InstallGroupRequest">
 				<parameters>
-					<parameter name="datapathid" type="string"/>
-					<parameter name="strjson" type="string"/>
-					<parameter name="resourceid" type="string"/>
+					<parameter name="in_datapathid" type="string"/>
+					<parameter name="in_strjson" type="string"/>
+					<parameter name="in_resourceid" type="string"/>
 				</parameters>
 				<container name="switchgroup" type="hashmap" keytype="string" valuetype="string"/>
 				<variable name="sresourceid" type="string"/>
 				<variable name="transportid" type="string"/>
 				<set name="sresourceid" value="context.allocResourceId()"/>
 				<!--qiulei modify 20170807-->
-				<if cond="context.merterContainer.hasValue(context.datapathid.toString())==true">
-					<then>
-						<lookup name="merterContainer" key="context.datapathid.toString()" output="context.switchgroup"/>
-					</then>
-					<else>
-						<insert name="merterContainer" key="context.datapathid.toString()" value="context.switchgroup"/>
-					</else>
-				</if>
-				<insert name="switchgroup" key="context.sresourceid.toString()" value="context.strjson.toString()"/>
+				<insert name="groupContainer" key="context.sresourceid.toString()" value="context.in_strjson.toString()"/>
 				<function name="GetTransportIdFromDevice" class="DeviceManager">
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid"/>
+						<parameter name="datapathid" type="string" in="context.in_datapathid"/>
 						<parameter name="transportid" type="string" out="context.transportid"/>
 					</parameters>
 				</function>
 				<function name="Send_OFPT13_GROUP_MOD">
-					
-			<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  InstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
+					<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  InstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
-						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+						<parameter name="strjson" type="string" in="context.in_strjson.toString()"/>
 					</parameters>
 				</function>
-				<set name="resourceid" value="context.sresourceid.toString()"/>
+				<set name="in_resourceid" value="context.sresourceid.toString()"/>
 			</function>
 			<function name="UnInstallGroupRequest">
 				<parameters>
@@ -47,39 +39,25 @@
 					<parameter name="resourceid" type="string"/>
 				</parameters>
 				<variable name="transportid" type="string"/>
-				<container name="switchgroup" type="hashmap" keytype="string" valuetype="string"/>
-				<variable name="flowmodjson" type="string"/>
+				<variable name="jsongroup" type="string"/>
 				<variable name="sendflowmodjson" type="string"/>
-				<if cond="context.merterContainer.hasValue(context.datapathid.toString()) ==true">
+				<if cond="context.groupContainer.hasValue(context.resourceid.toString()) ==true">
 					<then>
 						<function>
-							<lookup name="merterContainer" key="context.datapathid.toString()" output="context.switchgroup"/>
+							<lookup name="groupContainer" key="context.resourceid.toString()" output="context.jsongroup"/>
 						</function>
 					</then>
 					<else>
 						<function>
-							<log>UnInstallMeterRequest exit</log>
+							<log>UnInstallGroupRequest exit</log>
 							<exit/>
 						</function>
 					</else>
 				</if>
-				<if cond="context.switchgroup.hasValue(context.resourceid.toString()) == true">
-					<then>
-						<function>
-							<lookup name="switchgroup" key="context.resourceid.toString()" output="context.flowmodjson"/>
-						</function>
-					</then>
-					<else>
-						<function>
-							<log>UnInstallMeterRequest exit2</log>
-							<exit/>
-						</function>
-					</else>
-				</if>
-				<log><![CDATA[flowmodjson=<%=context.flowmodjson.toString()%>]]></log>
+				<log><![CDATA[jsongroup=<%=context.jsongroup.toString()%>]]></log>
 				<script><![CDATA[
-						var info = JSON.parse(context.flowmodjson.toString());
-						info.command='3';
+						var info = JSON.parse(context.jsongroup.toString());
+						info.command='2';
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
@@ -89,15 +67,14 @@
 						<parameter name="transportid" type="string" out="context.transportid"/>
 					</parameters>
 				</function>
-				<function name="Send_OFPT13_METER_MOD">
-				
-			<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  UnInstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
+				<function name="Send_OFPT13_GROUP_MOD">
+					<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  UnInstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid"/>
+						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
 					</parameters>
 				</function>
-				<remove name="switchgroup" key="context.resourceid.toString()"/>
+				<remove name="groupContainer" key="context.resourceid.toString()"/>
 			</function>
 			<!--
 				OFPGT_ALL = 0, /* All (multicast/broadcast) group. */
@@ -115,7 +92,7 @@
 					<jsonbody><![CDATA[ 
 						{
 							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
-							"command":"1",
+							"command":"0",
 							"grouptype":"1",
 							"groupid":"1",
 							"bucketlist":[
@@ -137,24 +114,25 @@
 				</reference>
 				<function name="InstallGroupRequest">
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid"/>
-						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="resourceid" type="string" out="returnresourceid"/>
+						<parameter name="in_datapathid" type="string" in="context.datapathid.toString()"/>
+						<parameter name="in_strjson" type="string" in="context.modstrjson.toString()"/>
+						<parameter name="in_resourceid" type="string" out="context.returnresourceid"/>
 					</parameters>
 				</function>
 				<log><![CDATA[testaddgroup returnresourceid=<%=context.returnresourceid.toString()%>]]></log>
-				
+				<set name="testresourceid" value="context.returnresourceid.toString()"/>
 			</function>
 			<function name="testremovegroup">			
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				<function name="InstallGroupRequest">
+				<function name="UnInstallGroupRequest">
 					<parameters>
-						<parameter name="resourceid" type="string" out="context.resourceid"/>
+						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+						<parameter name="resourceid" type="string" in="context.testresourceid.toString()"/>
 					</parameters>
 				</function>
-				<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>
+				<log><![CDATA[testremovegroup testresourceid=<%=context.testresourceid.toString()%>]]></log>
 				
 			</function>
 		</public>

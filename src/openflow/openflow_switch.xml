@@ -143,8 +143,18 @@
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
 		</function>
-	
-		
+		<function name="testaddmeter" class="MeterManager">	
+			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 pm  testaddmeter@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->		
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function>
+		<function name="testremovemeter" class="MeterManager">	
+			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 pm  testremovemeter@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->		
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function>
 		
 	</function>
 	
