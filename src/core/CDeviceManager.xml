@@ -41,7 +41,7 @@
 						<parameter name="protocol" type="string" in="context.protocol.toString()"/>	
 					</parameters>
 				</new>
-				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject.toString()"/>
+				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
 				<variable name="onlinejson" type="string"/>
 				<function name="ToOnlineJson" class="deviceobject">
 					<parameters>
