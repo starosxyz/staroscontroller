@@ -142,7 +142,7 @@
 						<parameter name="resourceid" type="string" out="returnresourceid"/>
 					</parameters>
 				</function>
-				<log><![CDATA[InstallFlowTableRequest returnresourceid=<%=context.returnresourceid.toString()%>]]></log>
+				<log><![CDATA[testaddgroup returnresourceid=<%=context.returnresourceid.toString()%>]]></log>
 				
 			</function>
 			<function name="testremovegroup">			
