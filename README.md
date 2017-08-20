@@ -1,10 +1,9 @@
 StarOS-Controller
 ====================================
 
-### 基于ONOS的开源控制器
-对ONOS做了优化。
+### 基于StarLang的开源控制器, API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写，StarLang是C++驱动的XML/Javascripts解析器。性能优于Java
 
-### 特点
+### 控制器特点
 
 * XML和javascript编写控制器APP.
 * 支持集群.
@@ -13,6 +12,9 @@ StarOS-Controller
 * 支持OpenFlow1.3协议.
 * 支持NETCONF over SSH ([RFC 4742](https://tools.ietf.org/html/rfc4742), [RFC 6242](https://tools.ietf.org/html/rfc6242)).
 * 支持NETCONF Call Home ([RFC 8071](https://tools.ietf.org/html/rfc8071)).
+* 支持YANG 1.0 ([RFC 6020](https://tools.ietf.org/html/rfc6020))和YANG 1.1 ([RFC 7950](https://tools.ietf.org/html/rfc7950))建模语言.
+
+### StarLang SDN编程语言
 * 支持面向对象的编程方式，类，数据封装，继承.
 * 支持运算位运算<<,>>,+,-,*,%,/,~,^,&.
 * 支持关键字for,while,if,function,openflow,netconf, restful等流程控制语法.
