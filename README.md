@@ -1,7 +1,7 @@
 StarOS-Controller
 ====================================
 
-### 基于StarLang的开源控制器, API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写，StarLang是C++驱动的XML/Javascripts解析器。性能优于Java
+### 基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写.
 
 ### 控制器特点
 
