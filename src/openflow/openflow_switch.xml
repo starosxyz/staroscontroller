@@ -131,7 +131,7 @@
 		<!--qiulei 20170818 pm 发送测试报文 group-->
 		
 		<function name="testaddgroup" class="GroupManager">
-			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 testaddgrouppm@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->
+			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 testaddgroup@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->
 			<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
