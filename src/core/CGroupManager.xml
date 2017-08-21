@@ -53,7 +53,7 @@
 						</function>
 					</else>
 				</if>
-				<log><![CDATA[jsongroup=<%=context.jsongroup.toString()%>]]></log>
+				<!--log><![CDATA[jsongroup=<%=context.jsongroup.toString()%>]]></log-->
 				<script><![CDATA[
 						var info = JSON.parse(context.jsongroup.toString());
 						info.command='2';
@@ -117,7 +117,7 @@
 						<parameter name="in_resourceid" type="string" out="context.returnresourceid"/>
 					</parameters>
 				</function>
-				<log><![CDATA[testaddgroup returnresourceid=<%=context.returnresourceid.toString()%>]]></log>
+				<!--log><![CDATA[testaddgroup returnresourceid=<%=context.returnresourceid.toString()%>]]></log-->
 				<set name="testresourceid" value="context.returnresourceid.toString()"/>
 			</function>
 			<function name="testremovegroup">			

@@ -366,7 +366,7 @@
 							<for var="i" from="0" to="context.deviceportinfo.size()-1">
 								<function>
 									<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
-									<function name="addPort">
+									<function name="addPort" class="m_ports">
 										<parameters>
 											<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
 											<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>
