@@ -106,20 +106,20 @@
 			<function name="GetTransportIdFromDevice">
 				<parameters>
 					<parameter name="datapathid" type="string"/>
-					<parameter name="transportid" type="string"/>
+					<parameter name="transportidOut" type="string"/>
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
 				<variable name="devicedatapathid" type="string"/>
+				<!--qiulei 20170821 Monday am-->
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<function>
 							<set name="deviceinfo" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 							<function name="GetTransportId" class="deviceinfo">
 								<parameters>
-									<parameter name="outtransport" type="string" out="devicedatapathid"/>
+									<parameter name="outtransport" type="string" out="transportidOut"/>
 								</parameters>
 							</function>
-							<set name="transportid" value="context.devicedatapathid.toString()"/>
 						</function>
 					</then>
 				</if>
