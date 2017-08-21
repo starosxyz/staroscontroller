@@ -134,7 +134,6 @@
 			<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-				
 		</function>
 		<function name="testremovegroup" class="GroupManager">	
 			<parameters>
