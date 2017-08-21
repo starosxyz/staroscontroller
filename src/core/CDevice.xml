@@ -334,57 +334,58 @@
 					</function>
 					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
 						<function>
+							<log>Hanle OpenFlowMultiPartPortDesc Reply</log>
 							<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+							<!--parse JSONString-->
+							<script><![CDATA[							
+								var info = JSON.parse(context.replyjson.toString());
+								context.print(info.portlist.length);
+								for(var i=0;i<info.portlist.length;i++)
+								{
+									//yijian add for null var
+									var ofport = context.createContainer("hashmap","string","string");
+									if (ofport != null)
+									{
+										ofport.addValue('advertised', info.portlist[i].advertised);
+										ofport.addValue('portno', info.portlist[i].portno);
+										ofport.addValue('config', info.portlist[i].config);
+										ofport.addValue('curr', info.portlist[i].curr);
+										ofport.addValue('currspeed', info.portlist[i].currspeed);
+										ofport.addValue('hwaddr', info.portlist[i].hwaddr);
+										ofport.addValue('maxspeed', info.portlist[i].maxspeed);
+										ofport.addValue('name', info.portlist[i].name);
+										ofport.addValue('peer', info.portlist[i].peer);
+										ofport.addValue('state', info.portlist[i].state);
+										ofport.addValue('supported', info.portlist[i].supported);
+										context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
+									}
+								}
+							]]></script>
+
+							<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
+							<for var="i" from="0" to="context.deviceportinfo.size()-1">
+								<function>
+									<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
+									<function name="addPort">
+										<parameters>
+											<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
+											<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>
+											<parameter name="config" type="string" in="context.portinfo.getValue('config').toString()"/>			
+											<parameter name="curr" type="string" in="context.portinfo.getValue('curr').toString()"/>
+											<parameter name="currspeed" type="string" in="context.portinfo.getValue('currspeed').toString()"/>	
+											<parameter name="hwaddr" type="string" in="context.portinfo.getValue('hwaddr').toString()"/>
+											<parameter name="maxspeed" type="string" in="context.portinfo.getValue('maxspeed').toString()"/>	
+											<parameter name="name" type="string" in="context.portinfo.getValue('name').toString()"/>	
+											<parameter name="peer" type="string" in="context.portinfo.getValue('peer').toString()"/>
+											<parameter name="state" type="string" in="context.portinfo.getValue('state').toString()"/>	
+											<parameter name="supported" type="string" in="context.portinfo.getValue('supported').toString()"/>
+										</parameters>
+									</function>
+								</function>
+							</for>
 						</function>
 					</wait>
 					<log>OpenFlowMultiPartPortDescRequest end</log>
-					<!--parse JSONString-->
-					<script><![CDATA[							
-						var info = JSON.parse(context.replyjson.toString());
-						context.print(info.portlist.length);
-						for(var i=0;i<info.portlist.length;i++)
-						{
-							//yijian add for null var
-							var ofport = context.createContainer("hashmap","string","string");
-							if (ofport != null)
-							{
-								ofport.addValue('advertised', info.portlist[i].advertised);
-								ofport.addValue('portno', info.portlist[i].portno);
-								ofport.addValue('config', info.portlist[i].config);
-								ofport.addValue('curr', info.portlist[i].curr);
-								ofport.addValue('currspeed', info.portlist[i].currspeed);
-								ofport.addValue('hwaddr', info.portlist[i].hwaddr);
-								ofport.addValue('maxspeed', info.portlist[i].maxspeed);
-								ofport.addValue('name', info.portlist[i].name);
-								ofport.addValue('peer', info.portlist[i].peer);
-								ofport.addValue('state', info.portlist[i].state);
-								ofport.addValue('supported', info.portlist[i].supported);
-								context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
-							}
-						}
-					]]></script>
-
-					<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
-					<for var="i" from="0" to="context.deviceportinfo.size()-1">
-						<function>
-							<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
-							<function name="addPort">
-								<parameters>
-									<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
-									<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>
-									<parameter name="config" type="string" in="context.portinfo.getValue('config').toString()"/>			
-									<parameter name="curr" type="string" in="context.portinfo.getValue('curr').toString()"/>
-									<parameter name="currspeed" type="string" in="context.portinfo.getValue('currspeed').toString()"/>	
-									<parameter name="hwaddr" type="string" in="context.portinfo.getValue('hwaddr').toString()"/>
-									<parameter name="maxspeed" type="string" in="context.portinfo.getValue('maxspeed').toString()"/>	
-									<parameter name="name" type="string" in="context.portinfo.getValue('name').toString()"/>	
-									<parameter name="peer" type="string" in="context.portinfo.getValue('peer').toString()"/>
-									<parameter name="state" type="string" in="context.portinfo.getValue('state').toString()"/>	
-									<parameter name="supported" type="string" in="context.portinfo.getValue('supported').toString()"/>
-								</parameters>
-							</function>
-						</function>
-					</for>
 				</function>
 			</function>
 			<function name="ForDeviceDetailReqJson">
