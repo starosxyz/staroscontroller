@@ -10,7 +10,8 @@
 -->
 	<variable name="applicationmgr" reference="global.ApplicationManager"/>
 	<events>
-		<onevent event="bundleapp.startup">
+		<onevent event="bundleapp.startup">			
+			<!-- YY 2017-08-21 -->
 			<function name="AddAppEvent" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'nullapp'"/>
@@ -23,12 +24,34 @@
 					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
 					<parameter name="pathname" type="string" in="event.getParam('pathname').toString()"/>
 				</parameters>
+			</function>			
+			
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<parameter name="app_name" type="string" in="'nullapp'"/>
+					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
+				</parameters>
 			</function>
 			<log>null app startup</log>
-		</onevent>
-		<onevent event="~bundleapp.shutdown">
+		</onevent>			
 		
+		<onevent event="~bundleapp.shutdown">
+			<!-- YY 2017-08-21 -->
+			<function name="removeProcessor" class="PacketService">				
+				<parameters>
+					<parameter name="app_name" type="string" in="'nullapp'"/>									
+				</parameters>
+			</function>
 		</onevent>
+		<onevent event="PacketInEvent">
+			<!-- YY 2017-08-21 -->
+			<function>
+				<log>################################################################################</log>
+				<log><![CDATA[ eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+				<log>################################################################################</log>
+			</function>
+		</onevent>
+		
 		<onevent event="*">
 			<function>
 			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>

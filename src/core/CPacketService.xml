@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-08-21
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<class name="CPacketService">
+		<private>
+			<container name="InstanceContainer" type="hashmap" keytype="string" valuetype="string"/>
+		</private>
+	
+		<public>
+			<function name="addProcessor">				
+				<parameters>
+					<parameter name="app_name" type="string"/>
+					<parameter name="event_name" type="string"/>			
+				</parameters>
+				<variable name="eventname" type="string"/>
+				<lookup name="InstanceContainer" key="app_name" output="context.eventname"/>
+				<if cond="context.eventname == null">
+					<then>
+						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.event_name.toString()"/>
+					</then>
+				</if>
+			</function>						
+			<function name="removeProcessor">
+				<parameters>
+					<parameter name="app_name" type="string"/>
+				</parameters>
+				<remove name="InstanceContainer" key="context.app_name.toString()"/>
+			</function>
+			<function name="FindProcessorFunction">				
+				<parameters>
+					<parameter name="app_name" type="string"/>
+					<parameter name="event_name" type="string"/>
+				</parameters>
+				<set name="event_name" value="thisclass.InstanceContainer.getValue(context.app_name.toString())"/>
+			</function>			
+			<function name="ProcessPacket">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<log>====================================================================================================</log>
+				<log><![CDATA[ eventdata <%=context.strjson.toString()%>]]></log>
+				<log>====================================================================================================</log>
+				<variable name="appname" type="string"/>				
+				<for var="i" from="0" to="context.InstanceContainer.size()-1">
+					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
+					<variable name="m_bundleid" type="long"/>
+					<function name="GetBundleID" class="ApplicationManager">
+						<parameters>
+							<parameter name="appid" type="string" in="context.appname.toString()"/>
+							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
+						</parameters>
+					</function>
+					<raise name="'PacketInEvent'" sessionid="context.m_bundleid.toLong()"/>
+				</for>
+			</function>
+		</public>
+	</class>
+</starosxml>

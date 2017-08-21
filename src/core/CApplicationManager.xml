@@ -134,6 +134,13 @@
 				</reference>
 				<set name="appjson" value="context.values.toString()"/>
 			</function>
+			<function name="GetBundleID">
+				<parameters>
+					<parameter name="appid" type="string"/>
+					<parameter name="bundleid" type="long"/>
+				</parameters>
+				<set name="bundleid" value="thisclass.bundleid.toLong()"/>
+			</function>
 		</public>
 	</class>
 	<class name="CApplicationManager">
