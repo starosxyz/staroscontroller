@@ -25,7 +25,6 @@
 					</parameters>
 				</function>
 				<function name="Send_OFPT13_GROUP_MOD">
-					<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  InstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.in_strjson.toString()"/>
@@ -68,7 +67,6 @@
 					</parameters>
 				</function>
 				<function name="Send_OFPT13_GROUP_MOD">
-					<log>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@  UnInstallGroupRequest   Send_OFPT13_GROUP_MOD  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</log>
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>

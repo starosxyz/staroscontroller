@@ -131,26 +131,22 @@
 		<!--qiulei 20170818 pm 发送测试报文 group-->
 		
 		<function name="testaddgroup" class="GroupManager">
-			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 testaddgroup@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->
 			<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
 				
 		</function>
 		<function name="testremovegroup" class="GroupManager">	
-			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 pm  testremovegroup@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->		
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
 		</function>
 		<function name="testaddmeter" class="MeterManager">	
-			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 pm  testaddmeter@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->		
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
 		</function>
 		<function name="testremovemeter" class="MeterManager">	
-			<!--@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ qiulei 2017.08.18 pm  testremovemeter@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-->		
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
