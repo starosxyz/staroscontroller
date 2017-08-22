@@ -348,6 +348,11 @@
 			<log dest="stdout">Get a PacketIn Message</log>
 			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
 			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<function name="ProcessPacket" class="PacketService">
+				<parameters>
+					<parameter name="strjson" type="string" in="event.getParam('eventdata').toString()"/>
+				</parameters>
+			</function>
 		  </function>
 		</onevent>
 		<!-- 11 -->

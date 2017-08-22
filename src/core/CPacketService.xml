@@ -21,9 +21,11 @@
 				</parameters>
 				<variable name="eventname" type="string"/>
 				<lookup name="InstanceContainer" key="app_name" output="context.eventname"/>
-				<if cond="context.eventname == null">
+				<if cond="context.InstanceContainer.hasValue(context.app_name.toString())==false">
 					<then>
-						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.event_name.toString()"/>
+						<function>
+							<insert name="InstanceContainer" key="context.app_name.toString()" value="context.event_name.toString()"/>
+						</function>
 					</then>
 				</if>
 			</function>						
@@ -47,9 +49,11 @@
 				<log>====================================================================================================</log>
 				<log><![CDATA[ eventdata <%=context.strjson.toString()%>]]></log>
 				<log>====================================================================================================</log>
-				<variable name="appname" type="string"/>				
+				<variable name="appname" type="string"/>		
+				<variable name="eventname" type="string"/>					
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
+					<set name="eventname" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
 					<variable name="m_bundleid" type="long"/>
 					<function name="GetBundleID" class="ApplicationManager">
 						<parameters>
@@ -57,7 +61,7 @@
 							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
 						</parameters>
 					</function>
-					<raise name="'PacketInEvent'" sessionid="context.m_bundleid.toLong()"/>
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"/>
 				</for>
 			</function>
 		</public>

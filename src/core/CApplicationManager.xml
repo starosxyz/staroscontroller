@@ -136,10 +136,9 @@
 			</function>
 			<function name="GetBundleID">
 				<parameters>
-					<parameter name="appid" type="string"/>
-					<parameter name="bundleid" type="long"/>
+					<parameter name="id" type="long"/>
 				</parameters>
-				<set name="bundleid" value="thisclass.bundleid.toLong()"/>
+				<set name="id" value="thisclass.bundleid.toLong()"/>
 			</function>
 		</public>
 	</class>
@@ -331,6 +330,25 @@
 							<function name="ActiveApplication" class="oneapp">
 								<parameters>
 									<parameter name="app_path" type="string" in="context.apppath.toString()"/>
+								</parameters>
+							</function>
+						</function>
+					</then>
+				</if>
+			</function>
+			<function name="GetBundleID">
+				<parameters>
+					<parameter name="appid" type="string"/>
+					<parameter name="bundleid" type="long"/>
+				</parameters>
+				<variable name="oneapp" type="class" />
+				<if cond="thisclass.appsContainer.hasValue(context.appid.toString())">
+					<then>
+						<function>
+							<lookup name="appsContainer" key="context.appid.toString()" output="context.oneapp"/>
+							<function name="GetBundleID" class="oneapp">
+								<parameters>
+									<parameter name="id" type="string" out="context.bundleid"/>
 								</parameters>
 							</function>
 						</function>
