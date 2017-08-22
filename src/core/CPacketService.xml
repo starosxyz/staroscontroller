@@ -45,7 +45,7 @@
 			<function name="ProcessPacket">
 				<parameters>
 					<parameter name="strjson" type="string"/>
-				</parameters>
+				</parameters>				
 				<variable name="appname" type="string"/>		
 				<variable name="eventname" type="string"/>	
 				<variable name="eventparam" type="params"/>					
