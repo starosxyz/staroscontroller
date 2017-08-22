@@ -46,11 +46,9 @@
 				<parameters>
 					<parameter name="strjson" type="string"/>
 				</parameters>
-				<log>====================================================================================================</log>
-				<log><![CDATA[ eventdata <%=context.strjson.toString()%>]]></log>
-				<log>====================================================================================================</log>
 				<variable name="appname" type="string"/>		
-				<variable name="eventname" type="string"/>					
+				<variable name="eventname" type="string"/>	
+				<variable name="eventparam" type="params"/>					
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
 					<set name="eventname" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
@@ -61,6 +59,7 @@
 							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
 						</parameters>
 					</function>
+					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true">
 					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"/>
 				</for>
 			</function>
