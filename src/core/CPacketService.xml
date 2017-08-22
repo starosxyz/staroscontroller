@@ -59,7 +59,7 @@
 							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
 						</parameters>
 					</function>
-					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true">
+					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
 					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"/>
 				</for>
 			</function>
