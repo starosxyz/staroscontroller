@@ -24,6 +24,7 @@
 				<variable name="transportid" type="string"/>
 				<set name="sresourceid" value="context.allocResourceId()"/>
 				<!--qiulei modify 20170807-->
+				<log><![CDATA[InstallFlowTableRequest datapathid=<%=context.datapathid.toString()%>]]></log>
 				<if cond="context.flowsContainer.hasValue(context.datapathid.toString())==true">
 					<then>
 						<lookup name="flowsContainer" key="context.datapathid.toString()" output="context.switchflowdevice"/>
@@ -39,9 +40,10 @@
 						<parameter name="transportid" type="string" out="context.transportid"/>
 					</parameters>
 				</function>
+				<log><![CDATA[InstallFlowTableRequest transportid=<%=context.transportid.toString()%>]]></log>
 				<function name="Send_OFPT13_FLOW_MOD">
 				
-					<parameters>
+<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 					</parameters>

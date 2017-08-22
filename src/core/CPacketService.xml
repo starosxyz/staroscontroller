@@ -45,14 +45,16 @@
 			<function name="ProcessPacket">
 				<parameters>
 					<parameter name="strjson" type="string"/>
+				<parameter name="datapathid" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
 				</parameters>				
 				<variable name="appname" type="string"/>		
 				<variable name="eventname" type="string"/>	
 				<variable name="eventparam" type="params"/>					
+				<variable name="m_bundleid" type="long"/>				
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
 					<set name="eventname" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
-					<variable name="m_bundleid" type="long"/>
 					<function name="GetBundleID" class="ApplicationManager">
 						<parameters>
 							<parameter name="appid" type="string" in="context.appname.toString()"/>
@@ -60,7 +62,9 @@
 						</parameters>
 					</function>
 					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
-					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"/>
+					<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
+					<set name="eventparam" paramname="msgblock" value="context.msgblock"/>					
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"param="context.eventparam"/>
 				</for>
 			</function>
 		</public>

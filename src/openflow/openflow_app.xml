@@ -25,6 +25,9 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_detect.xml"/>
 	<!--qiulei 2017/07/20-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_flowmgr.xml"/>
+	<!--qiulei 2017/08/22 Tuesday pm -->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/controllertoswitch/openflow_packet_out.xml"/>
+	
 	<!--YY 2017/07/19-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_switch.xml"/>
 	<!--YY 2017/07/27-->
@@ -348,9 +351,18 @@
 			<log dest="stdout">Get a PacketIn Message</log>
 			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
 			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<variable name="datapathid" type="string"/>
+			<function name="GetDatapathIdByTransportid" class="DeviceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="datapathid" type="string" out="context.datapathid"/>
+				</parameters>
+			</function>	
 			<function name="ProcessPacket" class="PacketService">
 				<parameters>
 					<parameter name="strjson" type="string" in="event.getParam('eventdata').toString()"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>	
+					<parameter name="msgblock" type="messageblock" in="event.getMessageBlock()"/>						
 				</parameters>
 			</function>
 		  </function>

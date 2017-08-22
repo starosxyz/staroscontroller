@@ -6,6 +6,7 @@
 				<parameter name="datapathid" type="string"/>
 		</parameters>
 		
+<log><![CDATA[InstallARPFlow datapathid=<%=context.datapathid.toString()%>]]></log>
 		<log dest="stdout">InstallARPFlow qiulei 2017/07/27</log>
 		<variable name="modstrjson" type="string"/>
 		<variable name="resourceid" type="string" value=""/>
@@ -66,6 +67,7 @@
 		<parameters>
 				<parameter name="datapathid" type="string"/>
 		</parameters>
+		<log><![CDATA[InstallDiscoveryFlow datapathid=<%=context.datapathid.toString()%>]]></log>
 		<log dest="stdout">InstallDiscoveryFlow qiulei 2017/07/27</log>
 		<variable name="modstrjson" type="string"/>
 		<variable name="resourceid" type="string" value=""/>
@@ -126,6 +128,7 @@
 				<parameter name="datapathid" type="string"/>
 		</parameters>
 		
+<log><![CDATA[InstallDefaultFlow datapathid=<%=context.datapathid.toString()%>]]></log>
 		<log dest="stdout">InstallDefaultFlow</log>
 		<!--qiulei 2017/07/27-->
 		<function name="InstallARPFlow">

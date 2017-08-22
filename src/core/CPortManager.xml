@@ -170,6 +170,30 @@
 				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 			
+<function name="PacketOutToAllPort">
+				<parameters>	
+					<parameter name="transportid" type="string"/>
+					<parameter name="inportid" type="string"/>	
+					<parameter name="pkoutjson" type="string"/>	
+					<parameter name="msgblock" type="messageblock"/>
+				</parameters>
+				<log>PacketOutToAllPort-------------- </log>
+				<for var="i" from="0" to="context.portContainer.size()-1">
+					<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
+						<then>
+							
+							<function name="SendOpenFlowPacketOut">
+								<parameters>
+									<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
+									<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
+									<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+									<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+				</for>
+			</function>
 		</public>
 	</class>
 </starosxml>

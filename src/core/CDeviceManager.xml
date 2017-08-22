@@ -3,6 +3,7 @@
 	<class name="CDeviceManager">
 		<private>
 			<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
+		<container name="t2dContainer" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
 		
 		<public>
@@ -42,6 +43,7 @@
 					</parameters>
 				</new>
 				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
+				<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
 				<variable name="onlinejson" type="string"/>
 				<function name="ToOnlineJson" class="deviceobject">
 					<parameters>
@@ -85,6 +87,7 @@
 				<log><![CDATA[removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
 				<variable name="deviceobject" type="class"/>
 				<variable name="offlinejson" type="string"/>
+				<variable name="devicetransportid" type="string"/>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())==true">
 					<then>
 						<function>
@@ -99,14 +102,28 @@
 									<parameter name="strjson" type="string" in="context.offlinejson.toString()"/>
 								</parameters>
 							</function>
+						<function name="GetTransportId" class="deviceobject">
+								<parameters>
+									<parameter name="outtransport" type="string" out="context.devicetransportid"/>
+								</parameters>
+							</function>
+							<remove name="deviceContainer" key="context.datapathid.toString()"/>
+							<remove name="t2dContainer" key="context.devicetransportid.toString()"/>
 						</function>
 					</then>
 				</if>
 			</function>
+			<function name="GetDatapathIdByTransportid">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
+			</function>
 			<function name="GetTransportIdFromDevice">
 				<parameters>
 					<parameter name="datapathid" type="string"/>
-					<parameter name="transportidOut" type="string"/>
+					<parameter name="transportid" type="string"/>
 				</parameters>
 				<variable name="deviceinfo" type="class"/>
 				<variable name="devicedatapathid" type="string"/>
@@ -117,7 +134,7 @@
 							<set name="deviceinfo" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 							<function name="GetTransportId" class="deviceinfo">
 								<parameters>
-									<parameter name="outtransport" type="string" out="transportidOut"/>
+									<parameter name="outtransport" type="string" out="transportid"/>
 								</parameters>
 							</function>
 						</function>
@@ -638,6 +655,47 @@
 						<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 					</parameters>	
 				</function>
+			</function>
+		<!--Send Packet To All Port By DeviceId-->
+			<function name="PacketOutToAllPort">	
+				<parameters>	
+					<parameter name="datapathid" type="string"/>
+					<parameter name="inportid" type="string"/>	
+					<parameter name="pkoutjson" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+				</parameters>
+				<variable name="device" type="class"/>
+				<log>PacketOutToAllPort !!!!!!!!!!!!!!</log>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+						<function name="PacketOutToAllPort" class="context.device">
+							<parameters>	
+								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+								<parameter name="msgblock" type="messageblock" in="context.msgblock"/>								
+							</parameters>
+						</function>		
+					</then>
+				</if>			
+			</function>
+			<function name="GetDatapathId">	
+				<parameters>	
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<variable name="device" type="class"/>
+				<log>PacketOutToAllPort !!!!!!!!!!!!!!</log>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+						<function name="PacketOutToAllPort" class="context.device">
+							<parameters>	
+								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
+							</parameters>
+						</function>		
+					</then>
+				</if>			
 			</function>
 		</public>
 	</class>

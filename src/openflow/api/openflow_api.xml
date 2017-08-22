@@ -266,15 +266,62 @@
 		</openflow>
 	</function>
 	<!--29-10 send PACKET_IN message, qiulei, 2017/6/19 -->
+	<!--Request 13-1 send OFPT13_PACKET_IN message, YY, 2017/8/22 
+		strjson example:
+		{
+		   "bufferid" : "4294967295",
+		   "cookie" : "0",
+		   "match" : {
+			  "matchfieldlist" : [
+				 {
+					"hasmask" : "false",
+					"inport" : "1",
+					"oxmLen" : "4",
+					"oxmclass" : "32768",
+					"oxmfield" : "0",
+					"oxmfieldlen" : "4"
+				 }
+			  ],
+			  "type" : "1"
+		   },
+		   "payload" : {
+			  "dmac" : "ff:ff:ff:ff:ff:ff",
+			  "ethernetplayload" : {
+				 "hardwareType" : "1",
+				 "hardwareaddresslength" : "6",
+				 "opcode" : "1",
+				 "protocolType" : "2048",
+				 "protocoladdresslength" : "4",
+				 "senderhardwareaddress" : "00:00:00:00:00:01",
+				 "senderprotocoladdress" : "10.0.0.1",
+				 "targethardwareaddress" : "00:00:00:00:00:00",
+				 "targetprotocoladdress" : "10.0.0.2"
+			  },
+			  "ethtype" : "2054",
+			  "priority" : "0",
+			  "qinqpriority" : "0",
+			  "qinqtpid" : "0",
+			  "qinqvid" : "65535",
+			  "smac" : "00:00:00:00:00:01",
+			  "vlanid" : "65535"
+		   },
+		   "reason" : "1",
+		   "tableid" : "0",
+		   "totallen" : "42",
+		   "xid" : "0"
+		}
+	-->
 	<function name="Send_OFPT13_PACKET_IN">
 		<parameters>
 			<parameter name="transportid" type="string"/>
 			<parameter name="strjson" type="string"/>
+		<!--qiulei 2017.08.22-->
+			<parameter name="msgblock" type="messageblock"/>
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_PACKET_IN</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_IN" params="context.openflowparams">
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_IN" params="context.openflowparams"payload="context.msgblock">
 			<jsonsrc src="strjson"/>
 		</openflow>
 	</function>
@@ -309,11 +356,12 @@
 		<parameters>
 			<parameter name="transportid" type="string"/>
 			<parameter name="strjson" type="string"/>
+		<parameter name="msgblock" type="messageblock"/>
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_PACKET_OUT</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_OUT" params="context.openflowparams">
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_OUT" params="context.openflowparams"payload="context.msgblock">
 			<jsonsrc src="strjson"/>
 		</openflow>
 	</function>
