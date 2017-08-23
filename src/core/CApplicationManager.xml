@@ -19,6 +19,7 @@
 			<container name="required_apps" type="list"  valuetype="string"/>
 			<container name="features" type="list" valuetype="string"/>
 			<container name="permissions" type="list" valuetype="string"/>
+			
 		</private>
 		<public>
 			<function name="CApplication">
