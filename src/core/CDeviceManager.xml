@@ -642,8 +642,7 @@
 					
 			</function>
 			
-
-			<function name="SendDetails">	
+<function name="SendDetails">	
 				<parameters>	
 					<parameter name="transportid" type="string"/>
 					<parameter name="datapathid" type="string"/>	
