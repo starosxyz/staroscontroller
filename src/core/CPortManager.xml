@@ -87,7 +87,7 @@
 				<parameters>
 					<parameter name="returnbool" type="boolean"/>
 				</parameters>
-				<if cond="thisclass.m_portno.toString()=='‭4294967295‬' || thisclass.m_portno.toString()=='‭4294967294‬' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='‭4294967288‬'|| thisclass.m_portno.toString()=='‭4294967289‬'|| thisclass.m_portno.toString()=='‭4294967290‬'|| thisclass.m_portno.toString()=='‭4294967291‬'|| thisclass.m_portno.toString()=='‭4294967292‬'|| thisclass.m_portno.toString()=='‭4294967293‬'">
+				<if cond="thisclass.m_portno.toString()=='4294967295' || thisclass.m_portno.toString()=='4294967294' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='4294967288‬'|| thisclass.m_portno.toString()=='4294967289'|| thisclass.m_portno.toString()=='4294967290'|| thisclass.m_portno.toString()=='4294967291'|| thisclass.m_portno.toString()=='4294967292'|| thisclass.m_portno.toString()=='4294967293'">
 					<then>
 						<set name="returnbool" value="true"/>
 					</then>
@@ -108,7 +108,7 @@
 				</parameters>
 				<log><![CDATA[thisclass.m_portno.toString()=<%=thisclass.m_portno.toString()%>]]></log>
 
-				<if cond="(thisclass.m_portno.toString()=='‭4294967295‬') || (thisclass.m_portno.toString()=='4294967294‬') || (thisclass.m_portno.toString()=='‭4294967040‬') || (thisclass.m_portno.toString()=='‭4294967288‬')||(thisclass.m_portno.toString()=='‭4294967289‬')||(thisclass.m_portno.toString()=='‭4294967290‬')|| (thisclass.m_portno.toString()=='‭4294967291‬')|| (thisclass.m_portno.toString()=='‭4294967292‬')|| (thisclass.m_portno.toString()=='‭4294967293‬')">
+				<if cond="thisclass.m_portno.toString()=='4294967295' || thisclass.m_portno.toString()=='4294967294' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='4294967288‬'|| thisclass.m_portno.toString()=='4294967289'|| thisclass.m_portno.toString()=='4294967290'|| thisclass.m_portno.toString()=='4294967291'|| thisclass.m_portno.toString()=='4294967292'|| thisclass.m_portno.toString()=='4294967293'">
 					<then>
 						<function>
 							<log>returnbool false</log>
