@@ -19,9 +19,7 @@
 		<log>-- SendOpenFlowPacketOut 2017.08.22 Tuesday pm --</log>
 		<variable name="modstrjson" type="string"/>
 		
-		<if cond="context.outputport.toString()!='4294967294'">
-			<then>
-				<reference variable="modstrjson">
+		<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -38,9 +36,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-			</then>
-		</if>
-		<log><![CDATA[modstrjson =<%=context.modstrjson.toString()%>]]></log>
+									<log><![CDATA[modstrjson =<%=context.modstrjson.toString()%>]]></log>
 		<function name="Send_OFPT13_PACKET_OUT">
 			<parameters>
 				<parameter name="transportid" type="string" in="context.transportid.toString()"/>

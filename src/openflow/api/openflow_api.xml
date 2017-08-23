@@ -315,8 +315,7 @@
 		<parameters>
 			<parameter name="transportid" type="string"/>
 			<parameter name="strjson" type="string"/>
-		<!--qiulei 2017.08.22-->
-			<parameter name="msgblock" type="messageblock"/>
+		<parameter name="msgblock" type="messageblock"/>
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_PACKET_IN</log>

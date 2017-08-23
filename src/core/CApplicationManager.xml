@@ -20,7 +20,7 @@
 			<container name="features" type="list" valuetype="string"/>
 			<container name="permissions" type="list" valuetype="string"/>
 			
-		</private>
+</private>
 		<public>
 			<function name="CApplication">
 				<parameters>

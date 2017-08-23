@@ -17,9 +17,9 @@
 				<parameters>
 					<parameter name="id" type="string" in="'forwarding'"/>
 					<parameter name="version" type="string" in="'1.0.0'"/>
-					<parameter name="category" type="string" in="'sdfsdf'"/>
-					<parameter name="origin" type="string" in="'sdfsdf'"/>
-					<parameter name="title" type="string" in="'sdfsdf'"/>
+					<parameter name="category" type="string" in="'starosapp'"/>
+					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
+					<parameter name="title" type="string" in="'app for forwarding'"/>
 					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
 					<parameter name="url" type="string" in="'192.168.228.128'"/>
 					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>

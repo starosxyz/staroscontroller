@@ -228,22 +228,11 @@
 					<parameter name="pkoutjson" type="string"/>	
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>
-				<variable name="portobj" type="class" />
-				<variable name="isvalidataport" type="boolean"/>
+				<log>PacketOutToAllPort-------------- </log>
 				<for var="i" from="0" to="context.portContainer.size()-1">
-					<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
-					<function name="IsValidatePort" class="context.portobj">
-						<parameters>
-							<parameter name="returnbool" type="bool" out="context.isvalidataport"/>
-						</parameters>
-					</function>
-					<if cond="context.isvalidataport.toBoolean()==true">
-						<then>
-							<function>
-								<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
+					<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
 						<then>
 							
-<log><![CDATA[PacketOutToAllPort--------------<%=context.portContainer.getKeyByIndex(context.i.toLong()).toString()%>]]></log>
 							<function name="SendOpenFlowPacketOut">
 								<parameters>
 									<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
