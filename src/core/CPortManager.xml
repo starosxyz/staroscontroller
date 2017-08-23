@@ -228,22 +228,82 @@
 					<parameter name="pkoutjson" type="string"/>	
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>
-				<log>PacketOutToAllPort-------------- </log>
+				<variable name="portobj" type="class" />
+				<variable name="isvalidataport" type="boolean"/>
 				<for var="i" from="0" to="context.portContainer.size()-1">
-					<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
+					<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+					<function name="IsValidatePort" class="context.portobj">
+						<parameters>
+							<parameter name="returnbool" type="bool" out="context.isvalidataport"/>
+						</parameters>
+					</function>
+					<if cond="context.isvalidataport.toBoolean()==true">
 						<then>
-							
-							<function name="SendOpenFlowPacketOut">
-								<parameters>
-									<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
-									<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
-									<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-									<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
-								</parameters>
-							</function>
+							<function>
+								<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
+									<then>
+										<function name="SendOpenFlowPacketOut">
+											<parameters>
+												<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
+												<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
+												<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+												<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+											</parameters>
+										</function>
+									</then>
+						
+								</if>
+							</function>						
 						</then>
 					</if>
 				</for>
+			</function>
+			
+			<!--qiulei 20170823 pm-->
+			<function name="PacketOutToPort">
+				<parameters>
+					<parameter name="outputport" type="string"/>
+					<parameter name="pkoutjson" type="string"/>
+					<parameter name="transportid" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+					<parameter name="inportid" type="string"/>
+				</parameters>
+				<log>PacketOutToPort-------------- </log>
+				<variable name="portobj" type="class" />
+				<variable name="isvalidataport" type="boolean"/>
+				
+				<log><![CDATA[context.outputport =<%=context.outputport.toString()%>]]></log>
+				
+				<for var="i" from="0" to="context.portContainer.size()-1">
+					<log><![CDATA[key value =<%=context.portContainer.getKeyByIndex(context.i.toLong()).toString()%>]]></log>
+				</for>
+				<if cond="context.portContainer.hasValue(context.outputport.toString())">
+					<then>
+						<log>--------------------2017.08.23 已发送 if 第一层--------------------</log>
+						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
+						<function name="IsValidatePort" class="context.portobj">
+							<parameters>
+								<parameter name="returnbool" type="bool" out="context.isvalidataport"/>
+							</parameters>
+						</function>
+						<if cond="context.isvalidataport.toBoolean()==true">
+							<then>
+								<log>--------------------2017.08.23 已发送--------------------</log>
+								<function name="SendOpenFlowPacketOut">
+									<parameters>
+										<parameter name="outputport" type="string" in="context.outputport.toString()"/>
+										<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
+										<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+										<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
+					</then>
+					<else>
+						<log>--------------------2017.08.23 已发送 else--------------------</log>
+					</else>
+				</if>
 			</function>
 		</public>
 	</class>

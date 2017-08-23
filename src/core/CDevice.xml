@@ -521,7 +521,7 @@
 				</websocket>
 			</function>
 		<!--hupeng 20170822-->
-				<function name="PacketOutToAllPort">
+			<function name="PacketOutToAllPort">
 				<parameters>	
 					<parameter name="inportid" type="string"/>	
 					<parameter name="pkoutjson" type="string"/>
@@ -535,7 +535,27 @@
 						<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
 					</parameters>
 				</function>
-			</function>	
+			</function>
+			
+			
+			<!--qiulei 20170823 pm-->
+			<function name="PacketOutToPort">
+				<parameters>
+					<parameter name="outputport" type="string"/>
+					<parameter name="pkoutjson" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+					<parameter name="inportid" type="string"/>
+				</parameters>
+				<function name="PacketOutToPort" class="thisclass.m_ports">
+					<parameters>
+						<parameter name="outputport" type="string" in="context.outputport.toString()"/>
+						<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
+						<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+						<parameter name="inportid" type="string" in="context.inportid.toString()"/>
+					</parameters>
+				</function>
+			</function>
 		</public>
 	</class>
 </starosxml>

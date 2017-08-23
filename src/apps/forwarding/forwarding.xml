@@ -33,7 +33,7 @@
 					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
 				</parameters>
 			</function>
-			<log>null app startup</log>
+			<log>forwarding app startup</log>
 		</onevent>			
 		<onevent event="~bundleapp.shutdown">
 			<!-- YY 2017-08-21 -->

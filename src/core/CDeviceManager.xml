@@ -657,7 +657,7 @@
 			</function>
 		<!--Send Packet To All Port By DeviceId-->
 			<function name="PacketOutToAllPort">	
-				<parameters>	
+				<parameters>
 					<parameter name="datapathid" type="string"/>
 					<parameter name="inportid" type="string"/>	
 					<parameter name="pkoutjson" type="string"/>
@@ -676,8 +676,40 @@
 							</parameters>
 						</function>		
 					</then>
-				</if>			
+				</if>
 			</function>
+			<!--qiulei 2017.08.23   Send Packet To one Port By DeviceId   -->
+			<function name="PacketOutToPort">
+				<parameters>
+					<parameter name="outputport" type="string"/>
+					<parameter name="pkoutjson" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+					<parameter name="inportid" type="string"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				
+				<log><![CDATA[CDeviceManager 中的context.outputport =<%=context.outputport.toString()%>]]></log>
+				<log><![CDATA[CDeviceManager 中的context.pkoutjson =<%=context.pkoutjson.toString()%>]]></log>				
+				<log><![CDATA[CDeviceManager 中的context.inportid =<%=context.inportid.toString()%>]]></log>
+				<log><![CDATA[CDeviceManager 中的context.datapathid =<%=context.datapathid.toString()%>]]></log>
+				<log><![CDATA[CDeviceManager 中的context.outputport =<%=context.outputport.toString()%>]]></log>
+				<variable name="device" type="class"/>
+				<log>PacketOutToPort !!!!!!!!!!!!!!</log>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+						<function name="PacketOutToPort" class="context.device">
+							<parameters>
+								<parameter name="outputport" type="string" in="context.outputport.toString()"/>
+								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+								<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+								<parameter name="inportid" type="string" in="context.inportid.toString()"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+			</function>
+			
 			<function name="GetDatapathId">	
 				<parameters>	
 					<parameter name="transportid" type="string"/>

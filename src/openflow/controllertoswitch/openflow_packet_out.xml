@@ -20,23 +20,24 @@
 		<variable name="modstrjson" type="string"/>
 		
 		<reference variable="modstrjson">
-					<jsonbody><![CDATA[ 
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+						"bufferid":"0xffffffff",
+						"inport":"0xfffffffd",
+						"actionlist":[
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
-								"bufferid":"0xffffffff",
-								"inport":"0xfffffffd",
-								"actionlist":[
-									{
-										"type":"0",
-										"outport":"<%=context.outputport.toString()%>",
-										"maxlen":"0xffff"
-									}
-								],
-								"payload":<%=context.payloadjson.toString()%>
+								"type":"0",
+								"outport":"<%=context.outputport.toString()%>",
+								"maxlen":"0xffff"
 							}
-					]]></jsonbody>
-				</reference>
-											<log><![CDATA[modstrjson =<%=context.modstrjson.toString()%>]]></log>
+						],
+						"payload":<%=context.payloadjson.toString()%>
+					}
+			]]></jsonbody>
+		</reference>
+		
+		<log><![CDATA[modstrjson =<%=context.modstrjson.toString()%>]]></log>
 		<function name="Send_OFPT13_PACKET_OUT">
 			<parameters>
 				<parameter name="transportid" type="string" in="context.transportid.toString()"/>

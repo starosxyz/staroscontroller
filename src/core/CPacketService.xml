@@ -45,7 +45,7 @@
 			<function name="ProcessPacket">
 				<parameters>
 					<parameter name="strjson" type="string"/>
-				<parameter name="datapathid" type="string"/>
+					<parameter name="datapathid" type="string"/>
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>				
 				<variable name="appname" type="string"/>		
@@ -66,7 +66,7 @@
 					</function>
 					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
 					<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
-					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"param="context.eventparam"messageblock="context.msgblock"/>
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam" messageblock="context.msgblock"/>
 				</for>
 			</function>
 		</public>

@@ -12,6 +12,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/localcall/localcall.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/global_resource.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/define.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/utils.xml"/>
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 

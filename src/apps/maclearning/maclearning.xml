@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-08-11
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<variable name="applicationmgr" reference="global.ApplicationManager"/>
+	<variable name="devicemgr" reference="global.DeviceManager"/>
+	<container name="machashmap" type="hashmap" keytype="string" valuetype="string"/>
+	<events>
+		<onevent event="bundleapp.startup">			
+			<!-- YY 2017-08-21 -->
+			<function name="AddAppEvent" class="context.applicationmgr">
+				<parameters>
+					<parameter name="id" type="string" in="'maclearning'"/>
+					<parameter name="version" type="string" in="'1.0.0'"/>
+					<parameter name="category" type="string" in="'starosapp'"/>
+					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
+					<parameter name="title" type="string" in="'app for maclearning'"/>
+					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
+					<parameter name="url" type="string" in="'192.168.228.128'"/>
+					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
+					<parameter name="pathname" type="string" in="event.getParam('pathname').toString()"/>
+				</parameters>
+			</function>			
+			
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<parameter name="app_name" type="string" in="'maclearning'"/>
+					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
+				</parameters>
+			</function>
+			<log>maclearning app startup</log>
+		</onevent>			
+		<onevent event="~bundleapp.shutdown">
+			<!-- YY 2017-08-21 -->
+			<function name="removeProcessor" class="PacketService">				
+				<parameters>
+					<parameter name="app_name" type="string" in="'maclearning'"/>									
+				</parameters>
+			</function>
+		</onevent>
+		<onevent event="PacketInEvent">
+			<!-- YY 2017-08-21 -->
+			<log dest="stdout">maclearning application get a PacketIn Message</log>			
+			<messageblock name="packetmsgblock"/>
+			<variable name="inportid" type="string"/>
+			<variable name="pkoutjson" type="string"/>
+			<variable name="srcmac" type="string"/>
+			<variable name="dstmac" type="string"/>
+			<variable name="result_mac" type="string"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if (info.match != null) {
+					var inport_id = info.match.matchfieldlist[0].inport;					
+					context.inportid.setValue(inport_id);
+				}
+				if (info.payload != null) {
+					var pay_load = info.payload;
+					var strjson=JSON.stringify(pay_load);
+					context.pkoutjson.setValue(strjson);
+				}
+				var src_mac = info.payload.smac;
+				var dst_mac = info.payload.dmac;
+				context.srcmac.setValue(src_mac);
+				context.dstmac.setValue(dst_mac);
+			]]></script>
+			<set name="packetmsgblock" value="event.getMessageBlock()"/>			
+			<if cond="context.machashmap.hasValue(context.srcmac.toString())">
+				<then>
+					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+				</then>
+				<else>
+					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+				</else>
+			</if>
+			<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
+				<then>									
+					<function name="PacketOutToAllPort" class="context.devicemgr">
+						<parameters>
+							<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+							<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+							<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
+							<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>	
+						</parameters>
+					</function>
+				</then>
+				<else>					
+					<function name="PacketOutToPort" class="context.devicemgr">
+						<parameters>	
+							<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+							<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>						
+							<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>
+							<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+							<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>							
+						</parameters>
+					</function>
+				</else>
+			</if>
+		</onevent>
+		
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

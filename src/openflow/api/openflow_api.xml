@@ -286,7 +286,7 @@
 		   },
 		   "payload" : {
 			  "dmac" : "ff:ff:ff:ff:ff:ff",
-			  "ethernetplayload" : {
+			  "ethernetpayload" : {
 				 "hardwareType" : "1",
 				 "hardwareaddresslength" : "6",
 				 "opcode" : "1",
@@ -314,13 +314,13 @@
 	<function name="Send_OFPT13_PACKET_IN">
 		<parameters>
 			<parameter name="transportid" type="string"/>
-			<parameter name="strjson" type="string"/>
-		<parameter name="msgblock" type="messageblock"/>
+			<parameter name="strjson" type="string"/>		
+			<parameter name="msgblock" type="messageblock"/>
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_PACKET_IN</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_IN" params="context.openflowparams"payload="context.msgblock">
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_IN" params="context.openflowparams" payload="context.msgblock">
 			<jsonsrc src="strjson"/>
 		</openflow>
 	</function>
@@ -395,7 +395,7 @@
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_PACKET_OUT</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_OUT" params="context.openflowparams"payload="context.msgblock">
+		<openflow name="openflowserverobj" method="openflow.OFPT13_PACKET_OUT" params="context.openflowparams" payload="context.msgblock">
 			<jsonsrc src="strjson"/>
 		</openflow>
 	</function>

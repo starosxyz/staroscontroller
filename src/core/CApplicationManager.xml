@@ -19,8 +19,7 @@
 			<container name="required_apps" type="list"  valuetype="string"/>
 			<container name="features" type="list" valuetype="string"/>
 			<container name="permissions" type="list" valuetype="string"/>
-			
-</private>
+		</private>
 		<public>
 			<function name="CApplication">
 				<parameters>
@@ -145,12 +144,29 @@
 	</class>
 	<class name="CApplicationManager">
 		<private>
+			<variable name="currentappname" type="string"/>
 			<container name="appsContainer" type="hashmap" keytype="string" valuetype="class"/>
 			<container name="appsPaths" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
 		<public>
 			<function name="CApplicationManager">
 				<log> i am CApplicationManager contructio function</log>
+				<function name="LoadApplication"/>
+			</function>
+			<function name="GetCurrentappname">
+				<parameters>
+					<parameter name="outappname" type="string" />
+				</parameters>
+				<set name="outappname" value="thisclass.currentappname"/>
+			</function>
+			<function name="SetCurrentappname">
+				<parameters>
+					<parameter name="inappname" type="string" />
+				</parameters>
+				<set name="thisclass.currentappname" value="context.inappname"/>
+			</function>
+			<function name="LoadApplication">
+				<log>LoadApplication</log>
 				<container name="listdir" type="list" valuetype="string"/>
 				<variable name="appname" type="string"/>
 				<variable name="appdir" type="string"/>
@@ -159,6 +175,8 @@
 				<variable name="appparam" type="params"/>
 				<readdir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
 				<log><![CDATA[dirlist size = '<%=context.listdir.size()%>']]></log>
+				<clear name="appsContainer"/>
+				<clear name="appsPaths"/>
 				<for var="i" from="0" to="context.listdir.size()-1">
 					<set name="appname" value="context.listdir.getValueByIndex(context.i.toLong())"/>
 					<log><![CDATA[appname=<%=context.appname.toString()%>]]></log>
@@ -337,6 +355,26 @@
 					</then>
 				</if>
 			</function>
+			
+			
+			<function name="UninstallApp">
+				<parameters>
+					<parameter name="id" type="string"/>
+				</parameters>
+				<log><![CDATA[UninstallApp id=<%=context.id.toString()%>]]></log>
+				<variable name="apppath" type="string" />
+				<set name="apppath" value="context.appsPaths.getValue(context.id.toString()).toString()"/>
+				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
+					<then>
+						<function>
+							<remove name="thisclass.appsContainer" key="context.id.toString()"/>
+							<remove name="thisclass.appsPaths" key="context.id.toString()"/>
+						</function>
+					</then>
+				</if>
+				<file method="deletefile" name="context.apppath.toString()"/>
+			</function>
+			
 			<function name="GetBundleID">
 				<parameters>
 					<parameter name="appid" type="string"/>

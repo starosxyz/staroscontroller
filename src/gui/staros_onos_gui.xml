@@ -30,6 +30,9 @@
 			<variable name="contenttype" type="string"/>
 			<variable name="requestpath" type="string"/>
 			<variable name="filepath" type="string"/>
+			<variable name="filename" type="string"/>
+			<variable name="xmldata" type="string"/>
+			<variable name="appname" type="string"/>
 			<function>
 				<!--qiulie-->
 				<set name="transportid" value="event.getParam('transportid').toString()"/>
@@ -94,6 +97,58 @@
 							</wait>
 						</function>
 					</then>
+					<elseif cond="context.requestpath.toString() == '/onos/ui/rs/applications/upload'">
+						<function>
+							<log><![CDATA[!!!!!!!!!!!!eventdata= '<%=event.getParam("eventdata").toString()%>']]></log>
+							<script><![CDATA[
+								var x = event.getParam("eventdata").toString();
+								var Contentindex=x.indexOf("Content-Disposition");
+								var Contentendindex=x.indexOf("Content-Type");
+								var firsthead=x.substring(Contentindex,Contentendindex);
+								var filenames=firsthead.split(";")[2];
+								var filefirst=filenames.indexOf("=");
+								var filelast=filenames.indexOf(".xml");
+								var filename=filenames.substring(filefirst+2,filelast+4);
+								context.print("filename!!!!!!!!!!!!:"+filename);
+								var filenamefloderindex=filenames.indexOf("=");
+								var filenamefloderlastindex=filenames.indexOf(".xml");
+								var filenamefloder=filenames.substring(filenamefloderindex+2,filenamefloderlastindex);
+								context.print("filenamefloder!!!!!!!!!!!!:"+filenamefloder);
+								context.appname.setValue(filenamefloder);
+								var absolutefilename="/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder+"/"+filename;
+								context.filepath.setValue("/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder);
+								context.print("absolutefilename!!!!!!!!!!!!:"+absolutefilename);
+								context.filename.setValue(absolutefilename);
+								var head=x.indexOf("<?xml");
+								context.print("head!!!!!!!!!!!!:"+head);
+								var end=x.indexOf("</starosxml>");
+								var contents=x.substring(head,end+12);
+								context.print("contents!!!!!!!!!!!!:"+contents);
+								context.xmldata.setValue(contents);
+							  ]]></script>
+							  
+							<log><![CDATA[filename= '<%=context.filename.toString()%>']]></log>
+							<log><![CDATA[xmldata= '<%=context.xmldata.toString()%>']]></log>
+							<file method="mkdir" name="context.filepath.toString()"/>
+							<function name="WriteToFile">
+								<parameters>
+									<parameter name="filename" type="string" in="context.filename.toString()"/>
+									<parameter name="xmldata" type="string" in="context.xmldata.toString()"/>
+								</parameters>
+							</function>
+							<function name="SetCurrentappname" class="ApplicationManager">
+								<parameters>
+									<parameter name="inappname" type="string"  in="context.appname.toString()"/>
+								</parameters>
+							</function>
+								<!--response 200-->
+							<function name="LoadApplication" class="ApplicationManager"/>
+							<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+							<set name="httpparam" paramname="Connection" value="'Close'"/>
+							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</function>
+					</elseif>
 					<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
 						<function>
 							<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
