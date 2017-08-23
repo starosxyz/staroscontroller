@@ -13,5 +13,43 @@
 		<set name="GlobalSetting" paramname="guiprotocol" value="'http'"/>
 		<set name="GlobalSetting" paramname="guicerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
 		<set name="GlobalSetting" paramname="guikeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		
+		<!--OpenFlow Ip Setting-->
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<parameter name="component" type="string" in="'GlobalSetting'"/>			
+				<parameter name="fqComponent" type="string" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<parameter name="prop" type="string" in="'openflowip'"/>			
+				<parameter name="id" type="string" in="'GlobalSetting::openflowip'"/>
+				<parameter name="type" type="string" in="'string'"/>	
+				<parameter name="value" type="string" in="'0.0.0.0'"/>
+				<parameter name="defValue" type="string" in="'0.0.0.0'"/>	
+				<parameter name="desc" type="string" in="'OpenFlow Protocol Server Listen Ip Address'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<parameter name="component" type="string" in="'GlobalSetting'"/>			
+				<parameter name="fqComponent" type="string" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<parameter name="prop" type="string" in="'openflowopenflowport'"/>			
+				<parameter name="id" type="string" in="'GlobalSetting::openflowopenflowport'"/>
+				<parameter name="type" type="string" in="'string'"/>	
+				<parameter name="value" type="string" in="'6633'"/>
+				<parameter name="defValue" type="string" in="'6633'"/>	
+				<parameter name="desc" type="string" in="'OpenFlow Protocol Server Listen Port'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<parameter name="component" type="string" in="'GlobalSetting'"/>			
+				<parameter name="fqComponent" type="string" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<parameter name="prop" type="string" in="'openflowprotocol'"/>			
+				<parameter name="id" type="string" in="'GlobalSetting::openflowprotocol'"/>
+				<parameter name="type" type="string" in="'string'"/>	
+				<parameter name="value" type="string" in="'tcp'"/>
+				<parameter name="defValue" type="string" in="'tcp'"/>	
+				<parameter name="desc" type="string" in="'OpenFlow Protocol Type'"/>		
+			</parameters>
+		</function>
 	</function>
 </starosxml>

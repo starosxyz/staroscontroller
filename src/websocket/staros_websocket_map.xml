@@ -13,6 +13,7 @@
 	<!--hupeng 20170804-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_host.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_apps.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_settings.xml"/>
 	<variable name="WebSocketHandlerMap" type="params" global="true"/>
 	<function name="InitWebSocketHandlerMap">
 		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
@@ -40,5 +41,7 @@
 		<set name="WebSocketHandlerMap" paramname="appManagementRequest" value="'HandleappManagementRequest'"/>
 		<!--hupeng 20170803-->
 		<set name="WebSocketHandlerMap" paramname="hostDataRequest" value="'HandlehostDataRequest'"/>
+		<!--yijian 20170823-->
+		<set name="WebSocketHandlerMap" paramname="settingDataRequest" value="'HandleSettingsRequest'"/>
 	</function>
 </starosxml>

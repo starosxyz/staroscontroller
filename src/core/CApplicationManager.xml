@@ -95,7 +95,7 @@
 				</parameters>
 				<set name="bundleid" value="context.newBundleId()"/>
 				<log><![CDATA[ActiveApplication=<%=context.app_path.toString()%>]]></log>
-				<createbundle bundleid="bundleid" src="context.app_path.toString()"/>
+				<createbundle bundleid="bundleid" src="context.app_path.toString()+'/'+thisclass.id+'.xml'"/>
 				<set name="thisclass.state" value="'ACTIVE'"/>
 				<set name="thisclass._iconid_state" value="'active'"/>
 			</function>
@@ -186,9 +186,9 @@
 							<set name="pathname" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/'+context.appname.toString()+'.xml'"/>
 							<log><![CDATA[pathname=<%=context.pathname.toString()%>]]></log>
 							<set name="bundleid" value="context.newBundleId()"/>
-							<set name="appparam" paramname="pathname" value="context.pathname.toString()"/>
+							<set name="appparam" paramname="pathname" value="context.appdir.toString()"/>
 							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
-							<insert name="appsPaths" key="context.appname.toString()" value="context.pathname.toString()"/>
+							<insert name="appsPaths" key="context.appname.toString()" value="context.appdir.toString()"/>
 						</then>
 					</if>
 				</for>
@@ -361,7 +361,6 @@
 				<parameters>
 					<parameter name="id" type="string"/>
 				</parameters>
-				<log><![CDATA[UninstallApp id=<%=context.id.toString()%>]]></log>
 				<variable name="apppath" type="string" />
 				<set name="apppath" value="context.appsPaths.getValue(context.id.toString()).toString()"/>
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
@@ -372,6 +371,7 @@
 						</function>
 					</then>
 				</if>
+				<log><![CDATA[UninstallApp id=<%=context.id.toString()%>]]></log>
 				<file method="deletefile" name="context.apppath.toString()"/>
 			</function>
 			
