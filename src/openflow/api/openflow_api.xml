@@ -352,6 +352,41 @@
 		</openflow>
 	</function>
 	<!--29-13 send PACKET_OUT message, qiulei, 2017/6/19 -->
+	<!--
+		{
+			"xid": "36",
+			"bufferid": "0xffffffff",
+			"inport": "0xfffffffd",
+			"actionlist": [
+				{
+					"type": "0",
+					"outport": "3",
+					"maxlen": "0xffff"
+				}
+			],
+			"payload": {
+				"dmac": "ff:ff:ff:ff:ff:ff",
+				"ethernetplayload": {
+					"hardwareType": "1",
+					"hardwareaddresslength": "6",
+					"opcode": "1",
+					"protocolType": "2048",
+					"protocoladdresslength": "4",
+					"senderhardwareaddress": "00:00:00:00:00:01",
+					"senderprotocoladdress": "10.0.0.1",
+					"targethardwareaddress": "00:00:00:00:00:00",
+					"targetprotocoladdress": "10.0.0.2"
+				},
+				"ethtype": "2054",
+				"priority": "0",
+				"qinqpriority": "0",
+				"qinqtpid": "0",
+				"qinqvid": "65535",
+				"smac": "00:00:00:00:00:01",
+				"vlanid": "65535"
+			}
+		}
+	-->
 	<function name="Send_OFPT13_PACKET_OUT">
 		<parameters>
 			<parameter name="transportid" type="string"/>

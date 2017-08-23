@@ -52,6 +52,9 @@
 				<variable name="eventname" type="string"/>	
 				<variable name="eventparam" type="params"/>					
 				<variable name="m_bundleid" type="long"/>				
+				<messageblock name="tempmsgblock"/>
+				<set name="tempmsgblock" value="context.msgblock"/>
+				<log><![CDATA[tempmsgblock=<%=context.tempmsgblock.getChainedLength()%>]]></log>
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
 					<set name="eventname" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
@@ -63,8 +66,7 @@
 					</function>
 					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
 					<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
-					<set name="eventparam" paramname="msgblock" value="context.msgblock"/>					
-					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"param="context.eventparam"/>
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()"param="context.eventparam"messageblock="context.msgblock"/>
 				</for>
 			</function>
 		</public>

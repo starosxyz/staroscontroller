@@ -83,6 +83,57 @@
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
 			
+<function name="IsReservedPort">
+				<parameters>
+					<parameter name="returnbool" type="boolean"/>
+				</parameters>
+				<if cond="thisclass.m_portno.toString()=='‭4294967295‬' || thisclass.m_portno.toString()=='‭4294967294‬' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='‭4294967288‬'|| thisclass.m_portno.toString()=='‭4294967289‬'|| thisclass.m_portno.toString()=='‭4294967290‬'|| thisclass.m_portno.toString()=='‭4294967291‬'|| thisclass.m_portno.toString()=='‭4294967292‬'|| thisclass.m_portno.toString()=='‭4294967293‬'">
+					<then>
+						<set name="returnbool" value="true"/>
+					</then>
+					<else>
+						<set name="returnbool" value="false"/>
+					</else>
+				</if>
+			</function>
+			<function name="GetPortState">
+				<parameters>
+					<parameter name="outstate" type="string"/>
+				</parameters>
+				<set name="outstate" value="thisclass.m_state.toString()"/>
+			</function>
+			<function name="IsValidatePort">
+				<parameters>
+					<parameter name="returnbool" type="boolean"/>
+				</parameters>
+				<log><![CDATA[thisclass.m_portno.toString()=<%=thisclass.m_portno.toString()%>]]></log>
+
+				<if cond="(thisclass.m_portno.toString()=='‭4294967295‬') || (thisclass.m_portno.toString()=='4294967294‬') || (thisclass.m_portno.toString()=='‭4294967040‬') || (thisclass.m_portno.toString()=='‭4294967288‬')||(thisclass.m_portno.toString()=='‭4294967289‬')||(thisclass.m_portno.toString()=='‭4294967290‬')|| (thisclass.m_portno.toString()=='‭4294967291‬')|| (thisclass.m_portno.toString()=='‭4294967292‬')|| (thisclass.m_portno.toString()=='‭4294967293‬')">
+					<then>
+						<function>
+							<log>returnbool false</log>
+							<set name="returnbool" value="false"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>returnbool true</log>
+							<if cond="thisclass.m_state.toString()=='0'">
+								<then>
+									<function>
+										<set name="returnbool" value="true"/>
+									</function>
+								</then>
+								<else>
+									<function>
+										<set name="returnbool" value="false"/>
+									</function>
+								</else>
+							</if>
+						</function>
+					</else>
+				</if>
+			</function>
 		</public>
 	</class>
 	<class name="CPortManager">
