@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+
+	<variable name="matchfieldMap" type="params" global="true"/>
+	<function name="InitOXMMatchFieldMap">
+		<set name="matchfieldMap" paramname="0" value="''"/>
+
+	</function>
+</starosxml>

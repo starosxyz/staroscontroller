@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+
+	<variable name="actionsMap" type="params" global="true"/>
+	<function name="InitActionsMap">
+		<set name="actionsMap" paramname="0" value="'outport'"/>
+		<set name="actionsMap" paramname="11" value="'nwttl'"/>
+		<set name="actionsMap" paramname="12" value="'nwttl'"/>
+		<set name="actionsMap" paramname="15" value="'mplsttl'"/>
+		<set name="actionsMap" paramname="16" value="'mplsttl'"/>
+		<set name="actionsMap" paramname="17" value="'ethertype'"/>
+		<set name="actionsMap" paramname="18" value="'ethertype'"/>
+		<set name="actionsMap" paramname="19" value="'ethertype'"/>
+		<set name="actionsMap" paramname="20" value="'ethertype'"/>
+		<set name="actionsMap" paramname="21" value="'queueid'"/>
+		<set name="actionsMap" paramname="22" value="'groupid'"/>
+		<set name="actionsMap" paramname="23" value="'nwttl'"/>
+		<set name="actionsMap" paramname="24" value="'nwttl'"/>
+		<set name="actionsMap" paramname="25" value="'oxmfield'"/>
+		<set name="actionsMap" paramname="26" value="'ethertype'"/>
+		<set name="actionsMap" paramname="27" value="'ethertype'"/>
+
+	</function>
+</starosxml>
