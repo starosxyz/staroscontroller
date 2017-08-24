@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml>
 	<variable name="matchfieldMap" type="params" global="true"/>
+	<variable name="matchfieldName" type="params" global="true"/>
 	<function name="InitOXMMatchFieldMap">
 		<set name="matchfieldMap" paramname="0" value="'inport'"/>
 		<set name="matchfieldMap" paramname="1" value="'inphyport'"/>
@@ -42,5 +43,47 @@
 		<set name="matchfieldMap" paramname="37" value="'pbbisid'"/>
 		<set name="matchfieldMap" paramname="38" value="'tunnelid'"/>
 		<set name="matchfieldMap" paramname="39" value="'ipv6exthdr'"/>
+	</function>
+	<function name="InitOXMMatchFieldNameMap">
+		<set name="matchfieldName" paramname="0" value="'inport'"/>
+		<set name="matchfieldName" paramname="1" value="'inphyport'"/>
+		<set name="matchfieldName" paramname="2" value="'metadata'"/>
+		<set name="matchfieldName" paramname="3" value="'dstmac'"/>
+		<set name="matchfieldName" paramname="4" value="'srcmac'"/>
+		<set name="matchfieldName" paramname="5" value="'ethtype'"/>
+		<set name="matchfieldName" paramname="6" value="'vlanid'"/>
+		<set name="matchfieldName" paramname="7" value="'pcp'"/>
+		<set name="matchfieldName" paramname="8" value="'dscp'"/>
+		<set name="matchfieldName" paramname="9" value="'ecn'"/>
+		<set name="matchfieldName" paramname="10" value="'ipproto'"/>
+		<set name="matchfieldName" paramname="11" value="'srcip'"/>
+		<set name="matchfieldName" paramname="12" value="'dstip'"/>
+		<set name="matchfieldName" paramname="13" value="'tcpsrc'"/>
+		<set name="matchfieldName" paramname="14" value="'tcpdst'"/>
+		<set name="matchfieldName" paramname="15" value="'udpsrc'"/>
+		<set name="matchfieldName" paramname="16" value="'udpdst'"/>
+		<set name="matchfieldName" paramname="17" value="'sctpsrc'"/>
+		<set name="matchfieldName" paramname="18" value="'sctpdst'"/>
+		<set name="matchfieldName" paramname="19" value="'icmpv4type'"/>
+		<set name="matchfieldName" paramname="20" value="'icmpv4code'"/>
+		<set name="matchfieldName" paramname="21" value="'arpopcode'"/>
+		<set name="matchfieldName" paramname="22" value="'arpspa'"/>
+		<set name="matchfieldName" paramname="23" value="'arptpa'"/>
+		<set name="matchfieldName" paramname="24" value="'arpsha'"/>
+		<set name="matchfieldName" paramname="25" value="'arptha'"/>
+		<set name="matchfieldName" paramname="26" value="'ipv6src'"/>
+		<set name="matchfieldName" paramname="27" value="'ipv6dst'"/>
+		<set name="matchfieldName" paramname="28" value="'ipv6flabel'"/>
+		<set name="matchfieldName" paramname="29" value="'icmpv6type'"/>
+		<set name="matchfieldName" paramname="30" value="'icmpv6code'"/>
+		<set name="matchfieldName" paramname="31" value="'ipv6ndtarget'"/>
+		<set name="matchfieldName" paramname="32" value="'ipv6ndsll'"/>
+		<set name="matchfieldName" paramname="33" value="'ipv6ndtll'"/>
+		<set name="matchfieldName" paramname="34" value="'mplslabel'"/>
+		<set name="matchfieldName" paramname="35" value="'mplstc'"/>
+		<set name="matchfieldName" paramname="36" value="'mplsbos'"/>
+		<set name="matchfieldName" paramname="37" value="'pbbisid'"/>
+		<set name="matchfieldName" paramname="38" value="'tunnelid'"/>
+		<set name="matchfieldName" paramname="39" value="'ipv6exthdr'"/>
 	</function>
 </starosxml>

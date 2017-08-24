@@ -20,6 +20,7 @@
 			<variable name="m_datapathid" type="string"/>
 			<variable name="m_tables" type="string"/>
 			<variable name="m_ports" type="class"/>
+			
 		</private>
 		<public>
 			<function name="CDevice">
@@ -556,7 +557,7 @@
 					</parameters>
 				</function>
 			</function>
-		<function name="SendPortStateRequest">
+			<function name="SendPortStateRequest">
 				<variable name="xid" type="long"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="portstatelist" type="list"  valuetype="string"/>

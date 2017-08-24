@@ -14,6 +14,9 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPacketService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
+	<!--qiulei 2017.08.24 Thursday-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
+
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<variable name="FlowManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
@@ -25,6 +28,8 @@
 	<variable name="WebSocketManager" type="class" global="true"/>
 	<variable name="gInstanceManager" type="class" global="true"/>
 	<variable name="gSettingsManager" type="class" global="true"/>
+	<!--qiulei 2017.08.24 Thursday-->
+	<variable name="RestfulAPIManager" type="class" global="true"/>
 	<!--YY 2017-08-21-->
 	<variable name="PacketService" type="class" global="true"/>
 	<function name="InitGlobalResource">
@@ -43,5 +48,8 @@
 		<new name="PacketService" class="CPacketService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
 		<new name="ApplicationManager" class="CApplicationManager"/>
+		
+		<!--qiulei 2017.08.24 Thursday-->
+		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 	</function>
 </starosxml>

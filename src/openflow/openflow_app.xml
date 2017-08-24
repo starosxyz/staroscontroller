@@ -124,6 +124,7 @@
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
 					</parameters>
 				</function>
+				<script><![CDATA[context.openflowserverobj.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
 			</function>
 		</onevent>
 		<!-- 0 -->

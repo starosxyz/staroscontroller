@@ -68,6 +68,7 @@
 					<parameter name="flowjson" type="string"/>
 				</parameters>
 				<variable name="outjson" type="string"/>
+				<log><![CDATA[m_flowjson=<%=thisclass.m_flowjson.toString()%>]]></log>	
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.m_flowjson.toString());
 					var flow = new Object();
@@ -78,32 +79,129 @@
 					flow.priority = info.priority;
 					var local_selector = "Criteria: ";
 					for (var i = 0; i < info.match.matchfieldlist.length; i++)
-					{						
-						var key = info.match.matchfieldlist[i].oxmfield;
-						var value_type = global.matchfieldMap.getParam(key).toString();
-						var value = info.match.matchfieldlist[i].value_type;
-						if (info.match.matchfieldlist[i].hasmask == "true")
+					{				
+						var onematch = info.match.matchfieldlist[i];
+						var key = onematch.oxmfield;
+						context.print(key);
+						if (global.matchfieldName.hasParam(key)==true)
 						{
-							var value_type_mask = value_type + "mask";
-							if (info.match.matchfieldlist[i].value_type_mask != null)							
+							var keyname=global.matchfieldName.getParam(key).toString();
+							var value_type = global.matchfieldMap.getParam(key).toString();
+							var value = onematch[value_type];
+							if (onematch.hasmask == "true")
 							{
-								value += "/" + info.match.matchfieldlist[i].value_type_mask;
+								var value_type_mask = value_type + "mask";
+								if (onematch[value_type_mask] != null)							
+								{
+									local_selector += keyname + ':' +value + '/' + onematch[value_type_mask]+', ';
+								}
+							}
+							else 
+							{
+								local_selector += keyname + ':' + value + ', ';
 							}
 						}
-						local_selector += key + ":" + value + ",";
 					}
 					flow.selector = local_selector;
-					var local_treatment = "Treatment Instructions: immediate:";
+					var local_treatment = "Treatment Instructions: ";
 					var local_treatment_end = " cleared:true";
-					/*for (var i = 0; i < info.instructionlist.length; i++)
+					var middle_treatment;
+					var tboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
 					{
-						for (var j = 0; j < info.instructionlist.actionlist.length; j++)
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
 						{
-							var key = info.instructionlist[i].actionlist[j].type;
-							var value = info.instructionlist[i].actionlist[j].maxlen;
-							local_treatment += key + ":" + value + ",";
+							if (oneinstruction.type=='1')
+							{
+								if (tboolfirst==true)
+								{
+									local_treatment+='transition:'+'TABLE:'+oneinstruction.tableid+',';
+									tboolfirst=false;
+								}
+								else
+								{
+									local_treatment+='TABLE:'+oneinstruction.tableid+',';
+								}
+							}
 						}
-					}*/
+					}
+					var boolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if (oneinstruction.type=='2')
+							{
+								if (boolfirst==true)
+								{
+									local_treatment+='metadata:'+'METADATA:'+oneinstruction.metadata+'/'+oneinstruction.metadatamask+', ';
+									boolfirst=false;
+								}
+								else
+								{
+									local_treatment+='METADATA:'+oneinstruction.metadata+'/'+oneinstruction.metadatamask+', ';
+								}
+							}
+						}
+					}
+					var mboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if (oneinstruction.type=='6')
+							{
+								if (mboolfirst==true)
+								{
+									local_treatment+='metered:'+'METER:'+oneinstruction.meterid+', ';
+									mboolfirst=false;
+								}
+								else
+								{
+									local_treatment+='METER:'+oneinstruction.meterid+'/'+', ';
+								}
+							}
+						}
+					}
+					var aboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if ((oneinstruction.type=='3')||(oneinstruction.type=='4')||(oneinstruction.type=='5'))
+							{
+								if (oneinstruction.actionlist != null)
+								{
+									if (aboolfirst==true)
+									{
+										local_treatment+='immediate:';
+										for (var j = 0; j < oneinstruction.actionlist.length; j++)
+										{
+											var oneaction = oneinstruction.actionlist[j];
+											var key=global.actionsMap.getParam(oneaction.type).toString();
+											var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
+											local_treatment+=keyname+':'+oneaction[key]+', ';
+										}
+										aboolfirst=false;
+									}
+									else 
+									{
+										for (var j = 0; j < oneinstruction.actionlist.length; j++)
+										{
+											var oneaction = oneinstruction.actionlist[j];
+											var key=global.actionsMap.getParam(oneaction.type).toString();
+											var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
+											local_treatment+=keyname+':'+oneaction[key]+', ';
+										}	
+									}
+								}
+							}
+						}
+					}
 					flow.treatment = local_treatment + local_treatment_end;
 					flow.timeout = info.idletimeout;
 					if ((info.idletimeout == info.hardtimeout) && (info.idletimeout == 0))
@@ -157,15 +255,15 @@
 				<variable name="transportid" type="string"/>
 				<set name="sresourceid" value="context.allocResourceId()"/>
 				<!--qiulei modify 20170807-->
-				<log><![CDATA[deviceid=<%=context.datapathid.toString()%>]]></log>
+				<log><![CDATA[deviceid=<%=context.datapathid.toString()%>]]></log>	
 				<log><![CDATA[flowId=<%=context.sresourceid.toString()%>]]></log>	
 				<log><![CDATA[appId=<%=context.appId.toString()%>]]></log>	
 				<log><![CDATA[flowjson=<%=context.strjson.toString()%>]]></log>		
 				<new name="flowentry" class="CFlowEntry">
 					<parameters>
 						<parameter name="deviceid" type="string" in="context.datapathid.toString()"/>
-					<parameter name="flowId" type="string" in="context.sresourceid.toString()"/>
-					<parameter name="appId" type="string" in="context.appId.toString()"/>
+						<parameter name="flowId" type="string" in="context.sresourceid.toString()"/>
+						<parameter name="appId" type="string" in="context.appId.toString()"/>
 						<parameter name="flowjson" type="string" in="context.strjson.toString()"/>
 					</parameters>
 				</new>				
@@ -178,8 +276,7 @@
 				</function>
 				<log><![CDATA[InstallFlowTableRequest transportid=<%=context.transportid.toString()%>]]></log>
 				<function name="Send_OFPT13_FLOW_MOD">
-				
-<parameters>
+					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
 						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 					</parameters>
@@ -220,9 +317,9 @@
 				<function name="GetFlowJsonString" class="context.flowentry">
 					<parameters>
 						<parameter name="jsonstring" type="string" out="context.flowmodjson"/>
-						</parameters>
-						</function>
-					<log><![CDATA[flowmodjson=<%=context.flowmodjson.toString()%>]]></log>
+					</parameters>
+				</function>
+				<log><![CDATA[flowmodjson=<%=context.flowmodjson.toString()%>]]></log>
 				<script><![CDATA[
 						var info = JSON.parse(context.flowmodjson.toString());
 						info.command='3';
@@ -243,7 +340,7 @@
 				</function>
 				<remove name="flowsContainer" key="context.resourceid.toString()"/>
 			</function>
-		<function name="GetFlowJsonData">
+			<function name="GetFlowJsonData">
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 					<parameter name="jsonstring" type="string"/>

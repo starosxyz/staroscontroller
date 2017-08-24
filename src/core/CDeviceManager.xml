@@ -3,9 +3,8 @@
 	<class name="CDeviceManager">
 		<private>
 			<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
-		<container name="t2dContainer" type="hashmap" keytype="string" valuetype="string"/>
+			<container name="t2dContainer" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
-		
 		<public>
 			<function name="addDevice">
 				<parameters>
@@ -392,7 +391,7 @@
 						<function name="MultiPartPortDescRequest" class="context.thisswitch"/>
 					</function>
 				</for>
-			<!--SendPortState-->
+				<!--SendPortState-->
 				<log> SendPortStateRequest !!!!!!!!!!!!!!!!!!!</log>
 				<function name="SendPortStateRequest"/>
 			</function>
@@ -645,7 +644,7 @@
 					
 			</function>
 			
-<function name="SendDetails">	
+			<function name="SendDetails">	
 				<parameters>	
 					<parameter name="transportid" type="string"/>
 					<parameter name="datapathid" type="string"/>	
@@ -731,7 +730,7 @@
 					</then>
 				</if>			
 			</function>
-		<function name="SendPortStateRequest">
+			<function name="SendPortStateRequest">
 				<variable name="device" type="class"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">			
 					<function>

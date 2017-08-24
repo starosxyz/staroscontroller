@@ -86,11 +86,11 @@
 		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toLong()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartPortStatsRequest">
-				<parameters>
-					<parameter name="portno" type="string"/>
+			<parameters>
+				<parameter name="portno" type="string"/>
 				<parameter name="transportid" type="string"/>
-				<parameter name="xid" type="long" />
-				</parameters>
+				<parameter name="xid" type="long"/>
+			</parameters>
 			</function>
 			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
 				<function>

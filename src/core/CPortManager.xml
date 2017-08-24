@@ -18,7 +18,7 @@
 			<variable name="m_supported" type="string"/>
 			<variable name="m_portno" type="string"/>
 			<variable name="m_elinks_dest" type="string"/>
-		<!--PortState-->
+			<!--PortState-->
 			<variable name="m_rxpackets" type="string"/>
 			<variable name="m_txpackets" type="string"/>
 			<variable name="m_rxbytes" type="string"/>
@@ -101,7 +101,7 @@
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
 			
-<function name="IsReservedPort">
+			<function name="IsReservedPort">
 				<parameters>
 					<parameter name="returnbool" type="boolean"/>
 				</parameters>
@@ -151,6 +151,54 @@
 						</function>
 					</else>
 				</if>
+			</function>
+
+			<function name="UpdatePortState">
+				<parameters>
+					<parameter name="portstate" type="string"/>
+				</parameters>
+				<log><![CDATA[UpdatePortState--------------------------=<%=context.portstate.toString()%>]]></log>
+				<script><![CDATA[
+						var info = JSON.parse(context.portstate.toString());
+						
+						thisclass.m_rxpackets.setValue(info.rxpackets);
+						thisclass.m_txpackets.setValue(info.txpackets);
+						thisclass.m_rxbytes.setValue(info.rxbytes);
+						thisclass.m_txbytes.setValue(info.txbytes);
+						thisclass.m_rxdropped.setValue(info.rxdropped);
+						thisclass.m_txdropped.setValue(info.txdropped);
+						thisclass.m_rxerrors.setValue(info.rxerrors);
+						thisclass.m_txerrors.setValue(info.txerrors);
+						
+						thisclass.m_rxframeerr.setValue(info.rxframeerr);
+						thisclass.m_rxovererr.setValue(info.rxovererr);
+						thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
+						thisclass.m_collisions.setValue(info.collisions);
+						thisclass.m_durationsec.setValue(info.durationsec);
+						thisclass.m_durationnsec.setValue(info.durationnsec);
+					
+					]]></script>
+				<log><![CDATA[portdetail--------------------------=<%=thisclass.m_rxpackets.toString()%>]]></log>
+				<log><![CDATA[portdetail--------------------------=<%=thisclass.m_durationnsec.toString()%>]]></log>
+			</function>
+			<function name="GetPortsStateJsonData">
+				<parameters>	
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<script><![CDATA[
+						var json = new Object();
+						
+						json['id']=thisclass.m_portno.toString();
+						json['pkt_rx']=thisclass.m_rxpackets.toString();
+						json['pkt_tx']=thisclass.m_txpackets.toString();
+						json['bytes_rx']=thisclass.m_rxbytes.toString();
+						json['bytes_tx']=thisclass.m_txbytes.toString();
+						json['pkt_rx_drp']=thisclass.m_rxdropped.toString();
+						json['pkt_tx_drp']=thisclass.m_txdropped.toString();
+						json['duration']=thisclass.m_durationsec.toString();
+						var jsonstring=JSON.stringify(json);
+						context.jsonstring.setValue(jsonstring);
+					]]></script>
 			</function>
 		</public>
 	</class>
@@ -226,6 +274,16 @@
 					}
 					var strjson=JSON.stringify(portsArray);
 					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			<function name="ForPortDetailReqJson">
+				<parameters>
+					<parameter name="outjson" type="string"/>
+				</parameters>
+				<log><![CDATA[ForPortDetailReqJson !!!!!!!!!=<%=event.getParam("eventdata").toString()%>]]></log>
+				<script><![CDATA[
+					
 				]]></script>
 			</function>
 			
@@ -323,6 +381,79 @@
 					</else>
 				</if>
 			</function>
+			
+			<function name="UpdatePortState">
+				<parameters>
+					<parameter name="portstatestring" type="string"/>
+				</parameters>
+				<variable name="portno" type="string"/>
+				<variable name="portobj" type="class"/>
+				<script><![CDATA[
+						var info = JSON.parse(context.portstatestring.toString());
+						//var stringportno=JSON.stringify(info.portno);
+						context.portno.setValue(info.portno);
+					]]></script>
+				<function name="dumpinfo"/>
+				<log><![CDATA[UpdatePortState portno=<%=context.portno.toString()%>]]></log>
+				<log><![CDATA[portContainer size=<%=context.portContainer.size()%>]]></log>
+				<if cond="context.portContainer.hasValue(context.portno.toString())==true">
+					<then>
+						<set name="portobj" value="context.portContainer.getValue(context.portno.toString())"/>
+						<function name="UpdatePortState" class="context.portobj">
+							<parameters>
+								<parameter name="portstate" type="string" in="context.portstatestring.toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<log> don't have the port</log>
+					</else>
+				</if>
+			</function>
+			<function name="dumpinfo">
+				<variable name="ports" type="string"/>
+				<for var="i" from="0" to="context.portContainer.size()-1">
+					<set name="ports" value="context.portContainer.getKeyByIndex(context.i.toLong())"/>
+					<log><![CDATA[dumpinfo: portno=<%=context.ports.toString()%>]]></log>
+				</for>
+			</function>
+			<function name="GetPortsStateJsonData">
+				<parameters>	
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<variable name="ports" type="class"/>
+				<container name="infolist" type="list" valuetype="string"/>
+				<variable name="stringports" type="string"/>
+				<for var="i" from="0" to="context.portContainer.size()-1">
+					<set name="ports" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+					<function name="GetPortsStateJsonData" class="ports">
+						<parameters>	
+							<parameter name="jsonstring" type="string" out="context.stringports"/>
+						</parameters>
+					</function>
+					<insert name="infolist" value="context.stringports.toString()"/>
+				</for>
+				<script><![CDATA[
+					var info = new Object();
+					info["event"]="portDataResponse";
+					var arrayport =new Array();
+					var ports = new Object();
+					for (var i=0;i<context.infolist.size();i++)
+					{
+						var oneportstate = context.infolist.getValueByIndex(i);
+						var jsoninfo = JSON.parse(oneportstate);
+						arrayport.push(jsoninfo);
+					}
+					ports["ports"]=arrayport;
+					info["payload"]=ports;
+					var msg = new Object();
+					msg["no_rows_msg"]="No ports found";
+					info["annots"]=msg;
+					var inforstring=JSON.stringify(info);
+					context.jsonstring.setValue(inforstring);
+				]]></script>
+			</function>
+				
 		</public>
 	</class>
 </starosxml>

@@ -33,12 +33,6 @@
 										"oxmfield":"5",
 										"hasmask":"false",
 										"ethtype":"0x0806"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"1",
-										"hasmask":"false",
-										"srcip":"'2.2."
 									}
 								]
 							},
@@ -59,9 +53,10 @@
 		</reference>
 		<function name="InstallFlowTableRequest" class="FlowManager">
 			<parameters>
-				<parameter name="datapathid" type="string" in="context.datapathid"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 				<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
 				<parameter name="resourceid" type="string" out="context.resourceid"/>
+				<parameter name="appId" type="string" in="'core'"/>
 			</parameters>
 		</function>
 		<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>
@@ -120,9 +115,10 @@
 		</reference>
 		<function name="InstallFlowTableRequest" class="FlowManager">
 			<parameters>
-				<parameter name="datapathid" type="string" in="context.datapathid"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 				<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
 				<parameter name="resourceid" type="string" out="context.resourceid"/>
+				<parameter name="appId" type="string" in="'core'"/>
 			</parameters>
 		</function>
 		<log><![CDATA[InstallFlowTableRequest resourceid=<%=context.resourceid.toString()%>]]></log>

@@ -55,8 +55,10 @@
 			<!--function name="startnullapp"/-->
 			<!--InitOpenFlow OXM Match Filed Map-->
 			<function name="InitOXMMatchFieldMap"/>
+			<function name="InitOXMMatchFieldNameMap"/>
 			<function name="InitInstrunctionMap"/>
 			<function name="InitActionsMap"/>
+			<function name="InitActionsNameMap"/>
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->

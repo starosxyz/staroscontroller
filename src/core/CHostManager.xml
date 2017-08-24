@@ -1,10 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<class name="CHostManager">
+	<class name="CHost">
 		<private>
-			<container name="hostContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+			<variable name="m_mac" type="string"/>		
+			<variable name="m_ip" type="string"/>	
+			<variable name="m_vlan" type="string"/>
+			<variable name="m_deviceid" type="string"/>	
+			<variable name="m_port" type="string"/>	
 		</private>
 		<public>
+			<function name="CHost">
+				<parameters>
+					<parameter name="mac" type="string"/>		
+					<parameter name="ip" type="string"/>	
+					<parameter name="vlan" type="string"/>
+					<parameter name="deviceid" type="string"/>	
+					<parameter name="port" type="string"/>				
+				</parameters>
+				<set name="thisclass.m_mac" value="context.mac.toString()"/>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+				<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
+				<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
+				<set name="thisclass.m_port" value="context.port.toString()"/>
+			</function>
+			<function name="printhost">
+				<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]> </log>
+				<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]> </log>
+				<log><![CDATA[m_vlan <%=thisclass.m_vlan.toString()%>]]> </log>
+				<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
+				<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]> </log>
+			</function>
+			<function name="ToString">
+				<parameters>
+					<parameter name="jsonstring" type="string" out="context.outjson"/>
+				</parameters>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray._iconid_type='hostIcon_endstation';
+						onearray.id=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString();
+						onearray.mac=thisclass.m_mac.toString();
+						onearray.vlan=thisclass.m_vlan.toString();
+						onearray.ips=thisclass.m_ip.toString();
+						onearray.location=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString();
+						var strjson=JSON.stringify(onearray);
+						context.jsonstring.setValue(strjson);
+					]]></script>
+			</function>
+		</public>
+	</class>
+	<class name="CHostManager">
+		<private>
+			<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+		<public>
+			<function name="CHostManager">
+				<log>CHostManager is create</log>
+				<function name="addhostest"/>
+			</function>
 			<function name="addHost">
 				<parameters>
 					<parameter name="mac" type="string"/>		
@@ -13,35 +65,17 @@
 					<parameter name="deviceid" type="string"/>	
 					<parameter name="port" type="string"/>				
 				</parameters>
-					<container name="onehostinfo" type="hashmap" keytype="string" valuetype="string"/>
-					<container name="onehostinfo2" type="hashmap" keytype="string" valuetype="string"/>
-					<insert name="onehostinfo" key="'mac'" value="context.mac.toString()"/>
-					<insert name="onehostinfo" key="'ip'" value="context.ip.toString()"/>
-					<insert name="onehostinfo" key="'vlan'" value="context.vlan.toString()"/>
-					<insert name="onehostinfo" key="'deviceid'" value="context.deviceid.toString()"/>
-					<insert name="onehostinfo" key="'port'" value="context.port.toString()"/>
-				
-				<if cond="context.hostContainer.hasValue(context.mac.toString())==false">
-					<then>
-						<function>
-							<insert name="hostContainer" key="context.mac.toString()" value="context.onehostinfo"/>
-							<log><![CDATA[mac=<%=context.mac.toString()%>]]></log>
-							<log><![CDATA[ip=<%=context.ip.toString()%>]]></log>
-							<log><![CDATA[vlan=<%=context.vlan.toString()%>]]></log>
-							<log><![CDATA[deviceid=<%=context.deviceid.toString()%>]]></log>
-							<log><![CDATA[port=<%=context.port.toString()%>]]></log>
-						</function>
-					</then>
-					<else>
-						<log>do not addsame</log>
-					</else>
-				</if>
-				<lookup name="hostContainer" key="context.mac.toString()" output="context.onehostinfo2"/>
-				<log><![CDATA[mac=<%=context.onehostinfo2.getValue('mac').toString()%>]]></log>
-				<log><![CDATA[ip=<%=context.onehostinfo2.getValue('ip').toString()%>]]></log>
-				<log><![CDATA[vlan=<%=context.onehostinfo2.getValue('vlan').toString()%>]]></log>
-				<log><![CDATA[deviceid=<%=context.onehostinfo2.getValue('deviceid').toString()%>]]></log>
-				<log><![CDATA[port=<%=context.onehostinfo2.getValue('port').toString()%>]]></log>
+				<variable name="hostobj" type="class"/>	
+				<new name="hostobj" class="CHost">
+					<parameters>
+						<parameter name="mac" type="string" in="context.mac.toString()"/>		
+						<parameter name="ip" type="string" in="context.ip.toString()"/>	
+						<parameter name="vlan" type="string" in="context.vlan.toString()"/>
+						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>	
+						<parameter name="port" type="string" in="context.port.toString()"/>				
+					</parameters>
+				</new>
+				<insert name="hostContainer" key="context.mac+'/'+context.vlan" value="context.hostobj"/>
 			</function>
 
 			<function name="addhostest">
@@ -63,17 +97,57 @@
 						<parameter name="port" type="string"  in="'3'"/>				
 					</parameters>
 				</function>
-				<function name="printhostmanager"/>
 			</function>
 			<function name="printhostmanager">
-				<container name="onehostinfo" type="hashmap" keytype="string" valuetype="string"/>
+				<variable name="onehostinfo" type="class"/>
 				<for var="i" from="0" to="context.hostContainer.size()-1">
 					<function>
 						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
-						<log><![CDATA[onehostinfo mac <%=context.onehostinfo.getValue('mac').toString()%>]]> </log>
+						<function name="printhost" class="context.onehostinfo"/>
 					</function>
 				</for>
 			</function>
+			<function name="GetHostJsonData">	
+				<parameters>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<variable name="outjson" type="string"/>
+				<variable name="onehostinfo" type="string"/>
+				<container name="hostlist" type="list" valuetype="string"/>
+				<for var="i" from="0" to="context.hostContainer.size()-1">
+					<function>
+						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="ToString" class="context.onehostinfo">
+							<parameters>
+								<parameter name="jsonstring" type="string" out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="hostlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+						var json = new Object();
+						var myArray=new Array();                               
+						for(var i=0;i<context.hostlist.size();i++)
+						{
+							var host = context.hostlist.getValueByIndex(i);									
+							var info = JSON.parse(host);	
+							myArray.push(info);
+						}
+						
+						json['event']='hostDataResponse';	
+						var payload = new Object();
+						payload['hosts']=myArray;
+						json['payload']=payload;
+						
+						var msg = new Object();
+						msg["no_rows_msg"]="No Hosts found";
+						info["annots"]=msg;
+						
+						var strjson=JSON.stringify(json);
+						context.jsonstring.setValue(strjson);
+					]]></script>
+			</function>	
 		</public>
 	</class>
 </starosxml>

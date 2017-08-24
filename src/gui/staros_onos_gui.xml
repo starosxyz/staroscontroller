@@ -33,6 +33,7 @@
 			<variable name="filename" type="string"/>
 			<variable name="xmldata" type="string"/>
 			<variable name="appname" type="string"/>
+			<variable name="isAPI" type="boolean"/>
 			<function>
 				<!--qiulie-->
 				<set name="transportid" value="event.getParam('transportid').toString()"/>
@@ -179,6 +180,10 @@
 									context.filepath.setValue(filename);
 									context.contenttype.setValue('image/png');
 								}
+								else if (x.indexOf('/api/v1/')>=0)
+								{	
+									context.isAPI.setValue(true);
+								}
 								else 
 								{
 									if (x.indexOf("/onos/v1/docs") >=0)
@@ -225,15 +230,30 @@
 									}
 								}
 							  ]]></script>
-							<!--yige end-->
-							<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
-							<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
-							<set name="httpparam" paramname="Connection" value="'Close'"/>
-							<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
-							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
-								<html file="context.filepath"/>
-							</restful>
-							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+							<if cond="context.isAPI.toBoolean()">
+								<then>
+									<function name="HandleAPI">
+										<parameters>
+											<parameter name="reqestpath" type="string" in="event.getParam('requestpath').toString()"/>
+											<parameter name="method" type="string" in="event.getParam('method').toString()"/>
+											<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+										</parameters>
+									</function>	
+								</then>
+								<else>
+									<function>
+										<!--yige end-->
+										<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+										<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+										<set name="httpparam" paramname="Connection" value="'Close'"/>
+										<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+										<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+											<html file="context.filepath"/>
+										</restful>
+										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+									</function>
+								</else>
+							</if>
 						</function>
 					</else>
 				</if>

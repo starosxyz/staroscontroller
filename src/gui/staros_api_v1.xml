@@ -4,7 +4,7 @@
 	<function name="HandleAPI">
 		<parameters>
 			<parameter name="reqestpath" type="string"/>
-		<parameter name="method" type="string"/>
+			<parameter name="method" type="string"/>
 			<parameter name="eventdata" type="string"/>
 		</parameters>
 		<variable name="functionname" type="string"/>
@@ -19,7 +19,7 @@
 						<parameters>
 							<parameter name="reqestpath" type="string" in="context.reqestpath.toString()"/>
 							<parameter name="method" type="string" in="context.method.toString()"/>
-				<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
+							<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
 						</parameters>
 					</function>
 				</function>

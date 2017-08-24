@@ -43,9 +43,9 @@
 		<set name="WebSocketHandlerMap" paramname="appManagementRequest" value="'HandleappManagementRequest'"/>
 		<!--hupeng 20170803-->
 		<set name="WebSocketHandlerMap" paramname="hostDataRequest" value="'HandlehostDataRequest'"/>
-		<!--yijian 20170823-->
+	<!--yijian 20170823-->
 		<set name="WebSocketHandlerMap" paramname="settingDataRequest" value="'HandleSettingsRequest'"/>
-	<set name="WebSocketHandlerMap" paramname="flowDataRequest" value="'HandleFlowDataRequest'"/>
+		<set name="WebSocketHandlerMap" paramname="flowDataRequest" value="'HandleFlowDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="portDataRequest" value="'HandlePortDataRequest'"/>
 	</function>
 </starosxml>
