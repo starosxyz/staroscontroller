@@ -392,6 +392,9 @@
 						<function name="MultiPartPortDescRequest" class="context.thisswitch"/>
 					</function>
 				</for>
+			<!--SendPortState-->
+				<log> SendPortStateRequest !!!!!!!!!!!!!!!!!!!</log>
+				<function name="SendPortStateRequest"/>
 			</function>
 			<function name="DeviceDetailsReqJson">
 				<parameters>
@@ -728,6 +731,33 @@
 					</then>
 				</if>			
 			</function>
+		<function name="SendPortStateRequest">
+				<variable name="device" type="class"/>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+					<function>
+						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="SendPortStateRequest" class="device"/>
+					</function>
+				</for>
+			</function>
+			<function name="GetPortsStateJsonData">	
+				<parameters>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<variable name="device" type="class"/>
+				<log>GetPortsStateJsonData !!!!!!!!!!!!!!</log>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+						<function name="GetPortsStateJsonData" class="context.device">
+							<parameters>	
+								<parameter name="jsonstring" type="string" out="context.jsonstring"/>
+							</parameters>
+						</function>		
+					</then>
+				</if>
+			</function>	
 		</public>
 	</class>
 </starosxml>

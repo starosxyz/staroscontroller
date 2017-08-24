@@ -2,6 +2,8 @@
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="OpenFlowMultiPartPortStatsRequest">
 		<parameters>
+			<parameter name="portno" type="string"/>
+			<parameter name="transportid" type="string"/>
 			<parameter name="xid" type="long"/>
 		</parameters>
 		<log dest="stdout">OpenFlowMultiPartPortStatsRequest</log>
@@ -9,14 +11,14 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
-						"portno":"1"
+						"xid":"<%=context.xid.toString()%>",
+						"portno":"<%=context.portno.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 			</parameters>
 		</function>
@@ -85,7 +87,9 @@
 		<function>
 			<function name="OpenFlowMultiPartPortStatsRequest">
 				<parameters>
-					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+					<parameter name="portno" type="string"/>
+				<parameter name="transportid" type="string"/>
+				<parameter name="xid" type="long" />
 				</parameters>
 			</function>
 			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">

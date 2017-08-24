@@ -556,6 +556,54 @@
 					</parameters>
 				</function>
 			</function>
+		<function name="SendPortStateRequest">
+				<variable name="xid" type="long"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<container name="portstatelist" type="list"  valuetype="string"/>
+				<variable name="portstatestring" type="string"/>
+				<function name="OpenFlowMultiPartPortStatsRequest">
+					<parameters>
+						<parameter name="portno" type="string" in="'0xffffffff'"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+					</parameters>
+				</function>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
+					<function>
+						<log><![CDATA[openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS=<%=event.getParam('eventdata').toString()%>]]></log>
+						<script><![CDATA[
+								var info = JSON.parse(event.getParam('eventdata').toString());
+								
+								for(var i=0;i<info.portstatslist.length;i++)
+								{
+									var portstats = info.portstatslist[i];
+									var portstrjson=JSON.stringify(portstats);
+									context.portstatelist.addValue(portstrjson);
+								}
+							]]></script>
+					</function>
+				</wait>
+				<log><![CDATA[portstatelist size=<%=context.portstatelist.size()%>]]></log>
+				<for var="i" from="0" to="context.portstatelist.size()-1">
+					<set name="portstatestring" value="context.portstatelist.getValueByIndex(context.i.toLong())"/>
+					<function name="UpdatePortState" class="thisclass.m_ports">
+						<parameters>
+							<parameter name="portstatestring" type="string" in="context.portstatestring.toString()"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+			<!--Get Port State Info , 2017/8/24 -->
+			<function name="GetPortsStateJsonData">
+				<parameters>	
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<function name="GetPortsStateJsonData" class="thisclass.m_ports">
+					<parameters>	
+						<parameter name="jsonstring" type="string" out="context.jsonstring"/>
+					</parameters>
+				</function>
+			</function>	
 		</public>
 	</class>
 </starosxml>
