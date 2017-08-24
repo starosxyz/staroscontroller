@@ -18,6 +18,24 @@
 			<variable name="m_supported" type="string"/>
 			<variable name="m_portno" type="string"/>
 			<variable name="m_elinks_dest" type="string"/>
+		<!--PortState-->
+			<variable name="m_rxpackets" type="string"/>
+			<variable name="m_txpackets" type="string"/>
+			<variable name="m_rxbytes" type="string"/>
+			<variable name="m_txbytes" type="string"/>
+			
+			<variable name="m_rxdropped" type="string"/>
+			<variable name="m_txdropped" type="string"/>
+			<variable name="m_rxerrors" type="string"/>
+			<variable name="m_txerrors" type="string"/>
+			
+			<variable name="m_rxframeerr" type="string"/>
+			<variable name="m_rxovererr" type="string"/>
+			<variable name="m_rxcrcerr" type="string"/>
+			<variable name="m_collisions" type="string"/>
+						
+			<variable name="m_durationsec" type="string"/>
+			<variable name="m_durationnsec" type="string"/>
 		</private>
 		<public>
 			<function name="CPort">
