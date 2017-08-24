@@ -33,6 +33,12 @@
 										"oxmfield":"5",
 										"hasmask":"false",
 										"ethtype":"0x0806"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"1",
+										"hasmask":"false",
+										"srcip":"'2.2."
 									}
 								]
 							},
