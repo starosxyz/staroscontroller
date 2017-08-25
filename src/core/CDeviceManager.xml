@@ -394,6 +394,9 @@
 				<!--SendPortState-->
 				<log> SendPortStateRequest !!!!!!!!!!!!!!!!!!!</log>
 				<function name="SendPortStateRequest"/>
+							<log> SendTableRequest !!!!!!!!!!!!!!!!!!!</log>
+				<function name="SendTableRequest"/>
+				<function name="SendFlowRequest"/>
 			</function>
 			<function name="DeviceDetailsReqJson">
 				<parameters>
@@ -756,6 +759,49 @@
 						</function>		
 					</then>
 				</if>
+			</function>	
+		<function name="SendFlowRequest">
+				<log>insert CDeviceManager SendFlowRequest</log>
+				<variable name="device" type="class"/>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+					<function>
+						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="SendFlowRequest" class="device"/>
+					</function>
+				</for>
+			</function>
+			<!----qiulei 20170825-->
+			<function name="GetAllMeterJsonData">	
+				<parameters>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				
+				<variable name="deviceobject" type="class"/>
+				<variable name="metermgr" type="class"/>
+				<!--qiulei 20170825 Friday pm-->
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())==true">
+					<then>
+						<function>
+							<lookup name="deviceContainer" key="context.datapathid.toString()" output="context.deviceobject"/>
+							
+							
+							<function name="GetMetermgr" class="deviceobject">
+								<parameters>
+									<variable name="metermgr" type="string" out="context.metermgr"/>
+								</parameters>
+							</function>
+							<function name="GetMeterJsonData" class="context.metermgr">	
+								<parameters>
+									<parameter name="jsonstring" type="string" out="context.jsonstring"/>
+								</parameters>
+							</function>
+							
+							
+						</function>
+					</then>
+				</if>
+				<log>GetMeterJsonData</log>
 			</function>	
 		</public>
 	</class>

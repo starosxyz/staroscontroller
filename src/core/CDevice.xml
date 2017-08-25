@@ -557,6 +557,54 @@
 					</parameters>
 				</function>
 			</function>
+						
+			<function name="SendTableRequest">
+				<variable name="xid" type="long"/>
+				<log>SendTableRequest !!!!!!!!!!!!!hu</log>
+				
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<container name="tablestatslist" type="list"  valuetype="string"/>
+				<variable name="tablestatestring" type="string"/>
+				<function name="OpenFlowMultiPartTableRequest">
+					<parameters>
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
+					</parameters>
+				</function>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
+					<script><![CDATA[
+								var info = JSON.parse(event.getParam('eventdata').toString());
+								context.print("tablestatslist huhuhu"+info.tablestatslist.length);
+								for(var i=0;i<info.tablestatslist.length;i++)
+								{	
+									var tablestats = info.tablestatslist[i];
+									var tablestrjson=JSON.stringify(tablestats);
+									context.tablestatslist.addValue(tablestrjson);
+								}
+							]]></script>
+				</wait>
+				<for var="i" from="0" to="context.tablestatslist.size()-1">
+					<set name="tablestatestring" value="context.tablestatslist.getValueByIndex(context.i.toLong())"/>
+					<function name="UpdateTableState" class="thisclass.m_tablemgr">
+						<parameters>
+							<parameter name="tablestatestring" type="string" in="context.tablestatestring.toString()"/>
+						</parameters>
+					</function>
+					<log>tablestatestring HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</log>
+				</for>
+				
+			</function>
+			
+			<function name="SendFlowRequest">
+				<log><![CDATA[CDevice m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
+				<log>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</log>
+				<function name="SendFlowRequest" class="FlowManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>				
+					</parameters>
+				</function>				
+			</function>
+			
 			<function name="SendPortStateRequest">
 				<variable name="xid" type="long"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>

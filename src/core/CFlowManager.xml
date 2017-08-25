@@ -19,6 +19,8 @@
 			<variable name="m_bytes" type="string"/>
 			<variable name="m_timeout" type="string"/>
 			<variable name="m_flowjson" type="string"/>
+		<variable name="m_durationsec" type="string"/>
+			<variable name="m_durationnsec" type="string"/>
 		</private>
 		<public>
 			<function name="CFlowEntry">
@@ -28,20 +30,12 @@
 					<parameter name="appId" type="string"/>
 					<parameter name="flowjson" type="string"/>					
 				</parameters>
-				<log><![CDATA[deviceid=<%=context.deviceid.toString()%>]]></log>	
-				<log><![CDATA[flowId=<%=context.flowId.toString()%>]]></log>	
-				<log><![CDATA[appId=<%=context.appId.toString()%>]]></log>	
-				<log><![CDATA[flowjson=<%=context.flowjson.toString()%>]]></log>	
 				<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
 				<set name="thisclass.m_flowId" value="context.flowId.toString()"/>
 				<set name="thisclass.m_appId" value="context.appId.toString()"/>
 				<set name="thisclass.m_flowjson" value="context.flowjson.toString()"/>
 				<set name="thisclass.m_state" value="'Added'"/>		
-				<log><![CDATA[m_deviceid=<%=thisclass.m_deviceid.toString()%>]]></log>	
-				<log><![CDATA[m_flowId=<%=thisclass.m_flowId.toString()%>]]></log>	
-				<log><![CDATA[m_appId=<%=thisclass.m_appId.toString()%>]]></log>	
-				<log><![CDATA[m_flowjson=<%=thisclass.m_flowjson.toString()%>]]></log>					
-			</function>
+				</function>
 			<function name="GetFlowJsonString" class="context.flowentry">
 				<parameters>
 					<parameter name="jsonstring" type="string"/>
@@ -228,6 +222,26 @@
 				<set name="context.deviceid" value="thisclass.m_deviceid.toString()"/>
 			</function>
 			
+		<function name="GetFlowId">
+				<parameters>
+					<parameter name="flowid" type="string"/>					
+				</parameters>
+				<set name="context.flowid" value="thisclass.m_flowId.toString()"/>
+			</function>
+			
+			<function name="Set4Natures">
+				<parameters>
+					<parameter name="packets" type="string"/>
+					<parameter name="bytes" type="string"/>
+					<parameter name="durationsec" type="string"/>
+					<parameter name="durationnsec" type="string"/>
+				</parameters>
+				<set name="m_packets" value="context.packets.toString()"/>
+				<set name="m_bytes" value="context.bytes.toString()"/>
+				<set name="m_durationsec" value="context.durationsec.toString()"/>
+				<set name="m_durationnsec" value="context.durationnsec.toString()"/>
+			</function>
+			
 		</public>
 	</class>
 	<class name="CFlowManager">
@@ -253,12 +267,9 @@
 				<variable name="flowentry" type="class"/>
 				<variable name="sresourceid" type="string"/>
 				<variable name="transportid" type="string"/>
+				<variable name="sendjson" type="string"/>
 				<set name="sresourceid" value="context.allocResourceId()"/>
 				<!--qiulei modify 20170807-->
-				<log><![CDATA[deviceid=<%=context.datapathid.toString()%>]]></log>	
-				<log><![CDATA[flowId=<%=context.sresourceid.toString()%>]]></log>	
-				<log><![CDATA[appId=<%=context.appId.toString()%>]]></log>	
-				<log><![CDATA[flowjson=<%=context.strjson.toString()%>]]></log>		
 				<new name="flowentry" class="CFlowEntry">
 					<parameters>
 						<parameter name="deviceid" type="string" in="context.datapathid.toString()"/>
@@ -267,6 +278,13 @@
 						<parameter name="flowjson" type="string" in="context.strjson.toString()"/>
 					</parameters>
 				</new>				
+				<script><![CDATA[
+						var info = JSON.parse(context.strjson.toString());
+						info.cookie=context.sresourceid.toString();
+						var str_json=JSON.stringify(info);
+						context.sendjson.setValue(str_json);
+				]]></script>
+				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				<function name="GetTransportIdFromDevice" class="DeviceManager">
 					<parameters>
@@ -278,7 +296,7 @@
 				<function name="Send_OFPT13_FLOW_MOD">
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid"/>
-						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+						<parameter name="strjson" type="string" in="context.sendjson.toString()"/>
 					</parameters>
 				</function>
 				<set name="resourceid" value="context.sresourceid.toString()"/>
@@ -319,7 +337,6 @@
 						<parameter name="jsonstring" type="string" out="context.flowmodjson"/>
 					</parameters>
 				</function>
-				<log><![CDATA[flowmodjson=<%=context.flowmodjson.toString()%>]]></log>
 				<script><![CDATA[
 						var info = JSON.parse(context.flowmodjson.toString());
 						info.command='3';
@@ -354,8 +371,6 @@
 					var deviceid = context.datapathid.toString();
 					var final_id = deviceid.split(":")[1];				
 					context.isTdeviceId.setValue(final_id);
-					context.print("datapathid = "+context.datapathid.toString());
-					context.print("isTdeviceId = "+context.isTdeviceId.toString());
 				]]></script>
 				<container name="flowinfos" type="list" valuetype="string"/>
 				<for var="i" from="0" to="context.flowsContainer.size()-1">
@@ -365,6 +380,7 @@
 							<parameter name="deviceid" type="string" out="context.flowobj_deviceid"/>
 						</parameters>
 					</function>
+					<log><![CDATA[flowobj_deviceid=<%=context.flowobj_deviceid.toString()%>]]></log>
 					<if cond="context.isTdeviceId.toString()==context.flowobj_deviceid.toString()">
 						<then>
 							<log>context.isTdeviceId.toString()==context.flowobj_deviceid.toString()</log>
@@ -405,6 +421,89 @@
 				]]></script>
 				<set name="jsonstring" value="context.outjson"/>
 			</function>
+		<function name="SendFlowRequest">
+				<parameters>
+					<parameter name="transportid" type="string"/>				
+				</parameters>
+				<log><![CDATA[transportid = <%=context.transportid.toString()%>]]></log>
+				<variable name="xid" type="long"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>							
+				
+				<container name="flowpartlist" type="list"  valuetype="string"/>
+				<variable name="flowpartstring" type="string"/>											
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="context.transportid.toString()"/>					
+					</parameters>
+				</function>
+				<log><![CDATA[transportid = <%=context.transportid.toString()%>]]></log>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="context.transportid.toString()" xid="context.xid.toLong()">
+					<function>
+						<script><![CDATA[
+							context.print(event.getParam('eventdata').toString());
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							for (var i = 0; i < info.statslist.length; i++)
+							{
+								var flowstats = info.statslist[i];
+								var flowstrjson=JSON.stringify(flowstats);
+								context.flowpartlist.addValue(flowstrjson);
+							}
+						]]></script>
+					</function>
+				</wait>
+				<variable name="flowobj" type="class"/>
+				<variable name="flowobj_flowid" type="string"/>
+				<variable name="json_cookie" type="string"/>
+				<variable name="local_packets" type="string"/>
+				<variable name="local_bytes" type="string"/>
+				<variable name="local_durationsec" type="string"/>
+				<variable name="local_durationnsec" type="string"/>
+				<for var="i" from="0" to="context.flowpartlist.size()-1">
+					<set name="flowpartstring" value="context.flowpartlist.getValueByIndex(context.i.toLong())"/>
+					<for var="j" from="0" to="context.flowsContainer.size()-1">
+						<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.j.toLong())"/>
+						<function name="GetFlowId" class="context.flowobj">
+							<parameters>
+								<parameter name="flowid" type="string" out="context.flowobj_flowid"/>
+							</parameters>
+						</function>
+						
+						<script><![CDATA[
+							var flowstats = context.flowpartstring.toString();
+							var info = JSON.parse(flowstats);
+							var cookie = info.cookie;
+							context.json_cookie.setValue(cookie);
+						]]></script>
+						<if cond="context.flowobj_flowid.toString()==context.json_cookie.toString()">
+							<then>
+								<script><![CDATA[
+									var flowstats = context.flowpartstring.toString();
+									var info = JSON.parse(flowstats);
+									var packets = info.packetcount;
+									var bytes = info.bytecount;
+									var durationsec = info.durationsec;
+									var durationnsec = info.durationnsec;
+									context.local_packets.setValue(packets);
+									context.local_bytes.setValue(bytes);
+									context.local_durationsec.setValue(durationsec);
+									context.local_durationnsec.setValue(durationnsec);
+								]]></script>
+								<function name="Set4Natures" class="context.flowobj">
+									<parameters>
+										<parameter name="packets" type="string" in="context.local_packets.toString()"/>
+										<parameter name="bytes" type="string" in="context.local_bytes.toString()"/>
+										<parameter name="durationsec" type="string" in="context.local_durationsec.toString()"/>
+										<parameter name="durationnsec" type="string" in="context.local_durationnsec.toString()"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
+					</for>
+				</for>
+				
+			</function>		
+			
 		</public>
 	</class>
 </starosxml>
