@@ -404,12 +404,6 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<!--function name="MultiPartPortDescRequest" class="context.thisswitch"/-->
-					</function>
-				</for>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
-					<function>
-						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
 						<function name="TimeOut" class="context.thisswitch"/>
 					</function>
 				</for>
@@ -753,15 +747,6 @@
 						</function>		
 					</then>
 				</if>			
-			</function>
-			<function name="SendPortStateRequest">
-				<variable name="device" type="class"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">			
-					<function>
-						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="SendPortStateRequest" class="device"/>
-					</function>
-				</for>
 			</function>
 			
 			<function name="SendTableRequest">
