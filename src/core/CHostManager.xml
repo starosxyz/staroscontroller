@@ -6,7 +6,7 @@
 			<variable name="m_ip" type="string"/>	
 			<variable name="m_vlan" type="string"/>
 			<variable name="m_deviceid" type="string"/>	
-			<variable name="m_port" type="string"/>	
+			<variable name="m_port" type="string"/>
 		</private>
 		<public>
 			<function name="CHost">
@@ -17,20 +17,21 @@
 					<parameter name="deviceid" type="string"/>	
 					<parameter name="port" type="string"/>				
 				</parameters>
-				<set name="thisclass.m_mac" value="context.mac.toString()"/>
-				<set name="thisclass.m_ip" value="context.ip.toString()"/>
-				<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
-				<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
-				<set name="thisclass.m_port" value="context.port.toString()"/>
-			</function>
-			<function name="printhost">
-				<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]> </log>
-				<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]> </log>
-				<log><![CDATA[m_vlan <%=thisclass.m_vlan.toString()%>]]> </log>
-				<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
-				<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]> </log>
-			</function>
-			<function name="ToString">
+					<set name="thisclass.m_mac" value="context.mac.toString()"/>
+					<set name="thisclass.m_ip" value="context.ip.toString()"/>
+					<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
+					<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
+					<set name="thisclass.m_port" value="context.port.toString()"/>
+				
+</function>
+				<function name="printhost">
+					<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]>						</log>
+							<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]>							</log>
+							<log><![CDATA[m_vlan <%=thisclass.m_vlan.toString()%>]]> </log>
+							<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
+							<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]>							</log>
+						</function>
+					<function name="ToString">
 				<parameters>
 					<parameter name="jsonstring" type="string" out="context.outjson"/>
 				</parameters>
@@ -45,13 +46,13 @@
 						var strjson=JSON.stringify(onearray);
 						context.jsonstring.setValue(strjson);
 					]]></script>
-			</function>
-		</public>
-	</class>
-	<class name="CHostManager">
+					</function>
+						</public>
+					</class>
+				<class name="CHostManager">
 		<private>
-			<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
-		</private>
+				<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
+				</private>
 		<public>
 			<function name="CHostManager">
 				<log>CHostManager is create</log>
@@ -73,7 +74,7 @@
 						<parameter name="vlan" type="string" in="context.vlan.toString()"/>
 						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>	
 						<parameter name="port" type="string" in="context.port.toString()"/>				
-					</parameters>
+				</parameters>
 				</new>
 				<insert name="hostContainer" key="context.mac+'/'+context.vlan" value="context.hostobj"/>
 			</function>
@@ -97,17 +98,17 @@
 						<parameter name="port" type="string"  in="'3'"/>				
 					</parameters>
 				</function>
-			</function>
+				</function>
 			<function name="printhostmanager">
 				<variable name="onehostinfo" type="class"/>
 				<for var="i" from="0" to="context.hostContainer.size()-1">
 					<function>
 						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="printhost" class="context.onehostinfo"/>
+			<function name="printhost" class="context.onehostinfo"/>
 					</function>
 				</for>
 			</function>
-			<function name="GetHostJsonData">	
+			<function name="GetHostJsonData">
 				<parameters>
 					<parameter name="jsonstring" type="string"/>
 				</parameters>
@@ -122,10 +123,10 @@
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
 							</parameters>
 						</function>
-						<insert name="hostlist" value="context.outjson.toString()"/>
+ <insert name="hostlist" value="context.outjson.toString()"/>
 					</function>
 				</for>
-				<script><![CDATA[
+			<script><![CDATA[
 						var json = new Object();
 						var myArray=new Array();                               
 						for(var i=0;i<context.hostlist.size();i++)
@@ -147,7 +148,7 @@
 						var strjson=JSON.stringify(json);
 						context.jsonstring.setValue(strjson);
 					]]></script>
-			</function>	
+			</function>
 		</public>
 	</class>
 </starosxml>

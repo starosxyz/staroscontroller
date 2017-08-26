@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CTable">
+		<private>
+			<variable name="m_tableid" type="string" />
+			<variable name="m_activecount" type="string" />
+			<variable name="m_lookupcount" type="string" />
+			<variable name="m_matchcount" type="string" />
+		</private>
+		<public>
+			<function name="CTable">
+				<parameters>
+					<parameter name="tableid" type="string"/>
+					<parameter name="activecount" type="string"/>
+					<parameter name="lookupcount" type="string"/>
+					<parameter name="matchcount" type="string"/>
+				</parameters>
+				<set name="thisclass.m_tableid" value="context.tableid.toString()"/>
+				<set name="thisclass.m_activecount" value="context.activecount.toString()"/>
+				<set name="thisclass.m_lookupcount" value="context.lookupcount.toString()"/>
+				<set name="thisclass.m_matchcount" value="context.matchcount.toString()"/>
+			</function>
+			<function name="UpdateTableInfo">
+				<parameters>
+					<parameter name="tableid" type="string"/>
+					<parameter name="activecount" type="string"/>
+					<parameter name="lookupcount" type="string"/>
+					<parameter name="matchcount" type="string"/>
+				</parameters>
+				<set name="thisclass.m_tableid" value="context.tableid.toString()"/>
+				<set name="thisclass.m_activecount" value="context.activecount.toString()"/>
+				<set name="thisclass.m_lookupcount" value="context.lookupcount.toString()"/>
+				<set name="thisclass.m_matchcount" value="context.matchcount.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CTableManager">
+		<private>
+			<container name="tableContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<variable name="m_transportid" type="string"/>
+		</private>
+		<public>
+			<function name="CTableManager">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>	
+				<log>CTableManager is create</log>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+			</function>
+			<function name="UpdateTableState">
+				<parameters>
+					<parameter name="tablestatestring" type="string"/>
+				</parameters>
+				
+				<variable name="tableid" type="string"/>
+				<variable name="activecount" type="string"/>
+				<variable name="lookupcount" type="string"/>
+				<variable name="matchcount" type="string"/>
+				<variable name="table" type="class"/>
+				<script><![CDATA[
+						var info = JSON.parse(context.tablestatestring.toString());
+						
+						context.tableid.setValue(info.tableid);
+						context.activecount.setValue(info.activecount);
+
+						context.lookupcount.setValue(info.lookupcount);
+						context.matchcount.setValue(info.matchedcount);
+					]]></script>
+				<if cond="thisclass.tableContainer.hasValue(context.tableid.toString())==false">
+					<then>
+						<new name="table" class="CTable">
+							<parameters>
+								<parameter name="tableid" type="string" in="context.tableid.toString()"/>
+								<parameter name="activecount" type="string" in="context.activecount.toString()"/>
+								<parameter name="lookupcount" type="string" in="context.lookupcount.toString()"/>
+								<parameter name="matchcount" type="string" in="context.matchcount.toString()" />
+							</parameters>
+						</new>
+						<insert name="tableContainer" key="context.tableid.toString()" value="context.table"/>
+					</then>
+					<else>
+						<set name="table" value="thisclass.tableContainer.getValue(context.tableid.toString())"/>
+						<function name="UpdateTableInfo" class="context.table">
+							<parameters>
+								<parameter name="tableid" type="string" in="context.tableid.toString()"/>
+								<parameter name="activecount" type="string" in="context.activecount.toString()"/>
+								<parameter name="lookupcount" type="string" in="context.lookupcount.toString()"/>
+								<parameter name="matchcount" type="string" in="context.matchcount.toString()" />
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</function>
+				
+			<function name="dumpinfo">
+				<variable name="tables" type="string"/>
+					<for var="i" from="0" to="context.tableContainer.size()-1">
+						<set name="tables" value="context.tableContainer.getKeyByIndex(context.i.toLong())"/>
+						<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
+					</for>
+			</function>
+			<function name="SendTableRequest">
+				<variable name="xid" type="long"/>
+				<log>SendTableRequest !!!!!!!!!!!!!hu</log>
+				
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<container name="tablestatslist" type="list"  valuetype="string"/>
+				<variable name="tablestatestring" type="string"/>
+				<function name="OpenFlowMultiPartTableRequest">
+					<parameters>
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</function>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
+					<script><![CDATA[
+								var info = JSON.parse(event.getParam('eventdata').toString());
+								for(var i=0;i<info.tablestatslist.length;i++)
+								{	
+									var tablestats = info.tablestatslist[i];
+									var tablestrjson=JSON.stringify(tablestats);
+									context.tablestatslist.addValue(tablestrjson);
+								}
+							]]></script>
+				</wait>
+				<for var="i" from="0" to="context.tablestatslist.size()-1">
+					<set name="tablestatestring" value="context.tablestatslist.getValueByIndex(context.i.toLong())"/>
+					<function name="UpdateTableState">
+						<parameters>
+							<parameter name="tablestatestring" type="string" in="context.tablestatestring.toString()"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+		</public>
+	</class>
+</starosxml>

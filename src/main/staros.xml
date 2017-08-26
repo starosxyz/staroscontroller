@@ -16,6 +16,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/oxm_match_fields_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/actions_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/instrunction_map.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/group_type_map.xml"/>
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 
@@ -58,7 +59,7 @@
 			<function name="InitOXMMatchFieldNameMap"/>
 			<function name="InitInstrunctionMap"/>
 			<function name="InitActionsMap"/>
-			<function name="InitActionsNameMap"/>
+		  <function name="InitActionsNameMap"/>
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->

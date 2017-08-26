@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandleGroupDataRequest">
+		<variable name="deviceid" type="string"/>
+		<variable name="outjson" type="string"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="groupobj" type="class"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam("eventdata").toString());
+			var devId = info.payload.devId;
+			var deviceids=devId.split(":")[1];
+			context.deviceid.setValue(deviceids);
+			
+		]]></script>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<parameter name="outdevice" type="class" out="context.deviceobj"/>
+				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<function name="GetGroupManager" class="context.deviceobj">
+			<parameters>
+				<parameter name="outgroupmgr" type="class" out="context.groupobj"/>
+			</parameters>
+		</function>
+		<function name="GetGroupJsonData" class="context.groupobj">	
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+				<parameter name="jsonstring" type="string" out="context.outjson"/>
+			</parameters>
+		</function>	
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>
+	</function>
+</starosxml>

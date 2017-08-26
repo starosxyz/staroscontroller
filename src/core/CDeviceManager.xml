@@ -6,6 +6,22 @@
 			<container name="t2dContainer" type="hashmap" keytype="string" valuetype="string"/>
 		</private>
 		<public>
+			<function name="CDeviceManager">
+				<log>CDeviceManager is create</log>
+			</function>
+			<function name="getDevice">
+				<parameters>
+					<parameter name="outdevice" type="class"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+					<then>
+						<function>
+							<set name="outdevice" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+						</function>
+					</then>
+				</if>
+			</function>
 			<function name="addDevice">
 				<parameters>
 					<parameter name="mfrdesc" type="string"/>
@@ -388,15 +404,20 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="MultiPartPortDescRequest" class="context.thisswitch"/>
+						<!--function name="MultiPartPortDescRequest" class="context.thisswitch"/-->
+					</function>
+				</for>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">
+					<function>
+						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="TimeOut" class="context.thisswitch"/>
 					</function>
 				</for>
 				<!--SendPortState-->
 				<log> SendPortStateRequest !!!!!!!!!!!!!!!!!!!</log>
-				<function name="SendPortStateRequest"/>
-							<log> SendTableRequest !!!!!!!!!!!!!!!!!!!</log>
-				<function name="SendTableRequest"/>
-				<function name="SendFlowRequest"/>
+				<!--function name="SendPortStateRequest"/-->
+				
+				<!--function name="SendFlowRequest"/-->
 			</function>
 			<function name="DeviceDetailsReqJson">
 				<parameters>
@@ -742,6 +763,16 @@
 					</function>
 				</for>
 			</function>
+			
+			<function name="SendTableRequest">
+				<variable name="device" type="class"/>
+				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+					<function>
+						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="SendTableRequest" class="device"/>
+					</function>
+				</for>
+			</function>
 			<function name="GetPortsStateJsonData">	
 				<parameters>
 					<parameter name="datapathid" type="string"/>
@@ -759,50 +790,7 @@
 						</function>		
 					</then>
 				</if>
-			</function>	
-		<function name="SendFlowRequest">
-				<log>insert CDeviceManager SendFlowRequest</log>
-				<variable name="device" type="class"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">			
-					<function>
-						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="SendFlowRequest" class="device"/>
-					</function>
-				</for>
 			</function>
-			<!----qiulei 20170825-->
-			<function name="GetAllMeterJsonData">	
-				<parameters>
-					<parameter name="datapathid" type="string"/>
-					<parameter name="jsonstring" type="string"/>
-				</parameters>
-				
-				<variable name="deviceobject" type="class"/>
-				<variable name="metermgr" type="class"/>
-				<!--qiulei 20170825 Friday pm-->
-				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())==true">
-					<then>
-						<function>
-							<lookup name="deviceContainer" key="context.datapathid.toString()" output="context.deviceobject"/>
-							
-							
-							<function name="GetMetermgr" class="deviceobject">
-								<parameters>
-									<variable name="metermgr" type="string" out="context.metermgr"/>
-								</parameters>
-							</function>
-							<function name="GetMeterJsonData" class="context.metermgr">	
-								<parameters>
-									<parameter name="jsonstring" type="string" out="context.jsonstring"/>
-								</parameters>
-							</function>
-							
-							
-						</function>
-					</then>
-				</if>
-				<log>GetMeterJsonData</log>
-			</function>	
 		</public>
 	</class>
 </starosxml>

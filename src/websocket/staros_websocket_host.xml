@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandlehostDataRequest">
-		<variable name="outjson" type="string"/>
+	<variable name="outjson" type="string"/>
 		<log>HandlehostDataRequest</log>
 		<!--hupeng 20170731-->
 		<function name="GetHostJsonData" class="HostManager">	
@@ -9,8 +9,8 @@
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
 			</parameters>
 		</function>	
-		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
-		</websocket>
-	</function>
+			</websocket>		
+		</function>
 </starosxml>

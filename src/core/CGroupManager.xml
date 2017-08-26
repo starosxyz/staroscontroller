@@ -1,49 +1,280 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<variable name="testresourceid" type="string"/>
-	<class name="CGroupManager">
+	<class name="CGroupBucket">
 		<private>
-			<container name="groupContainer" type="hashmap" keytype="string" valuetype="string"/>
+			<variable name="m_packets" type="string"/>
+			<variable name="m_bytes" type="string"/>
+			<variable name="m_bucketjson" type="string"/>
 		</private>
 		<public>
+			<function name="CGroupBucket">
+				<parameters>
+					<parameter name="bucketjson" type="string"/>
+				</parameters>
+				<set name="thisclass.m_bytes" value="'0'"/>
+				<set name="thisclass.m_packets" value="'0'"/>
+				<set name="thisclass.m_bucketjson" value="context.bucketjson.toString()"/>
+				<log><![CDATA[CGroupBucket bucketjson=<%=thisclass.m_bucketjson.toString()%>]]></log>
+			</function>
+			<function name="UpdateState">
+				<parameters>
+					<parameter name="packets" type="string"/>
+					<parameter name="bytes" type="string"/>
+				</parameters>
+				<set name="thisclass.m_packets" value="context.packets.toString()"/>
+				<set name="thisclass.m_bytes" value="context.bytes.toString()"/>
+			</function>
+			<function name="ToJsonString">
+				<parameters>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<log><![CDATA[m_bucketjson=<%=thisclass.m_bucketjson.toString()%>]]></log>
+				<script><![CDATA[
+					var onebucket = JSON.parse(thisclass.m_bucketjson.toString());
+					var jsonstrign='Bytes: '+thisclass.m_bytes.toString()+' Packets: '+thisclass.m_packets.toString()+' Actions: ';
+					var straction="";
+					if (onebucket.actions.length==0)
+					{
+						context.jsonstring.setValue("(No buckets for this group)");
+					}
+					else 
+					{
+						for (var j = 0; j < onebucket.actions.length; j++)
+						{
+							var oneaction = onebucket.actions[j];
+							var key=global.actionsMap.getParam(oneaction.type).toString();
+							var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
+							var actionvalue=oneaction[key];
+							if (oneaction.type=='25')
+							{
+								if (global.matchfieldName.hasParam(actionvalue)==true)
+								{
+									var matchkeyname=global.matchfieldName.getParam(actionvalue).toString();
+									var matchvalue_type = global.matchfieldMap.getParam(actionvalue).toString();
+									var matchvalue = oneaction[matchvalue_type];
+									if (oneaction.hasmask == "true")
+									{
+										var value_type_mask = matchvalue_type + "mask";
+										if (oneaction[value_type_mask] != null)							
+										{
+											straction += keyname + ':' +matchvalue + '/' + oneaction[value_type_mask]+', ';
+										}
+									}
+									else 
+									{
+										straction+=keyname+':' +matchvalue + ', ';
+									}
+								}
+								straction+=keyname+':' +matchvalue + '/' + oneaction[value_type_mask]+', '
+							}
+							else 
+							{
+								straction+=keyname+':'+actionvalue+', ';
+							}
+						}
+					}
+					jsonstrign+=straction+"<br>";
+					context.jsonstring.setValue(jsonstrign);				
+				]]></script>
+			</function>
+			<function name="FetchStateFromJson">
+				<parameters>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
+				<script><![CDATA[
+					var info = JSON.parse(thisclass.groupjson.toString());
+					thisclass.m_packets=info.packetcount;
+					thisclass.m_bytes=info.bytecount;
+				]]></script>
+			</function>
+		</public>
+	</class>
+	<class name="CGroup">
+		<private>
+			<variable name="m_id" type="string"/>
+			<variable name="m_appid" type="string"/>
+			<variable name="m_state" type="string"/>
+			<variable name="m_type" type="string"/>
+			<variable name="m_packets" type="string"/>
+			<variable name="m_bytes" type="string"/>
+			<variable name="m_strjson" type="string"/>
+			<variable name="m_duration_sec" type="string"/>
+			<variable name="m_duration_nsec" type="string"/>
+			<variable name="m_ref_count" type="string"/>
+			<container name="m_buckets" type="list" valuetype="class"/>
+		</private>
+		<public>
+			<function name="CGroup">
+				<parameters>
+					<parameter name="id" type="string"/>
+					<parameter name="appid" type="string"/>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
+				<set name="thisclass.m_id" value="context.id.toString()"/>
+				<set name="thisclass.m_appid" value="context.appid.toString()"/>
+				<set name="thisclass.m_strjson" value="context.groupjson.toString()"/>
+				<set name="thisclass.m_state" value="'Added'"/>
+				<set name="thisclass.m_packets" value="'0'"/>
+				<set name="thisclass.m_bytes" value="'0'"/>
+				<container name="strbucketlist" type="list" valuetype="string"/>
+				<variable name="bucketobj" type="class"/>
+				<variable name="strbucket" type="string"/>
+				<script><![CDATA[
+						var info = JSON.parse(thisclass.m_strjson.toString());
+						thisclass.m_type=info.grouptype;
+						if (info.bucketlist!=null)
+						{
+							for(var i=0;i<info.bucketlist.length;i++)
+							{
+								var onebucket = info.bucketlist[i];
+								var strjson=JSON.stringify(onebucket);
+								context.strbucketlist.addValue(strjson);
+							}
+						}
+				]]></script>
+				<for var="i" from="0" to="context.strbucketlist.size()-1">
+					<function>
+						<set name="strbucket" value="context.strbucketlist.getValueByIndex(context.i.toLong())"/>
+						<log><![CDATA[strbucket=<%=context.strbucket.toString()%>]]></log>
+						<new name="bucketobj" class="CGroupBucket">
+							<parameters>
+								<parameter name="bucketjson" type="string" in="context.strbucket.toString()"/>
+							</parameters>
+						</new>
+						<insert name="m_buckets" value="context.bucketobj"/>
+					</function>
+				</for>
+			</function>
+			<function name="GroupToJsonString">
+				<parameters>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
+				<variable name="outjson" type="string"/>
+				<variable name="bucketsobj" type="class"/>
+				<container name="bucketjsonlist" type="list" valuetype="string"/>
+				<log><![CDATA[m_strjson=<%=thisclass.m_strjson.toString()%>]]></log>
+				<log><![CDATA[m_appid=<%=thisclass.m_appid.toString()%>]]></log>
+				<log><![CDATA[m_state=<%=thisclass.m_state.toString()%>]]></log>
+				<log><![CDATA[m_packets=<%=thisclass.m_packets.toString()%>]]></log>
+				<log><![CDATA[m_bytes=<%=thisclass.m_bytes.toString()%>]]></log>
+				<log><![CDATA[m_buckets size=<%=context.m_buckets.size()%>]]></log>
+				<for var="i" from="0" to="context.m_buckets.size()-1">
+					<function>
+						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
+						<function name="ToJsonString" class="bucketsobj">
+							<parameters>
+								<parameter name="jsonstring" type="string" out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="bucketjsonlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<log><![CDATA[bucketjsonlist size=<%=context.bucketjsonlist.size()%>]]></log>
+				<script><![CDATA[
+					var flow = new Object();
+					flow.id = thisclass.m_id.toString();
+					flow.app_id = thisclass.m_appid.toString();
+					flow.state = thisclass.m_state.toString();
+					flow.packets = thisclass.m_packets.toString();
+					flow.bytes = thisclass.m_bytes.toString();
+					flow.type = thisclass.m_type.toString();
+					var buckets=" ";
+					for(var i=0;i<context.bucketjsonlist.size();i++)
+					{
+						buckets+=context.bucketjsonlist.getValueByIndex(i);
+					}
+					flow.buckets=buckets;
+					var strjson=JSON.stringify(flow);
+					context.groupjson.setValue(strjson);					
+				]]></script>				
+
+			</function>
+			<!--Get Stat info from MGroup Reply json-->
+			<function name="FetchStateFromJson">
+				<parameters>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
+				<container name="bucketjsonlist" type="list" valuetype="string"/>
+				<variable name="bucketsobj" type="class"/>
+				<variable name="bucketstring" type="class"/>
+				<log><![CDATA[FetchStateFromJson groupjson=<%=context.groupjson.toString()%>]]></log>
+				<script><![CDATA[
+					var info = JSON.parse(thisclass.groupjson.toString());
+					thisclass.m_ref_count=info.refcount;
+					thisclass.m_packets=info.packetcount;
+					thisclass.m_bytes=info.bytecount;
+					thisclass.m_duration_sec=info.duretionsec;
+					thisclass.m_duration_nsec=info.durationnsec;
+					for(var i=0;i<info.bucketcounterlist.length;i++)
+					{
+						var onebucket = info.bucketcounterlist[i];
+						context.bucketjsonlist.addValue(JSON.stringify(onebucket));
+					}
+				]]></script>
+				<for var="i" from="0" to="context.m_buckets.size()-1">
+					<function>
+						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
+						<set name="bucketstring" value="context.bucketjsonlist.getValueByIndex(context.i.toLong())"/>
+						<function name="FetchStateFromJson" class="bucketsobj">
+							<parameters>
+								<parameter name="jsonstring" type="string" in="context.bucketstring.toString()"/>
+							</parameters>
+						</function>
+					</function>
+				</for>
+			</function>
+		</public>
+	</class>
+	<class name="CGroupManager">
+		<private>
+			<container name="groupContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<variable name="m_transportid" type="string"/>
+			<variable name="m_testgroupid" type="string"/>
+		</private>
+		<public>
+			<function name="CGroupManager">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<set name="thisclass.m_testgroupid" value="'2'"/>
+				<function name="testaddgroup"/>
+			</function>
 			<function name="InstallGroupRequest">
 				<parameters>
-					<parameter name="in_datapathid" type="string"/>
 					<parameter name="in_strjson" type="string"/>
-					<parameter name="in_resourceid" type="string"/>
+					<parameter name="in_appid" type="string"/>
+					<parameter name="in_groupid" type="string"/>
 				</parameters>
-				<container name="switchgroup" type="hashmap" keytype="string" valuetype="string"/>
-				<variable name="sresourceid" type="string"/>
-				<variable name="transportid" type="string"/>
-				<set name="sresourceid" value="context.allocResourceId()"/>
+				<variable name="groupobj" type="class"/>
 				<!--qiulei modify 20170807-->
-				<insert name="groupContainer" key="context.sresourceid.toString()" value="context.in_strjson.toString()"/>
-				<function name="GetTransportIdFromDevice" class="DeviceManager">
-					<parameters>
-						<parameter name="datapathid" type="string" in="context.in_datapathid"/>
-						<parameter name="transportid" type="string" out="context.transportid"/>
-					</parameters>
-				</function>
 				<function name="Send_OFPT13_GROUP_MOD">
 					<parameters>
-						<parameter name="transportid" type="string" in="context.transportid"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
 						<parameter name="strjson" type="string" in="context.in_strjson.toString()"/>
 					</parameters>
 				</function>
-				<set name="in_resourceid" value="context.sresourceid.toString()"/>
+				<new name="groupobj" class="CGroup">
+					<parameters>
+						<parameter name="id" type="string" in="context.in_groupid.toString()"/>
+						<parameter name="appid" type="string" in="context.in_appid.toString()"/>
+						<parameter name="groupjson" type="string" in="context.in_strjson.toString()"/>
+					</parameters>
+				</new>
+				<insert name="groupContainer" key="context.in_groupid.toString()" value="context.groupobj"/>
 			</function>
 			<function name="UnInstallGroupRequest">
 				<parameters>
-					<parameter name="datapathid" type="string"/>
-					<parameter name="resourceid" type="string"/>
+					<parameter name="groupid" type="string"/>
 				</parameters>
-				<variable name="transportid" type="string"/>
-				<variable name="jsongroup" type="string"/>
+				<variable name="jsongroup" type="class"/>
 				<variable name="sendflowmodjson" type="string"/>
-				<if cond="context.groupContainer.hasValue(context.resourceid.toString()) ==true">
+				<variable name="groupstring" type="string"/>
+				<if cond="context.groupContainer.hasValue(context.groupid.toString()) ==true">
 					<then>
 						<function>
-							<lookup name="groupContainer" key="context.resourceid.toString()" output="context.jsongroup"/>
+							<lookup name="groupContainer" key="context.groupid.toString()" output="context.jsongroup"/>
 						</function>
 					</then>
 					<else>
@@ -53,26 +284,25 @@
 						</function>
 					</else>
 				</if>
-				<!--log><![CDATA[jsongroup=<%=context.jsongroup.toString()%>]]></log-->
+				<function name="GetGroupString" class="context.jsongroup">
+					<parameters>
+						<parameter name="outgroupstring" type="string" out="context.groupstring"/>
+					</parameters>
+				</function>
+				<!--log><![CDATA[groupstring=<%=context.groupstring.toString()%>]]></log-->
 				<script><![CDATA[
-						var info = JSON.parse(context.jsongroup.toString());
+						var info = JSON.parse(context.groupstring.toString());
 						info.command='2';
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
-				<function name="GetTransportIdFromDevice" class="DeviceManager">
-					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid"/>
-						<parameter name="transportid" type="string" out="context.transportid"/>
-					</parameters>
-				</function>
 				<function name="Send_OFPT13_GROUP_MOD">
 					<parameters>
-						<parameter name="transportid" type="string" in="context.transportid"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
 					</parameters>
 				</function>
-				<remove name="groupContainer" key="context.resourceid.toString()"/>
+				<remove name="groupContainer" key="context.groupid.toString()"/>
 			</function>
 			<!--
 				OFPGT_ALL = 0, /* All (multicast/broadcast) group. */
@@ -80,10 +310,7 @@
 				OFPGT_INDIRECT = 2, /* Indirect group. */
 				OFPGT_FF = 3, /* Fast failover group. */
 			-->
-			<function name="testaddgroup">			
-				<parameters>
-						<parameter name="datapathid" type="string"/>
-				</parameters>
+			<function name="testaddgroup">
 				<variable name="modstrjson" type="string"/>
 				<variable name="returnresourceid" type="string"/>
 				<reference variable="modstrjson">
@@ -112,26 +339,118 @@
 				</reference>
 				<function name="InstallGroupRequest">
 					<parameters>
-						<parameter name="in_datapathid" type="string" in="context.datapathid.toString()"/>
 						<parameter name="in_strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="in_resourceid" type="string" out="context.returnresourceid"/>
+						<parameter name="in_groupid" type="string" in="thisclass.m_testgroupid.toString()"/>
+						<parameter name="in_appid" type="string" in="'core'"/>
 					</parameters>
 				</function>
-				<!--log><![CDATA[testaddgroup returnresourceid=<%=context.returnresourceid.toString()%>]]></log-->
-				<set name="testresourceid" value="context.returnresourceid.toString()"/>
 			</function>
 			<function name="testremovegroup">			
-				<parameters>
-					<parameter name="datapathid" type="string"/>
-				</parameters>
 				<function name="UnInstallGroupRequest">
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-						<parameter name="resourceid" type="string" in="context.testresourceid.toString()"/>
+						<parameter name="groupid" type="string" in="thisclass.m_testgroupid.toString()"/>
 					</parameters>
 				</function>
 				<log><![CDATA[testremovegroup testresourceid=<%=context.testresourceid.toString()%>]]></log>
 				
+			</function>
+			<!-- for Get Group Json Data-->
+			<function name="GetGroupJsonData">	
+				<parameters>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<container name="groupjsonlist" type="list" valuetype="string"/>
+				<variable name="groupobj" type="class"/>
+				<variable name="GroupInfoJson" type="string"/>
+				<for var="i" from="0" to="context.groupContainer.size()-1">
+					<function>
+						<set name="groupobj" value="context.groupContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="GroupToJsonString" class="groupobj">
+							<parameters>
+								<parameter name="groupjson" type="string" out="context.GroupInfoJson"/>
+							</parameters>
+						</function>
+						<insert name="groupjsonlist" value="context.GroupInfoJson.toString()"/>
+					</function>
+				</for>
+				
+				<script><![CDATA[
+					var json = new Object();
+					var payload = new Object();							
+					json['event'] = "groupDataResponse";
+					
+					var gArray=new Array();
+					for(var i=0;i<context.groupjsonlist.size();i++)
+					{
+						var oneStrJson = context.groupjsonlist.getValueByIndex(i);
+						var oneObject = JSON.parse(oneStrJson);
+						gArray.push(oneObject);
+					}
+					payload['groups'] = gArray;
+					
+					var twobject = new Object();								
+					twobject['no_rows_msg'] = "No groups found";
+													
+					payload['annots'] = twobject;
+					json['payload'] = payload;
+					var strjson=JSON.stringify(json);				
+					context.jsonstring.setValue(strjson);
+					
+				]]></script>
+			</function>	
+			<!--Group State Request-->
+			<function name="GroupStateRequest">
+				<variable name="xid" type="string"/>
+				<variable name="groupid" type="string"/>
+				<variable name="groupobj" type="string"/>
+				<variable name="groupstate" type="string"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>
+				<function name="OpenFlowMultiPartGroupRequest">
+					<parameters>
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</function>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
+					<function>
+						<if cond="event.getName() == 'openflow.OFPT13_ERROR'">
+							<then>
+								<log>GroupStateRequest Got a Error</log>
+							</then>
+							<else>
+								<script><![CDATA[							
+									var info = JSON.parse(event.getParam('eventdata').toString());
+									if (info.statslist != null)
+									{
+										for(var i=0;i<info.statslist.length;i++)
+										{
+											var onestat=info.statslist[i];
+											context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
+										}
+									}
+								]]></script>
+							</else>
+						</if>
+					</function>
+				</wait>
+				<log>GroupStateRequest</log>
+				<for var="i" from="0" to="context.groupContainer.size()-1">
+					<function>
+						<set name="groupobj" value="context.groupContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="groupid" value="context.groupContainer.getKeyByIndex(context.i.toLong())"/>
+						<if cond="context.liststate.hasValue(context.groupid.toString())==true">
+							<then>
+								<set name="groupstate" value="context.liststate.getValue(context.groupid.toString())"/>
+								<function name="FetchStateFromJson" class="groupobj">
+									<parameters>
+										<parameter name="groupjson" type="string" in="context.groupstate.toString"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
+					</function>
+				</for>
 			</function>
 		</public>
 	</class>

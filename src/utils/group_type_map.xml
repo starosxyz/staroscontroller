@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+	<variable name="GroupTypeParam" type="params" global="true"/>
+	<function name="InitGroupType">
+		<set name="GroupTypeParam" paramname="OFPGT_ALL" value="'0'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_SELECT" value="'1'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_INDIRECT" value="'2'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_FF" value="'3'"/>
+	</function>
+</starosxml>

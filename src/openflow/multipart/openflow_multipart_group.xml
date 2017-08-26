@@ -3,6 +3,7 @@
 	<function name="OpenFlowMultiPartGroupRequest">
 		<parameters>
 			<parameter name="xid" type="long"/>
+			<parameter name="transportid" type="string"/>
 		</parameters>
 		<log dest="stdout">OpenFlowMultiPartGroupRequest</log>
 		<variable name="strjson" type="string"/>
@@ -16,7 +17,7 @@
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 			</parameters>
 		</function>

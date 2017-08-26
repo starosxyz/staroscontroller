@@ -23,8 +23,6 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/controllertoswitch/openflow_handshake.xml"/>
 	<!--qiulei 2017/07/18-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_detect.xml"/>
-	<!--qiulei 2017/07/20-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_flowmgr.xml"/>
 	<!--qiulei 2017/08/22 Tuesday pm -->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/controllertoswitch/openflow_packet_out.xml"/>
 	
@@ -124,7 +122,7 @@
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
 					</parameters>
 				</function>
-				<script><![CDATA[context.openflowserverobj.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
+			<script><![CDATA[context.openflowserverobj.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
 			</function>
 		</onevent>
 		<!-- 0 -->

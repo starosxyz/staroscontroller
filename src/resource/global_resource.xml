@@ -14,16 +14,14 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPacketService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 
 	<variable name="ApplicationManager" type="class" global="true"/>
-	<variable name="FlowManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
 	<variable name="ClusterManager" type="class" global="true"/>
 	<variable name="DeviceManager" type="class" global="true"/>
-	<variable name="MeterManager" type="class" global="true"/>
-	<variable name="GroupManager" type="class" global="true"/>
 	<variable name="HostManager" type="class" global="true"/>
 	<variable name="WebSocketManager" type="class" global="true"/>
 	<variable name="gInstanceManager" type="class" global="true"/>
@@ -34,13 +32,10 @@
 	<variable name="PacketService" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
-		<new name="FlowManager" class="CFlowManager"/>
 		<!--qiulei 20170811-->
 		<new name="ClusterManager" class="CClusterManager"/>
 		<new name="DeviceManager" class="CDeviceManager"/>
-		<!--yijian 20170814-->
-		<new name="MeterManager" class="CMeterManager"/>
-		<new name="GroupManager" class="CGroupManager"/>
+
 		<new name="HostManager" class="CHostManager"/>
 		<new name="WebSocketManager" class="CWebSocketManager"/>
 		<new name="gInstanceManager" class="CInstanceManager"/>

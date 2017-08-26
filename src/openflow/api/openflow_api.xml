@@ -2,124 +2,124 @@
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--qiulei start-->
 	<!-- 29-0 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_HELLO"/>
+	<define name="openflow.OFPT13_HELLO" value="0"/>
 	<!-- 29-1 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_ERROR"/>
+	<define name="openflow.OFPT13_ERROR" value="1"/>
 	<!-- 29-2 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_ECHO_REQUEST"/>
+	<define name="openflow.OFPT13_ECHO_REQUEST" value="2"/>
 	<!-- 29-3 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_ECHO_REPLY"/>
+	<define name="openflow.OFPT13_ECHO_REPLY" value="3"/>
 	<!-- 29-4 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_EXPERIMENTER"/>
+	<define name="openflow.OFPT13_EXPERIMENTER" value="4"/>
 	<!-- 29-5 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_FEATURES_REQUEST"/>
+	<define name="openflow.OFPT13_FEATURES_REQUEST" value="5"/>
 	<!-- 29-6 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_FEATURES_REPLY"/>
+	<define name="openflow.OFPT13_FEATURES_REPLY" value="6"/>
 	<!-- 29-7 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_GET_CONFIG_REQUEST"/>
+	<define name="openflow.OFPT13_GET_CONFIG_REQUEST" value="7"/>
 	<!-- 29-8 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_GET_CONFIG_REPLY"/>
+	<define name="openflow.OFPT13_GET_CONFIG_REPLY" value="8"/>
 	<!-- 29-9 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_SET_CONFIG"/>
+	<define name="openflow.OFPT13_SET_CONFIG" value="9"/>
 	<!-- 29-10 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_PACKET_IN"/>
+	<define name="openflow.OFPT13_PACKET_IN" value="10"/>
 	<!-- 29-11 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_FLOW_REMOVED"/>
+	<define name="openflow.OFPT13_FLOW_REMOVED" value="11"/>
 	<!-- 29-12 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_PORT_STATUS"/>
+	<define name="openflow.OFPT13_PORT_STATUS" value="12"/>
 	<!-- 29-13 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_PACKET_OUT"/>
+	<define name="openflow.OFPT13_PACKET_OUT" value="13"/>
 	<!-- 29-14 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_FLOW_MOD"/>
+	<define name="openflow.OFPT13_FLOW_MOD" value="14"/>
 	<!-- 29-15 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_GROUP_MOD"/>
+	<define name="openflow.OFPT13_GROUP_MOD" value="15"/>
 	<!-- 29-16 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_PORT_MOD"/>
+	<define name="openflow.OFPT13_PORT_MOD" value="16"/>
 	<!-- 29-17 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_TABLE_MOD"/>
+	<define name="openflow.OFPT13_TABLE_MOD" value="17"/>
 	<!-- 29-18 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST" value="18"/>
 	<!-- 29-19 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY"/>
+	<define name="openflow.OFPT13_MULTIPART_REPLY" value="19"/>
 	<!-- 29-20 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_BARRIER_REQUEST"/>
+	<define name="openflow.OFPT13_BARRIER_REQUEST" value="20"/>
 	<!-- 29-21 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_BARRIER_REPLY"/>
+	<define name="openflow.OFPT13_BARRIER_REPLY" value="21"/>
 	<!-- 29-22 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_QUEUE_GET_CONFIG_REQUEST"/>
+	<define name="openflow.OFPT13_QUEUE_GET_CONFIG_REQUEST" value="22"/>
 	<!-- 29-23 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_QUEUE_GET_CONFIG_REPLY"/>
+	<define name="openflow.OFPT13_QUEUE_GET_CONFIG_REPLY" value="23"/>
 	<!-- 29-24 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_ROLE_REQUEST"/>
+	<define name="openflow.OFPT13_ROLE_REQUEST" value="24"/>
 	<!-- 29-25 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_ROLE_REPLY"/>
+	<define name="openflow.OFPT13_ROLE_REPLY" value="25"/>
 	<!-- 29-26 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_GET_ASYNC_REQUEST"/>
+	<define name="openflow.OFPT13_GET_ASYNC_REQUEST" value="26"/>
 	<!-- 29-27 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_GET_ASYNC_REPLY"/>
+	<define name="openflow.OFPT13_GET_ASYNC_REPLY" value="27"/>
 	<!-- 29-28 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_SET_ASYNC"/>
+	<define name="openflow.OFPT13_SET_ASYNC" value="28"/>
 	<!-- 29-29 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_METER_MOD"/>
+	<define name="openflow.OFPT13_METER_MOD" value="29"/>
 	
 	<!-- Request 13-0 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC" value="30"/>
 	<!-- Request 13-1 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW" value="31"/>
 	<!-- Request 13-2 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE" value="32"/>
 	<!-- Request 13-3 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE" value="33"/>
 	<!-- Request 13-4 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS" value="34"/>
 	<!-- Request 13-5 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE" value="35"/>
 	<!-- Request 13-6 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP" value="36"/>
 	<!-- Request 13-7 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC" value="37"/>
 	<!-- Request 13-8 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_FEATURES" value="38"/>
 	<!-- Request 13-9 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER" value="39"/>
 	<!-- Request 13-10 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG" value="40"/>
 	<!-- Request 13-11 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES" value="41"/>
 	<!-- Request 13-12 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES" value="42"/>
 	<!-- Request 13-13 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC"/>
+	<define name="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC" value="43"/>
 
 	
 	<!-- Reply 13-0 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" value="44"/>	
 	<!-- Reply 13-1 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW" value="45"/>	
 	<!-- Reply 13-2 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE" value="46"/>	
 	<!-- Reply 13-3 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" value="47"/>	
 	<!-- Reply 13-4 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS" value="48"/>	
 	<!-- Reply 13-5 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE" value="49"/>	
 	<!-- Reply 13-6 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP" value="50"/>	
 	<!-- Reply 13-7 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC" value="51"/>	
 	<!-- Reply 13-8 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES" value="52"/>	
 	<!-- Reply 13-9 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER" value="53"/>	
 	<!-- Reply 13-10 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG" value="54"/>	
 	<!-- Reply 13-11 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES" value="55"/>	
 	<!-- Reply 13-12 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES"/>	
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES" value="56"/>	
 	<!-- Reply 13-13 -->
-	<define namespace="openflowmsg" name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC"/>
+	<define name="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC" value="57"/>
 	<!--qiulei end-->
 	
 	<!--29-0 send HELLO message, 

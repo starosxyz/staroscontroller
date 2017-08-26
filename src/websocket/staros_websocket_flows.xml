@@ -3,12 +3,13 @@
 	<function name="HandleFlowDataRequest">
 		<variable name="deviceid" type="string"/>
 		<variable name="outjson" type="string"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="flowobj" type="class"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var devId = info.payload.devId;
-			context.deviceid.setValue(devId);
-			context.print("==============================================================");
-			context.print("!!!!!!!!!!!!!!!!!"+context.deviceid.toString());
+			var deviceids=devId.split(":")[1];
+			context.deviceid.setValue(deviceids);
 		]]></script>
 		<!--
 			{
@@ -78,9 +79,25 @@
 				}
 			}
 		-->
-		<function name="GetFlowJsonData" class="FlowManager">	
+		<function name="getDevice" class="DeviceManager">
 			<parameters>
+				<parameter name="outdevice" type="class" out="context.deviceobj"/>
 				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj==null">
+			<then>
+				<log>deviceobj is null</log>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetFlowManager" class="context.deviceobj">
+			<parameters>
+				<parameter name="outflowmgr" type="class" out="context.flowobj"/>
+			</parameters>
+		</function>
+		<function name="GetFlowJsonData" class="context.flowobj">	
+			<parameters>
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
 			</parameters>
 		</function>	

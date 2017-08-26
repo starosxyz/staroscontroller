@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
@@ -122,35 +122,34 @@
 		<!--qiulei 20170807 -->
 		
 		<log dest="stdout">执行InstallDefaultFlow 2017.8.07</log>
-		<function name="InstallDefaultFlow">
+		<!--function name="InstallDefaultFlow">
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-		</function>
+		</function-->
 		
 		<!--qiulei 20170818 pm 发送测试报文 group-->
-		
-		<function name="testaddgroup" class="GroupManager">
+		<!--function name="testaddgroup" class="GroupManager">
 			<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-		</function>
-		<function name="testremovegroup" class="GroupManager">	
+		</function-->
+		<!--function name="testremovegroup" class="GroupManager">	
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-		</function>
-		<function name="testaddmeter" class="MeterManager">	
+		</function-->
+		<!--function name="testaddmeter" class="MeterManager">	
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-		</function>
-		<function name="testremovemeter" class="MeterManager">	
+		</function -->
+		<!--function name="testremovemeter" class="MeterManager">	
 			<parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
 			</parameters>
-		</function>
-		
+		</function-->
+	
 	</function>
 	
 	<function name="OpenFlowFeatures">

@@ -3,6 +3,7 @@
 	<function name="OpenFlowMultiPartFlowRequest">
 		<parameters>
 			<parameter name="xid" type="long"/>
+			<parameter name="transportid" type="string"/>			
 		</parameters>
 		<log dest="stdout">OpenFlowMultiPartFlowRequest</log>
 		<variable name="strjson" type="string"/>
@@ -10,35 +11,20 @@
 			<jsonbody><![CDATA[ 
 					{
 						"xid":"<%=context.xid.toLong()%>",
-						"tableid":"1",
-						"outport":"1",
-						"outgroup":"1",
-						"cookie":"1",
-						"cookiemask":"1",
+						"tableid":"0xff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"cookie":"0",
+						"cookiemask":"0",
 						"match":{
-								"type":"1",
-								"matchfieldlist":[
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"5",
-										"hasmask":"false",
-										"ethtype":"0x0806"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"3",
-										"hasmask":"true",
-										"dstmac":"00:0c:29:58:ef:2a",
-										"dstmacmask":"ff:ff:ff:00:00:00"
-									}
-								]
+								"type":"1"
 							}
 					}
 			]]></jsonbody>
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 			</parameters>
 		</function>
