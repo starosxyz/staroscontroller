@@ -273,8 +273,8 @@
 		</onevent>
 		<onevent event="websocketdisconnect">
 			<function>
-				<log level="1"><![CDATA[ websocketdisconnect event <%=event.getName()%>]]> </log>
-				<log level="1"><![CDATA[ websocketdisconnect transportid <%=event.getParam("transportid").toString()%>]]> </log>
+				<log><![CDATA[ websocketdisconnect event <%=event.getName()%>]]> </log>
+				<log><![CDATA[ websocketdisconnect transportid <%=event.getParam("transportid").toString()%>]]> </log>
 				<!--remove name="websocketclients" value="event.getParam('transportid').toString()"/-->
 				<function name="RemoveWebSocket" class="WebSocketManager">
 					<parameters>

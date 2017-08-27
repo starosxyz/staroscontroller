@@ -224,7 +224,7 @@
         is = _is_;
         $scope.panelData = {};
         $scope.ctrlBtnState = {};
-        $scope.uploadTip = 'Upload an application (.oar file)';
+        $scope.uploadTip = 'Upload an application (.xml file)';
         $scope.activateTip = 'Activate selected application';
         $scope.deactivateTip = 'Deactivate selected application';
         $scope.uninstallTip = 'Uninstall selected application';

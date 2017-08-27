@@ -3,6 +3,8 @@
 	<function name="HandlePortDataRequest">
 		<variable name="deviceid" type="string"/>
 		<variable name="outjson" type="string"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="portsobj" type="class"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var devId = info.payload.devId;
@@ -53,9 +55,19 @@
 				}
 
 		-->
-		<function name="GetPortsStateJsonData" class="DeviceManager">	
+		<function name="getDevice" class="DeviceManager">
 			<parameters>
+				<parameter name="outdevice" type="class" out="context.deviceobj"/>
 				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<function name="GetPortManager" class="context.deviceobj">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.portsobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortsStateJsonData" class="context.portsobj">	
+			<parameters>
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
 			</parameters>
 		</function>	

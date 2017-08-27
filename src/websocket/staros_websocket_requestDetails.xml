@@ -19,88 +19,11 @@
 			context.datapathid.setValue(final_id);
 			]]>
 		</script>
-		<set name="switchdevice" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-		<set name="switchport" value="context.portContainer.getValue(context.datapathid.toString())"/>
 		<function name="SendDetails" class="DeviceManager">	
-			<parameters>
-				<!--parameter name="datapathid" type="string" in="context.datapathid.toString()"/>				
-				<parameter name="deviceobject" type="hashmap" in="context.switchdevice"/>	
-				<parameter name="portobject" type="hashmap" in="context.switchport"/-->		
+			<parameters>	
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>	
 			</parameters>
 		</function>
 	</function>
-	
-	<!--function name="SendDetails">
-		<parameters>
-			<parameter name="transportid" type="string"/>
-			<parameter name="deviceobject" type="hashmap"/>	
-			<parameter name="portobject" type="hashmap"/>				
-		</parameters>
-		<variable name="detailarray" type="string"/>
-		<function>
-			<script><![CDATA[
-			var json = new Object();						
-			json['event'] = "showDetails";
-			var payload = new Object();
-			payload['title'] = "of:" + context.datapathid.toString();
-			payload['type'] = "switch";
-			payload['id'] = "of:" + context.datapathid.toString();
-			
-			var oneArray = new Array();			
-			oneArray.push("URI");
-			oneArray.push("Vendor");
-			oneArray.push("H/W Version");
-			oneArray.push("S/W Version");
-			oneArray.push("Serial #");
-			oneArray.push("Protocol");
-			oneArray.push("-");
-			oneArray.push("Latitude");
-			oneArray.push("Longitude");
-			oneArray.push("-");
-			oneArray.push("Ports");
-			oneArray.push("Flows");
-			oneArray.push("Tunnels");			
-			payload['propOrder'] = oneArray;
-			
-
-			var twoarray = new Object();				
-			twoarray['URI'] = "of:" + context.datapathid.toString();
-			twoarray['Vendor'] = context.deviceobject.getValue('mfrdesc').toString();
-			twoarray['H/W Version'] = context.deviceobject.getValue('hwdesc').toString();
-			twoarray['S/W Version'] = context.deviceobject.getValue('swdesc').toString();
-			twoarray['Serial #'] = context.deviceobject.getValue('serialnum').toString();
-			twoarray['Protocol'] = "OF_13";
-			twoarray['-'] = "";
-			twoarray['Latitude'] = null;
-			twoarray['Longitude'] = null;
-			twoarray['Ports'] = context.portobject.size();
-			twoarray['Flows'] = 4;
-			twoarray['Tunnels'] = 0;
-			payload['props'] = twoarray;
-			
-			
-			var threeArray = new Array();
-			threeArray.push("showDeviceView");
-			threeArray.push("showFlowView");
-			threeArray.push("showPortView");
-			threeArray.push("showGroupView");
-			threeArray.push("showMeterView");
-			threeArray.push("showDeviceFlows");
-			threeArray.push("showRelatedTraffic");
-			payload['buttons'] = threeArray;
-			
-			
-			json['payload'] = payload;			
-			var strjson=JSON.stringify(json);
-			context.detailarray.setValue(strjson);
-			
-			
-			]]></script>
-		</function>
-		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
-			<jsonsrc src="detailarray"/>
-		</websocket>
-	</function-->
 </starosxml>

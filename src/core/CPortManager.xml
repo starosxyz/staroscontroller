@@ -75,7 +75,6 @@
 						</function>
 					</else>
 				</if>
-				<function name="MultiPartPortDescRequest"/>
 			</function>
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
@@ -215,6 +214,7 @@
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 				<log>CPortManager is create</log>
+				<function name="MultiPartPortDescRequest"/>
 			</function>
 			<function name="addPort">
 				<parameters>
