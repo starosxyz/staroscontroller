@@ -13,6 +13,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPacketService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
@@ -30,6 +31,8 @@
 	<variable name="RestfulAPIManager" type="class" global="true"/>
 	<!--YY 2017-08-21-->
 	<variable name="PacketService" type="class" global="true"/>
+	<variable name="TopoService" type="class" global="true"/>
+	<variable name="SessionManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -41,6 +44,7 @@
 		<new name="gInstanceManager" class="CInstanceManager"/>
 		<!--YY 2017-08-21-->		
 		<new name="PacketService" class="CPacketService"/>
+		<new name="TopoService" class="CTopoService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
 		<new name="ApplicationManager" class="CApplicationManager"/>
 		

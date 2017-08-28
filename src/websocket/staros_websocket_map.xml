@@ -18,6 +18,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_ports.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_meter.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_group.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_processor.xml"/>
 	<variable name="WebSocketHandlerMap" type="params" global="true"/>
 	<function name="InitWebSocketHandlerMap">
 		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
@@ -51,5 +52,7 @@
 		<set name="WebSocketHandlerMap" paramname="portDataRequest" value="'HandlePortDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="meterDataRequest" value="'HandleMeterDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="groupDataRequest" value="'HandleGroupDataRequest'"/>
+	<!-- YY 20180828 -->
+		<set name="WebSocketHandlerMap" paramname="processorDataRequest" value="'HandleProcessorDataRequest'"/>
 	</function>
 </starosxml>

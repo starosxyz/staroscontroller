@@ -34,8 +34,23 @@
 					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
 				</parameters>
 			</function>
+									<function name="addTopoListener" class="TopoService">				
+				<parameters>
+					<parameter name="appid" type="string" in="'maclearning'"/>
+					<parameter name="add_eventname" type="string" in="'mytopadd'"/>
+					<parameter name="remove_eventname" type="string" in="'mytopremove'"/>
+				</parameters>
+			</function>	
+			
 			<log>maclearning app startup</log>
 		</onevent>			
+						<onevent event="mytopadd">
+			
+		</onevent>
+		<onevent event="mytopremove">
+			
+		</onevent>
+		
 		<onevent event="~bundleapp.shutdown">
 			<!-- YY 2017-08-21 -->
 			<function name="removeProcessor" class="PacketService">				
@@ -43,6 +58,12 @@
 					<parameter name="app_name" type="string" in="'maclearning'"/>									
 				</parameters>
 			</function>
+								<function name="removeTopoListener" class="TopoService">
+				<parameters>
+					<parameter name="appid" type="string" in="'maclearning'"/>
+				</parameters>
+			</function>
+			
 		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
