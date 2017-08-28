@@ -16,6 +16,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 
@@ -50,5 +51,6 @@
 		
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
+	<new name="SessionManager" class="CSessionManager"/>
 	</function>
 </starosxml>

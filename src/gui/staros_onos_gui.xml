@@ -34,6 +34,9 @@
 			<variable name="xmldata" type="string"/>
 			<variable name="appname" type="string"/>
 			<variable name="isAPI" type="boolean"/>
+			<variable name="usersession" type="string"/>
+			<variable name="sendjsessionid" type="string"/>
+			<variable name="ishavesession" type="boolean"/>
 			<function>
 				<!--qiulie-->
 				<set name="transportid" value="event.getParam('transportid').toString()"/>
@@ -45,6 +48,43 @@
 				<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
 				<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
 				<log dest="stdout"><![CDATA[requestcount= '<%=context.requestcount.toLong()%>']]></log>
+				<log dest="stdout"><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
+				<!--hu!!!-->
+				<if cond="event.getParam('cookie').toString()!=''">
+					<then>
+						<script><![CDATA[
+							var cookies=event.getParam('cookie').toString();
+							var arraycookies = cookies.split(";");
+							for(var i=0;i<arraycookies.length;i++)
+							{
+								var onecookie = arraycookies[i];
+								var arrayparam = onecookie.split("=");
+								if (arrayparam.length==2)
+								{
+									var paramname = arrayparam[0];
+									var paramvalue = arrayparam[1];
+									if (paramname=="JSESSIONID")
+									{
+										context.usersession.setValue(paramvalue);
+										break;
+									}
+								}
+							}
+						]]></script>
+						<function name="IsHaveTheSession" class="SessionManager">
+							<parameters>
+								<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
+								<parameter name="ishavesession" type="boolean" out="context.ishavesession"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<function>
+							<set name="ishavesession" value="false"/>
+						</function>
+					</else>
+				</if>
+				
 				<if cond="event.getParam('requestpath').toString() == '/onos/ui/j_security_check'">
 					<then>
 						<function>
@@ -84,7 +124,16 @@
 											<set name="httpparam" paramname="Location" value="'/onos/ui/index.html'"/>
 											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
 											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-										</function>
+																					<set name="sendjsessionid" value="restful.randjsessionid()"/>
+											<set name="httpparam" paramname="Set-Cookie" value="'JSESSIONID='+context.sendjsessionid.toString()+'; path=/'"/>
+											<log><![CDATA[huhuhuh!!!!!!!! sendjsessionid= '<%=context.sendjsessionid.toString()%>']]></log>
+											<function name="CreateSession" class="SessionManager">
+												<parameters>
+													<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
+												</parameters>
+											</function>
+									</function>
+
 									</then>
 									<else>
 										<log>auth failure</log>
@@ -100,7 +149,18 @@
 					</then>
 					<elseif cond="context.requestpath.toString() == '/onos/ui/rs/applications/upload'">
 						<function>
-							<log><![CDATA[!!!!!!!!!!!!eventdata= '<%=event.getParam("eventdata").toString()%>']]></log>
+							<!--hu!!!-->
+							<if cond="context.ishavesession.toString() == 'false'">
+									<then>
+										<function>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+												<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+												<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+												<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</function>
+									</then>
+								<else>
+								<log><![CDATA[!!!!!!!!!!!!eventdata= '<%=event.getParam("eventdata").toString()%>']]></log>
 							<script><![CDATA[
 								var x = event.getParam("eventdata").toString();
 								var Contentindex=x.indexOf("Content-Disposition");
@@ -148,23 +208,57 @@
 							<set name="httpparam" paramname="Connection" value="'Close'"/>
 							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
 							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-						</function>
+						</else>
+						</if>
+					</function>
 					</elseif>
 					<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
 						<function>
-							<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+							<!--hu!!!-->
+							<if cond="context.ishavesession.toString() == 'false'">
+									<then>
+										<function>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+												<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+												<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+												<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</function>
+									</then>
+								<else>
+									<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
 							<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
-						</function>
+						</else>
+							</if>
+					</function>
 					</elseif>
 					<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
 						<function>
-							<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+							<!--hu!!!-->
+						<if cond="context.ishavesession.toString() == 'false'">
+									<then>
+										<function>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+												<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+												<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+												<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</function>
+									</then>
+									<else>
+										<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
 							<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
-						</function>
+						</else>
+						</if>
+					</function>
 					</elseif>
 					<elseif cond="context.requestpath.toString() == '/onos/ui/rs/logout'">
 						<function>
-							<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+							<!--hu!!!-->
+						<function name="RemoveSession" class="SessionManager">
+							<parameters>
+								<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
+							</parameters>
+						</function>
+						<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
 								<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
 								<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
 								<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
@@ -243,7 +337,18 @@
 								<else>
 									<function>
 										<!--yige end-->
-										<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+										<!--hu!!!-->
+										<if cond="context.ishavesession.toString() == 'false'">
+											<then>
+												<function>
+													<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+														<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+														<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+														<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+												</function>
+											</then>
+											<else>
+												<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
 										<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
 										<set name="httpparam" paramname="Connection" value="'Close'"/>
 										<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
@@ -251,6 +356,8 @@
 											<html file="context.filepath"/>
 										</restful>
 										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+									</else>
+										</if>
 									</function>
 								</else>
 							</if>

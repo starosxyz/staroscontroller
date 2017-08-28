@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CSession">
+		<private>
+			<variable name="m_cseeionid" type="string" />
+			<variable name="m_current" type="long" />
+		</private>
+		<public>
+			<function name="CSession">
+				<parameters>
+					<parameter name="sessionid" type="string"/>
+				</parameters>
+				<set name="thisclass.m_cseeionid" value="context.sessionid.toString()"/>
+				<script><![CDATA[
+					function getNowFormatDate() {
+						var date = new Date();
+						var seperator1 = "-";
+						var seperator2 = ":";
+						var month = date.getMonth() + 1;
+						var strDate = date.getDate();
+						if (month >= 1 && month <= 9) {
+							month = "0" + month;
+						}
+						if (strDate >= 0 && strDate <= 9) {
+							strDate = "0" + strDate;
+						}
+						var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+								+ " " + date.getHours() + seperator2 + date.getMinutes()
+								+ seperator2 + date.getSeconds();
+						return currentdate;
+					}
+					function getCurrentTimerInMs() {
+						var timestamp=new Date().getTime();
+						return timestamp;
+					}
+					
+					context.m_current.setValue(getCurrentTimerInMs());
+				]]></script>
+			</function>
+			<function name="ResetTime">
+				<script><![CDATA[
+					function getCurrentTimerInMs() {
+						var timestamp=new Date().getTime();
+						return timestamp;
+					}
+					
+					context.m_current.setValue(getCurrentTimerInMs());
+				]]></script>
+			</function>
+			<function name="Gettime">
+				<parameters>
+					<parameter name="time" type="long"/>
+				</parameters>
+				<set name="time" value="thisclass.m_current.toLong()"/>
+			</function>
+			
+			
+		</public>
+	</class>
+	<class name="CSessionManager">
+		<private>
+			<container name="SessionContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+		<public>
+			<function name="CreateSession">
+					<parameters>
+						<parameter name="sessionid" type="string"/>
+					</parameters>
+					<log>CreateSession</log>
+						<variable name="session" type="class"/>				
+					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==false">
+							<then>
+								<new name="session" class="CSession">
+									<parameters>
+										<parameter name="sessionid" type="string" in="context.sessionid.toString()"/>
+									</parameters>
+								</new>
+								<insert name="SessionContainer" key="context.sessionid.toString()" value="context.session"/>
+							</then>
+							<else>
+								<exit/>
+							</else>
+					</if>
+			</function>
+		
+			<function name="RemoveSession">
+					<parameters>
+						<parameter name="sessionid" type="string"/>
+					</parameters>
+					<remove name="SessionContainer" key="context.sessionid.toString()"/>
+			</function>
+			
+			<function name="FindSession">				
+					<parameters>
+						<parameter name="sessionid" type="string"/>	
+						<parameter name="sessionobj" type="class"/>	
+					</parameters>
+					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==ture">
+						<then>
+							<lookup name="SessionContainer"  key="context.sessionid.toString()" output="context.sessionobj"/>
+						</then>
+						<else>
+							<exit/>
+						</else>
+					</if>
+			</function>	
+			<function name="Timeout">
+				<parameters>
+						<parameter name="sessionid" type="string"/>	
+				</parameters>
+				<variable name="current" type="long" />
+				<variable name="oncurrent" type="long" />
+				<variable name="sessionobj" type="class" />
+					<script><![CDATA[
+							function getCurrentTimerInMs() {
+								var timestamp=new Date().getTime();
+								return timestamp;
+							}
+							
+							context.current.setValue(getCurrentTimerInMs());
+					]]></script>
+					
+					<for var="i" from="0" to="context.SessionContainer.size()-1">
+						<set name="sessionobj" value="context.SessionContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="Gettime" class="context.sessionobj">
+							<parameters>
+								<parameter name="time" type="long" out="context.oncurrent"/>	
+							</parameters>
+						</function>
+						<if cond="context.current.toLong()-context.oncurrent.toLong()>=300000">
+							<then>
+								<remove name="SessionContainer" key="context.sessionid.toString()"/>
+							</then>
+						</if>
+					</for>
+
+			</function>
+		
+			<function name="IsHaveTheSession" >
+					<parameters>
+						<parameter name="sessionid" type="string"/>
+						<parameter name="ishavesession" type="boolean"/>
+					</parameters>
+					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==ture">
+						<then>
+							<set name="ishavesession" value="true"/>
+						</then>
+						<else>
+							<set name="ishavesession" value="false"/>
+						</else>
+					</if>
+			</function>
+				
+				
+		</public>
+	</class>
+</starosxml>
