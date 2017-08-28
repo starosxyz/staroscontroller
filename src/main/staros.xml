@@ -27,6 +27,8 @@
 		  <variable name="calloutSession" type="long"/>
 		  <variable name="outjson" type="string"/>
 		  <variable name="injson" type="string"/>
+		  <!--qiulei 20170828 Monday-->
+		  <variable name="eventname" type="string"/>
 		  <function>
 			<set name="injson" value="'[]'"/>
 			<log>##########STAROS application start#######</log>
@@ -60,6 +62,10 @@
 			<function name="InitInstrunctionMap"/>
 			<function name="InitActionsMap"/>
 		  <function name="InitActionsNameMap"/>
+		  			<!--qiulei 20170828 Monday-->
+			<set name="eventname"  value="'TimeOutEvent'"/>
+			<raise name="context.eventname.toString()"/>
+			
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->
@@ -67,6 +73,16 @@
 		  <function>
 			<log>##########~bundleapp.shutdown#######</log>
 		  </function>
+		</onevent>
+			<!--qiulei 20170828 Monday-->
+		<onevent event="TimeOutEvent">
+			<function >
+				<log>staros TimeOutEvent 2017.08.28</log>
+				<wait event="InvalidEvent" timeout="2000"/>
+				<function name="OpenFlowDetect"/>
+				<function name="Timeout" class="SessionManager"/>
+				<raise name="'TimeOutEvent'"/>
+			</function>
 		</onevent>
 	</events>
 </starosxml>

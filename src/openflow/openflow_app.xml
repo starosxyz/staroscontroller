@@ -35,31 +35,18 @@
 	<!--include src="/opt/staros.xyz/staros/starlang/unittest/openflow_unittest.xml"/-->
 	<variable name="openflowxidbase" type="long" value="0"/>
 	<container name="switchmap" type="hashmap" keytype="string" valuetype="long"/>
-	<variable name="eventname" type="string"/>
 	<function name="startopenflow">
 		<variable name="openflowparams" type="params"/>
 		<!--hu peng 2017/07/28-->
 		<set name="openflowparams" paramname="listenip" value="context.GlobalSetting.getParam('openflowip').toString()"/>
 		<set name="openflowparams" paramname="listenport" value="context.GlobalSetting.getParam('openflowopenflowport').toString()"/>
 		<set name="openflowparams" paramname="protocol" value="context.GlobalSetting.getParam('openflowprotocol').toString()"/>
-		<set name="eventname"  value="'setInterval'"/>
 		<set name="openflowparams" paramname="cerfile" value="context.GlobalSetting.getParam('openflowcerfile').toString()"/>
 		<set name="openflowparams" paramname="keyfile" value="context.GlobalSetting.getParam('openflowkeyfile').toString()"/>
 		<openflow name="openflowserverobj" method="SERVER" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
-		<raise name="context.eventname.toString()"/>
-		
-	</function>
+			</function>
 	
 	<events>
-		<onevent event="setInterval">
-			<function >
-				<log>setInterval</log>
-				<wait event="InvalidEvent" timeout="1000"/>
-				<function name="OpenFlowDetect"/>
-				<raise name="'setInterval'"/>
-			</function>
-		</onevent>
-	
 		<onevent event="openflow.Connected">
 			<variable name="jsonbody" type="string"/>
 			<variable name="openflowparams" type="params"/>
