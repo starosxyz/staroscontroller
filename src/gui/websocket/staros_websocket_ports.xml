@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandlePortDataRequest">
+		<variable name="deviceid" type="string"/>
+		<variable name="outjson" type="string"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="portsobj" type="class"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam("eventdata").toString());
+			var devId = info.payload.devId;
+			var deviceids=devId.split(":")[1];
+			context.deviceid.setValue(deviceids);
+			
+		]]></script>
+
+		<!--
+			{
+				"event": "portDataResponse",
+				"payload": {
+					"ports": [
+						{
+							"id": "1",
+							"pkt_rx": "862",
+							"pkt_tx": "127,398",
+							"bytes_rx": "83,076",
+							"bytes_tx": "11,197,898",
+							"pkt_rx_drp": "0",
+							"pkt_tx_drp": "0",
+							"duration": "4700"
+						},
+						{
+							"id": "2",
+							"pkt_rx": "96,492",
+							"pkt_tx": "96,489",
+							"bytes_rx": "7,983,564",
+							"bytes_tx": "7,983,362",
+							"pkt_rx_drp": "0",
+							"pkt_tx_drp": "0",
+							"duration": "4700"
+						},
+						{
+							"id": "3",
+							"pkt_rx": "97,354",
+							"pkt_tx": "97,353",
+							"bytes_rx": "8,066,722",
+							"bytes_tx": "8,066,646",
+							"pkt_rx_drp": "0",
+							"pkt_tx_drp": "0",
+							"duration": "4700"
+						}
+					],
+					"annots": {
+						"no_rows_msg": "No ports found"
+					}
+				}
+
+		-->
+		<function name="getDevice" class="DeviceManager">	
+			<parameters>
+				<parameter name="outdevice" type="class" out="context.deviceobj"/>
+				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+				</parameters>
+		</function>
+		<function name="GetPortManager" class="context.deviceobj">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.portsobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortsStateJsonData" class="context.portsobj">	
+			<parameters>
+				<parameter name="jsonstring" type="string" out="context.outjson"/>
+			</parameters>
+		</function>	
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>
+	</function>
+</starosxml>

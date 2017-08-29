@@ -2,12 +2,9 @@
 <!--StarOS Entry-->
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/function_callback.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/restfulapi/staros_api_map.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/websocket/staros_websocket_map.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/staros_onos_gui.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_app.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/openflow/openflow_topology.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/staros_http.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/setting/setting.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/protocols/openflow/openflow_app.xml"/>
 	<!--qiulei 20170811-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/localcall/localcall.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/resource/global_resource.xml"/>
@@ -61,8 +58,9 @@
 			<function name="InitOXMMatchFieldNameMap"/>
 			<function name="InitInstrunctionMap"/>
 			<function name="InitActionsMap"/>
-		  <function name="InitActionsNameMap"/>
-		  						<!--qiulei 20170828 Monday-->
+			<function name="InitActionsNameMap"/>
+			
+<!--qiulei 20170828 Monday-->
 			<set name="eventname"  value="'TimeOutEvent'"/>
 			<raise name="context.eventname.toString()"/>
 			
@@ -74,7 +72,8 @@
 			<log>##########~bundleapp.shutdown#######</log>
 		  </function>
 		</onevent>
-					<!--qiulei 20170828 Monday-->
+		
+		<!--qiulei 20170828 Monday-->
 		<onevent event="TimeOutEvent">
 			<function >
 				<log>staros TimeOutEvent 2017.08.28</log>

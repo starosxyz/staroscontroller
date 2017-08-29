@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<!--WebGUI-->
+	<function name="HandlDocsRequest">
+		<parameters>
+			<parameter name="requestpath" type="string"/>
+			<parameter name="method" type="string"/>
+			<parameter name="eventdata" type="string"/>
+			<parameter name="transportid" type="string"/>
+		</parameters>
+		<variable name="contenttype" type="string"/>
+		<variable name="filepath" type="string"/>
+		<variable name="httpparam" type="params"/>
+		<script><![CDATA[
+			var x = context.requestpath.toString();
+			var filename="/opt/staros.xyz/staroscontroller/starlang/gui/docs/"+x;
+			context.filepath.setValue(filename);
+			if(x.indexOf(".html") > 0 )   
+			{   
+				context.contenttype.setValue('text/html');  
+			} 
+			else if (x.indexOf(".png")>0)
+			{
+				context.contenttype.setValue('image/png');
+			}
+			else if (x.indexOf(".js")>0)
+			{
+				context.contenttype.setValue('text/javascript');
+			}
+			else if (x.indexOf(".css")>0)
+			{
+				context.contenttype.setValue('text/css');
+			}
+			else if (x.indexOf(".gif")>0)
+			{
+				context.contenttype.setValue('image/gif');
+			}
+			else if (x.indexOf(".woff")>0)
+			{
+				context.contenttype.setValue('application/x-font-woff');
+			}
+			else if (x.indexOf(".ttf")>0)
+			{
+				context.contenttype.setValue('application/x-font-woff');
+			}
+			else 
+			{
+				context.contenttype.setValue('text/html'); 
+			}
+		  ]]></script>
+		<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+		<set name="httpparam" paramname="Connection" value="'Close'"/>
+		<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+		<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+			<html file="context.filepath"/>
+		</restful>
+		<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+	</function>
+</starosxml>

@@ -34,6 +34,7 @@
 	<variable name="PacketService" type="class" global="true"/>
 	<variable name="TopoService" type="class" global="true"/>
 	<variable name="SessionManager" type="class" global="true"/>
+
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -51,6 +52,6 @@
 		
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
-	<new name="SessionManager" class="CSessionManager"/>
+		<new name="SessionManager" class="CSessionManager"/>
 	</function>
 </starosxml>

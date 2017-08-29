@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-08-28
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<function name="HandleProcessorDataRequest">
+		<variable name="outjson" type="string"/>
+		<function name="GetPacketJsonData" class="PacketService">
+			<parameters>
+				<parameter name="json" type="string" out="context.outjson"/>
+			</parameters>			
+		</function>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>
+	</function>
+</starosxml>

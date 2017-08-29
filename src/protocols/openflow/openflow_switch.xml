@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-07-28
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<function name="SendOpenFlowFeatures">
+		<log dest="stdout">SendOpenFlowFeatures</log>
+		
+		<variable name="mfrdesc" type="string"/>
+		<variable name="swdesc" type="string"/>
+		<variable name="serialnum" type="string"/>
+		<variable name="dpdesc" type="string"/>
+		<variable name="hwdesc" type="string"/>
+		<variable name="transportid" type="string"/>
+		<variable name="localipaddr" type="string"/>
+		<variable name="peeripaddr" type="string"/>
+		<variable name="masterid" type="string"/>
+		<variable name="type" type="string"/>
+		<variable name="online" type="string"/>
+		<variable name="protocol" type="string"/>
+		<variable name="auxiliaryid" type="string"/>
+		<variable name="buffers" type="string"/>
+		<variable name="capabilities" type="string"/>
+		<variable name="datapathid" type="string"/>
+		<variable name="tables" type="string"/>
+		<variable name="xid" type="long"/>
+		<variable name="openflowdevice" type="object"/>
+		<set name="openflowdevice" value="context.openflowserverobj.getDevice(event.getParam('transportid').toString())"/>
+		<set name="localipaddr" value="context.openflowdevice.getParam('localipaddr').toString()"/>
+		<set name="peeripaddr" value="context.openflowdevice.getParam('peeripaddr').toString()"/>
+		<set name="masterid" value="context.openflowdevice.getParam('masterid').toString()"/>
+		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
+		<variable name="jsonvariable" type="string"/>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_FEATURES_REQUEST">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.jsonvariable.toString()"/>
+			</parameters>
+		</function>	
+		<wait event="openflow.OFPT13_FEATURES_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+			<function>
+				
+				<log><![CDATA[Recieve Features Reply:=<%=event.getParam('eventdata').toString()%>]]></log>
+				
+				<script>
+					<![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							context.auxiliaryid.setValue(info.auxiliaryid);
+							context.buffers.setValue(info.buffers);
+							context.capabilities.setValue(info.capabilities);
+							context.datapathid.setValue(info.datapathid);
+							context.tables.setValue(info.tables);
+							context.transportid.setValue(event.getParam('transportid').toString());
+					]]>
+				</script>				
+				
+			</function>
+		</wait>
+		
+		
+		<variable name="desc" type="string"/>
+		<reference variable="desc">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toLong()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="strjson" type="string" in="context.desc.toString()"/>
+			</parameters>
+		</function>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+			<function>				
+				<script>
+					<![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							context.mfrdesc.setValue(info.mfrdesc);
+							context.swdesc.setValue(info.swdesc);	
+							context.serialnum.setValue(info.serialnum);	
+							context.dpdesc.setValue(info.dpdesc);	
+							context.hwdesc.setValue(info.hwdesc);								
+					]]>
+				</script>
+				
+			</function>
+		</wait>
+		
+		<function name="addDevice" class="DeviceManager">
+			<parameters>
+				<parameter name="mfrdesc" type="string" in="context.mfrdesc.toString()"/>
+				<parameter name="swdesc" type="string" in="context.swdesc.toString()"/>
+				<parameter name="serialnum" type="string" in="context.serialnum.toString()"/>
+				<parameter name="dpdesc" type="string" in="context.dpdesc.toString()"/>
+				<parameter name="hwdesc" type="string" in="context.hwdesc.toString()"/>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+				<parameter name="localipaddr" type="string" in="context.localipaddr.toString()"/>
+				<parameter name="peeripaddr" type="string" in="context.peeripaddr.toString()"/>
+				<parameter name="masterid" type="string" in="context.masterid.toString()"/>	
+				<parameter name="type" type="string" in="'switch'"/>
+				<parameter name="online" type="string" in="'true'"/>
+				<parameter name="protocol" type="string" in="'OF_13'"/>					
+			</parameters>
+		</function>
+		
+		<!--qiulei 20170807 -->
+		
+		<log dest="stdout">执行InstallDefaultFlow 2017.8.07</log>
+		<!--function name="InstallDefaultFlow">
+<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+</parameters>
+		</function-->
+		
+		<!--qiulei 20170818 pm 发送测试报文 group-->
+		<!--function name="testaddgroup" class="GroupManager">
+			<parameters>
+					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function-->
+		<!--function name="testremovegroup" class="GroupManager">	
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function-->
+		<!--function name="testaddmeter" class="MeterManager">	
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function -->
+		<!--function name="testremovemeter" class="MeterManager">	
+			<parameters>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function-->
+	
+	</function>
+	
+	<function name="OpenFlowFeatures">
+		<function name="SendOpenFlowFeatures"/>	
+	</function>
+	
+</starosxml>

@@ -40,6 +40,7 @@
 			<variable name="m_transportid" type="string"/>
 		</private>
 		<public>
+
 			<function name="CTableManager">
 				<parameters>
 					<parameter name="transportid" type="string"/>
@@ -99,6 +100,7 @@
 						<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
 					</for>
 			</function>
+			
 			<function name="SendTableRequest">
 				<variable name="xid" type="long"/>
 				<log>SendTableRequest !!!!!!!!!!!!!hu</log>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandleFlowDataRequest">
+		<variable name="deviceid" type="string"/>
+		<variable name="outjson" type="string"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="flowobj" type="class"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam("eventdata").toString());
+			var devId = info.payload.devId;
+			var deviceids=devId.split(":")[1];
+			context.deviceid.setValue(deviceids);
+		]]></script>
+		<!--
+			{
+				"event": "flowDataResponse",
+				"payload": {
+					"flows": [
+						{
+							"id": "0x10000ae20446f",
+							"appId": "1",
+							"groupId": "0x0",
+							"tableId": "0",
+							"priority": "5",
+							"selector": "Criteria: ETH_TYPE:arp",
+							"treatment": "Treatment Instructions: immediate:OUTPUT:CONTROLLER, cleared:true",
+							"timeout": "0",
+							"permanent": "true",
+							"state": "Added",
+							"packets": "100",
+							"bytes": "4,200"
+						},
+						{
+							"id": "0x10000c66d3c3d",
+							"appId": "1",
+							"groupId": "0x0",
+							"tableId": "0",
+							"priority": "5",
+							"selector": "Criteria: ETH_TYPE:ipv4",
+							"treatment": "Treatment Instructions: immediate:OUTPUT:CONTROLLER, cleared:true",
+							"timeout": "0",
+							"permanent": "true",
+							"state": "Added",
+							"packets": "3,308",
+							"bytes": "324,184"
+						},
+						{
+							"id": "0x10000d40aee30",
+							"appId": "1",
+							"groupId": "0x0",
+							"tableId": "0",
+							"priority": "40000",
+							"selector": "Criteria: ETH_TYPE:lldp",
+							"treatment": "Treatment Instructions: immediate:OUTPUT:CONTROLLER, cleared:true",
+							"timeout": "0",
+							"permanent": "true",
+							"state": "Added",
+							"packets": "2,602",
+							"bytes": "210,762"
+						},
+						{
+							"id": "0x10000f548f4e5",
+							"appId": "1",
+							"groupId": "0x0",
+							"tableId": "0",
+							"priority": "40000",
+							"selector": "Criteria: ETH_TYPE:bddp",
+							"treatment": "Treatment Instructions: immediate:OUTPUT:CONTROLLER, cleared:true",
+							"timeout": "0",
+							"permanent": "true",
+							"state": "Added",
+							"packets": "2,602",
+							"bytes": "210,762"
+						}
+					],
+					"annots": {
+						"no_rows_msg": "No flows found"
+					}
+				}
+			}
+		-->
+		<function name="getDevice" class="DeviceManager">	
+			<parameters>
+				<parameter name="outdevice" type="class" out="context.deviceobj"/>
+				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+				</parameters>
+		</function>
+		<if cond="context.deviceobj==null">
+			<then>
+				<log>deviceobj is null</log>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetFlowManager" class="context.deviceobj">
+			<parameters>
+				<parameter name="outflowmgr" type="class" out="context.flowobj"/>
+			</parameters>
+		</function>
+		<function name="GetFlowJsonData" class="context.flowobj">	
+			<parameters>
+				<parameter name="jsonstring" type="string" out="context.outjson"/>
+			</parameters>
+		</function>	
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>
+	</function>
+</starosxml>

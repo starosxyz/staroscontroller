@@ -410,8 +410,7 @@
 				<!--SendPortState-->
 				<log> SendPortStateRequest !!!!!!!!!!!!!!!!!!!</log>
 				<!--function name="SendPortStateRequest"/-->
-				
-				<!--function name="SendFlowRequest"/-->
+												<!--function name="SendFlowRequest"/-->
 			</function>
 			<function name="DeviceDetailsReqJson">
 				<parameters>
@@ -748,8 +747,7 @@
 					</then>
 				</if>			
 			</function>
-			
-			<function name="SendTableRequest">
+									<function name="SendTableRequest">
 				<variable name="device" type="class"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">			
 					<function>
@@ -776,6 +774,6 @@
 					</then>
 				</if>
 			</function>
-		</public>
+			</public>
 	</class>
 </starosxml>

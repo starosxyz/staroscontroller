@@ -31,7 +31,7 @@
 				</parameters>
 				<variable name="outjson" type="string"/>
 				<script><![CDATA[
-					var data = context.m_appid.toString() + "$" + context.m_eventname().toString();
+					var data = context.m_appid.toString() + "$" + context.m_eventname.toString();
 					context.outjson.setValue(data);
 				]]></script>
 				<set name="json" value="context.outjson.toString()"/>
@@ -80,12 +80,13 @@
 						<variable name="packetobj" type="class"/>
 						<new name="packetobj" class="CPacket">
 							<parameters>
-								<parameter name="appid" type="string"in="context.app_name.toString()"/>
-				<parameter name="eventname" type="string" in="context.event_name.toString()"/>
-				</parameters>
+								<parameter name="appid" type="string" in="context.app_name.toString()"/>
+								<parameter name="eventname" type="string" in="context.event_name.toString()"/>
+							</parameters>
 						</new>
-							<insert name="InstanceContainer" key="context.app_name.toString()" value="context.packetobj"/>
-											</then>
+						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.packetobj"/>
+						
+					</then>
 				</if>
 			</function>						
 			<function name="removeProcessor">
@@ -108,7 +109,7 @@
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>				
 				<variable name="appname" type="string"/>		
-				<variable name="eventname" type="string"/>	
+				<variable name="eventname" type="string"/>		
 				<variable name="packetobj" type="class"/>	
 				<variable name="eventparam" type="params"/>					
 				<variable name="m_bundleid" type="long"/>				
@@ -125,7 +126,8 @@
 							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
 						</parameters>
 					</function>
-										<function name="GetEventName" class="context.packetobj">
+					
+					<function name="GetEventName" class="context.packetobj">
 						<parameters>
 							<parameter name="eventname" type="string" out="context.eventname"/>
 						</parameters>						
@@ -134,10 +136,11 @@
 					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
 					<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
 					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam" messageblock="context.msgblock"/>
-									<function name="GetPackets">
+					
+					<function name="GetPackets" class="context.packetobj">
 						<parameters>
 							<parameter name="packets" type="long" out="context.getpacketcount"/>
-						</parameters>						
+						</parameters>
 					</function>
 					<function name="SetPackets" class="context.packetobj">
 						<parameters>
@@ -149,7 +152,7 @@
 			</function>
 			<function name="GetPacketJsonData">
 				<parameters>
-					<parameter name="json" value="string"/>
+					<parameter name="json" type="string"/>
 				</parameters>
 				<container name="packetjsonlist" type="list" valuetype="string"/>
 				<container name="packetcountlist" type="list" valuetype="long"/>				
@@ -157,6 +160,7 @@
 				<variable name="data" type="string"/>
 				<variable name="packetcount" type="long"/>
 				<variable name="result" type="string"/>
+				<log><![CDATA[context.InstanceContainer.size()<%=context.InstanceContainer.size()%>]]></log>
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="packetobj" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
 					<function name="GetData" class="packetobj">
@@ -170,28 +174,32 @@
 						</parameters>						
 					</function>
 					<insert name="packetjsonlist" value="context.data.toString()"/>
-					<insert name="packetcountlist" value="context.packetcount.toString()"/>
+					<insert name="packetcountlist" value="context.packetcount.toLong()"/>
 				</for>
-			<script><![CDATA[
+				<log><![CDATA[context.packetjsonlist.size()<%=context.packetjsonlist.size()%>]]></log>
+				<log><![CDATA[context.packetcountlist.size()<%=context.packetcountlist.size()%>]]></log>
+				<script><![CDATA[
 					var json = new Object();
 					json.event = "processorDataResponse";
 					var onearray = new Array();
 					for (var i = 0; i < context.packetjsonlist.length; i++)
 					{
-						var processor = new Object();
+						var processorobj = new Object();
 						var id = "715827884";
 						var type = "director";
 						var priority = "1";
-						var processor = context.packetjsonlist.getValueByIndex(i);
-						var packets = "" + context.packetcountlist.getValueByIndex(i);
+						var processor_1 = context.packetjsonlist.getValueByIndex(i);
+						var processor = JSON.parse(processor_1);
+						var packets_1 = context.packetcountlist.getValueByIndex(i);
+						var packets = JSON.parse(packets_1);
 						var avgMillis = "0.00000";
-						processor.id = id;
-						processor.type = type;
-						processor.priority = priority;
-						processor.processor = processor;
-						processor.packets = packets;
-						processor.avgMillis = avgMillis;
-						onearray.push(processor);
+						processorobj.id = id;
+						processorobj.type = type;
+						processorobj.priority = priority;
+						processorobj.processor = processor;
+						processorobj.packets = packets;
+						processorobj.avgMillis = avgMillis;
+						onearray.push(processorobj);						
 					}
 					var twoobject = new Object();
 					twoobject.no_rows_msg = "No packet processors found";
@@ -201,6 +209,8 @@
 					json.payload = payload;					
 					var strjson=JSON.stringify(json);				
 					context.result.setValue(strjson);
+					context.print("########################20170829 17:00####################################");
+					context.print(strjson);
 				]]></script>
 				<set name="json" value="context.result.toString()"/>
 			</function>

@@ -316,7 +316,15 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-							<function name="DeactiveApplication" class="oneapp"/>
+							<if cond="context.oneapp!=null">
+								<then>
+									<function name="DeactiveApplication" class="oneapp"/>
+								</then>
+								<else>
+									<log> can not find the app</log>
+									<exit/>
+								</else>
+							</if>
 						</function>
 					</then>
 				</if>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml>
+	<variable name="APIV1MapFunction" type="params" global="true"/>
+	<function name="InitAPIMapFunction">
+		<set name="APIV1MapFunction" paramname="/api/v1/devices" value="'HandleGetDevices'"/>
+		<set name="APIV1MapFunction" paramname="/api/v1/topology" value="'HandleGetTopology'"/>
+	</function>
+</starosxml>

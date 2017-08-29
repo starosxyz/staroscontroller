@@ -95,7 +95,7 @@
 						<parameter name="sessionid" type="string"/>	
 						<parameter name="sessionobj" type="class"/>	
 					</parameters>
-					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==ture">
+					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==true">
 						<then>
 							<lookup name="SessionContainer"  key="context.sessionid.toString()" output="context.sessionobj"/>
 						</then>
@@ -105,11 +105,10 @@
 					</if>
 			</function>	
 			<function name="Timeout">
-				<parameters>
-						<parameter name="sessionid" type="string"/>	
-				</parameters>
 				<variable name="current" type="long" />
 				<variable name="oncurrent" type="long" />
+				<variable name="sessionid" type="string" />
+				<container name="removelist" type="list" valuetype="string"/>
 				<variable name="sessionobj" type="class" />
 					<script><![CDATA[
 							function getCurrentTimerInMs() {
@@ -119,37 +118,32 @@
 							
 							context.current.setValue(getCurrentTimerInMs());
 					]]></script>
-					
+				<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size()%>']]></log>
 					<for var="i" from="0" to="context.SessionContainer.size()-1">
 						<set name="sessionobj" value="context.SessionContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="sessionid" value="context.SessionContainer.getKeyByIndex(context.i.toLong())"/>
 						<function name="Gettime" class="context.sessionobj">
 							<parameters>
 								<parameter name="time" type="long" out="context.oncurrent"/>	
 							</parameters>
 						</function>
+						<log><![CDATA[current= '<%=context.current.toLong()%>']]></log>
+						<log><![CDATA[oncurrent= '<%=context.oncurrent.toLong()%>']]></log>
 						<if cond="context.current.toLong()-context.oncurrent.toLong()>=300000">
 							<then>
-								<remove name="SessionContainer" key="context.sessionid.toString()"/>
+								<insert name="removelist" value="context.sessionid.toString()"/>
+								<log>Timeout remove</log>
 							</then>
 						</if>
 					</for>
-
+					<log><![CDATA[removelist size!!!!!= '<%=context.removelist.size()%>']]></log>
+					<for var="i" from="0" to="context.removelist.size()-1">
+						<set name="sessionid" value="context.removelist.getValueByIndex(context.i.toLong())"/>
+						<remove name="SessionContainer" key="context.sessionid.toString()"/>
+					</for>
 			</function>
 		
-			<function name="IsHaveTheSession" >
-					<parameters>
-						<parameter name="sessionid" type="string"/>
-						<parameter name="ishavesession" type="boolean"/>
-					</parameters>
-					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==ture">
-						<then>
-							<set name="ishavesession" value="true"/>
-						</then>
-						<else>
-							<set name="ishavesession" value="false"/>
-						</else>
-					</if>
-			</function>
+
 				
 				
 		</public>

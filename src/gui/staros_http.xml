@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_handler.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/docs/staros_docs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/gui/staros_gui.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_v1.xml"/>
+	<!--WebGUI-->
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<variable name="requestcount" type="long"/>
+	<variable name="isStop" type="boolean" value="true"/>
+	<function name="Restfulserver">
+		<variable name="restfulparams" type="params"/>
+		<!--hu peng 2017/07/28-->
+		<set name="restfulparams" paramname="listenip" value="context.GlobalSetting.getParam('guiip').toString()"/>
+		<set name="restfulparams" paramname="listenport" value="context.GlobalSetting.getParam('guiport').toString()"/>
+		<set name="restfulparams" paramname="protocol" value="context.GlobalSetting.getParam('guiprotocol').toString()"/>
+		<set name="restfulparams" paramname="cerfile" value="context.GlobalSetting.getParam('guicerfile').toString()"/>
+		<set name="restfulparams" paramname="keyfile" value="context.GlobalSetting.getParam('guikeyfile').toString()"/>
+		<log>Restfulserver</log>
+		<restful name="restfulserver" action="SERVER" param="restfulparams" expectevent="restfulrequest.event"/>
+	</function>
+	<events>
+		<onevent event="restfulrequest.event">
+			<variable name="usernameparam" type="string"/>
+			<variable name="passwordparam" type="string"/>
+			<variable name="authresult" type="string"/>
+			<variable name="authjson" type="string"/>
+			<variable name="httpparam" type="params"/>
+			<variable name="transportid" type="string"/>
+			<messageblock name="authresultmsg"/>
+			<variable name="contenttype" type="string"/>
+			<variable name="requestpath" type="string"/>
+			<variable name="filepath" type="string"/>
+			<variable name="filename" type="string"/>
+			<variable name="xmldata" type="string"/>
+			<variable name="appname" type="string"/>
+			<variable name="usersession" type="string"/>
+			<variable name="sendjsessionid" type="string"/>
+			<variable name="ishavesession" type="boolean"/>
+			<variable name="isDocReqeust" type="boolean" value="false"/>
+			<variable name="isAPI" type="boolean" value="false"/>
+			<variable name="isUi" type="boolean" value="false"/>
+			<variable name="isBadRequest" type="boolean" value="false"/>
+			<function>
+				<!--qiulie-->
+				<set name="transportid" value="event.getParam('transportid').toString()"/>
+				<set name="requestpath" value="event.getParam('requestpath').toString()"/>
+				<set name="requestcount" value="context.requestcount.toLong()+1"/>
+				<log dest="stdout"><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[requestcount= '<%=context.requestcount.toLong()%>']]></log>
+				<log dest="stdout"><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
+				<!--hu!!!-->
+				<script><![CDATA[
+					var x = context.requestpath.toString();
+					if(x.indexOf("/onos/webdocs/") >= 0)
+					{
+						context.isDocReqeust.setValue(true);
+					}
+					else if (x.indexOf("/onos/v1/")>=0)
+					{	
+						context.isAPI.setValue(true);
+					}
+					else if (x.indexOf("/onos/ui/")>=0)
+					{
+						context.isUi.setValue(true);
+					}
+					else
+					{
+						context.isBadRequest.setValue(true);
+					}
+				  ]]></script>
+				<if cond="context.isDocReqeust.toBoolean()==true">
+					<then>
+						<function name="HandlDocsRequest">
+							<parameters>
+								<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
+								<parameter name="method" type="string" in="event.getParam('method').toString()"/>
+								<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
+								<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<elseif cond="context.isAPI.toBoolean()==true">
+						<then>
+							<function name="HandlAPIRequest">
+									<parameters>
+										<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
+										<parameter name="method" type="string" in="event.getParam('method').toString()" />
+										<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
+									</parameters>
+							</function>
+						</then>
+					</elseif>
+					<elseif cond="context.isUi.toBoolean()==true">
+						<then>
+							<function name="HandlGUIRequest">
+								<parameters>
+									<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
+									<parameter name="method" type="string" in="event.getParam('method').toString()"/>
+									<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
+									<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+									<parameter name="cookie" type="string" in="event.getParam('cookie').toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</elseif>
+					<else>
+						<log>bad request</log>
+						<function name="HandlGUIRequest">
+							<parameters>
+								<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
+								<parameter name="method" type="string" in="event.getParam('method').toString()"/>
+								<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
+								<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+								<parameter name="cookie" type="string" in="event.getParam('cookie').toString()"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</function>
+		</onevent>
+		<onevent event="websocketopen">
+			<function>			
+				<log level="1"><![CDATA[ websocketopen event <%=event.getName()%>]]> </log>				
+				<log level="1"><![CDATA[ websocketopen transportid <%=event.getParam("transportid").toString()%>]]> </log>
+				<!--insert name="websocketclients" value="event.getParam('transportid').toString()"/-->
+				<function name="addWebSocket" class="WebSocketManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+					</parameters>
+				</function>
+			</function>
+		</onevent>
+		<onevent event="websocketdisconnect">
+			<function>
+				<log><![CDATA[ websocketdisconnect event <%=event.getName()%>]]> </log>
+				<log><![CDATA[ websocketdisconnect transportid <%=event.getParam("transportid").toString()%>]]> </log>
+				<!--remove name="websocketclients" value="event.getParam('transportid').toString()"/-->
+				<function name="RemoveWebSocket" class="WebSocketManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+					</parameters>
+				</function>
+			</function>
+		</onevent>
+		<onevent event="websocketdata">
+			<variable name="jsontype" type="string"/>
+			<function>
+				<script><![CDATA[
+					var info = JSON.parse(event.getParam("eventdata").toString());
+					context.jsontype.setValue(info.event);
+				]]></script>
+				<function name="HandleWebSocket">
+					<parameters>
+						<parameter name="websockettype" type="string" in="context.jsontype.toString()"/>
+					</parameters>
+				</function>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

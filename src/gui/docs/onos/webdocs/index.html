@@ -1,0 +1,273 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="description" content="">
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>StarOS-Controller开发指南</title>
+	<link rel="alternate" type="application/rss+xml" title="" href="feed/index.html">
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/prettify.css">
+</head>
+<body>
+<div class="wrapper">
+<header>
+  <div class="container">
+    <h2 class="lone-header">StarOS-Controller开发指南</h2>
+  </div>
+</header>
+<section>
+  <div class="container">
+    <ul class="docs-nav">
+      <li><strong>开始</strong></li>
+      <li><a href="#aboutstaros" class="cc-active">关于StarOS</a></li>
+      <li><a href="#starlang" class="cc-active">StarLang编程语言</a></li>
+      <li class="separator"></li>
+      <li><strong>编程指南</strong></li>
+      <li><a href="#class_type" class="cc-active">类</a></li>
+      <li><a href="#function_style" class="cc-active">函数编程</a></li>
+      <li><a href="#js_style" class="cc-active">Javscript编程</a></li>
+	  <!--qiulei 20170829 add image  -->
+      <li><a href="#for_style" class="cc-active">XML中的for循环语法</a></li>
+      <li><a href="#if_style" class="cc-active">XML中的if判断语法</a></li>
+      <li><a href="#if_else_style" class="cc-active">XML中的if..else..判断语法</a></li>
+      <li><a href="#invoke_style" class="cc-active">演示如何调用别人写的函数</a></li>
+	  
+    </ul>
+    <div class="docs-content">
+      <h2> 关于StarOS控制器</h2>
+	  <!--添加图片
+	  <div>
+		<img src="testimg/01.jpg">
+	  </div>
+	  -->
+      <h3 id="aboutstaros"> 简介</h3>
+      <p> 基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写</p>
+      
+      <p> 控制器特点:</p>
+      <ul>
+        <li>XML和javascript编写控制器APP</li>
+        <li>支持集群</li>
+        <li>XML/javascript和C++互补.</li>
+        <li>支持Restful-http/Restful-https/netconf协议</li>
+        <li>支持OpenFlow1.3协议</li>
+        <li>支持NETCONF over SSH (RFC 4742, RFC 6242).</li>
+        <li>支持NETCONF Call Home (RFC 8071).</li>
+        <li>支持YANG 1.0 (RFC 6020)和YANG 1.1 (RFC 7950)建模语言.</li>
+      </ul>
+      <h3 id="starlang"> StarLang编程语言</h3>
+      <ul>
+        <li>支持面向对象的编程方式，类，数据封装，继承.</li>
+        <li>支持运算位运算<<,>>,+,-,*,%,/,~,^,&.</li>
+        <li>支持关键字for,while,if,function,openflow,netconf, restful等流程控制语法.</li>
+        <li>支持数据类型，uint8_t, uint16_t, uint32_t,uint64_t, void,string, class, object,param,long等基本数据类型.</li>
+        <li>支持自定义类类型</li>
+        <li>支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.</li>
+        <li>支持container容器类型。 容器有list, hashmap, array等类型.</li>
+      </ul>
+      <hr>
+      <h2> 编程指南</h2>
+      <p> XML语言</p>
+      <ul>
+        <li>面向对象类的编程 </li>
+        <li>面向过程的函数编程</li>
+		<li>Javscript编程</li>
+      </ul>
+      <p> 下面介绍具体使用方法:</p>
+      <h3 id="class_type"> Class类</h3>
+      <ul>
+        <li>声明一个类</li>
+      </ul>
+	  <p> Starlang的类的声明和java和c++很类似，有三个封装方式，私有，共有，保护</p>
+      <pre class="prettyprint">
+		<xmp>
+<class name="CTestClassBase">
+	<private>
+		<variable name="classstring1" type="string"/>
+	</private>
+	<public>
+		<function name="FunctioninCTestBase">
+			<function>
+				<set name="classstring1" value="'classstring1'"/>
+				<log>FunctioninCTestBase</log>
+				<log><![CDATA[classstring1 <%=context.classstring1.toString()%>]]> </log>
+			</function>
+		</function>
+	</public>
+</class>
+		</xmp>
+	  </pre>
+      
+      
+      <h3 id="function_style"> 函数声明</h3>
+      <ul>
+        <li>函数声明</li>
+      </ul>
+	  
+	  
+      <pre class="prettyprint"><xmp>
+<function name="ActiveApplication">
+	<parameters>
+		<parameter name="app_path" type="string"/>
+	</parameters>
+	<set name="bundleid" value="context.newBundleId()"/>
+	<log><![CDATA[ActiveApplication=<%=context.app_path.toString()%>]]></log>
+	<createbundle bundleid="bundleid" src="context.app_path.toString()+'/'+thisclass.id+'.xml'"/>
+	<set name="thisclass.state" value="'ACTIVE'"/>
+	<set name="thisclass._iconid_state" value="'active'"/>
+</function>
+	</xmp></pre>
+	
+	
+      <h3 id="js_style"> Javscript编程</h3>
+	  <ul>
+        <li>Javscript编程</li>
+      </ul>
+      <pre class="prettyprint"><xmp>
+				<script><![CDATA[
+					var x = context.requestpath.toString();
+					if(x.indexOf("/onos/webdocs/") >= 0)
+					{
+						context.isDocReqeust.setValue(true);
+					}
+					else if (x.indexOf('/onos/v1/')>=0)
+					{	
+						context.isAPI.setValue(true);
+					}
+					else if (x.indexOf('/onos/ui/')>0)
+					{
+						context.isUi.setValue(true);
+					}
+					else
+					{
+						context.isBadRequest.setValue(true);
+					}
+				  ]]></script>
+	</xmp></pre>
+      <ul>
+        <li>context全局变量</li>
+      </ul>
+      <pre class="prettyprint">&lt;script&gt;
+		context.openflowserverobj.getDevice(event.getParam('transportid').toString());
+&lt;/script&gt;
+		</pre>
+      <ul>
+        <li>context局部变量</li>
+      </ul>
+	  
+	  
+		<!--qiulei 2017089 -->
+		<h3 id="for_style"> XML中的for循环语法</h3>
+		<pre class="prettyprint">
+			<xmp>			
+<container name="deviceinfo" type="hashmap" keytype="string" valuetype="string"/>
+<for var="i" from="0" to="context.deviceinfo.size()-1">
+	<function>
+		
+	</function>
+</for>
+			</xmp>
+		</pre>
+		
+		
+		<!--qiulei 2017089 -->
+		<h3 id="if_style"> XML中的if判断语法</h3>
+		<pre class="prettyprint">
+			<xmp>			
+<if cond="context.port==null">
+	<then>
+		<log>判断条件为true,就执行此句</log>
+	</then>
+</if>
+			</xmp>
+		</pre>
+		
+		
+		<!--qiulei 2017089 -->
+		<h3 id="if_else_style"> XML中的if..else..判断语法</h3>
+		<pre class="prettyprint">
+			<xmp>			
+<if cond="context.port==null">
+	<then>
+		<log>判断条件为true,就执行此句</log>
+	</then>
+	<else>
+		<log>判断条件为false,就执行此句</log>
+	</else>
+</if>
+			</xmp>
+		</pre>
+		
+		
+		<!--qiulei 2017089 -->
+		<h3 id="invoke_style"> 演示如何调用别人写的函数</h3>
+		<pre class="prettyprint">
+			<xmp>			
+<!--别人写的GetMetermgr函数-->
+<function name="GetMetermgr">
+	<parameters>
+		<variable name="metermgr" type="class"/>
+	</parameters>
+	<set name="metermgr" value="thisclass.m_metermgr"/>
+</function>
+
+<!--自己声明一个变量metermgr,变量类型是class,然后调用别人的函数得到数据给自定义的变量赋值-->
+<variable name="metermgr" type="class"/>
+<function name="GetMetermgr">
+	<parameters>
+		<variable name="metermgr" type="class" out="context.metermgr.toString()"/>
+	</parameters>
+</function>
+			</xmp>
+		</pre>
+		
+		
+		<!--qiulei 2017089 -->
+		<h3 id="invoke_style"> 演示如何从hashmap中,根据给定的主键取得对应的值</h3>
+		<pre class="prettyprint">
+			<xmp>			
+<class name="CDeviceManager">
+	<private>
+		<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
+	</private>
+	<public>
+		<function name="getDevice">
+			<parameters>
+				<parameter name="outdevice" type="class"/>
+				<parameter name="datapathid" type="string"/>
+			</parameters>
+			<!--if判断语法-->
+			<!--context.deviceContainer.hasValue(context.datapathid.toString())
+				该语句的作用是判断deviceContainer都否包含给定的主键,若包含则返回true,不包含返回false;
+			-->
+			<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+				<then>
+					<function>
+						<!--调用deviceContainer.getValue(),方法中传入给定的主键取得对应的值-->
+						<set name="outdevice" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+					</function>
+				</then>
+			</if>
+		</function>
+	</public>
+</class>
+			</xmp>
+		</pre>
+		
+		
+    </div>
+  </div>
+</section>
+<footer>
+	<div class="">
+		<p> &copy; 南京北星极网络科技有限公司.</p>
+	</div>
+</footer>
+</div>
+<script src="js/jquery.min.js"></script> 
+<script type="text/javascript" src="js/prettify/prettify.js"></script> 
+<script src="js/layout.js"></script>
+</body>
+</html>

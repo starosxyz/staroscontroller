@@ -62,18 +62,18 @@
 				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
 				<new name="m_ports" class="CPortManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>	
 					</parameters>
 				</new>
 				<new name="m_tablemgr" class="CTableManager">
 					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
-					</parameters>
+				</parameters>
 				</new>
 				<new name="m_metermgr" class="CMeterManager">	
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
-					</parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>	
+				</parameters>
 				</new>
 				<!--new Group Manager object-->
 				<new name="m_groupmgr" class="CGroupManager">
@@ -84,7 +84,7 @@
 				<new name="m_flowmgr" class="CFlowManager">
 					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
-					</parameters>
+			</parameters>
 				</new>
 				<!--function name="MultiPartPortDescRequest"/-->
 			</function>
@@ -94,7 +94,8 @@
 					<parameter name="portno" type="string"/>
 					<parameter name="config" type="string"/>			
 					<parameter name="curr" type="string"/>
-					<parameter name="currspeed" type="string"/>	
+					
+<parameter name="currspeed" type="string"/>	
 					<parameter name="hwaddr" type="string"/>
 					<parameter name="maxspeed" type="string"/>
 					<parameter name="name" type="string"/>	
@@ -371,8 +372,7 @@
 				</reference>
 				<set name="strjson" value="context.adddevicejson.toString()"/>
 			</function>
-
-			<function name="ForDeviceDetailReqJson">
+												<function name="ForDeviceDetailReqJson">
 				<parameters>
 					<parameter name="outjson" type="string"/>
 				</parameters>
@@ -541,25 +541,25 @@
 				</function>
 			</function>
 			
-			<!--who do this?-->
+			
+<!--who do this?-->
 			<!--function name="SendFlowRequest">
 				<log><![CDATA[CDevice m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
 				<log>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</log>
 				<function name="SendFlowRequest" class="FlowManager">
-					<parameters>
+<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>				
-					</parameters>
-				</function>				
+</parameters>
+</function>
 			</function-->
-			<!--TimeOut-->
-			<function name="TimeOut">
-				<function name="GroupStateRequest" class="m_groupmgr"/>
-				<function name="SendFlowRequest" class="m_flowmgr"/>
-				<function name="SendPortStateRequest" class="m_ports"/>
+				<!--TimeOut-->
+					<function name="TimeOut">
+					<function name="GroupStateRequest" class="m_groupmgr"/>
+						<function name="SendFlowRequest" class="m_flowmgr"/>				
+					<function name="SendPortStateRequest" class="m_ports"/>
 				<!--function name="SendTableRequest" class="m_tablemgr"/-->
-			</function>
-
-			<!--Get Port State Info , 2017/8/24 -->
+					</function>
+										<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
 					<parameter name="jsonstring" type="string"/>

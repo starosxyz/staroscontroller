@@ -236,7 +236,7 @@
 	<class name="CFlowManager">
 		<private>
 			<container name="flowsContainer" type="hashmap" keytype="string" valuetype="class"/>
-			<variable name="m_transportid" type="string"/>
+		<variable name="m_transportid" type="string"/>
 			<variable name="m_arpflowid" type="string"/>
 			<variable name="m_discoveryflowid" type="string"/>
 		</private>
@@ -353,12 +353,12 @@
 				<for var="i" from="0" to="context.flowsContainer.size()-1">
 					<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.i.toLong())"/>
 					<function name="FlowEntryToJsonString" class="context.flowobj">
-						<parameters>
-							<parameter name="flowjson" type="string" out="context.flowobjJson"/>
-						</parameters>
-					</function>
-					<insert name="flowinfos" value="context.flowobjJson.toString()"/>
-				</for>
+								<parameters>
+									<parameter name="flowjson" type="string" out="context.flowobjJson"/>
+								</parameters>
+							</function>
+							<insert name="flowinfos" value="context.flowobjJson.toString()"/>
+						</for>
 				<log><![CDATA[flowinfos size=<%=context.flowinfos.size()%>]]></log>
 				<script><![CDATA[
 					var json = new Object();
@@ -405,16 +405,16 @@
 							</then>
 							<else>
 								<script><![CDATA[
-									context.print(event.getParam('eventdata').toString());
-									var info = JSON.parse(event.getParam('eventdata').toString());
-									for (var i = 0; i < info.statslist.length; i++)
-									{
-										var flowstats = info.statslist[i];
-										var flowstrjson=JSON.stringify(flowstats);
-										context.flowpartlist.addValue(flowstrjson);
-									}
-								]]></script>
-							</else>
+							context.print(event.getParam('eventdata').toString());
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							for (var i = 0; i < info.statslist.length; i++)
+							{
+								var flowstats = info.statslist[i];
+								var flowstrjson=JSON.stringify(flowstats);
+								context.flowpartlist.addValue(flowstrjson);
+							}
+						]]></script>
+					</else>
 						</if>
 					</function>
 				</wait>
@@ -469,7 +469,8 @@
 				</for>
 				
 			</function>		
-			<function name="InstallARPFlow">
+			
+<function name="InstallARPFlow">
 				<log dest="stdout">InstallARPFlow qiulei 2017/07/27</log>
 				<variable name="modstrjson" type="string"/>
 				<reference variable="modstrjson">

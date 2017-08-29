@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<!--WebGUI-->
+	<function name="HandlGUIRequest">
+		<parameters>
+			<parameter name="requestpath" type="string"/>
+			<parameter name="method" type="string"/>
+			<parameter name="eventdata" type="string"/>
+			<parameter name="transportid" type="string"/>
+			<parameter name="cookie" type="string"/>
+		</parameters>
+		<variable name="contenttype" type="string"/>
+		<variable name="httpparam" type="params"/>
+		<variable name="usersession" type="params"/>
+		<variable name="usernameparam" type="string"/>
+		<variable name="filename" type="string"/>
+		
+		<variable name="filepath" type="string"/>
+		<variable name="xmldata" type="string"/>
+		<variable name="passwordparam" type="string"/>
+		<variable name="authresult" type="string"/>
+		<messageblock name="authresultmsg"/>
+		<variable name="authjson" type="string"/>
+		<variable name="sendjsessionid" type="string"/>
+		<variable name="sessionobj" type="class"/>
+		<function>
+			<!--qiulie-->
+			<log dest="stdout"><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
+			<log dest="stdout"><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
+			<log dest="stdout"><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
+			<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
+			<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
+			<log dest="stdout"><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
+			<!--hu!!!-->
+			<if cond="event.getParam('cookie').toString()!=''">
+				<then>
+					<script><![CDATA[
+						var cookies=event.getParam('cookie').toString();
+						var arraycookies = cookies.split(";");
+						for(var i=0;i<arraycookies.length;i++)
+						{
+							var onecookie = arraycookies[i];
+							var arrayparam = onecookie.split("=");
+							if (arrayparam.length==2)
+							{
+								var paramname = arrayparam[0];
+								var paramvalue = arrayparam[1];
+								if (paramname=="JSESSIONID")
+								{
+									context.usersession.setValue(paramvalue);
+									break;
+								}
+							}
+						}
+					]]></script>
+					<function name="FindSession" class="SessionManager">
+						<parameters>
+							<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
+							<parameter name="sessionobj" type="string" out="context.sessionobj"/>
+						</parameters>
+					</function>
+				</then>
+			</if>
+			
+			<if cond="context.requestpath.toString() == '/onos/ui/j_security_check'">
+				<then>
+					<function>
+						<script><![CDATA[
+							var x = event.getParam("eventdata").toString();
+							//j_username=karaf&j_password=karaf
+							var username=(x.split("&")[0]).split("=")[1];
+							var password=(x.split("&")[1]).split("=")[1];	
+							context.usernameparam.setValue(username);
+							context.passwordparam.setValue(password);
+						]]></script>
+						<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
+						<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
+						<remotecall method="AuthRequest">
+							<applicationdata>
+							<![CDATA[ 
+							{
+							"username":"<%=context.usernameparam.toString()%>",
+							"password":"<%=context.passwordparam.toString()%>"
+							}
+							]]>
+							</applicationdata>
+						</remotecall>
+						<wait event="event.AuthReply" timeout="1000">	
+							<log dest="stdout">Got event.AuthReply</log>
+							<set name="authresultmsg" value="event.getMessageBlock()"/>
+							<set name="authjson" value="context.authresultmsg.toString()"/>
+							<script><![CDATA[
+								var info = JSON.parse(context.authjson.toString());
+								context.authresult.setValue(info.result);
+							]]></script>
+							<log><![CDATA[auth reply json= '<%=context.authjson.toString()%>']]></log>
+							<if cond="context.authresult.toString() == 'ok'">
+								<then>
+									<function>
+										<log><![CDATA[auth ok transportid= '<%=context.transportid.toString()%>']]></log>
+										<set name="httpparam" paramname="Location" value="'/onos/ui/index.html'"/>
+										<set name="sendjsessionid" value="restful.randjsessionid()"/>
+										<set name="httpparam" paramname="Set-Cookie" value="'JSESSIONID='+context.sendjsessionid.toString()+'; path=/'"/>
+										<log><![CDATA[huhuhuh!!!!!!!! sendjsessionid= '<%=context.sendjsessionid.toString()%>']]></log>
+										<function name="CreateSession" class="SessionManager">
+											<parameters>
+												<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
+											</parameters>
+										</function>
+										<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										
+									</function>
+
+								</then>
+								<else>
+									<log>auth failure</log>
+									<function>
+										<set name="httpparam" paramname="Location" value="'/onos/ui/error.html'"/>
+										<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+									</function>
+								</else>
+							</if>
+						</wait>
+					</function>
+				</then>
+				<elseif cond="context.requestpath.toString() == '/onos/ui/rs/applications/upload'">
+					<function>
+					
+								<if cond="context.sessionobj!=null">
+										<then>
+											<function name="ResetTime" class="sessionobj"/>
+													<log><![CDATA[!!!!!!!!!!!!eventdata= '<%=event.getParam("eventdata").toString()%>']]></log>
+													<script><![CDATA[
+													var x = event.getParam("eventdata").toString();
+													var Contentindex=x.indexOf("Content-Disposition");
+													var Contentendindex=x.indexOf("Content-Type");
+													var firsthead=x.substring(Contentindex,Contentendindex);
+													var filenames=firsthead.split(";")[2];
+													var filefirst=filenames.indexOf("=");
+													var filelast=filenames.indexOf(".xml");
+													var filename=filenames.substring(filefirst+2,filelast+4);
+													context.print("filename!!!!!!!!!!!!:"+filename);
+													var filenamefloderindex=filenames.indexOf("=");
+													var filenamefloderlastindex=filenames.indexOf(".xml");
+													var filenamefloder=filenames.substring(filenamefloderindex+2,filenamefloderlastindex);
+													context.print("filenamefloder!!!!!!!!!!!!:"+filenamefloder);
+													context.appname.setValue(filenamefloder);
+													var absolutefilename="/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder+"/"+filename;
+													context.filepath.setValue("/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder);
+													context.print("absolutefilename!!!!!!!!!!!!:"+absolutefilename);
+													context.filename.setValue(absolutefilename);
+													var head=x.indexOf("<?xml");
+													context.print("head!!!!!!!!!!!!:"+head);
+													var end=x.indexOf("</starosxml>");
+													var contents=x.substring(head,end+12);
+													context.print("contents!!!!!!!!!!!!:"+contents);
+													context.xmldata.setValue(contents);
+												  ]]></script>
+											  
+												<log><![CDATA[filename= '<%=context.filename.toString()%>']]></log>
+												<log><![CDATA[xmldata= '<%=context.xmldata.toString()%>']]></log>
+												<file method="mkdir" name="context.filepath.toString()"/>
+												<function name="WriteToFile">
+													<parameters>
+														<parameter name="filename" type="string" in="context.filename.toString()"/>
+														<parameter name="xmldata" type="string" in="context.xmldata.toString()"/>
+													</parameters>
+												</function>
+												<function name="SetCurrentappname" class="ApplicationManager">
+													<parameters>
+														<parameter name="inappname" type="string"  in="context.appname.toString()"/>
+													</parameters>
+												</function>
+													<!--response 200-->
+												<function name="LoadApplication" class="ApplicationManager"/>
+												<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+												<set name="httpparam" paramname="Connection" value="'Close'"/>
+												<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
+												<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</then>
+										<else>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+											<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</else>
+									</if>
+							
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
+				<function>
+					<!--hu!!!-->
+					
+									<if cond="context.sessionobj!=null">
+										<then>
+											<function name="ResetTime" class="sessionobj"/>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+											<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
+										</then>
+										<else>
+											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+											<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</else>
+									</if>
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/rs/logout'">
+				<function>
+					<!--hu!!!-->
+					<function name="RemoveSession" class="SessionManager">
+						<parameters>
+							<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
+						</parameters>
+					</function>
+					<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+					<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/login.html'">
+				<function>
+					<script><![CDATA[
+						var x = context.requestpath.toString();
+						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+						context.filepath.setValue(filename);
+						context.contenttype.setValue('text/html');
+					  ]]></script>
+					<log>Request Login</log>
+					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+					<set name="httpparam" paramname="Connection" value="'Close'"/>
+					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+						<html file="context.filepath"/>
+					</restful>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/index.html'">
+				<function>
+					<script><![CDATA[
+						var x = context.requestpath.toString();
+						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+						context.filepath.setValue(filename);
+						context.contenttype.setValue('text/html');
+					  ]]></script>
+					<if cond="context.sessionobj!=null">
+						<then>
+							<function name="ResetTime" class="sessionobj"/>
+							<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+							<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+							<set name="httpparam" paramname="Connection" value="'Close'"/>
+							<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+								<html file="context.filepath"/>
+							</restful>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</then>
+						<else>
+							<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+							<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</else>
+					</if>
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/onos.js'">
+				<function>
+					<script><![CDATA[
+						var x = context.requestpath.toString();
+						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+						context.filepath.setValue(filename);
+						context.contenttype.setValue('text/javascript');
+					  ]]></script>
+					<if cond="context.sessionobj!=null">
+						<then>
+							<function name="ResetTime" class="sessionobj"/>
+							<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+							<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+							<set name="httpparam" paramname="Connection" value="'Close'"/>
+							<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+								<html file="context.filepath"/>
+							</restful>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</then>
+						<else>
+							<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+							<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</else>
+					</if>
+				</function>
+			</elseif>
+			<elseif cond="context.requestpath.toString() == '/onos/ui/error.html'">
+				<function>
+				<script><![CDATA[
+					var x = context.requestpath.toString();
+					var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+					context.filepath.setValue(filename);
+					context.contenttype.setValue('text/html');
+				  ]]></script>
+					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+					<set name="httpparam" paramname="Connection" value="'Close'"/>
+					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+						<html file="context.filepath"/>
+					</restful>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</function>
+			</elseif>
+			<else>	
+				
+				<!--yige start-->
+				<script><![CDATA[
+					var x = context.requestpath.toString();
+					if((x.indexOf("/onos/ui/rs/applications/") >= 0)&&(x.indexOf("icon") >= 0)){
+						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui/onos/ui/data/img/icon.png";
+						context.filepath.setValue(filename);
+						context.contenttype.setValue('image/png');
+					}
+					else 
+					{
+						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+						context.filepath.setValue(filename);
+						if(x.indexOf(".html") > 0 )   
+						{   
+							context.contenttype.setValue('text/html');  
+						} 
+						else if (x.indexOf(".png")>0)
+						{
+							context.contenttype.setValue('image/png');
+						}
+						else if (x.indexOf(".js")>0)
+						{
+							context.contenttype.setValue('text/javascript');
+						}
+						else if (x.indexOf(".css")>0)
+						{
+							context.contenttype.setValue('text/css');
+						}
+						else if (x.indexOf(".gif")>0)
+						{
+							context.contenttype.setValue('image/gif');
+						}
+						else if (x.indexOf(".woff")>0)
+						{
+							context.contenttype.setValue('application/x-font-woff');
+						}
+						else if (x.indexOf(".ttf")>0)
+						{
+							context.contenttype.setValue('application/x-font-woff');
+						}
+						else 
+						{
+							context.contenttype.setValue('text/html'); 
+						}
+					}
+				  ]]></script>
+					<!--yige end-->
+					<!--hu!!!-->
+					<if cond="context.sessionobj!=null">
+						<then>
+							<function name="ResetTime" class="sessionobj"/>
+						</then>
+					</if>
+					<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+					<set name="httpparam" paramname="Connection" value="'Close'"/>
+					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+						<html file="context.filepath"/>
+					</restful>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</else>	
+			</if>
+		</function>
+	</function>
+</starosxml>
