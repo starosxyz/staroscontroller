@@ -93,6 +93,7 @@
 										<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
 										<parameter name="method" type="string" in="event.getParam('method').toString()" />
 										<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
+									<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 									</parameters>
 							</function>
 						</then>
