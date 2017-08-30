@@ -113,7 +113,7 @@
 					<parameter name="jsonstring" type="string"/>
 				</parameters>
 				<variable name="outjson" type="string"/>
-				<variable name="onehostinfo" type="string"/>
+				<variable name="onehostinfo" type="class"/>
 				<container name="hostlist" type="list" valuetype="string"/>
 				<for var="i" from="0" to="context.hostContainer.size()-1">
 					<function>
