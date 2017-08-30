@@ -10,6 +10,7 @@
 	<variable name="systemparam" type="params"/>
 	<variable name="requestcount" type="long"/>
 	<variable name="isStop" type="boolean" value="true"/>
+	<variable name="WebsocketForTest" type="object"/>
 	<function name="Restfulserver">
 		<variable name="restfulparams" type="params"/>
 		<!--hu peng 2017/07/28-->
@@ -20,8 +21,36 @@
 		<set name="restfulparams" paramname="keyfile" value="context.GlobalSetting.getParam('guikeyfile').toString()"/>
 		<log>Restfulserver</log>
 		<restful name="restfulserver" action="SERVER" param="restfulparams" expectevent="restfulrequest.event"/>
+		<function name="ConnectWebsocketForTest"/>
+	</function>
+	<function name="ConnectWebsocketForTest">
+		<variable name="urlvar" type="string"/>
+		<log>ConnectWebsocketForTest</log>
+		<set name="urlvar" value="'http://localhost:9922/onos/ui/websock/core'"/>
+		<restful name="WebsocketForTest" action="REQUESTWEBSOCKET" url="context.urlvar" method="get" expectevent="WebsocketForTest.event"/>
 	</function>
 	<events>
+		<onevent event="WebsocketForTest.event">
+			<log>WebsocketForTest.event</log>
+			<log><![CDATA[ConnectWebsocketForTest status '<%=event.getParam("status").toString()%>']]></log>
+			<if cond="event.getParam('status').toString() == '101'">
+				<then>
+					<websocket name="WebsocketForTest" method="ConnectWebSocket" transportid="event.getParam('transportid').toString()" openevent="WebsocketForTest.websocketopen" dataevent="WebsocketForTest.websocketdata" disconnectevent="WebsocketForTest.websocketdisconnect"/>
+				</then>
+				<else>
+					<log>web socket connect error</log>
+				</else>
+			</if>
+		</onevent>
+		<onevent event="WebsocketForTest.websocketopen">
+			<log>WebsocketForTest.websocketopen</log>
+		</onevent>
+		<onevent event="WebsocketForTest.websocketdata">
+			<log>WebsocketForTest.websocketdata</log>
+		</onevent>
+		<onevent event="WebsocketForTest.websocketdisconnect">
+			<log>WebsocketForTest.websocketdisconnect</log>
+		</onevent>
 		<onevent event="restfulrequest.event">
 			<variable name="usernameparam" type="string"/>
 			<variable name="passwordparam" type="string"/>
