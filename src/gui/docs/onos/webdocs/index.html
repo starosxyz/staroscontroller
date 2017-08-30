@@ -6,7 +6,7 @@
 	<meta name="HandheldFriendly" content="True">
 	<meta name="MobileOptimized" content="320">
 	<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>StarOS-Controller开发指南</title>
+	<title>StarOS-Controller控制器开发手册</title>
 	<link rel="alternate" type="application/rss+xml" title="" href="feed/index.html">
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/prettify.css">
@@ -15,14 +15,14 @@
 <div class="wrapper">
 <header>
   <div class="container">
-    <h2 class="lone-header">StarOS-Controller开发指南</h2>
+    <h2 class="lone-header">StarOS-Controller控制器开发手册</h2>
   </div>
 </header>
 <section>
   <div class="container">
     <ul class="docs-nav">
       <li><strong>开始</strong></li>
-      <li><a href="#aboutstaros" class="cc-active">关于StarOS</a></li>
+      <li><a href="#aboutstaros" class="cc-active">关于StarOS控制器</a></li>
       <li><a href="#starlang" class="cc-active">StarLang编程语言</a></li>
       <li class="separator"></li>
       <li><strong>编程指南</strong></li>
@@ -41,7 +41,7 @@
 		<li><a href="#index_style" class="cc-active">指定下标从hashmap中取值</a></li>
 		<li><a href="#websocket_how" class="cc-active">WebSocket编程</a></li>
     </ul>
-    <div class="docs-content" style="width:960px">
+    <div class="docs-content" style="width:1460px">
       <h2> 关于StarOS控制器</h2>
 	  <!--添加图片
 	  <div>
@@ -50,7 +50,10 @@
 	  -->
       <h3 id="aboutstaros"> 简介</h3>
       <p> 基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写</p>
-      
+      <p> StarOS控制器架构图:</p>
+	  <div>
+		<img src="img/staros.png">
+	  </div>
       <p> 控制器特点:</p>
       <ul>
         <li>XML和javascript编写控制器APP</li>
