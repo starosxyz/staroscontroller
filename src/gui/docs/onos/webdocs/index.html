@@ -36,9 +36,10 @@
       <li><a href="#invoke_style" class="cc-active">演示如何调用别人写的函数</a></li>
 
 		<li><a href="#hasValue_style" class="cc-active">Hashmap中的hasValue(key)</a></li>
-		
+
 		<li><a href="#keyword_style" class="cc-active">指定主键从hashmap中取值</a></li>
 		<li><a href="#index_style" class="cc-active">指定下标从hashmap中取值</a></li>
+		<li><a href="#websocket_how" class="cc-active">WebSocket编程</a></li>
     </ul>
     <div class="docs-content" style="width:960px">
       <h2> 关于StarOS控制器</h2>
@@ -321,8 +322,87 @@
 			</xmp>
 		</pre>
 		
-		
-		
+		<h3 id="websocket_how">WebSocket</h3>
+		  <ul>
+			<li>WebSocket介绍</li>
+		  </ul>
+		<p> WebSocket协议是基于TCP的一种新的网络协议</p>
+		<p> 它实现了浏览器与服务器全双工(full-duplex)通信——允许服务器主动发送信息给客户端</p>
+		<p> WebSocket通信协议于2011年被IETF定为标准RFC 6455，并被RFC7936所补充规范</p>
+		  <ul>
+			<li>WebSocket客户端</li>
+		  </ul>
+		<pre class="prettyprint">
+			<xmp>
+<!--1)定义一个变量，类型是object-->	
+<variable name="WebsocketForTest" type="object"/>
+<!--2)连接Websocket服务器-->		
+<function name="ConnectWebsocketForTest">
+	<variable name="urlvar" type="string"/>
+	<log>ConnectWebsocketForTest</log>
+	<set name="urlvar" value="'http://localhost:9922/onos/ui/websock/core'"/>
+	<restful name="WebsocketForTest" action="REQUESTWEBSOCKET" url="context.urlvar" method="get" expectevent="WebsocketForTest.event"/>
+</function>
+<!--3)在消息处理代码块添加消息处理函数-->	
+<!------------------------->
+<onevent event="WebsocketForTest.event">
+	<log>WebsocketForTest.event</log>
+	<log><![CDATA[ConnectWebsocketForTest status '<%=event.getParam("status").toString()%>']]></log>
+	<if cond="event.getParam('status').toString() == '101'">
+		<then>
+			<websocket name="WebsocketForTest" method="ConnectWebSocket" transportid="event.getParam('transportid').toString()" openevent="WebsocketForTest.websocketopen" dataevent="WebsocketForTest.websocketdata" disconnectevent="WebsocketForTest.websocketdisconnect"/>
+		</then>
+		<else>
+			<log>web socket connect error</log>
+		</else>
+	</if>
+</onevent>
+<onevent event="WebsocketForTest.websocketopen">
+	<log>WebsocketForTest.websocketopen</log>
+</onevent>
+<onevent event="WebsocketForTest.websocketdata">
+	<log>WebsocketForTest.websocketdata</log>
+</onevent>
+<onevent event="WebsocketForTest.websocketdisconnect">
+	<log>WebsocketForTest.websocketdisconnect</log>
+</onevent>
+			</xmp>
+		</pre>	
+		  <ul>
+			<li>WebSocket服务器</li>
+		  </ul>
+		<pre class="prettyprint">
+			<xmp>
+<!--1)定义一个变量，类型是object-->			
+<variable name="restfulserver" type="object"/>
+<!--2)启动HTTP服务-->
+<function name="Restfulserver">
+	<variable name="restfulparams" type="params"/>
+	<!--hu peng 2017/07/28-->
+	<set name="restfulparams" paramname="listenip" value="context.GlobalSetting.getParam('guiip').toString()"/>
+	<set name="restfulparams" paramname="listenport" value="context.GlobalSetting.getParam('guiport').toString()"/>
+	<set name="restfulparams" paramname="protocol" value="context.GlobalSetting.getParam('guiprotocol').toString()"/>
+	<set name="restfulparams" paramname="cerfile" value="context.GlobalSetting.getParam('guicerfile').toString()"/>
+	<set name="restfulparams" paramname="keyfile" value="context.GlobalSetting.getParam('guikeyfile').toString()"/>
+	<log>Restfulserver</log>
+	<restful name="restfulserver" action="SERVER" param="restfulparams" expectevent="restfulrequest.event"/>
+</function>
+<!--3)Websocket客户端连接-->
+<function>
+	<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
+</function>
+<!--4)消息处理-->
+<onevent event="WebsocketForTest.websocketopen">
+	<log>WebsocketForTest.websocketopen</log>
+</onevent>
+<onevent event="WebsocketForTest.websocketdata">
+	<log>WebsocketForTest.websocketdata</log>
+</onevent>
+<onevent event="WebsocketForTest.websocketdisconnect">
+	<log>WebsocketForTest.websocketdisconnect</log>
+</onevent>
+			</xmp>
+		</pre>	
 		
 		
 		
