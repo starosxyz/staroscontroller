@@ -34,6 +34,11 @@
       <li><a href="#if_style" class="cc-active">XML中的if判断语法</a></li>
       <li><a href="#if_else_style" class="cc-active">XML中的if..else..判断语法</a></li>
       <li><a href="#invoke_style" class="cc-active">演示如何调用别人写的函数</a></li>
+
+		<li><a href="#hasValue_style" class="cc-active">Hashmap中的hasValue(key)</a></li>
+		
+		<li><a href="#keyword_style" class="cc-active">指定主键从hashmap中取值</a></li>
+		<li><a href="#index_style" class="cc-active">指定下标从hashmap中取值</a></li>
     </ul>
     <div class="docs-content" style="width:960px">
       <h2> 关于StarOS控制器</h2>
@@ -157,7 +162,7 @@
       </ul>
 	  
 	  
-		<!--qiulei 2017089 -->
+		<!--qiulei 20170829 -->
 		<h3 id="for_style"> XML中的for循环语法</h3>
 		<pre class="prettyprint">
 			<xmp>			
@@ -171,7 +176,7 @@
 		</pre>
 		
 		
-		<!--qiulei 2017089 -->
+		<!--qiulei 20170829 -->
 		<h3 id="if_style"> XML中的if判断语法</h3>
 		<pre class="prettyprint">
 			<xmp>			
@@ -184,7 +189,7 @@
 		</pre>
 		
 		
-		<!--qiulei 2017089 -->
+		<!--qiulei 20170829 -->
 		<h3 id="if_else_style"> XML中的if..else..判断语法</h3>
 		<pre class="prettyprint">
 			<xmp>			
@@ -200,7 +205,7 @@
 		</pre>
 		
 		
-		<!--qiulei 2017089 -->
+		<!--qiulei 20170829 -->
 		<h3 id="invoke_style"> 演示如何调用别人写的函数</h3>
 		<pre class="prettyprint">
 			<xmp>			
@@ -223,10 +228,48 @@
 		</pre>
 		
 		
-		<!--qiulei 2017089 -->
-		<h3 id="invoke_style"> 演示如何从hashmap中,根据给定的主键取得对应的值</h3>
+		
+		<!--qiulei 20170830 -->
+		<h3 id="hasValue_style"> Hashmap中的hasValue(key)方法</h3>
+		<pre class="prettyprint">
+			<xmp>
+<!--Hashmap中的hasValue(key)方法:
+	该方法的作用是判断deviceContainer是否包含给定的key,若包含则返回true,不包含返回false;
+-->			
+<class name="CDeviceManager">
+	<private>
+		<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
+	</private>
+	<public>
+		<function name="getDevice">
+			<parameters>
+				<parameter name="outdevice" type="class"/>
+				<parameter name="datapathid" type="string"/>
+			</parameters>
+			<!--if判断语法-->
+			<!--context.deviceContainer.hasValue(context.datapathid.toString())
+				该语句的作用是判断deviceContainer是否包含给定的key,若包含则返回true,不包含返回false;
+			-->
+			<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
+				<then>
+					<function>
+						<!--判断条件为true，在这里执行相应的操作-->
+					</function>
+				</then>
+			</if>
+		</function>
+	</public>
+</class>
+			</xmp>
+		</pre>
+		
+		
+		
+		<!--qiulei 20170829 -->
+		<h3 id="keyword_style"> 指定主键从hashmap中取值</h3>
 		<pre class="prettyprint">
 			<xmp>			
+<!--演示如何根据给定的key,从hashmap中取得与Key对应的值-->
 <class name="CDeviceManager">
 	<private>
 		<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
@@ -254,6 +297,33 @@
 </class>
 			</xmp>
 		</pre>
+		
+		
+		
+		<!--qiulei 20170830 -->
+		<h3 id="index_style"> 指定下标从hashmap中取值</h3>
+		<pre class="prettyprint">
+			<xmp>
+<!--演示如何根据给定的下标,从hashmap中取得与下标对应的值-->			
+<variable name="deviceinfo" type="class"/>
+<container name="deviceContainer" type="hashmap" keytype="string" valuetype="class"/>
+<for var="i" from="0" to="context.deviceContainer.size()-1">
+	<function>
+		<!--调用deviceContainer.getValueByIndex(),方法中传入给定的下标取得对应的值-->
+		<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+		<function name="GetTransportId" class="deviceinfo">
+			<parameters>
+				<parameter name="outtransport" type="string" out="context.devicetransportid"/>
+			</parameters>
+		</function>
+	</function>
+</for>
+			</xmp>
+		</pre>
+		
+		
+		
+		
 		
 		
     </div>
