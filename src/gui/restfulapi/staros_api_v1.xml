@@ -19,6 +19,8 @@
 		<variable name="authresult" type="string"/>
 		<messageblock name="authresultmsg"/>
 		<variable name="authjson" type="string"/>
+								<variable name="injson" type="string"/>
+		<variable name="outjson" type="string"/>
 		<log>HandleAPI</log>
 		<log><![CDATA[HandleAPI request path <%=context.requestpath.toString()%>]]></log>
 		<log><![CDATA[Authorization !!!!! <%=event.getParam("Authorization").toString()%>]]></log>	
@@ -33,7 +35,7 @@
 			</then>
 			<else>
 					<script><![CDATA[
-						context.print("123123");
+						
 						var strs = event.getParam("Authorization").toString();
 						var str=strs.split(" ")[1];
 
@@ -51,22 +53,20 @@
 									
 					<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 					<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
-					<remotecall method="AuthRequest">
-						<applicationdata>
-						<![CDATA[ 
+					<reference variable="injson">
+						<jsonbody><![CDATA[ 
 						{
 						"username":"<%=context.usernameparam.toString()%>",
 						"password":"<%=context.passwordparam.toString()%>"
 						}
 						]]>
-						</applicationdata>
-					</remotecall>
-					<wait event="event.AuthReply" timeout="1000">	
-						<log dest="stdout">Got event.AuthReply</log>
-						<set name="authresultmsg" value="event.getMessageBlock()"/>
-						<set name="authjson" value="context.authresultmsg.toString()"/>
+</jsonbody>
+						</reference>
+																	<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
+						<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
+						<log><![CDATA[AuthRequest outparam= '<%=context.outjson.toString()%>']]></log>
 						<script><![CDATA[
-							var info = JSON.parse(context.authjson.toString());
+								var info = JSON.parse(context.outjson.toString());
 							context.authresult.setValue(info.result);
 						]]></script>
 						<log><![CDATA[auth reply json= '<%=context.authjson.toString()%>']]></log>
@@ -81,8 +81,7 @@
 									<exit/>
 							</then>
 						</if>
-					</wait>
-			</else>
+											</else>
 		</if>
 		<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
 			<then>

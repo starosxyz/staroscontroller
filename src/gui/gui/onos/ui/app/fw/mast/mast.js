@@ -92,7 +92,8 @@
                 var curId = $location.path().replace('/', ''),
                     viewMap = $scope.onos['viewMap'],
                     helpUrl = viewMap[curId];
-                $window.open(helpUrl);
+					// $window.open(helpUrl);
+                $window.open("webdocs/index.html");
             };
 
             $log.log('MastCtrl has been created');
