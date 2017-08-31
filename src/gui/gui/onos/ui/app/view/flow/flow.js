@@ -211,6 +211,7 @@
             $scope.portTip = 'Show port view for this device';
             $scope.groupTip = 'Show group view for this device';
             $scope.meterTip = 'Show meter view for selected device';
+            $scope.tableTip = 'Show table view for selected device';
             $scope.briefTip = 'Switch to brief view';
             $scope.detailTip = 'Switch to detailed view';
             $scope.brief = true;

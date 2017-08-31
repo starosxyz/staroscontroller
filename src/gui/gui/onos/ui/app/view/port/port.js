@@ -41,6 +41,7 @@
             $scope.flowTip = 'Show flow view for this device';
             $scope.groupTip = 'Show group view for this device';
             $scope.meterTip = 'Show meter view for selected device';
+            $scope.tableTip = 'Show table view for selected device';
 
             params = $location.search();
             if (params.hasOwnProperty('devId')) {

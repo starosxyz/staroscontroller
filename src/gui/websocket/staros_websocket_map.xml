@@ -35,5 +35,7 @@
 		<set name="WebSocketHandlerMap" paramname="groupDataRequest" value="'HandleGroupDataRequest'"/>
 		<!-- YY 20180828 -->
 		<set name="WebSocketHandlerMap" paramname="processorDataRequest" value="'HandleProcessorDataRequest'"/>
+	<!-- YY 20180831 -->
+		<set name="WebSocketHandlerMap" paramname="tableDataRequest" value="'HandleTableDataRequest'"/>
 	</function>
 </starosxml>

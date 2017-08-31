@@ -15,33 +15,62 @@
  */
 
 /*
- ONOS GUI -- Meter View Module
+ ONOS GUI -- Flow View Module
  */
+
 (function () {
     'use strict';
 
     // injected references
-    var $log, $scope, $location, fs, tbs, ns;
+    var $log, $scope, $location, fs, tbs, ns, mast, ps, wss, is, ks;
 
-    angular.module('ovMeter', [])
-    .controller('OvMeterCtrl',
-        ['$log', '$scope', '$location', '$sce',
+    // constants
+    var topPdg = 28,
+        detailsReq = 'tableDataRequest',
+        detailsResp = 'tableDataResponse',
+
+        propOrder = [
+            'tableId', 'activecount', 'lookupcount', 'matchedcount'
+        ],
+        friendlyProps = [
+            'Table ID', 'Active Count', 'Lookup Count', 'Matched Count'
+        ];
+
+    function respDetailsCb(data) {
+        $log.debug("Got response from server :", data);
+        $scope.panelData = data.details;
+        $scope.$apply();
+    }
+
+    angular.module('ovTable', [])
+    .controller('OvTableCtrl',
+        ['$log', '$scope', '$location',
             'FnService', 'TableBuilderService', 'NavService',
+            'MastService', 'PanelService', 'KeyService', 'IconService',
+            'WebSocketService',
 
-        function (_$log_, _$scope_, _$location_, $sce, _fs_, _tbs_, _ns_) {
-            var params;
+        function (_$log_, _$scope_, _$location_, _fs_, _tbs_, _ns_,
+                    _mast_, _ps_, _ks_, _is_, _wss_) {
+            var params,
+                handlers = {};
+
             $log = _$log_;
             $scope = _$scope_;
             $location = _$location_;
             fs = _fs_;
             tbs = _tbs_;
             ns = _ns_;
+            is = _is_;
+            wss = _wss_;
+            mast = _mast_;
+            ps = _ps_;
             $scope.deviceTip = 'Show device table';
-            $scope.flowTip = 'Show flow view for this device';
             $scope.portTip = 'Show port view for this device';
             $scope.groupTip = 'Show group view for this device';
-            $scope.tableTip = 'Show table view for this device';
-
+            $scope.meterTip = 'Show meter view for selected device';         
+            $scope.briefTip = 'Switch to brief view';
+            $scope.detailTip = 'Switch to detailed view';
+            $scope.brief = true;
             params = $location.search();
             if (params.hasOwnProperty('devId')) {
                 $scope.devId = params['devId'];
@@ -49,16 +78,8 @@
 
             tbs.buildTable({
                 scope: $scope,
-                tag: 'meter',
+                tag: 'table',
                 query: params
-            });
-
-            $scope.$watch('tableData', function () {
-                if (!fs.isEmptyObject($scope.tableData)) {
-                    $scope.tableData.forEach(function (meter) {
-                        meter.bands = $sce.trustAsHtml(meter.bands);
-                    });
-                }
             });
 
             $scope.nav = function (path) {
@@ -67,15 +88,10 @@
                 }
             };
 
-            Object.defineProperty($scope, "queryFilter", {
-                get: function() {
-                    var out = {};
-                    out[$scope.queryBy || "$"] = $scope.query;
-                    return out;
-                }
-            });
+             $scope.$on('$destroy', function () {
+                 wss.unbindHandlers(handlers);
+             });
 
-
-            $log.log('OvMeterCtrl has been created');
-        }]);
+            $log.log('OvTableCtrl has been created');
+        }])
 }());

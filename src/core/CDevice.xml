@@ -557,7 +557,7 @@
 					<function name="GroupStateRequest" class="m_groupmgr"/>
 						<function name="SendFlowRequest" class="m_flowmgr"/>				
 					<function name="SendPortStateRequest" class="m_ports"/>
-				<!--function name="SendTableRequest" class="m_tablemgr"/-->
+				<function name="SendTableRequest" class="m_tablemgr"/>							
 					</function>
 										<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
@@ -578,6 +578,19 @@
 				</parameters>
 				<set name="metermgr" value="thisclass.m_metermgr"/>
 			</function>
+		<function name="GetTableData">		
+				<parameters>				
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="jsondata" type="string"/>
+				<function name="GetTableData" class="thisclass.m_tablemgr">
+					<parameters>
+						<parameter name="data" type="string" out="context.jsondata"/>
+					</parameters>
+				</function>
+				<set name="json" value="context.jsondata.toString()"/>
+			</function>
+			
 		</public>
 	</class>
 </starosxml>

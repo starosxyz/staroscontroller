@@ -87,11 +87,12 @@
 					var pay_load = info.payload;
 					var strjson=JSON.stringify(pay_load);
 					context.pkoutjson.setValue(strjson);
-				}
 				var src_mac = info.payload.smac;
 				var dst_mac = info.payload.dmac;
 				context.srcmac.setValue(src_mac);
 				context.dstmac.setValue(dst_mac);
+				}
+
 			]]></script>
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>			
 			<if cond="context.machashmap.hasValue(context.srcmac.toString())">

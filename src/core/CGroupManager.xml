@@ -402,7 +402,7 @@
 			<function name="GroupStateRequest">
 				<variable name="xid" type="string"/>
 				<variable name="groupid" type="string"/>
-				<variable name="groupobj" type="string"/>
+				<variable name="groupobj" type="class"/>
 				<variable name="groupstate" type="string"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>

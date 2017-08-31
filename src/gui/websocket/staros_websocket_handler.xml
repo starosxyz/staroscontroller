@@ -21,6 +21,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_meter.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_group.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_processor.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_table.xml"/>
 	<!--WebGUI-->
 	<function name="HandleWebSocket">
 		<parameters>

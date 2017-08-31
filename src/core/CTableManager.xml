@@ -38,6 +38,7 @@
 		<private>
 			<container name="tableContainer" type="hashmap" keytype="string" valuetype="class"/>
 			<variable name="m_transportid" type="string"/>
+		<variable name="m_tablejson" type="string"/>
 		</private>
 		<public>
 
@@ -115,24 +116,30 @@
 					</parameters>
 				</function>
 				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
-					<script><![CDATA[
-								var info = JSON.parse(event.getParam('eventdata').toString());
-								for(var i=0;i<info.tablestatslist.length;i++)
-								{	
-									var tablestats = info.tablestatslist[i];
-									var tablestrjson=JSON.stringify(tablestats);
-									context.tablestatslist.addValue(tablestrjson);
-								}
-							]]></script>
+					<set name="thisclass.m_tablejson" value="event.getParam('eventdata').toString()"/>
 				</wait>
-				<for var="i" from="0" to="context.tablestatslist.size()-1">
-					<set name="tablestatestring" value="context.tablestatslist.getValueByIndex(context.i.toLong())"/>
-					<function name="UpdateTableState">
+				</function>
+					<!-- YY 20170831 -->
+					<function name="GetTableData">
 						<parameters>
-							<parameter name="tablestatestring" type="string" in="context.tablestatestring.toString()"/>
+							<parameter name="data" type="string" />
 						</parameters>
-					</function>
-				</for>
+					<variable name="outjsonstring" type="string"/>
+				<script><![CDATA[
+							var payload = new Object();
+							var tablelist = JSON.parse(thisclass.m_tablejson.toString());
+							
+							var json = new Object();
+							json.event = "tableDataResponse";
+							var twoobject = new Object();
+							twoobject.no_rows_msg = "No tables found";
+							payload.tables = tablelist.tablestatslist;
+							payload.annots = twoobject;
+							json.payload = payload;
+							var strjson=JSON.stringify(json);												
+							context.outjsonstring.setValue(strjson);								
+						]]></script>				
+				<set name="data" value="context.outjsonstring.toString()"/>
 			</function>
 		</public>
 	</class>

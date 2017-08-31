@@ -50,11 +50,11 @@
         'port' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'group' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'meter' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
+        'table' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'link' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'host' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'intent' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'tunnel' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
-
     },
     viewIds = [];
 
