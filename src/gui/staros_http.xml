@@ -21,7 +21,6 @@
 		<set name="restfulparams" paramname="keyfile" value="context.GlobalSetting.getParam('guikeyfile').toString()"/>
 		<log>Restfulserver</log>
 		<restful name="restfulserver" action="SERVER" param="restfulparams" expectevent="restfulrequest.event"/>
-<<<<<<< HEAD
 	<function name="ConnectWebsocketForTest"/>
 	</function>
 	<function name="ConnectWebsocketForTest">
@@ -31,15 +30,6 @@
 		<set name="urlvar" value="'http://localhost:9922/onos/ui/websock/core'"/>
 	
 		<restful name="WebsocketForTest" action="REQUESTWEBSOCKET" url="context.urlvar" method="get" username="'admin'" password="'admin'"  expectevent="WebsocketForTest.event"/>
-=======
-		<function name="ConnectWebsocketForTest"/>
-	</function>
-	<function name="ConnectWebsocketForTest">
-		<variable name="urlvar" type="string"/>
-		<log>ConnectWebsocketForTest</log>
-		<set name="urlvar" value="'http://localhost:9922/onos/ui/websock/core'"/>
-		<restful name="WebsocketForTest" action="REQUESTWEBSOCKET" url="context.urlvar" method="get" expectevent="WebsocketForTest.event"/>
->>>>>>> 12308a274c8df0f69d89603b439a733f7922014a
 	</function>
 	<events>
 		<onevent event="WebsocketForTest.event">
@@ -134,7 +124,7 @@
 										<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
 										<parameter name="method" type="string" in="event.getParam('method').toString()" />
 										<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
-									<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+										<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 									</parameters>
 							</function>
 						</then>
