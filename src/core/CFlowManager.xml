@@ -285,6 +285,24 @@
 				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				<log><![CDATA[InstallFlowTableRequest transportid=<%=context.transportid.toString()%>]]></log>
+								<!---qiulei 20170831 start-->
+				<variable name="BarrierStrJson" type="string"/>
+				<reference variable="BarrierStrJson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>"
+							}
+					]]></jsonbody>
+				</reference>
+				<!--openflow_api中的方法-->
+				<function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<parameter name="strjson" type="string" in="context.BarrierStrJson.toString()"/>
+					</parameters>
+                </function>
+				<!---qiulei 20170831 end-->
+
 				<function name="Send_OFPT13_FLOW_MOD">
 					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
@@ -333,6 +351,28 @@
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
+								
+				
+				<!---qiulei 20170831 start-->
+				<variable name="BarrierStrJson" type="string"/>
+				<reference variable="BarrierStrJson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>"
+							}
+					]]></jsonbody>
+				</reference>
+				<!--openflow_api中的方法-->
+				<function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<parameter name="transportid" type="string"  in="thisclass.m_transportid.toString()"/>
+						<parameter name="strjson" type="string" in="context.BarrierStrJson.toString()"/>
+					</parameters>
+                </function>
+				<!---qiulei 20170831 end-->
+				
+				
+				
 				<function name="Send_OFPT13_FLOW_MOD">
 					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
