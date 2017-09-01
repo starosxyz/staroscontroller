@@ -21,7 +21,7 @@
 					<parameter name="instanceinfo" type="hashmap"/>
 				</parameters>
 				<container name="OneInstanceContainer" type="hashmap" keytype="string" valuetype="string"/>
-				<if cond="context.InstanceContainer.hasValue(id)==true">
+				<if cond="context.InstanceContainer.hasValue(context.id)==true">
 					<then>
 						<function>
 							<lookup name="InstanceContainer" key="context.id.toString()" output="context.OneInstanceContainer"/>
