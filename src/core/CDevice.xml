@@ -574,7 +574,8 @@
 			<!--qiulei 20170825-->
 			<function name="GetMetermgr">
 				<parameters>
-					<variable name="metermgr" type="class"/>
+					<!--20170901,Modify the Tag error-->
+					<parameter name="metermgr" type="class"/>
 				</parameters>
 				<set name="metermgr" value="thisclass.m_metermgr"/>
 			</function>
