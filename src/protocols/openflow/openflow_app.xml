@@ -33,6 +33,9 @@
 	<!--qiulei 20170829-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/protocols/openflow/openflow_topology.xml"/>
 	
+	<!-- wangkang 2017/09/01 -->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/protocols/openflow/openflow_error_handler.xml"/>
+	
 	<!--include src="/opt/staros.xyz/staros/starlang/unittest/openflow_unittest.xml"/-->
 	<variable name="openflowxidbase" type="long" value="0"/>
 	<container name="switchmap" type="hashmap" keytype="string" valuetype="long"/>
@@ -226,12 +229,28 @@
 		  </function>
 		</onevent>
 		<!-- 1 -->
-		<onevent event="openflow.OFPT13_ERROR">
 
-		  <variable name="switchSessionid"/>
-		  <function>
-			<log dest="stdout">Get a Error Message</log>
-		  </function>
+		<onevent event="openflow.OFPT13_ERROR">
+			<log>####################################</log>
+			<variable name="switchSessionid"/>
+			
+			<variable name="messagetype" type="string"/>
+			<function>
+				<log dest="stdout">Get a Error Message</log>
+				<log>####################################</log>
+				<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+				<log>####################################</log>
+				<script><![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							context.messagetype.setValue(info.body.type);
+				]]></script>
+				<log><![CDATA[messagetype=<%=context.messagetype.toString()%>]]></log>
+				<if cond="context.messagetype.toString() == '14'">
+					<then>
+						<function name="ErrorHandleFlowMod"/>
+					</then>
+				</if>
+			</function>
 		</onevent>
 		<!-- 2 -->
 		<!--qiulei 20170808 15:27-->

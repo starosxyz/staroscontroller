@@ -210,14 +210,28 @@
 				<log>######################################################</log>
 				<set name="flowjson" value="context.outjson.toString()"/>
 			</function>
-			
+			<!--
+				YY
+				Get Flow's flowid
+				parameter:
+							flowid :
+									type :	string
+									style :	out
+			-->
 			<function name="GetFlowId">
 				<parameters>
 					<parameter name="flowid" type="string"/>					
 				</parameters>
 				<set name="context.flowid" value="thisclass.m_flowId.toString()"/>
 			</function>
-			
+			<!--
+				YY
+				Set Flow's packets bytes durationsec and durationnsec
+				parameter:
+							packets bytes durationsec durationnsec:
+																type :	string
+																style :	in
+			-->
 			<function name="Set4Natures">
 				<parameters>
 					<parameter name="packets" type="string"/>
@@ -231,14 +245,23 @@
 				<set name="m_durationnsec" value="context.durationnsec.toString()"/>
 			</function>
 			
+			<!-- wangkang 2017/09/01 -->
+			<function name="SetState">
+				<log>##### Set FlowMessage State #####</log>
+				<parameters>
+					<parameter name="inmodstate" type="string"/>
+				</parameters>
+				<set name="m_state" value="context.inmodstate.toString()"/>
+			</function>
 		</public>
 	</class>
 	<class name="CFlowManager">
 		<private>
 			<container name="flowsContainer" type="hashmap" keytype="string" valuetype="class"/>
-		<variable name="m_transportid" type="string"/>
+			<variable name="m_transportid" type="string"/>
 			<variable name="m_arpflowid" type="string"/>
 			<variable name="m_discoveryflowid" type="string"/>
+			<variable name="m_errorid" type="string"/>
 		</private>
 		<public>
 			<function name="CFlowManager">
@@ -247,7 +270,6 @@
 				</parameters>
 				<log>CFlowManager is create</log>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
-				<function name="InstallDefaultFlow"/>
 			</function>
 			<!--
 				Install Flow.
@@ -285,7 +307,8 @@
 				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				<log><![CDATA[InstallFlowTableRequest transportid=<%=context.transportid.toString()%>]]></log>
-								<!---qiulei 20170831 start-->
+				
+				<!---qiulei 20170831 start-->
 				<variable name="BarrierStrJson" type="string"/>
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
@@ -351,7 +374,8 @@
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
-								
+				
+				
 				
 				<!---qiulei 20170831 start-->
 				<variable name="BarrierStrJson" type="string"/>
@@ -458,6 +482,14 @@
 						</if>
 					</function>
 				</wait>
+				<!--
+					YY
+					Set Flow's packets bytes durationsec and durationnsec
+					1) get data from event
+					2) judge Flow's flowid and data's cookie is it equal
+					3) get packets bytes durationsec and durationnsec from data
+					4) put 4 datas set in Flow
+				-->
 				<variable name="flowobj" type="class"/>
 				<variable name="flowobj_flowid" type="string"/>
 				<variable name="json_cookie" type="string"/>
@@ -510,7 +542,7 @@
 				
 			</function>		
 			
-<function name="InstallARPFlow">
+			<function name="InstallARPFlow">
 				<log dest="stdout">InstallARPFlow qiulei 2017/07/27</log>
 				<variable name="modstrjson" type="string"/>
 				<reference variable="modstrjson">
@@ -623,8 +655,92 @@
 				<!--qiulei 2017/07/27-->
 				<function name="InstallARPFlow"/>
 				<function name="InstallDiscoveryFlow"/>
+				<function name="InstallErrorFlow"/>
 			</function>
-
+			
+			<!-- wangkang 2017/09/01 -->
+			<function name="InstallErrorFlow">
+				<log dest="stdout">InstallErrorFlow wangkang 2017/09/01</log>
+				<variable name="modstrjson" type="string"/>
+				<variable name="resourceid" type="string" value=""/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"33",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x9944"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+						<parameter name="outflowid" type="string" out="thisclass.m_errorid"/>
+						<parameter name="appId" type="string" in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!-- wangkang 2017/09/01-->
+			<function name="FindFlow">
+				<parameters>
+					<parameter name="incookie" type="string"/>
+					<parameter name="outflowentry" type="class"/>
+				</parameters>
+				<log>##### Find a Flowentry class #####</log>
+				<log><![CDATA[incookie=<%=context.incookie.toString()%>]]></log>
+				<log><![CDATA[flowsContainer size=<%=context.flowsContainer.size()%>]]></log>
+				<function name="DumpFlow"/>
+				<if cond="context.flowsContainer.hasValue(context.incookie.toString()) == true">
+					<then>
+						<log>##### incookie is found #####</log>
+						<function>
+							<lookup name="flowsContainer" key="context.incookie.toString()" output="context.outflowentry"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			<function name="DumpFlow">
+				<variable name="flowkey" type="string"/>
+				<log>===========DumpFlowStart===============</log>
+				<for var="i" from="0" to="context.flowsContainer.size()-1">
+					<set name="flowkey" value="context.flowsContainer.getKeyByIndex(context.i.toLong())"/>
+					<log><![CDATA[flowkey=<%=context.flowkey.toString()%>]]></log>
+				</for>
+				<log>===========DumpFlowEnd===============</log>
+			</function>
 		</public>
 	</class>
 </starosxml>

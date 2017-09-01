@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<!-- wangkang 2017/09/01 
+		1.Get a Error Message and JSON parse,Find MessageType and Cookie
+		2.Find the appropriate device according to TransportID
+		3.Get FlowManager from device
+		4.Find the appropriate Flowentry according to Cookie
+		5.Set Message State from Flowentry
+	-->
+	<function name="ErrorHandleFlowMod">
+		<variable name="flowentryobj" type="class"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="flowmgrobj" type="class"/>
+		<variable name="flowcookie" type="string"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				context.flowcookie.setValue(info.body.cookie);
+		]]></script>
+
+		<log><![CDATA[flowcookie=<%=context.flowcookie.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 14 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.flowmgrobj!=null">
+					<then>
+						<log>##### Flowmgrobj is not null #####</log>
+						<function name="FindFlow" class="context.flowmgrobj">
+							<parameters>
+								<parameter name="incookie" type="string" in="context.flowcookie.toString()"/>
+								<parameter name="outflowentry" type="class" out="context.flowentryobj"/>
+							</parameters>
+						</function>
+						<if cond="context.flowentryobj != null">											
+							<then>
+								<log>##### Flowentryobj is not null #####</log>
+								<function name="SetState" class="context.flowentryobj">												
+									<parameters>
+										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+
+</starosxml>

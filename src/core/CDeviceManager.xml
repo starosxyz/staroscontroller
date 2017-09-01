@@ -60,6 +60,7 @@
 				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
 				<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
 				<variable name="onlinejson" type="string"/>
+				<function name="SendDefaultFlow" class="deviceobject"/>
 				<function name="ToOnlineJson" class="deviceobject">
 					<parameters>
 						<parameter name="strjson" type="string" out="onlinejson"/>
@@ -76,6 +77,8 @@
 						<parameter name="outtransport" type="string" out="outtransid"/>
 					</parameters>
 				</function>
+				
+				
 				<log><![CDATA[addDevice outtransid =<%=context.outtransid.toString()%>]]></log>
 			</function>
 				
@@ -117,7 +120,7 @@
 									<parameter name="strjson" type="string" in="context.offlinejson.toString()"/>
 								</parameters>
 							</function>
-						<function name="GetTransportId" class="deviceobject">
+							<function name="GetTransportId" class="deviceobject">
 								<parameters>
 									<parameter name="outtransport" type="string" out="context.devicetransportid"/>
 								</parameters>
@@ -244,56 +247,56 @@
 								<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 									<then>
 										<function>
-								<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>
-								<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
-					<script><![CDATA[
-							if (context.strlink.toString().length>0)
-							{
-								var info = JSON.parse(context.strlink.toString());
-								if (info.paths.length==1)
-								{
-									context.dstport.setValue(info.paths[0].dst.port);
-									context.srcport.setValue(info.paths[0].src.port);
-									context.binvalidlink.setValue('true');
-								}
-								else 
-								{	
-									context.binvalidlink.setValue('false');
-								}
-							}
-							else 
-							{
-								context.binvalidlink.setValue('false');
-							}
-					]]></script>
-									<function>
-										<if cond="context.binvalidlink.toString()=='true'">
-											<then>
+											<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>
+											<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+												<script><![CDATA[
+														if (context.strlink.toString().length>0)
+														{
+															var info = JSON.parse(context.strlink.toString());
+															if (info.paths.length==1)
+															{
+																context.dstport.setValue(info.paths[0].dst.port);
+																context.srcport.setValue(info.paths[0].src.port);
+																context.binvalidlink.setValue('true');
+															}
+															else 
+															{	
+																context.binvalidlink.setValue('false');
+															}
+														}
+														else 
+														{
+															context.binvalidlink.setValue('false');
+														}
+												]]></script>
 												<function>
-													<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
-														<jsonbody>
-										<![CDATA[
-						{
-						"event":"addLink","payload":
-						{"id":"of:<%=context.srcdevicedpid.toString()%>/<%=context.srcport.toString()%>-of:<%=context.dstdevicedpid.toString()%>/<%=context.dstport.toString()%>",
-						"type":"direct",
-						"expected":false,
-						"online":true,
-						"linkWidth":1.2,
-						"src":"of:<%=context.srcdevicedpid.toString()%>",
-						"srcPort":"<%=context.srcport.toString()%>",
-						"dst":"of:<%=context.dstdevicedpid.toString()%>",
-						"dstPort":"<%=context.dstport.toString()%>"
-						}
-						}
-										]]>
-														</jsonbody>
-													</websocket>
+													<if cond="context.binvalidlink.toString()=='true'">
+														<then>
+															<function>
+																<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+																	<jsonbody>
+																		<![CDATA[
+																		{
+																		"event":"addLink","payload":
+																		{"id":"of:<%=context.srcdevicedpid.toString()%>/<%=context.srcport.toString()%>-of:<%=context.dstdevicedpid.toString()%>/<%=context.dstport.toString()%>",
+																		"type":"direct",
+																		"expected":false,
+																		"online":true,
+																		"linkWidth":1.2,
+																		"src":"of:<%=context.srcdevicedpid.toString()%>",
+																		"srcPort":"<%=context.srcport.toString()%>",
+																		"dst":"of:<%=context.dstdevicedpid.toString()%>",
+																		"dstPort":"<%=context.dstport.toString()%>"
+																		}
+																		}
+																						]]>
+																	</jsonbody>
+																</websocket>
+															</function>
+														</then>
+													</if>
 												</function>
-											</then>
-										</if>
-									</function>
-									</function>
+										</function>
 									</then>
 								</if>
 							</for>
@@ -554,7 +557,7 @@
 			
 			
 			
-			<!--hupeng 20170818-->
+			<!--hupeng 20170818 send label 4pps-->
 			
 			<function name="sendhighlights">
 				<parameters>
@@ -674,7 +677,7 @@
 					</parameters>	
 				</function>
 			</function>
-		<!--Send Packet To All Port By DeviceId-->
+			<!--Send Packet To All Port By DeviceId-->
 			<function name="PacketOutToAllPort">	
 				<parameters>
 					<parameter name="datapathid" type="string"/>
@@ -747,7 +750,7 @@
 					</then>
 				</if>			
 			</function>
-									<function name="SendTableRequest">
+			<function name="SendTableRequest">
 				<variable name="device" type="class"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">			
 					<function>
@@ -774,6 +777,32 @@
 					</then>
 				</if>
 			</function>
-			</public>
+			
+			<!-- wangkang 2017/09/01 -->
+			<function name="GetDeviceByTransportId">
+				<log>##### Get Device By TransportId #####</log>
+				<parameters>
+					<parameter name="transportid" type="string"/>
+					<parameter name="onedeviceobj" type="class"/>
+				</parameters>
+				<log><![CDATA[t2dContainer size=<%=context.t2dContainer.size()%>]]></log>
+				<function name="DumpT2d"/>
+				
+				<variable name="datapathid" type="string"/>
+				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
+				<set name="onedeviceobj" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
+				<log><![CDATA[GetDeviceByTransportId datapathid=<%=context.datapathid.toString()%>]]></log>
+				<log><![CDATA[GetDeviceByTransportId transportid=<%=context.transportid.toString()%>]]></log>
+			</function>
+			<function name="DumpT2d">
+				<variable name="t2dkey" type="string"/>
+				<log>===========DumpT2dStart===============</log>
+				<for var="i" from="0" to="context.t2dContainer.size()-1">
+					<set name="t2dkey" value="context.t2dContainer.getKeyByIndex(context.i.toLong())"/>
+					<log><![CDATA[t2dkey=<%=context.t2dkey.toString()%>]]></log>
+				</for>
+				<log>===========DumpT2dEnd===============</log>
+			</function>
+		</public>
 	</class>
 </starosxml>
