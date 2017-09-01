@@ -11,7 +11,7 @@
 		</parameters>
 		<variable name="contenttype" type="string"/>
 		<variable name="httpparam" type="params"/>
-		<variable name="usersession" type="params"/>
+		<variable name="usersession" type="string"/>
 		<variable name="usernameparam" type="string"/>
 		<variable name="filename" type="string"/>
 		
@@ -23,7 +23,8 @@
 		<variable name="authjson" type="string"/>
 		<variable name="sendjsessionid" type="string"/>
 		<variable name="sessionobj" type="class"/>
-				<variable name="injson" type="string"/>
+				<variable name="appname" type="string"/>
+		<variable name="injson" type="string"/>
 		<variable name="outjson" type="string"/>
 		<function>
 			<!--qiulie-->
@@ -37,6 +38,37 @@
 			<if cond="event.getParam('cookie').toString()!=''">
 				<then>
 					<script><![CDATA[
+						function trim(s){  
+							return trimRight(trimLeft(s));  
+						}   
+						function trimLeft(s){  
+							if(s == null) {  
+								return "";  
+							}  
+							var whitespace = new String(" \t\n\r");  
+							var str = new String(s);  
+							if (whitespace.indexOf(str.charAt(0)) != -1) {  
+								var j=0, i = str.length;  
+								while (j < i && whitespace.indexOf(str.charAt(j)) != -1){  
+									j++;  
+								}  
+								str = str.substring(j, i);  
+							}  
+							return str;  
+						}   
+						function trimRight(s){  
+							if(s == null) return "";  
+							var whitespace = new String(" \t\n\r");  
+							var str = new String(s);  
+							if (whitespace.indexOf(str.charAt(str.length-1)) != -1){  
+								var i = str.length - 1;  
+								while (i >= 0 && whitespace.indexOf(str.charAt(i)) != -1){  
+								   i--;  
+								}  
+								str = str.substring(0, i+1);  
+							}  
+							return str;  
+						} 
 						var cookies=event.getParam('cookie').toString();
 						var arraycookies = cookies.split(";");
 						for(var i=0;i<arraycookies.length;i++)
@@ -45,17 +77,22 @@
 							var arrayparam = onecookie.split("=");
 							if (arrayparam.length==2)
 							{
-								var paramname = arrayparam[0];
-								var paramvalue = arrayparam[1];
+								var paramname = trim(arrayparam[0]);
+								
+								var paramvalue = trim(arrayparam[1]);
+								context.print("paramvalue  huhuhu!!"+paramvalue);
+								context.print("paramname   huhuhu!!"+paramname);
 								if (paramname=="JSESSIONID")
 								{
-									context.usersession.setValue(paramvalue);
+									context.usersession.setValue(""+paramvalue);
+									context.print("insert into second if!");
+									context.print(context.usersession.toString);
 									break;
 								}
 							}
 						}
 					]]></script>
-					<function name="FindSession" class="SessionManager">
+										<function name="FindSession" class="SessionManager">
 						<parameters>
 							<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
 							<parameter name="sessionobj" type="string" out="context.sessionobj"/>
@@ -82,7 +119,7 @@
 						]]></script>
 						<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 						<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
-													<reference variable="injson">
+																					<reference variable="injson">
 							<jsonbody><![CDATA[ 
 							{
 							"username":"<%=context.usernameparam.toString()%>",
