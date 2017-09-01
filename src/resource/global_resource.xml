@@ -12,8 +12,9 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CDevice.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPortManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CInstanceManager.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPacketService.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CPacketService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CTopoService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CFlowService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
@@ -33,6 +34,7 @@
 	<!--YY 2017-08-21-->
 	<variable name="PacketService" type="class" global="true"/>
 	<variable name="TopoService" type="class" global="true"/>
+	<variable name="FlowService" type="class" global="true"/>
 	<variable name="SessionManager" type="class" global="true"/>
 
 	<function name="InitGlobalResource">
@@ -47,6 +49,7 @@
 		<!--YY 2017-08-21-->		
 		<new name="PacketService" class="CPacketService"/>
 		<new name="TopoService" class="CTopoService"/>
+		<new name="FlowService" class="CFlowService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
 		<new name="ApplicationManager" class="CApplicationManager"/>
 		

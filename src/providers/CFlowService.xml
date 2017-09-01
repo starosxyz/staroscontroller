@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				YY
+		Date:
+				2017-09-01
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<class name="CFlowService">
+		<function name="InstallFlow">
+			<parameters>
+				<parameter name="outflowid" type="string"/>
+				<parameter name="strjson" type="string"/>
+				<parameter name="appId" type="string"/>
+				<parameter name="datapathid" type="string"/>
+			</parameters>
+			
+			<variable name="deviceobj" type="class"/>
+			<function name="findDevice" class="DeviceManager">
+				<parameters>
+					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+					<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+				</parameters>				
+			</function>
+			
+			<variable name="flowmgrobj" type="class"/>
+			<function name="GetFlowManager" class="context.deviceobj">
+				<parameters>
+					<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+				</parameters>			
+			</function>
+			
+			<function name="InstallFlowTableRequest" class="context.flowmgrobj">
+				<parameters>
+					<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>
+					<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+					<parameter name="appId" type="string" in="context.appId.toString()"/>
+				</parameters>
+			</function>
+		</function>
+		
+		<function name="UnInstallFlow">
+			<parameters>
+				<parameter name="datapathid" type="string"/>			
+				<parameter name="flowid" type="string"/>
+			</parameters>
+			
+			<variable name="deviceobj" type="class"/>
+			<function name="findDevice" class="DeviceManager">
+				<parameters>
+					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+					<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+				</parameters>				
+			</function>
+			
+			<variable name="flowmgrobj" type="class"/>
+			<function name="GetFlowManager" class="context.deviceobj">
+				<parameters>
+					<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+				</parameters>			
+			</function>
+			
+			<function name="UnInstallFlowTableRequest">
+				<parameters>
+					<parameter name="flowid" type="string" in="context.flowid.toString()"/>
+				</parameters>
+			</function>
+		</function>
+	</class>
+</starosxml>

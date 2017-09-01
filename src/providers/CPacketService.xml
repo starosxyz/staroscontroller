@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-08-21
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<class name="CPacket">
+		<private>
+			<variable name="m_appid" type="string"/>
+			<variable name="m_eventname" type="string"/>
+			<variable name="m_packets" type="long"/>			
+		</private>
+		<public>
+			<function name="CPacket">
+				<parameters>
+					<parameter name="appid" type="string"/>
+					<parameter name="eventname" type="string"/>
+				</parameters>
+				<set name="thisclass.m_appid" value="context.appid.toString()"/>
+				<set name="thisclass.m_eventname" value="context.eventname.toString()"/>
+				<set name="thisclass.m_packets" value="0"/>
+			</function>
+			
+			<function name="GetData">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="outjson" type="string"/>
+				<script><![CDATA[
+					var data = context.m_appid.toString() + "$" + context.m_eventname.toString();
+					context.outjson.setValue(data);
+				]]></script>
+				<set name="json" value="context.outjson.toString()"/>
+			</function>
+			
+			<function name="GetEventName">
+				<parameters>
+					<parameter name="eventname" type="string"/>
+				</parameters>
+				<set name="eventname" value="thisclass.m_eventname.toString()"/>
+			</function>
+			
+			<function name="SetPackets">
+				<parameters>
+					<parameter name="packets" type="long"/>
+				</parameters>
+				<variable name="result" type="long"/>
+				<script><![CDATA[
+					var count = thisclass.m_packets.toLong() + context.packets.toLong();
+					context.result.setValue(count);
+				]]></script>
+				<set name="thisclass.m_packets" value="context.result.toLong()"/>
+			</function>
+			
+			<function name="GetPackets">
+				<parameters>
+					<parameter name="packets" type="long"/>
+				</parameters>
+				<set name="packets" value="thisclass.m_packets.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CPacketService">
+		<private>
+			<container name="InstanceContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+	
+		<public>
+			<function name="addProcessor">				
+				<parameters>
+					<parameter name="app_name" type="string"/>
+					<parameter name="event_name" type="string"/>			
+				</parameters>
+				<if cond="context.InstanceContainer.hasValue(context.app_name.toString())==false">
+					<then>
+						<variable name="packetobj" type="class"/>
+						<new name="packetobj" class="CPacket">
+							<parameters>
+								<parameter name="appid" type="string" in="context.app_name.toString()"/>
+								<parameter name="eventname" type="string" in="context.event_name.toString()"/>
+							</parameters>
+						</new>
+						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.packetobj"/>
+						
+					</then>
+				</if>
+			</function>						
+			<function name="removeProcessor">
+				<parameters>
+					<parameter name="app_name" type="string"/>
+				</parameters>
+				<remove name="InstanceContainer" key="context.app_name.toString()"/>
+			</function>
+			<function name="FindProcessorFunction">				
+				<parameters>
+					<parameter name="app_name" type="string"/>
+					<parameter name="packetobj" type="class"/>
+				</parameters>
+				<set name="packetobj" value="thisclass.InstanceContainer.getValue(context.app_name.toString())"/>
+			</function>			
+			<function name="ProcessPacket">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+					<parameter name="datapathid" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+				</parameters>				
+				<variable name="appname" type="string"/>		
+				<variable name="eventname" type="string"/>		
+				<variable name="packetobj" type="class"/>	
+				<variable name="eventparam" type="params"/>					
+				<variable name="m_bundleid" type="long"/>				
+				<variable name="getpacketcount" type="long"/>			
+				<messageblock name="tempmsgblock"/>
+				<set name="tempmsgblock" value="context.msgblock"/>
+				<log><![CDATA[tempmsgblock=<%=context.tempmsgblock.getChainedLength()%>]]></log>
+				<for var="i" from="0" to="context.InstanceContainer.size()-1">
+					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
+					<set name="packetobj" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
+					<function name="GetBundleID" class="ApplicationManager">
+						<parameters>
+							<parameter name="appid" type="string" in="context.appname.toString()"/>
+							<parameter name="bundleid" type="long" out="context.m_bundleid"/>
+						</parameters>
+					</function>
+					
+					<function name="GetEventName" class="context.packetobj">
+						<parameters>
+							<parameter name="eventname" type="string" out="context.eventname"/>
+						</parameters>						
+					</function>
+					
+					<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
+					<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam" messageblock="context.msgblock"/>
+					
+					<function name="GetPackets" class="context.packetobj">
+						<parameters>
+							<parameter name="packets" type="long" out="context.getpacketcount"/>
+						</parameters>
+					</function>
+					<function name="SetPackets" class="context.packetobj">
+						<parameters>
+							<parameter name="packets" type="long" in="context.tempmsgblock.getChainedLength()"/>
+						</parameters>						
+					</function>
+					
+				</for>
+			</function>
+			<function name="GetPacketJsonData">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<container name="packetjsonlist" type="list" valuetype="string"/>
+				<container name="packetcountlist" type="list" valuetype="long"/>				
+				<variable name="packetobj" type="class"/>
+				<variable name="data" type="string"/>
+				<variable name="packetcount" type="long"/>
+				<variable name="result" type="string"/>
+				<for var="i" from="0" to="context.InstanceContainer.size()-1">
+					<set name="packetobj" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
+					<function name="GetData" class="packetobj">
+						<parameters>
+							<parameter name="json" type="string" out="context.data"/>
+						</parameters>
+					</function>
+					<function name="GetPackets" class="packetobj">
+						<parameters>
+							<parameter name="packets" type="long" out="context.packetcount"/>
+						</parameters>						
+					</function>
+					<insert name="packetjsonlist" value="context.data.toString()"/>
+					<insert name="packetcountlist" value="context.packetcount.toLong()"/>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					json.event = "processorDataResponse";
+					var onearray = new Array();
+					for (var i = 0; i < context.packetjsonlist.size(); i++)
+					{
+						var processorobj = new Object();
+						var id = "715827884";
+						var type = "director";
+						var priority = "1";
+						var processor_1 = context.packetjsonlist.getValueByIndex(i);
+						//var processor = JSON.parse(processor_1);
+						var packets_1 = context.packetcountlist.getValueByIndex(i);
+						//var packets = JSON.parse(packets_1);
+						var avgMillis = "0.00000";
+						processorobj.id = id;
+						processorobj.type = type;
+						processorobj.priority = priority;
+						processorobj.processor = processor_1;
+						processorobj.packets = packets_1;
+						processorobj.avgMillis = avgMillis;
+						onearray.push(processorobj);						
+					}
+					var twoobject = new Object();
+					twoobject.no_rows_msg = "No packet processors found";
+					var payload = new Object();
+					payload.processors = onearray;
+					payload.annots = twoobject;
+					json.payload = payload;					
+					var strjson=JSON.stringify(json);				
+					context.result.setValue(strjson);				
+				]]></script>
+				<set name="json" value="context.result.toString()"/>
+			</function>
+		</public>
+	</class>
+</starosxml>

@@ -119,7 +119,16 @@
 					<set name="thisclass.m_tablejson" value="event.getParam('eventdata').toString()"/>
 				</wait>
 				</function>
-					<!-- YY 20170831 -->
+					<!-- 
+				YY 20170831
+				return TableManager's data
+				1) put TableManager's variable m_tablejson package in JSON
+				2) Put JSON in parameter : data
+				parameter:
+							json :
+									type :	string
+									style :	out
+			-->
 					<function name="GetTableData">
 						<parameters>
 							<parameter name="data" type="string" />
