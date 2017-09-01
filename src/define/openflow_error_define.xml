@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+		<!--
+			Author:
+					qiulei
+			Date:
+					2017-09-01
+			Copyright: 
+					Nanjing StarOS Inc. All rights reserved.
+		-->
+<!--
+enum ofp_error_type {
+	OFPET_HELLO_FAILED = 0, /* Hello protocol failed. */
+	OFPET_BAD_REQUEST = 1, /* Request was not understood. */
+	OFPET_BAD_ACTION = 2, /* Error in action description. */
+	OFPET_BAD_INSTRUCTION = 3, /* Error in instruction list. */
+	OFPET_BAD_MATCH = 4, /* Error in match. */
+	OFPET_FLOW_MOD_FAILED = 5, /* Problem modifying flow entry. */
+	OFPET_GROUP_MOD_FAILED = 6, /* Problem modifying group entry. */
+	OFPET_PORT_MOD_FAILED = 7, /* Port mod request failed. */
+	OFPET_TABLE_MOD_FAILED = 8, /* Table mod request failed. */
+	OFPET_QUEUE_OP_FAILED = 9, /* Queue operation failed. */
+	OFPET_SWITCH_CONFIG_FAILED = 10, /* Switch config request failed. */
+	OFPET_ROLE_REQUEST_FAILED = 11, /* Controller Role request failed. */
+	OFPET_METER_MOD_FAILED = 12, /* Error in meter. */
+	OFPET_TABLE_FEATURES_FAILED = 13, /* Setting table features failed. */
+	OFPET_EXPERIMENTER = 0xffff /* Experimenter error messages. */
+};	
+-->
+	<define name="OFPET_HELLO_FAILED" value="0"/>
+	<define name="OFPET_BAD_REQUEST" value="1"/>
+	<define name="OFPET_BAD_ACTION" value="2"/>
+	<define name="OFPET_BAD_INSTRUCTION" value="3"/>
+	<define name="OFPET_BAD_MATCH" value="4"/>
+	<define name="OFPET_FLOW_MOD_FAILED" value="5"/>
+	<define name="OFPET_GROUP_MOD_FAILED" value="6"/>
+	<define name="OFPET_PORT_MOD_FAILED" value="7"/>
+	<define name="OFPET_TABLE_MOD_FAILED" value="8"/>
+	<define name="OFPET_QUEUE_OP_FAILED" value="9"/>
+	<define name="OFPET_SWITCH_CONFIG_FAILED" value="10"/>
+	<define name="OFPET_ROLE_REQUEST_FAILED" value="11"/>
+	<define name="OFPET_METER_MOD_FAILED" value="12"/>
+	<define name="OFPET_TABLE_FEATURES_FAILED" value="13"/>
+	<define name="OFPET_EXPERIMENTER" value="0xffff"/>
+</starosxml>
+

@@ -39,6 +39,15 @@
 
 						<li><a href="#useHasmap_style" class="cc-active">如何使用Hashmap</a></li>
 						<li><a href="#websocket_how" class="cc-active">WebSocket编程</a></li>
+						<li><a href="#macroDefinition_style" class="cc-active">宏定义</a></li>
+						<li class="separator"></li>
+						<!--qiulei 20170901 -->
+						<li><strong>Json格式参考</strong></li>
+						<li><a href="#ethernet_json" class="cc-active">ARP报文</a></li>
+						<li><a href="#ethernet_json" class="cc-active">TCP报文</a></li>
+						<li><a href="#ethernet_json" class="cc-active">UDP报文</a></li>
+						<li><a href="#ethernet_json" class="cc-active">ICMP报文</a></li>
+						<li><a href="#ethernet_json" class="cc-active">流表格式</a></li>
 					</ul>
 					<div class="docs-content">
 						<h3> 关于StarOS控制器</h3>
@@ -435,6 +444,52 @@
 </websocket>
 							</xmp>
 						</pre>
+<!--qiulei 20170901 am 添加宏定义适用于法 start-->
+						<h3 id="macroDefinition_style"> 宏定义</h3>
+						<ul>
+							<li>定义</li>
+						</ul>
+						<pre class="prettyprint">
+							<xmp>
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<define name="OPENFLOW_METER_MOD_REMOVE" value="3"/>
+	<define name="OPENFLOW_METER_MOD_ADD" value="1"/>
+</starosxml>
+							</xmp>
+						</pre>
+						<ul>
+							<li>使用</li>
+						</ul>
+						<pre class="prettyprint">
+							<xmp>
+<function name="testaddmeter">			
+	<variable name="modstrjson" type="string"/>
+	<reference variable="modstrjson">
+		<jsonbody><![CDATA[ 
+			{
+				"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+				"command":"<$=OPENFLOW_METER_MOD_ADD$>",//"command":"<$=OPENFLOW_METER_MOD_ADD$>"等价于"command":"1"
+				"flag":"1",
+				"meterid":"1",
+				"meterbandlist":[
+					{
+						"bandtype":"1",
+						"rate":"1000",
+						"burstsize":"1000"
+					},
+					{
+						"bandtype":"2",
+						"preclevel":"1000"
+					}
+				]
+			}	
+		]]></jsonbody>
+	</reference>
+</function>
+							</xmp>
+						</pre>
+<!--qiulei 20170901 am 添加宏定义适用于法 and-->
 					</div>
 				</div>
 			</section>
