@@ -15,6 +15,11 @@
 				<insert name="InstanceContainer" key="context.id.toString()" value="context.instanceinfo"/>
 			</function>
 				
+<!--20170904 
+				Call this function
+				input a value ,type is String
+				output a value, type is hashmap
+			-->
 			<function name="findInstance">
 				<parameters>
 					<parameter name="id" type="string"/>

@@ -526,6 +526,7 @@
 			
 			
 			<!--qiulei 20170823 pm-->
+			<!--Calling this method requires you to pass in four parameters 调用此方法需要传入4个参数-->
 			<function name="PacketOutToPort">
 				<parameters>
 					<parameter name="outputport" type="string"/>
@@ -575,6 +576,7 @@
 			</function>
 			
 			<!--qiulei 20170825-->
+			<!--Call this function to get a value-->
 			<function name="GetMetermgr">
 				<parameters>
 					<!--20170901,Modify the Tag error-->
