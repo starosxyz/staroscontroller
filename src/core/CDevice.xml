@@ -62,31 +62,34 @@
 				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
 				<new name="m_ports" class="CPortManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>	
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>	
 					</parameters>
 				</new>
 				<new name="m_tablemgr" class="CTableManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
-				</parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+					</parameters>
 				</new>
 				<new name="m_metermgr" class="CMeterManager">	
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>	
-				</parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>	
+					</parameters>
 				</new>
 				<!--new Group Manager object-->
 				<new name="m_groupmgr" class="CGroupManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
 				<new name="m_flowmgr" class="CFlowManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_datapathid.toString()"/>
-			</parameters>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+					</parameters>
 				</new>
 				<!--function name="MultiPartPortDescRequest"/-->
+			</function>
+			<function name="SendDefaultFlow">
+				<function name="InstallDefaultFlow" class="m_flowmgr"/>
 			</function>
 			<function name="addPort">
 				<parameters>
@@ -95,7 +98,7 @@
 					<parameter name="config" type="string"/>			
 					<parameter name="curr" type="string"/>
 					
-<parameter name="currspeed" type="string"/>	
+					<parameter name="currspeed" type="string"/>	
 					<parameter name="hwaddr" type="string"/>
 					<parameter name="maxspeed" type="string"/>
 					<parameter name="name" type="string"/>	
@@ -372,7 +375,7 @@
 				</reference>
 				<set name="strjson" value="context.adddevicejson.toString()"/>
 			</function>
-												<function name="ForDeviceDetailReqJson">
+			<function name="ForDeviceDetailReqJson">
 				<parameters>
 					<parameter name="outjson" type="string"/>
 				</parameters>
@@ -542,22 +545,22 @@
 			</function>
 			
 			
-<!--who do this?-->
+			<!--who do this?-->
 			<!--function name="SendFlowRequest">
 				<log><![CDATA[CDevice m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
 				<log>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</log>
 				<function name="SendFlowRequest" class="FlowManager">
-<parameters>
+					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>				
-</parameters>
-</function>
+					</parameters>
+				</function>
 			</function-->
 				<!--TimeOut-->
 					<function name="TimeOut">
-					<function name="GroupStateRequest" class="m_groupmgr"/>
+						<function name="GroupStateRequest" class="m_groupmgr"/>
 						<function name="SendFlowRequest" class="m_flowmgr"/>				
-					<function name="SendPortStateRequest" class="m_ports"/>
-				<function name="SendTableRequest" class="m_tablemgr"/>							
+						<function name="SendPortStateRequest" class="m_ports"/>
+						<function name="SendTableRequest" class="m_tablemgr"/>							
 					</function>
 										<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
@@ -574,11 +577,22 @@
 			<!--qiulei 20170825-->
 			<function name="GetMetermgr">
 				<parameters>
-					<variable name="metermgr" type="class"/>
+					<!--20170901,Modify the Tag error-->
+					<parameter name="metermgr" type="class"/>
 				</parameters>
 				<set name="metermgr" value="thisclass.m_metermgr"/>
 			</function>
-		<function name="GetTableData">		
+			<!-- 
+				YY 20170831
+				tablewebsocket Get one device's TableManager's data
+				1) Get data from TableManager
+				2) Put data in parameter : json
+				parameter:
+							json :
+									type :	string
+									style :	out
+			-->
+			<function name="GetTableData">		
 				<parameters>				
 					<parameter name="json" type="string"/>
 				</parameters>

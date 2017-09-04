@@ -23,3 +23,18 @@ StarOS-Controller
 * 支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.
 * 支持container容器类型。 容器有list, hashmap, array等类型.
 Checkout our [website](http://www.staros.xyz)
+
+### 开始
+```
+# git clone https://github.com/starosxyz/staroscontroller
+# cd staroscontroller/tools/installstaros
+# chmod a+x staros-install.sh
+# ./staros-install.sh install
+# cd ../../projects/
+# source ./env.sh
+# make
+# mv staroscontroller /opt/staros.xyz/
+# cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
+# dipc start
+```
+
