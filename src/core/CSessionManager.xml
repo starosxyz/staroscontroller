@@ -6,6 +6,7 @@
 			<variable name="m_current" type="long" />
 		</private>
 		<public>
+		<!-- hu 20170904 create Session and add data-->
 			<function name="CSession">
 				<parameters>
 					<parameter name="sessionid" type="string"/>
@@ -37,6 +38,7 @@
 					context.m_current.setValue(getCurrentTimerInMs());
 				]]></script>
 			</function>
+			<!-- hu 20170904 resettime to now time-->
 			<function name="ResetTime">
 				<script><![CDATA[
 					function getCurrentTimerInMs() {
@@ -104,6 +106,7 @@
 						</else>
 					</if>
 			</function>	
+			<!-- hu 20170904 when timeout remove session-->
 			<function name="Timeout">
 				<variable name="current" type="long" />
 				<variable name="oncurrent" type="long" />
