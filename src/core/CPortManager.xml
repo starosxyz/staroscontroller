@@ -539,6 +539,10 @@
 					<log>OpenFlowMultiPartPortDescRequest end</log>
 				</function>
 			</function>	
+			<!-- hu 20170904 SendPortStateRequest 
+			1)get portstatslist and portstatestring
+			2)send port portstatestring
+			-->
 			<function name="SendPortStateRequest">
 				<variable name="xid" type="long"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
