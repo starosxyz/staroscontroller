@@ -8,6 +8,13 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
+	<!--
+		YY 20170831
+		send data to web
+		1) get device from eventdata.devId use DeviceManager's findDevice function
+		2) get device's tabledata from device
+		3) send data to web
+	-->
 	<function name="HandleTableDataRequest">
 		<variable name="deviceid" type="string"/>
 		<variable name="deviceobj" type="class"/>
