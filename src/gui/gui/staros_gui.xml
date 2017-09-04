@@ -34,7 +34,7 @@
 			<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
 			<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
 			<log dest="stdout"><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
-			<!--hu!!!-->
+			<!--hu!!! get Jessionid-->
 			<if cond="event.getParam('cookie').toString()!=''">
 				<then>
 					<script><![CDATA[
@@ -100,7 +100,7 @@
 					</function>
 				</then>
 			</if>
-			
+			<!-- hu verification user and password-->
 			<if cond="context.requestpath.toString() == '/onos/ui/j_security_check'">
 				<then>
 					<if cond="event.getParam('eventdata').toString()==''">
@@ -165,6 +165,7 @@
 				</else>
 					</if>
 				</then>
+				<!-- hu get application contents-->
 				<elseif cond="context.requestpath.toString() == '/onos/ui/rs/applications/upload'">
 					<function>
 					
@@ -231,7 +232,7 @@
 				</function>
 			</elseif>
 			<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
-				<!--hu-->
+				<!--hu Verification websocket-->
 				<function>
 					<if cond="event.getParam('Authorization')==''">
 					

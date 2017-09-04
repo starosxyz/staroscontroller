@@ -106,6 +106,7 @@
 						context.isBadRequest.setValue(true);
 					}
 				  ]]></script>
+				  <!--hu control all gui-->
 				<if cond="context.isDocReqeust.toBoolean()==true">
 					<then>
 						<function name="HandlDocsRequest">
