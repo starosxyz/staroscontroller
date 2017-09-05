@@ -96,6 +96,13 @@
 				<parameter name="outflowmgr" type="class" out="context.flowobj"/>
 			</parameters>
 		</function>
+		<!--hu 20170905-->
+		<if cond="context.flowobj==null">
+			<then>
+				<log>flowobj is null</log>
+				<exit/>
+			</then>
+		</if>
 		<function name="GetFlowJsonData" class="context.flowobj">	
 			<parameters>
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
