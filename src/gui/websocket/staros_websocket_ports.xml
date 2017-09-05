@@ -61,11 +61,25 @@
 				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
 				</parameters>
 		</function>
+		<!--hu 20170905-->
+		<if cond="context.deviceobj==null">
+			<then>
+				<log>deviceobj is null</log>
+				<exit/>
+			</then>
+		</if>
 		<function name="GetPortManager" class="context.deviceobj">
 			<parameters>
 				<parameter name="outportmgr" type="class" out="context.portsobj"/>
 			</parameters>
 		</function>
+		<!--hu 20170905-->
+		<if cond="context.portsobj==null">
+			<then>
+				<log>portsobj is null</log>
+				<exit/>
+			</then>
+		</if>
 		<function name="GetPortsStateJsonData" class="context.portsobj">	
 			<parameters>
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
