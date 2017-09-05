@@ -363,11 +363,26 @@
 						</function>
 					</else>
 				</if>
-				<function name="GetFlowJsonString" class="context.flowentry">
+				<!--qiulei 20170905 start1
+					Modify some bugs
+					Add if judgment-->
+				<if cond="context.flowentry!=null">
+					<then>
+						<function name="GetFlowJsonString" class="context.flowentry">
 					<parameters>
 						<parameter name="jsonstring" type="string" out="context.flowmodjson"/>
 					</parameters>
 				</function>				
+				</then>
+					<else>
+						<function>
+							<log>deviceinfo is null</log>
+							<exit/>
+						</function>
+					</else>
+				</if>
+				<!--qiulei 20170905 end1-->
+				
 				<script><![CDATA[
 						var info = JSON.parse(context.flowmodjson.toString());
 						info.command='3';
@@ -376,8 +391,7 @@
 				]]></script>
 				
 				
-				
-				<!---qiulei 20170831 start-->
+<!---qiulei 20170831 start2-->
 				<variable name="BarrierStrJson" type="string"/>
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
@@ -393,7 +407,7 @@
 						<parameter name="strjson" type="string" in="context.BarrierStrJson.toString()"/>
 					</parameters>
                 </function>
-				<!---qiulei 20170831 end-->
+				<!---qiulei 20170831 end2-->
 				
 				
 				

@@ -19,7 +19,7 @@
 		<variable name="authresult" type="string"/>
 		<messageblock name="authresultmsg"/>
 		<variable name="authjson" type="string"/>
-								<variable name="injson" type="string"/>
+										<variable name="injson" type="string"/>
 		<variable name="outjson" type="string"/>
 		<log>HandleAPI</log>
 		<log><![CDATA[HandleAPI request path <%=context.requestpath.toString()%>]]></log>
@@ -60,9 +60,9 @@
 						"password":"<%=context.passwordparam.toString()%>"
 						}
 						]]>
-						</jsonbody>
+</jsonbody>
 						</reference>
-						<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
+													<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
 						<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
 						<log><![CDATA[AuthRequest outparam= '<%=context.outjson.toString()%>']]></log>
 						<script><![CDATA[
@@ -81,7 +81,7 @@
 									<exit/>
 							</then>
 						</if>
-											</else>
+														</else>
 		</if>
 		<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
 			<then>

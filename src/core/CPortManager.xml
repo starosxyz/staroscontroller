@@ -350,7 +350,6 @@
 					<parameter name="msgblock" type="messageblock"/>
 					<parameter name="inportid" type="string"/>
 				</parameters>
-				<log>PacketOutToPort-------------- </log>
 				<variable name="portobj" type="class" />
 				<variable name="isvalidataport" type="boolean"/>
 				
@@ -361,7 +360,6 @@
 				</for>
 				<if cond="context.portContainer.hasValue(context.outputport.toString())">
 					<then>
-						<log>--------------------2017.08.23 已发送 if 第一层--------------------</log>
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
 						<function name="IsValidatePort" class="context.portobj">
 							<parameters>
@@ -370,7 +368,6 @@
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">
 							<then>
-								<log>--------------------2017.08.23 已发送--------------------</log>
 								<function name="SendOpenFlowPacketOut">
 									<parameters>
 										<parameter name="outputport" type="string" in="context.outputport.toString()"/>
@@ -460,7 +457,7 @@
 				]]></script>
 			</function>
 				
-<function name="MultiPartPortDescRequest">
+			<function name="MultiPartPortDescRequest">
 				<variable name="strjson" type="string"/>
 				<variable name="xid" type="long"/>
 				<variable name="replyjson" type="string"/>

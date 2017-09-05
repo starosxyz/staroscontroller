@@ -43,7 +43,7 @@
 			</parameters>
 		</function>
 				
-		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>
 	</function>

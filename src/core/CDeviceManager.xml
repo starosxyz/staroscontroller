@@ -110,6 +110,11 @@
 					<then>
 						<function>
 							<lookup name="deviceContainer" key="context.datapathid.toString()" output="context.deviceobject"/>
+							<if cond="context.deviceobject == null">
+								<then>
+									<exit/>
+								</then>
+							</if>
 							<function name="ToOfflineJson" class="deviceobject">
 								<parameters>
 									<parameter name="strjson" type="string" out="offlinejson"/>
@@ -171,11 +176,15 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>			
 						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="GetTransportId" class="deviceinfo">
+						<if cond="context.deviceinfo != null">
+							<then>
+								<function name="GetTransportId" class="deviceinfo">
 							<parameters>
 								<parameter name="outtransport" type="string" out="context.devicetransportid"/>
 							</parameters>
 						</function>
+						</then>
+						</if>
 						<log><![CDATA[devicetransportid =<%=context.devicetransportid.toString()%>]]></log>
 						<if cond="context.devicetransportid.toString() == context.transportid.toString()">
 							<then>
@@ -204,11 +213,15 @@
 					<log><![CDATA[SendAddAllDeviceToWebClient device size=<%=context.deviceContainer.size()%>]]></log>
 					<function>
 						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="ToAddDeviceJson" class="context.switchdevice">
+						<if cond="context.switchdevice != null">
+							<then>
+								<function name="ToAddDeviceJson" class="context.switchdevice">
 							<parameters>
 								<parameter name="strjson" type="string" out="jsonstr"/>
 							</parameters>
 						</function>
+						</then>
+						</if>
 						<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 							<jsonsrc src="jsonstr"/>
 						</websocket>
@@ -231,19 +244,27 @@
 					<log><![CDATA[deviceLength=<%=context.deviceContainer.size()%>]]></log>
 					<function>
 						<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="GetDatapathId" class="srcdevice">
+						<if cond="context.srcdevice != null">
+							<then>
+								<function name="GetDatapathId" class="srcdevice">
 							<parameters>
 								<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 							</parameters>
 						</function>
+						</then>
+						</if>
 						<function>
 							<for var="j" from="0" to="context.deviceContainer.size()-1">
 								<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
-								<function name="GetDatapathId" class="dstdevice">
+								<if cond="context.dstdevice != null">
+									<then>
+										<function name="GetDatapathId" class="dstdevice">
 									<parameters>
 										<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 									</parameters>
 								</function>
+								</then>
+								</if>
 								<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 									<then>
 										<function>
@@ -317,12 +338,17 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="GetDeviceInfoJson" class="context.switchdevice">
+						<if cond="context.switchdevice != null">
+							<then>
+								<function name="GetDeviceInfoJson" class="context.switchdevice">
 							<parameters>
 								<parameter name="strjson" type="string" out="jsonstr"/>
 							</parameters>
 						</function>
 						<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
+					</then>
+						</if>	
+						
 					</function>
 				</for>
 				<script><![CDATA[
@@ -365,11 +391,15 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="GetDeviceInfoJson" class="context.switchdevice">
+						<if cond="context.switchdevice != null">
+							<then>
+								<function name="GetDeviceInfoJson" class="context.switchdevice">
 							<parameters>
 								<parameter name="strjson" type="string" out="jsonstr"/>
 							</parameters>
 						</function>
+						</then>
+						</if>
 						<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
 					</function>
 				</for>
@@ -407,7 +437,11 @@
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
 					<function>
 						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="TimeOut" class="context.thisswitch"/>
+						<if cond="context.thisswitch != null">
+							<then>
+								<function name="TimeOut" class="context.thisswitch"/>
+					</then>
+						</if>
 					</function>
 				</for>
 				<!--SendPortState-->
@@ -423,11 +457,15 @@
 				<variable name="thisswitch" type="class"/>
 				<variable name="sendjsonstr" type="string"/>
 				<set name="thisswitch" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-				<function name="ForDeviceDetailReqJson" class="thisswitch">
+				<if cond="context.thisswitch != null">
+					<then>
+						<function name="ForDeviceDetailReqJson" class="thisswitch">
 					<parameters>
 						<parameter name="outjson" type="string" out="sendjsonstr"/>
 					</parameters>
 				</function>
+				</then>
+				</if>
 				<log><![CDATA[DeviceDetailsReqJson sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 					<jsonsrc src="sendjsonstr"/>
@@ -452,19 +490,27 @@
 					<for var="i" from="0" to="context.deviceContainer.size()-1">			
 						<function>
 							<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-							<function name="GetDatapathId" class="srcdevice">
+							<if cond="context.srcdevice != null">
+								<then>
+									<function name="GetDatapathId" class="srcdevice">
 								<parameters>
 									<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 								</parameters>
 							</function>
+							</then>
+							</if>
 							<function>
 								<for var="j" from="0" to="context.deviceContainer.size()-1">
 									<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
-									<function name="GetDatapathId" class="dstdevice">
+									<if cond="context.srcdevice != null">
+										<then>
+											<function name="GetDatapathId" class="dstdevice">
 										<parameters>
 											<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 										</parameters>
 									</function>
+									</then>
+									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
 											<function>
@@ -577,19 +623,27 @@
 					<for var="i" from="0" to="context.deviceContainer.size()-1">			
 						<function>
 							<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-							<function name="GetDatapathId" class="srcdevice">
+							<if cond="context.srcdevice != null">
+								<then>
+									<function name="GetDatapathId" class="srcdevice">
 								<parameters>
 									<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 								</parameters>
 							</function>
+							</then>
+							</if>	
 							<function>
 								<for var="j" from="0" to="context.deviceContainer.size()-1">
 									<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
-									<function name="GetDatapathId" class="dstdevice">
+									<if cond="context.dstdevice != null">
+										<then>
+											<function name="GetDatapathId" class="dstdevice">
 										<parameters>
 											<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 										</parameters>
 									</function>
+									</then>
+									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
 											<function>
@@ -671,11 +725,15 @@
 				</parameters>
 				<variable name="deviceobject" type="class"/>
 				<set name="deviceobject" value="thisclass.deviceContainer.getValue(context.datapathid.toString())"/>
-				<function name="SendDetails" class="deviceobject">
+				<if cond="context.deviceobject != null">
+					<then>
+						<function name="SendDetails" class="deviceobject">
 					<parameters>
 						<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 					</parameters>	
 				</function>
+			</then>
+				</if>
 			</function>
 			<!--Send Packet To All Port By DeviceId-->
 			<function name="PacketOutToAllPort">	
@@ -690,7 +748,9 @@
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-						<function name="PacketOutToAllPort" class="context.device">
+						<if cond="context.device != null">
+							<then>
+								<function name="PacketOutToAllPort" class="context.device">
 							<parameters>	
 								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
 								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
@@ -698,6 +758,8 @@
 							</parameters>
 						</function>		
 					</then>
+				</if>
+			</then>
 				</if>
 			</function>
 			<!--qiulei 2017.08.23   Send Packet To one Port By DeviceId   -->
@@ -720,7 +782,9 @@
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-						<function name="PacketOutToPort" class="context.device">
+						<if cond="context.device != null">
+							<then>
+								<function name="PacketOutToPort" class="context.device">
 							<parameters>
 								<parameter name="outputport" type="string" in="context.outputport.toString()"/>
 								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
@@ -729,6 +793,8 @@
 							</parameters>
 						</function>
 					</then>
+				</if>
+			</then>
 				</if>
 			</function>
 			
@@ -741,7 +807,9 @@
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-						<function name="PacketOutToAllPort" class="context.device">
+						<if cond="context.device != null">
+							<then>
+								<function name="PacketOutToAllPort" class="context.device">
 							<parameters>	
 								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
 								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
@@ -749,13 +817,19 @@
 						</function>		
 					</then>
 				</if>			
+			</then>
+				</if>			
 			</function>
 			<function name="SendTableRequest">
 				<variable name="device" type="class"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">			
 					<function>
 						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
-						<function name="SendTableRequest" class="device"/>
+						<if cond="context.device != null">
+							<then>
+								<function name="SendTableRequest" class="device"/>
+					</then>
+						</if>
 					</function>
 				</for>
 			</function>
@@ -769,12 +843,16 @@
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-						<function name="GetPortsStateJsonData" class="context.device">
+						<if cond="context.device != null">
+							<then>
+								<function name="GetPortsStateJsonData" class="context.device">
 							<parameters>	
 								<parameter name="jsonstring" type="string" out="context.jsonstring"/>
 							</parameters>
 						</function>		
 					</then>
+				</if>
+			</then>
 				</if>
 			</function>
 			

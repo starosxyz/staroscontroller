@@ -35,7 +35,7 @@
 				</parameters>
 			</function>			
 			
-<function name="addTopoListener" class="TopoService">				
+			<function name="addTopoListener" class="TopoService">				
 				<parameters>
 					<parameter name="appid" type="string" in="'maclearning'"/>
 					<parameter name="add_eventname" type="string" in="'mytopadd'"/>
@@ -46,7 +46,7 @@
 			<log>maclearning app startup</log>
 		</onevent>	
 		
-<onevent event="mytopadd">
+		<onevent event="mytopadd">
 			
 		</onevent>
 		<onevent event="mytopremove">
@@ -61,7 +61,7 @@
 				</parameters>
 			</function>
 			
-<function name="removeTopoListener" class="TopoService">
+			<function name="removeTopoListener" class="TopoService">
 				<parameters>
 					<parameter name="appid" type="string" in="'maclearning'"/>
 				</parameters>

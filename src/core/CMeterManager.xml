@@ -333,7 +333,7 @@
 					<parameter name="jsonstring" type="string"/>
 								</parameters>
 				
-<container name="meterjsonlist" type="list" valuetype="string"/>
+				<container name="meterjsonlist" type="list" valuetype="string"/>
 				<variable name="meterobj" type="class"/>
 				<variable name="meterInfoJson" type="string"/>
 				<for var="i" from="0" to="context.merterContainer.size()-1">

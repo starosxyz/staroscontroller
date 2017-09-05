@@ -7,6 +7,11 @@
 		</private>
 	
 		<public>
+			<!--20170905 
+				Call this function
+				introduction id ,type is String
+				introduction instanceinfo, type is hashmap
+			-->
 			<function name="addInstance">
 				<parameters>
 					<parameter name="id" type="string"/>
@@ -15,10 +20,10 @@
 				<insert name="InstanceContainer" key="context.id.toString()" value="context.instanceinfo"/>
 			</function>
 				
-<!--20170904 
+			<!--20170904 
 				Call this function
-				input a value ,type is String
-				output a value, type is hashmap
+				introduction id ,type is String
+				output instanceinfo, type is hashmap
 			-->
 			<function name="findInstance">
 				<parameters>
@@ -36,6 +41,10 @@
 				<set name="instanceinfo" value="context.OneInstanceContainer"/>
 			</function>
 			
+			<!--20170905 
+				Call this function
+				introduction id ,type is String
+			-->
 			<function name="removeInstance">
 				<parameters>
 					<parameter name="id" type="string"/>

@@ -21,7 +21,9 @@
 			<!--qiulei 20170824 pm-->
 			<function name="GetAPIInfo">
 				<parameters>
+					<!--return eventname-->
 					<parameter name="eventname" type="string"/>
+					<!--return bundleid-->
 					<parameter name="bundleid" type="string"/>
 				</parameters>
 				<parameters>
