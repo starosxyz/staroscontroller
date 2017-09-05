@@ -62,7 +62,7 @@
 				</parameters>			
 			</function>
 			
-			<function name="UnInstallFlowTableRequest">
+			<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
 				<parameters>
 					<parameter name="flowid" type="string" in="context.flowid.toString()"/>
 				</parameters>
