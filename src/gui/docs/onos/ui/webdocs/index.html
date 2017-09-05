@@ -21,8 +21,9 @@
 			<section>
 				<div class="container">
 					<ul class="docs-nav">
-						<li><strong>开始</strong></li>
+						<li><strong>StarOS控制器介绍</strong></li>
 						<li><a href="#aboutstaros" class="cc-active">关于StarOS控制器</a></li>
+						<li><a href="#structpic" class="cc-active">StarOS控制器架构图</a></li>
 						<li><a href="#RuntimeEnvironment" class="cc-active">关于StarOS运行环境</a></li>
 						<!--0831运行环境 qiulei-->
 						<li><a href="#starlang" class="cc-active">StarLang编程语言</a></li>
@@ -52,14 +53,17 @@
 					<div class="docs-content">
 						<h3> 关于StarOS控制器</h3>
 						<h2 id="aboutstaros"> 简介</h2>
-						<p> 基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写</p>
-						<p> StarOS控制器架构图:</p>
-						<div><img src="img/staros_kantuwang.png"></div>
+						<p> StarOS控制器是一款面向编程的SDN控制器。StarOS控制器是一个开放的，开源的SDN控制器。采用StarLang语言编写，这个语言的特点是基于XML/Javascripts的</p>
+						<p>所以开发非常方便，采用C++做驱动引擎，性能也得到了保障。基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面</p>
+						<h3> StarOS控制器架构图:</h3>
+						<h2 id="structpic">
+						<div><img src="img/staros_kantuwang.png"></div></h2>
 						<p> 控制器特点:</p>
 						<ul>
-							<li>XML和javascript编写控制器APP</li>
+							<li>采用SDN编程语言-StarLang编写，灵活稳定，适合多变的业务层</li>
 							<li>支持集群</li>
-							<li>XML/javascript和C++互补.</li>
+							<li>XML/javascript和C++互补，兼容灵活，性能兼顾</li>
+							<li>XML特点天生兼容Netconf协议。</li>
 							<li>支持Restful-http/Restful-https/netconf协议</li>
 							<li>支持OpenFlow1.3协议</li>
 							<li>支持NETCONF over SSH (RFC 4742, RFC 6242).</li>
@@ -178,7 +182,7 @@
 						<pre class="prettyprint">
 							<xmp>
 <script>
-	context.openflowserverobj.getDevice(event.getParam('transportid').toString());
+		context.openflowserverobj.getDevice(event.getParam('transportid').toString());
 </script>
 							</xmp>
 						</pre>
