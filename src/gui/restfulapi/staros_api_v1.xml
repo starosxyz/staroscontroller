@@ -60,14 +60,14 @@
 						"password":"<%=context.passwordparam.toString()%>"
 						}
 						]]>
-</jsonbody>
+						</jsonbody>
 						</reference>
-																	<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
+						<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
 						<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
 						<log><![CDATA[AuthRequest outparam= '<%=context.outjson.toString()%>']]></log>
 						<script><![CDATA[
-								var info = JSON.parse(context.outjson.toString());
-							context.authresult.setValue(info.result);
+									var info = JSON.parse(context.outjson.toString());
+									context.authresult.setValue(info.result);
 						]]></script>
 						<log><![CDATA[auth reply json= '<%=context.authjson.toString()%>']]></log>
 						<if cond="context.authresult.toString() == 'error'">

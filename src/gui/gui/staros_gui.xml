@@ -23,7 +23,7 @@
 		<variable name="authjson" type="string"/>
 		<variable name="sendjsessionid" type="string"/>
 		<variable name="sessionobj" type="class"/>
-				<variable name="appname" type="string"/>
+		<variable name="appname" type="string"/>
 		<variable name="injson" type="string"/>
 		<variable name="outjson" type="string"/>
 		<function>
@@ -92,7 +92,7 @@
 							}
 						}
 					]]></script>
-										<function name="FindSession" class="SessionManager">
+						<function name="FindSession" class="SessionManager">
 						<parameters>
 							<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
 							<parameter name="sessionobj" type="string" out="context.sessionobj"/>
@@ -119,14 +119,14 @@
 						]]></script>
 						<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 						<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
-																					<reference variable="injson">
-							<jsonbody><![CDATA[ 
-							{
-							"username":"<%=context.usernameparam.toString()%>",
-							"password":"<%=context.passwordparam.toString()%>"
-							}
-							]]>
-</jsonbody>
+							<reference variable="injson">
+								<jsonbody><![CDATA[ 
+								{
+								"username":"<%=context.usernameparam.toString()%>",
+								"password":"<%=context.passwordparam.toString()%>"
+								}
+								]]>
+								</jsonbody>
 							</reference>
 						<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
 							<script><![CDATA[
@@ -236,21 +236,21 @@
 				<function>
 					<if cond="event.getParam('Authorization')==''">
 					
-<then>
-									<if cond="context.sessionobj!=null">
-										<then>
-											<function name="ResetTime" class="sessionobj"/>
-											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
-											<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
-										</then>
-										<else>
-											<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
-											<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
-											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-										</else>
-									</if>
-				</then>
+						<then>
+							<if cond="context.sessionobj!=null">
+								<then>
+									<function name="ResetTime" class="sessionobj"/>
+									<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+									<websocket name="restfulserver" method="AcceptWebSocket" transportid="context.transportid.toString()" openevent="websocketopen" dataevent="websocketdata" disconnectevent="websocketdisconnect"/>
+								</then>
+								<else>
+									<log><![CDATA[get a web socket connect= '<%=context.transportid.toString()%>']]></log>
+									<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
+									<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+									<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+								</else>
+							</if>
+						</then>
 						<else>
 							<script><![CDATA[
 						
