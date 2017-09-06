@@ -92,7 +92,7 @@
 							}
 						}
 					]]></script>
-											<function name="FindSession" class="SessionManager">
+																<function name="FindSession" class="SessionManager">
 						<parameters>
 							<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
 							<parameter name="sessionobj" type="string" out="context.sessionobj"/>
@@ -119,7 +119,7 @@
 						]]></script>
 						<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 						<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
-															<reference variable="injson">
+																							<reference variable="injson">
 								<jsonbody><![CDATA[ 
 								{
 								"username":"<%=context.usernameparam.toString()%>",

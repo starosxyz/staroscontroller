@@ -162,6 +162,12 @@
 				<for var="i" from="0" to="context.m_buckets.size()-1">
 					<function>
 						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
+						<if cond="context.bucketsobj==null">
+							<then>
+								<log>bucketsobj is null</log>
+								<exit/>
+							</then>
+						</if>
 						<function name="ToJsonString" class="bucketsobj">
 							<parameters>
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
@@ -216,6 +222,12 @@
 					<function>
 						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
 						<set name="bucketstring" value="context.bucketjsonlist.getValueByIndex(context.i.toLong())"/>
+						<if cond="context.bucketsobj==null">
+							<then>
+								<log>bucketsobj is null</log>
+								<exit/>
+							</then>
+						</if>
 						<function name="FetchStateFromJson" class="bucketsobj">
 							<parameters>
 								<parameter name="jsonstring" type="string" in="context.bucketstring.toString()"/>

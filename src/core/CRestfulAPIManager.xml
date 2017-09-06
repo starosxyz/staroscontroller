@@ -71,10 +71,13 @@
 				<variable name="apientry" type="class"/>
 				<variable name="eventname" type="string"/>
 				<variable name="bundleid" type="string"/>
+				<variable name="errorjson" type="string"/>
+				<variable name="httpparam" type="params"/>
 				<!--qiulei 20170824 pm-->
 				<if cond="thisclass.restfulapiContainer.hasValue(context.reqestpath.toString())">
 					<then>
 						<function>
+							<log> have restfulapiContainer huhuh!!!!!!!!!! </log>
 							<set name="apientry" value="thisclass.restfulapiContainer.getValue(context.reqestpath.toString())"/>
 							<function name="GetAPIInfo" class="apientry">
 								<parameters>
@@ -87,6 +90,20 @@
 							<raise name="context.eventname.toString()" bundleid="context.bundleid.toLong()" param="context.eventparam"/>
 						</function>
 					</then>
+				<else>
+					<log>  not have restfulapiContainer huhuh!!!!!!!!!! </log>
+						<reference variable="errorjson">
+								<jsonbody><![CDATA[ 
+{"code":"404","message":"HTTP 404 Not Found"}
+								]]></jsonbody>
+						</reference>
+						<set name="httpparam" paramname="Server" value="'StarOS'"/>
+						<set name="httpparam" paramname="Connection" value="'Close'"/>
+						<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+						<restful name="restfulserver" action="RESPONSE" status="404" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+							<jsonsrc src="errorjson"/>
+						</restful>
+					</else>
 				</if>
 			</function>
 		</public>
