@@ -9,7 +9,8 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->
 	<class name="CFlowService">
-		<function name="InstallFlow">
+		<public>
+			<function name="InstallFlow">
 			<parameters>
 				<parameter name="outflowid" type="string"/>
 				<parameter name="strjson" type="string"/>
@@ -17,14 +18,24 @@
 				<parameter name="datapathid" type="string"/>
 			</parameters>
 			
+<log>##################################################################</log>
+				<log>insert CFlowService InstallFlow</log>				
+				<log><![CDATA[appId = <%=context.appId.toString()%>]]></log>	
+				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
+				<log>##################################################################</log>
 			<variable name="deviceobj" type="class"/>
-			<function name="findDevice" class="DeviceManager">
+			<function name="getDevice" class="DeviceManager">
 				<parameters>
-					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-					<parameter name="deviceobject" type="class" out="context.deviceobj"/>
-				</parameters>				
+					<parameter name="outdevice" type="class" out="context.deviceobj"/>
+						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+					</parameters>				
 			</function>
 			
+<if cond="context.deviceobj==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
 			<variable name="flowmgrobj" type="class"/>
 			<function name="GetFlowManager" class="context.deviceobj">
 				<parameters>
@@ -32,6 +43,11 @@
 				</parameters>			
 			</function>
 			
+<if cond="context.flowmgrobj==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
 			<function name="InstallFlowTableRequest" class="context.flowmgrobj">
 				<parameters>
 					<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>
@@ -39,7 +55,8 @@
 					<parameter name="appId" type="string" in="context.appId.toString()"/>
 				</parameters>
 			</function>
-		</function>
+		<log>CFlowService InstallFlow end</log>
+			</function>
 		
 		<function name="UnInstallFlow">
 			<parameters>
@@ -68,5 +85,6 @@
 				</parameters>
 			</function>
 		</function>
+	</public>
 	</class>
 </starosxml>

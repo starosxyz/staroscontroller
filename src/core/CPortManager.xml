@@ -316,7 +316,7 @@
 					<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
 					<function name="IsValidatePort" class="context.portobj">
 						<parameters>
-							<parameter name="returnbool" type="bool" out="context.isvalidataport"/>
+							<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
 						</parameters>
 					</function>
 					<if cond="context.isvalidataport.toBoolean()==true">
@@ -363,7 +363,7 @@
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
 						<function name="IsValidatePort" class="context.portobj">
 							<parameters>
-								<parameter name="returnbool" type="bool" out="context.isvalidataport"/>
+								<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
 							</parameters>
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">

@@ -430,6 +430,12 @@
 				<container name="flowinfos" type="list" valuetype="string"/>	
 				<for var="i" from="0" to="context.flowsContainer.size()-1">
 					<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.i.toLong())"/>
+					<if cond="context.flowobj==null">
+						<then>
+							<log>flowobj is null</log>
+							<exit/>
+						</then>
+					</if>
 					<function name="FlowEntryToJsonString" class="context.flowobj">
 								<parameters>
 									<parameter name="flowjson" type="string" out="context.flowobjJson"/>
@@ -515,6 +521,12 @@
 					<set name="flowpartstring" value="context.flowpartlist.getValueByIndex(context.i.toLong())"/>
 					<for var="j" from="0" to="context.flowsContainer.size()-1">
 						<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.j.toLong())"/>
+						<if cond="context.flowobj==null">
+							<then>
+								<log>flowobj is null</log>
+								<exit/>
+							</then>
+						</if>
 						<function name="GetFlowId" class="context.flowobj">
 							<parameters>
 								<parameter name="flowid" type="string" out="context.flowobj_flowid"/>

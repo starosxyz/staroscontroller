@@ -10,7 +10,100 @@
 -->
 	<variable name="applicationmgr" reference="global.ApplicationManager"/>
 	<variable name="devicemgr" reference="global.DeviceManager"/>
+	<variable name="flowservice" reference="global.FlowService"/>
+	<container name="resourceid_list" type="list" valuetype="string"/>
 	<container name="machashmap" type="hashmap" keytype="string" valuetype="string"/>
+	<function name="installflow">
+		<parameters>
+			<parameter name="outport" type="string"/>
+			<parameter name="dstmac" type="string"/>
+			<parameter name="datapathid" type="string"/>
+		</parameters>
+		<log>##################################################################</log>
+		<log>insert maclearning installflow</log>		
+		<log><![CDATA[outport = <%=context.outport.toString()%>]]></log>	
+		<log><![CDATA[dstmac = <%=context.dstmac.toString()%>]]></log>	
+		<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
+		<log>##################################################################</log>
+		<variable name="modstrjson" type="string"/>
+		<reference variable="modstrjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"3",
+										"hasmask":"false",
+										"dstmac":"<%=context.dstmac.toString()%>"
+									},
+									{
+										"oxmclass":"0x0800",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x8000"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"<%=context.outport.toString()%>",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<variable name="resourceid" type="string"/>
+		<if cond="context.flowservice==null">
+			<then>
+				<log>flowservice is null</log>
+			</then>
+		</if>
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<parameter name="outflowid" type="string" out="context.resourceid"/>
+				<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+				<parameter name="appId" type="string" in="'maclearning'"/>
+				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_list" value="context.resourceid.toString()"/>
+	</function>
+	<function name="uninstallflow">
+		<parameters>
+			<parameter name="datapathid" type="string"/>
+		</parameters>
+		<variable name="resourceid" type="string"/>
+		<for var="i" from="0" to="context.resourceid_list.size()-1">
+			<set name="resourceid" value="context.resourceid_list.getValueByIndex(context.i.toLong()"/>
+			<function name="UnInstallFlow" class="context.flowservice">
+				<parameters>
+					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>			
+					<parameter name="flowid" type="string" in="context.resourceid.toString()"/>
+				</parameters>
+			</function>
+		</for>
+	</function>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -67,6 +160,11 @@
 				</parameters>
 			</function>
 			
+		<!--function name="uninstallflow">
+				<parameters>
+					<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+				</parameters>
+			</function-->
 		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
@@ -76,6 +174,7 @@
 			<variable name="pkoutjson" type="string"/>
 			<variable name="srcmac" type="string"/>
 			<variable name="dstmac" type="string"/>
+			<variable name="ethtype" type="string"/>
 			<variable name="result_mac" type="string"/>
 			<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
@@ -89,23 +188,71 @@
 					context.pkoutjson.setValue(strjson);
 				var src_mac = info.payload.smac;
 				var dst_mac = info.payload.dmac;
+					var eth = info.payload.ethtype;
 				context.srcmac.setValue(src_mac);
 				context.dstmac.setValue(dst_mac);
+					context.ethtype.setValue(eth);										
 				}
 
 			]]></script>
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>			
-			<if cond="context.machashmap.hasValue(context.srcmac.toString())">
+			<if cond="context.ethtype.toString()=='2054'">
 				<then>
-					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
-				</then>
+					<log>get a arp packet</log>
+					<if cond="context.dstmac.toString()=='ff:ff:ff:ff:ff:ff'">
+						<then>
+							<log>dstmac is ff:ff:ff:ff:ff:ff PacketOutToAllPort</log>
+							<function name="PacketOutToAllPort" class="context.devicemgr">
+								<parameters>
+									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+									<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
+									<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>	
+								</parameters>
+							</function>
+						</then>					
+						<else>
+							<log><![CDATA[dstmac <%=context.dstmac.toString()%>]]> </log>
+							<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
+								<then>		
+									<log><![CDATA[dstmac <%=context.dstmac.toString()%> PacketOutToAllPort]]> </log>								
+									<function name="PacketOutToAllPort" class="context.devicemgr">
+										<parameters>
+											<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+											<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+											<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
+											<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>
+				</parameters>
+									</function>
+								</then>
 				<else>
-					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
-				</else>
+					<log><![CDATA[dstmac <%=context.dstmac.toString()%> find outport=<%=context.machashmap.getValue(context.dstmac.toString()).toString()%> ]]> </log>								
+									<function name="PacketOutToPort" class="context.devicemgr">
+										<parameters>	
+											<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+											<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>						
+											<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>
+											<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+											<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>							
+										</parameters>
+									</function>							
+								</else>
+							</if>
+						</else>
+					</if>
+					<log><![CDATA[srcmac <%=context.srcmac.toString()%> inportid=<%=context.inportid.toString()%> insert]]> </log>	
+					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
+						<then>
+							<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+				</then>
 			</if>
-			<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
+			</then>
+				<else>			
+					<log><![CDATA[not arp packet]]> </log>	
+					<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
 				<then>									
-					<function name="PacketOutToAllPort" class="context.devicemgr">
+					<log><![CDATA[not arp packet dstmac <%=context.dstmac.toString()%> can not find , PacketOutToAllPort]]> </log>							
+							<function name="PacketOutToAllPort" class="context.devicemgr">
 						<parameters>
 							<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
 							<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
@@ -115,7 +262,8 @@
 					</function>
 				</then>
 				<else>					
-					<function name="PacketOutToPort" class="context.devicemgr">
+					<log><![CDATA[not arp packet dstmac <%=context.dstmac.toString()%> find outport=<%=context.machashmap.getValue(context.dstmac.toString()).toString()%> ]]> </log>	
+							<function name="PacketOutToPort" class="context.devicemgr">
 						<parameters>	
 							<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
 							<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>						
@@ -124,6 +272,21 @@
 							<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>							
 						</parameters>
 					</function>
+				<function name="installflow">
+								<parameters>
+									<parameter name="outport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+									<parameter name="dstmac" type="string" in="context.dstmac.toString()"/>
+									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+								</parameters>
+							</function>
+						</else>
+					</if>
+					<log><![CDATA[not arp packet srcmac <%=context.srcmac.toString()%> inportid=<%=context.inportid.toString()%> insert]]> </log>	
+					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
+						<then>
+							<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+						</then>
+					</if>
 				</else>
 			</if>
 		</onevent>
