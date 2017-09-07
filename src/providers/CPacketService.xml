@@ -108,6 +108,9 @@
 					<parameter name="datapathid" type="string"/>
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>				
+				<log>##########################20170917 YY#########################</log>
+				<log><![CDATA[ProcessPacket's strjson = <%=context.strjson.toString()%>]]></log>
+				<log>##########################20170917 YY#########################</log>
 				<variable name="appname" type="string"/>		
 				<variable name="eventname" type="string"/>		
 				<variable name="packetobj" type="class"/>	
@@ -149,7 +152,60 @@
 					</function>
 					
 				</for>
+			<function name="HostData">
+					<parameters>
+						<parameter name="data" type="string" in="context.strjson.toString()"/>
+						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+					</parameters>
+				</function>
 			</function>
+			
+			<function name="HostData">
+				<parameters>
+					<parameter name="data" type="string"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				<log><![CDATA[HostData's data = <%=context.data.toString()%>]]></log>
+				<log><![CDATA[HostData's datapathid = <%=context.datapathid.toString()%>]]></log>
+				<variable name="local_mac" type="string"/>
+				<variable name="local_ip" type="string"/>
+				<variable name="local_vlan" type="string"/>
+				<variable name="local_port" type="string"/>
+				<variable name="local_ethtype" type="string"/>
+				<script><![CDATA[
+					var info = JSON.parse(context.data.toString());
+					var js_ethtype = info.payload.ethtype;
+					context.local_ethtype.setValue(js_ethtype);
+				]]></script>
+				<if cond="context.local_ethtype.toString()=='2054'">
+					<then>
+						<script><![CDATA[
+							var info = JSON.parse(context.data.toString());
+							var js_mac = info.payload.smac;
+							var js_ip = info.payload.ethernetpayload.senderprotocoladdress;
+							var js_vlan = info.payload.vlanid;
+							var js_port = info.match.matchfieldlist[0].inport;
+							if (js_vlan == 65535)
+								js_vlan = 0;
+							context.local_mac.setValue(js_mac);
+							context.local_ip.setValue(js_ip);
+							context.local_vlan.setValue(js_vlan);
+							context.local_port.setValue(js_port);
+						]]></script>
+						<function name="addHost" class="HostManager">
+							<parameters>
+								<parameter name="mac" type="string" in="context.local_mac.toString()"/>
+								<parameter name="ip" type="string" in="context.local_ip.toString()"/>
+								<parameter name="vlan" type="string" in="context.local_vlan.toString()"/>
+								<parameter name="deviceid" type="string" in="'of:'+context.datapathid.toString()"/>
+								<parameter name="port" type="string" in="context.local_port.toString()"/>
+							</parameters>
+						</function>
+			</then>
+				</if>
+				
+			</function>
+			
 			<function name="GetPacketJsonData">
 				<parameters>
 					<parameter name="json" type="string"/>
