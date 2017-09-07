@@ -250,6 +250,16 @@
 						<function name="ErrorHandleFlowMod"/>
 					</then>
 				</if>
+				<if cond="context.messagetype.toString() == '15'">
+					<then>
+						<function name="ErrorHandleGroupMod"/>
+					</then>
+				</if>
+				<if cond="context.messagetype.toString() == '29'">
+					<then>
+						<function name="ErrorHandleMeterMod"/>
+					</then>
+				</if>
 			</function>
 		</onevent>
 		<!-- 2 -->

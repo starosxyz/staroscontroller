@@ -15,7 +15,10 @@
 		<variable name="flowcookie" type="string"/>
 		<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
-				context.flowcookie.setValue(info.body.cookie);
+				if(info.body)
+				{
+					context.flowcookie.setValue(info.body.cookie);
+				}
 		]]></script>
 
 		<log><![CDATA[flowcookie=<%=context.flowcookie.toString()%>]]></log>
@@ -59,5 +62,130 @@
 			</then>
 		</if>
 	</function>
+	
+	<!-- wangkang 2017/09/06
+		1.Get a Error Message and JSON parse,Find MessageType and GroupId
+		2.Find the appropriate device according to TransportID
+		3.Get GroupManager from device
+		4.Find the appropriate Group according to GroupId
+		5.Set Message State from Group
+	-->
+	<function name="ErrorHandleGroupMod">
+		<variable name="groupobj" type="class"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="groupmgrobj" type="class"/>
+		<variable name="groupid" type="string"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if(info.body)
+				{
+					context.groupid.setValue(info.body.groupid);
+				}
+		]]></script>
+
+		<log><![CDATA[groupid=<%=context.groupid.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 15 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<parameter name="outgroupmgr" type="class" out="context.groupmgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.groupmgrobj!=null">
+					<then>
+						<log>##### groupmgrobj is not null #####</log>
+						<function name="FindGroup" class="context.groupmgrobj">
+							<parameters>
+								<parameter name="ingroupid" type="string" in="context.groupid.toString()"/>
+								<parameter name="outgroup" type="class" out="context.groupobj"/>
+							</parameters>
+						</function>
+						<if cond="context.groupobj != null">											
+							<then>
+								<log>##### groupobj is not null #####</log>
+								<function name="SetState" class="context.groupobj">												
+									<parameters>
+										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+	
+	<!-- wangkang 2017/09/07
+		1.Get a Error Message and JSON parse,Find MessageType and MeterId
+		2.Find the appropriate device according to TransportID
+		3.Get MeterManager from device
+		4.Find the appropriate Meter according to MeterId
+		5.Set Message State from Meter
+	-->
+	<function name="ErrorHandleMeterMod">
+		<variable name="meterobj" type="class"/>
+		<variable name="deviceobj" type="class"/>
+		<variable name="metermgrobj" type="class"/>
+		<variable name="meterid" type="string"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if(info.body)
+				{
+					context.meterid.setValue(info.body.meterid);
+				}
+		]]></script>
+
+		<log><![CDATA[meterid=<%=context.meterid.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 29 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetMeterManager" class="context.deviceobj">
+					<parameters>
+						<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.metermgrobj!=null">
+					<then>
+						<log>##### metermgrobj is not null #####</log>
+						<function name="FindMeter" class="context.metermgrobj">
+							<parameters>
+								<parameter name="inmeterid" type="string" in="context.meterid.toString()"/>
+								<parameter name="outmeter" type="class" out="context.meterobj"/>
+							</parameters>
+						</function>
+						<if cond="context.meterobj != null">											
+							<then>
+								<log>##### meterobj is not null #####</log>
+								<function name="SetState" class="context.meterobj">												
+									<parameters>
+										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+
 
 </starosxml>
