@@ -548,17 +548,7 @@
 			</function>
 			
 			
-			<!--who do this?-->
-			<!--function name="SendFlowRequest">
-				<log><![CDATA[CDevice m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
-				<log>YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY</log>
-				<function name="SendFlowRequest" class="FlowManager">
-					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>				
-					</parameters>
-				</function>
-			</function-->
-				<!--TimeOut-->
+			<!--TimeOut-->
 					<function name="TimeOut">
 						<function name="GroupStateRequest" class="m_groupmgr"/>
 						<function name="SendFlowRequest" class="m_flowmgr"/>				

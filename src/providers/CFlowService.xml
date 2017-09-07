@@ -18,7 +18,7 @@
 				<parameter name="datapathid" type="string"/>
 			</parameters>
 			
-<log>##################################################################</log>
+				<log>##################################################################</log>
 				<log>insert CFlowService InstallFlow</log>				
 				<log><![CDATA[appId = <%=context.appId.toString()%>]]></log>	
 				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
@@ -31,7 +31,7 @@
 					</parameters>				
 			</function>
 			
-<if cond="context.deviceobj==null">
+				<if cond="context.deviceobj==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>
@@ -43,7 +43,7 @@
 				</parameters>			
 			</function>
 			
-<if cond="context.flowmgrobj==null">
+				<if cond="context.flowmgrobj==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>

@@ -2,7 +2,6 @@
 <starosxml>
 	<!--qiulei 20170803  pm funcition:Handledevicedata-->
 	<function name="Handledevicedata">
-		<log>==============qiulei==Handledevicedata==20170803=================</log>
 		<function name="SendDeviceInfoToWebClient" class="DeviceManager">
 			<parameters>
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
@@ -11,7 +10,6 @@
 	</function>
 	<!--qiulei 20170803  pm funcition:HandleDeviceDetailsReq-->
 	<function name="HandleDeviceDetailsReq">
-		<log>==============qiulei==HandleDeviceDetailsReq==20170803=================</log>
 		<variable name="datapathid" type="string"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());

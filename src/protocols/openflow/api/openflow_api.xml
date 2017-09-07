@@ -141,7 +141,6 @@
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_HELLO</log>
-		<log><![CDATA[Send_OFPT13_HELLO=<%=context.strjson.toString%>]]></log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
 		<openflow name="openflowserverobj" method="openflow.OFPT13_HELLO" params="context.openflowparams">
 			<jsonsrc src="strjson"/>
@@ -155,7 +154,6 @@
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_ERROR</log>
-		<log><![CDATA[Send_OFPT13_ERROR=<%=context.strjson.toString%>]]></log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
 		<openflow name="openflowserverobj" method="openflow.OFPT13_ERROR" params="context.openflowparams">
 			<jsonsrc src="strjson"/>
@@ -861,7 +859,6 @@
 		</parameters>
 		<variable name="openflowparams" type="params"/>
         <log dest="stdout">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC</log>
-		<log><![CDATA[strjson=<%=context.strjson.toJson()%>]]></log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
 		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC" params="context.openflowparams">
 			<jsonsrc src="strjson"/>

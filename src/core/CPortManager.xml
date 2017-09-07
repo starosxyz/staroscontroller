@@ -36,7 +36,7 @@
 						
 			<variable name="m_durationsec" type="string"/>
 			<variable name="m_durationnsec" type="string"/>
-					<!--qiulei 20170907   add variable name="m_transportid" type="string"-->
+											<!--qiulei 20170907   add variable name="m_transportid" type="string"-->
 			<variable name="m_transportid" type="string"/>
 		</private>
 		<public>
@@ -128,39 +128,28 @@
 				</parameters>
 				<set name="outstate" value="thisclass.m_state.toString()"/>
 			</function>
-						<!--qiulei 20170907 start-->
+												<!--qiulei 20170907 start-->
 			<function name="IsEdgePort">
 				<parameters>
 					<parameter name="returnbool" type="boolean"/>
 				</parameters>
 				
-				<log>insert CPortManager's IsEdgePort</log>
 				<variable name="openflowdevice" type="object"/>
-				<log><![CDATA[m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
-				<log>create openflowdevice success</log>
 				<set name="openflowdevice" value="context.openflowserverobj.getDevice(thisclass.m_transportid.toString())"/>
-				<log>set openflowdevice success</log>
-				<log>ready insert CPortManager's IsEdgePort first if</log>
 				<if cond="context.openflowdevice!=null">
 					<then>
-						<log>insert CPortManager's IsEdgePort first if</log>
 						<variable name="number" type="long"/>
 						<set name="number" value="context.openflowdevice.getNeigborSize(thisclass.m_portno.toString())"/>
-						<log><![CDATA[number = <%=context.number.toLong()%>]]></log>
 						<if cond="context.number.toLong()==0">
 							<then>
-								<log>insert CPortManager's IsEdgePort second if</log>
 								<function>
 									<set name="returnbool" value="true"/>
-									<log>CPortManager's IsEdgePort returnbool is true</log>
-								</function>
+									</function>
 							</then>
 							<else>
-								<log>insert CPortManager's IsEdgePort second if's else</log>
 								<function>
 									<set name="returnbool" value="false"/>
-									<log>CPortManager's IsEdgePort returnbool is false</log>
-								</function>
+									</function>
 							</else>
 						</if>
 					</then>
@@ -212,8 +201,7 @@
 				<parameters>
 					<parameter name="portstate" type="string"/>
 				</parameters>
-				<log><![CDATA[UpdatePortState--------------------------=<%=context.portstate.toString()%>]]></log>
-				<script><![CDATA[
+												<script><![CDATA[
 						var info = JSON.parse(context.portstate.toString());
 						
 						thisclass.m_rxpackets.setValue(info.rxpackets);
@@ -233,9 +221,7 @@
 						thisclass.m_durationnsec.setValue(info.durationnsec);
 					
 					]]></script>
-				<log><![CDATA[portdetail--------------------------=<%=thisclass.m_rxpackets.toString()%>]]></log>
-				<log><![CDATA[portdetail--------------------------=<%=thisclass.m_durationnsec.toString()%>]]></log>
-			</function>
+										</function>
 			<function name="GetPortsStateJsonData">
 				<parameters>	
 					<parameter name="jsonstring" type="string"/>
@@ -360,7 +346,6 @@
 				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 			
-<!--getNeigborSize-->
 			<function name="PacketOutToAllPort">
 				<parameters>	
 					<parameter name="transportid" type="string"/>
