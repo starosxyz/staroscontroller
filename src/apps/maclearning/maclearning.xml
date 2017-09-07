@@ -19,12 +19,6 @@
 			<parameter name="dstmac" type="string"/>
 			<parameter name="datapathid" type="string"/>
 		</parameters>
-		<log>##################################################################</log>
-		<log>insert maclearning installflow</log>		
-		<log><![CDATA[outport = <%=context.outport.toString()%>]]></log>	
-		<log><![CDATA[dstmac = <%=context.dstmac.toString()%>]]></log>	
-		<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
-		<log>##################################################################</log>
 		<variable name="modstrjson" type="string"/>
 		<reference variable="modstrjson">
 			<jsonbody><![CDATA[ 
@@ -51,10 +45,10 @@
 										"dstmac":"<%=context.dstmac.toString()%>"
 									},
 									{
-										"oxmclass":"0x0800",
+										"oxmclass":"0x8000",
 										"oxmfield":"5",
 										"hasmask":"false",
-										"ethtype":"0x8000"
+										"ethtype":"0x0800"
 									}
 								]
 							},

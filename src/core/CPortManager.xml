@@ -36,6 +36,8 @@
 						
 			<variable name="m_durationsec" type="string"/>
 			<variable name="m_durationnsec" type="string"/>
+					<!--qiulei 20170907   add variable name="m_transportid" type="string"-->
+			<variable name="m_transportid" type="string"/>
 		</private>
 		<public>
 			<function name="CPort">
@@ -51,6 +53,9 @@
 					<parameter name="peer" type="string"/>
 					<parameter name="state" type="string"/>	
 					<parameter name="supported" type="string"/>
+				<!--qiulei 20170907-->
+					<parameter name="transportid" type="string"/>
+					
 				</parameters>
 				<set name="thisclass.m_advertised" value="context.advertised.toString()"/>
 				<set name="thisclass.m_portno" value="context.portno.toString()"/>
@@ -63,6 +68,9 @@
 				<set name="thisclass.m_state" value="context.state.toString()"/>
 				<set name="thisclass.m_supported" value="context.supported.toString()"/>
 				<set name="thisclass.m_type" value="'Copper'"/>
+				<!--qiulei 20170907-->
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				
 				<if cond="thisclass.m_state.toString() !='0'">
 					<then>
 						<function>
@@ -120,6 +128,51 @@
 				</parameters>
 				<set name="outstate" value="thisclass.m_state.toString()"/>
 			</function>
+						<!--qiulei 20170907 start-->
+			<function name="IsEdgePort">
+				<parameters>
+					<parameter name="returnbool" type="boolean"/>
+				</parameters>
+				
+				<log>insert CPortManager's IsEdgePort</log>
+				<variable name="openflowdevice" type="object"/>
+				<log><![CDATA[m_transportid = <%=thisclass.m_transportid.toString()%>]]></log>
+				<log>create openflowdevice success</log>
+				<set name="openflowdevice" value="context.openflowserverobj.getDevice(thisclass.m_transportid.toString())"/>
+				<log>set openflowdevice success</log>
+				<log>ready insert CPortManager's IsEdgePort first if</log>
+				<if cond="context.openflowdevice!=null">
+					<then>
+						<log>insert CPortManager's IsEdgePort first if</log>
+						<variable name="number" type="long"/>
+						<set name="number" value="context.openflowdevice.getNeigborSize(thisclass.m_portno.toString())"/>
+						<log><![CDATA[number = <%=context.number.toLong()%>]]></log>
+						<if cond="context.number.toLong()==0">
+							<then>
+								<log>insert CPortManager's IsEdgePort second if</log>
+								<function>
+									<set name="returnbool" value="true"/>
+									<log>CPortManager's IsEdgePort returnbool is true</log>
+								</function>
+							</then>
+							<else>
+								<log>insert CPortManager's IsEdgePort second if's else</log>
+								<function>
+									<set name="returnbool" value="false"/>
+									<log>CPortManager's IsEdgePort returnbool is false</log>
+								</function>
+							</else>
+						</if>
+					</then>
+					<else>
+						<log>insert CPortManager's IsEdgePort first if's else</log>
+						<log>openflowdevice is null</log>
+					</else>
+				</if>
+				
+			</function>
+			<!--qiulei 20170907 end-->
+			
 			<function name="IsValidatePort">
 				<parameters>
 					<parameter name="returnbool" type="boolean"/>
@@ -144,6 +197,8 @@
 								</then>
 								<else>
 									<function>
+										<log>thisclass.m_state.toString()!='0'</log>
+										<log><![CDATA[thisclass.m_state.toString() = <%=thisclass.m_state.toString()%>]]></log>
 										<set name="returnbool" value="false"/>
 									</function>
 								</else>
@@ -244,6 +299,8 @@
 						<parameter name="peer" type="string" in="context.peer.toString()"/>
 						<parameter name="state" type="string" in="context.state.toString()"/>	
 						<parameter name="supported" type="string" in="context.supported.toString()"/>		
+					<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						
 					</parameters>
 				</new>
 				<insert name="portContainer" key="context.portno.toString()" value="context.portobj"/>
@@ -303,6 +360,7 @@
 				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 			
+<!--getNeigborSize-->
 			<function name="PacketOutToAllPort">
 				<parameters>	
 					<parameter name="transportid" type="string"/>
@@ -310,20 +368,33 @@
 					<parameter name="pkoutjson" type="string"/>	
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>
+				<log>insert CPortManager's PacketOutToAllPort</log>				
 				<variable name="portobj" type="class" />
 				<variable name="isvalidataport" type="boolean"/>
+				<variable name="isedgeport" type="boolean"/>
 				<for var="i" from="0" to="context.portContainer.size()-1">
+					<log>insert CPortManager's PacketOutToAllPort's for</log>
+					<log><![CDATA[CPortManager's PacketOutToAllPort's for's i = <%=context.i.toLong()%>]]></log>
 					<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
 					<function name="IsValidatePort" class="context.portobj">
 						<parameters>
 							<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
 						</parameters>
 					</function>
-					<if cond="context.isvalidataport.toBoolean()==true">
+					<!--qiulei 20170907 add IsEdgePort Function-->
+					<function name="IsEdgePort" class="context.portobj">
+						<parameters>
+							<parameter name="returnbool" type="boolean" out="context.isedgeport"/>
+						</parameters>
+					</function>
+					
+					<if cond="(context.isvalidataport.toBoolean()==true) &amp;&amp;(context.isedgeport.toBoolean()==true)">
 						<then>
+							<log>insert CPortManager's PacketOutToAllPort's for's first if</log>
 							<function>
 								<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
 									<then>
+										<log>insert CPortManager's PacketOutToAllPort's for's second if</log>
 										<function name="SendOpenFlowPacketOut">
 											<parameters>
 												<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
@@ -334,7 +405,7 @@
 										</function>
 									</then>
 						
-								</if>
+</if>
 							</function>						
 						</then>
 					</if>
@@ -350,16 +421,15 @@
 					<parameter name="msgblock" type="messageblock"/>
 					<parameter name="inportid" type="string"/>
 				</parameters>
+				<log>insert CPortManager's PacketOutToPort</log>
 				<variable name="portobj" type="class" />
 				<variable name="isvalidataport" type="boolean"/>
 				
-				<log><![CDATA[context.outputport =<%=context.outputport.toString()%>]]></log>
+<log><![CDATA[context.outputport =<%=context.outputport.toString()%>]]></log>
 				
-				<for var="i" from="0" to="context.portContainer.size()-1">
-					<log><![CDATA[key value =<%=context.portContainer.getKeyByIndex(context.i.toLong()).toString()%>]]></log>
-				</for>
-				<if cond="context.portContainer.hasValue(context.outputport.toString())">
+<if cond="context.portContainer.hasValue(context.outputport.toString())">
 					<then>
+						<log>insert CPortManager's PacketOutToPort's for's first if</log>
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
 						<function name="IsValidatePort" class="context.portobj">
 							<parameters>
@@ -368,6 +438,7 @@
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">
 							<then>
+								<log>insert CPortManager's PacketOutToPort's for's second if</log>
 								<function name="SendOpenFlowPacketOut">
 									<parameters>
 										<parameter name="outputport" type="string" in="context.outputport.toString()"/>

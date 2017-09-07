@@ -772,12 +772,7 @@
 					<parameter name="datapathid" type="string"/>
 				</parameters>
 				
-				<log><![CDATA[CDeviceManager 中的context.outputport =<%=context.outputport.toString()%>]]></log>
-				<log><![CDATA[CDeviceManager 中的context.pkoutjson =<%=context.pkoutjson.toString()%>]]></log>				
-				<log><![CDATA[CDeviceManager 中的context.inportid =<%=context.inportid.toString()%>]]></log>
-				<log><![CDATA[CDeviceManager 中的context.datapathid =<%=context.datapathid.toString()%>]]></log>
-				<log><![CDATA[CDeviceManager 中的context.outputport =<%=context.outputport.toString()%>]]></log>
-				<variable name="device" type="class"/>
+<variable name="device" type="class"/>
 				<log>PacketOutToPort !!!!!!!!!!!!!!</log>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
@@ -803,7 +798,6 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<variable name="device" type="class"/>
-				<log>PacketOutToAllPort !!!!!!!!!!!!!!</log>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>

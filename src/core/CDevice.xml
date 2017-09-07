@@ -514,6 +514,7 @@
 					<parameter name="pkoutjson" type="string"/>
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>
+				<log>insert CDevice's PacketOutToAllPort</log>
 				<function name="PacketOutToAllPort" class="thisclass.m_ports">
 					<parameters>	
 						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
@@ -534,6 +535,7 @@
 					<parameter name="msgblock" type="messageblock"/>
 					<parameter name="inportid" type="string"/>
 				</parameters>
+				<log>insert CDevice's PacketOutToPort</log>
 				<function name="PacketOutToPort" class="thisclass.m_ports">
 					<parameters>
 						<parameter name="outputport" type="string" in="context.outputport.toString()"/>
