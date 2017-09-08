@@ -155,11 +155,16 @@
 					<then>
 						<function>
 							<set name="deviceinfo" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-							<function name="GetTransportId" class="deviceinfo">
+							<!--qiulei 20170908 add if judge-->
+							<if cond="context.deviceinfo != null">
+								<then>
+									<function name="GetTransportId" class="deviceinfo">
 								<parameters>
 									<parameter name="outtransport" type="string" out="transportid"/>
 								</parameters>
 							</function>
+						</then>
+							</if>
 						</function>
 					</then>
 				</if>
