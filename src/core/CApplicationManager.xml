@@ -19,6 +19,10 @@
 			<container name="required_apps" type="list"  valuetype="string"/>
 			<container name="features" type="list" valuetype="string"/>
 			<container name="permissions" type="list" valuetype="string"/>
+			
+			<variable name="m_apppath" type="string" />
+			<variable name="pathends" type="string" />
+			
 		</private>
 		<public>
 			<function name="CApplication">
@@ -31,6 +35,7 @@
 					<parameter name="appdesc" type="string"/>		
 					<parameter name="appurl" type="string"/>
 					<parameter name="appbundleid" type="long"/>
+					<parameter name="apppath" type="string"/>
 				</parameters>
 				<set name="thisclass.id" value="context.appid.toString()"/>
 				<set name="thisclass.version" value="context.appversion.toString()"/>
@@ -40,8 +45,9 @@
 				<set name="thisclass.desc" value="context.appdesc.toString()"/>
 				<set name="thisclass.url" value="context.appurl.toString()"/>
 				<set name="thisclass.bundleid" value="context.appbundleid.toString()"/>
-				<set name="thisclass.state" value="'ACTIVE'"/>
-				<set name="thisclass._iconid_state" value="'active'"/>
+				<set name="thisclass.state" value="'INSTALLED'"/>
+				<set name="thisclass._iconid_state" value="'appInactive'"/>
+				<set name="thisclass.m_apppath" value="context.apppath.toString()"/>
 				<log><![CDATA[app_id=<%=context.appid.toString()%>]]></log>
 				<log><![CDATA[app_version=<%=context.appversion.toString()%>]]></log>
 				<log><![CDATA[app_category=<%=context.appcategory.toString()%>]]></log>
@@ -50,6 +56,7 @@
 				<log><![CDATA[app_desc=<%=context.appdesc.toString()%>]]></log>
 				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
 				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
+
 			</function>
 			<function name="GetApplicationId">
 				<parameters>
@@ -88,21 +95,48 @@
 				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
 				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
 				<log><![CDATA[pathname=<%=context.apppath.toString()%>]]></log>
+				
 			</function>
+		
 			<function name="ActiveApplication">
 				<parameters>
 					<parameter name="app_path" type="string"/>
 				</parameters>
+				
+				<variable name="filecontent" type="string" value="'0'"/>
 				<set name="bundleid" value="context.newBundleId()"/>
 				<log><![CDATA[ActiveApplication=<%=context.app_path.toString()%>]]></log>
-				<createbundle bundleid="bundleid" src="context.app_path.toString()+'/'+thisclass.id+'.xml'"/>
+				<activebundle bundleid="bundleid"/>
 				<set name="thisclass.state" value="'ACTIVE'"/>
 				<set name="thisclass._iconid_state" value="'active'"/>
+				<set name="filecontent" value="'1'"/>
+				<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
+				
+				<script><![CDATA[
+					context.print(thisclass.id.toString());
+					var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active.active";
+					context.pathends.setValue(pathend);
+				]]></script>
+				<file method="deletefile" name="context.pathends.toString()"/>
+				<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
+				<log dest="stdout"><![CDATA[pathends!!!!!!!!!!!=<%=context.pathends.toString()%>]]></log>
+				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
 			</function>
 			<function name="DeactiveApplication">
-				<destroybundle bundleid="bundleid"/>
+
+				<variable name="filecontent" type="string" value="'0'"/>
+				<deactivebundle bundleid="bundleid"/>
 				<set name="thisclass.state" value="'INSTALLED'"/>
 				<set name="thisclass._iconid_state" value="'appInactive'"/>
+				<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
+						<script><![CDATA[
+						context.print(thisclass.id.toString());
+						var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active.active";
+						context.pathends.setValue(pathend);
+					]]></script>
+				<file method="deletefile" name="context.pathends.toString()"/>
+				<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
+				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
 			</function>
 			<function name="ToJsonString">
 				<parameters>
@@ -173,6 +207,10 @@
 				<variable name="bundleid" type="long"/>
 				<variable name="pathname" type="string"/>
 				<variable name="appparam" type="params"/>
+				<variable name="filecontent" type="string"/>
+				<variable name="activitefile" type="string"/>
+				<variable name="isfile" type="boolean"/>
+				<messageblock name="filecontentss"/>
 				<readdir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
 				<log><![CDATA[dirlist size = '<%=context.listdir.size()%>']]></log>
 				<clear name="appsContainer"/>
@@ -183,12 +221,37 @@
 					<set name="appdir" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()"/>
 					<if cond="context.isDir(context.appdir.toString())">
 						<then>
+							<log>listdir huhu!!!!!!!</log>
 							<set name="pathname" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/'+context.appname.toString()+'.xml'"/>
 							<log><![CDATA[pathname=<%=context.pathname.toString()%>]]></log>
 							<set name="bundleid" value="context.newBundleId()"/>
 							<set name="appparam" paramname="pathname" value="context.appdir.toString()"/>
-							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
-							<insert name="appsPaths" key="context.appname.toString()" value="context.appdir.toString()"/>
+							<set name="activitefile" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/active.active'"/>
+							<set name="isfile" value="context.isFile(context.activitefile.toString())"/>
+							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>	
+							<if cond="context.isfile.toBoolean()==false">
+								<then>	
+									<log> isfile is false!!!!!!!!!!!!!!</log>
+									<set name="filecontent" value="'0'"/>
+									<file method="writefile" name="context.activitefile.toString()" data="context.filecontent.toMessageBlock()"/>
+									<log dest="stdout"><![CDATA[filecontent = '<%=context.filecontent.toString()%>']]></log>
+									
+									<insert name="appsPaths" key="context.appname.toString()" value="context.appdir.toString()"/>
+								</then>
+								<else>
+								<log> isfile is true!!!!!!!!!!!!!!</log>
+									<log><![CDATA[readfilehuhu=<%=context.activitefile.toString()%>]]></log>
+									<file method="readfile" name="context.activitefile.toString()" data="context.filecontentss"/>
+									<log dest="stdout"><![CDATA[filecontent = '<%=context.filecontentss.toString()%>']]></log>
+									<if cond="context.filecontentss.toString()!='0'">	
+										<then>
+											<insert name="appsPaths" key="context.appname.toString()" value="context.appdir.toString()"/>
+											<activebundle bundleid="bundleid"/>
+										</then>
+									</if>
+								</else>
+							</if>
+							
 						</then>
 					</if>
 				</for>
@@ -294,7 +357,7 @@
 						<parameter name="appdesc" type="string" in="context.desc.toString()"/>		
 						<parameter name="appurl" type="string" in="context.url.toString()"/>
 						<parameter name="appbundleid" type="long" in="context.bundleid.toLong()"/>
-						<parameter name="apppath" type="string" in="context.path.toLong()"/>
+						<parameter name="apppath" type="string" in="context.path.toString()"/>
 					</parameters> 
 				</new>
 				<remove name="appsContainer" key="context.id.toString()"/>
