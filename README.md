@@ -37,4 +37,10 @@ Checkout our [website](http://www.staros.xyz)
 # cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
 # dipc start
 ```
+### 运行应用程序
+```
+# starosctl startapp [appfile]
+# starosctl listapp 
+# starosctl stopapp [appid] 
+```
 
