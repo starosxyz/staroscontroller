@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+		<!--
+			Author:
+					hupeng
+			Date:
+					2017-09-11
+			Copyright: 
+					Nanjing StarOS Inc. All rights reserved.
+		-->
 	<class name="CApplication">
 		<private>
 			<variable name="pathname" type="string" />
@@ -42,7 +50,11 @@
 				<set name="thisclass.pathname" value="context.apppathname.toString()"/>
 			</function>
 		
-		
+			<!-- 
+					auth:hupeng
+					data:2017-09-11
+					From CApplicationManager function send some information to this
+			-->
 			<function name="Setallinfo" class="oneapp">
 				<parameters>
 					<parameter name="appversion" type="string"/>
@@ -71,7 +83,12 @@
 				<log><![CDATA[app_desc=<%=context.appdesc.toString()%>]]></log>
 				<log><![CDATA[app_url=<%=context.appurl.toString()%>]]></log>
 				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>	
-				<log><![CDATA[!!!!thisclass.state=<%=thisclass.state.toString()%>]]></log>	
+				<log><![CDATA[!!!!thisclass.state=<%=thisclass.state.toString()%>]]></log>
+				<!-- 
+					auth:hupeng
+					data:2017-09-11
+					judge state whether is "ACTIVE"
+				-->
 				<if cond="thisclass.state.toString()=='ACTIVE'">
 					<then>
 						<log>ACTIVE!!!!!!!!!!!!!!</log>
@@ -83,14 +100,23 @@
 					</else>
 				</if>
 			</function>
-			
+				<!-- 
+					auth:hupeng
+					data:2017-09-11
+					get app path
+				-->
 			<function name="Getpath">
 				<parameters>
 					<parameter name="apppath" type="string"/>
 				</parameters> 
 				<set name="apppath" value="thisclass.pathname"/>
 			</function>
-
+			
+				<!-- 
+					auth:hupeng
+					data:2017-09-11
+					get appactionid
+				-->
 			<function name="GetApplicationId">
 				<parameters>
 					<parameter name="outappid" type="string"/>
@@ -128,7 +154,13 @@
 				<log><![CDATA[app_bundleid=<%=context.appbundleid.toLong()%>]]></log>
 				
 			</function>
-
+			
+			<!-- 
+					auth:hupeng
+					data:2017-09-11
+					active application
+			-->
+			
 			<function name="ActiveApplication">
 				<variable name="filecontent" type="string" value="'0'"/>
 				<activebundle bundleid="thisclass.bundleid"/>
@@ -147,6 +179,12 @@
 				<log dest="stdout"><![CDATA[pathends!!!!!!!!!!!=<%=context.pathends.toString()%>]]></log>
 				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
 			</function>
+			
+			<!-- 
+					auth:hupeng
+					data:2017-09-11
+					deactive application
+			-->
 			<function name="DeactiveApplication">
 
 				<variable name="filecontent" type="string" value="'0'"/>
@@ -163,6 +201,8 @@
 				<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
 				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
 			</function>
+			
+
 			<function name="ToJsonString">
 				<parameters>
 					<!--appjson is return value-->
@@ -223,6 +263,18 @@
 				</parameters>
 				<set name="thisclass.currentappname" value="context.inappname"/>
 			</function>
+			
+			<!-- 
+					auth:hupeng
+					data:2017-09-11
+					load application
+					1):find all apps floder and apps
+					2):judge whether is floder and judge active file whether exist (if active file not exist 
+						create file and if active file exist judge content whether is 0)
+					3)create application object and send value
+					4)create createbundle
+
+			-->
 			<function name="LoadApplication">
 				<log>LoadApplication</log>
 				<container name="listdir" type="list" valuetype="string"/>
@@ -383,7 +435,14 @@
 					</then>
 				</if>
 			</function>
+			<!-- 
+				auth:hupeng
+				data:2017-09-11
+				regist application 
+				get value from every app.xml file
 			
+			
+			-->
 			<function name="RegistApplication">
 				<parameters>
 					<parameter name="id" type="string"/>
@@ -412,7 +471,11 @@
 				</function>
 		
 			</function>
-		
+			<!--
+			
+				 make  app deactive
+			
+			-->
 			<function name="AppDeactiveEvent">
 				<parameters>
 					<parameter name="id" type="string"/>
@@ -435,6 +498,11 @@
 					</then>
 				</if>
 			</function>
+			<!--
+			
+				 make  app active
+			
+			-->
 			<function name="AppActiveEvent">
 				<parameters>
 					<parameter name="id" type="string"/>
@@ -454,7 +522,9 @@
 				</if>
 			</function>
 			
-			
+			<!--	
+				 make  app uninstall and floder delete
+			-->
 			<function name="UninstallApp">
 				<parameters>
 					<parameter name="id" type="string"/>
