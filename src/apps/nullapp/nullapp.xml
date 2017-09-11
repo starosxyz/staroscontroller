@@ -12,7 +12,7 @@
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
-			<function name="AddAppEvent" class="context.applicationmgr">
+			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'nullapp'"/>
 					<parameter name="version" type="string" in="'1.0.0'"/>
@@ -26,22 +26,31 @@
 				</parameters>
 			</function>			
 			
-			<function name="addProcessor" class="PacketService">				
-				<parameters>
-					<parameter name="app_name" type="string" in="'nullapp'"/>
-					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
-				</parameters>
-			</function>
+			
 			<log>null app startup</log>
 		</onevent>			
 		
-		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
+		<onevent event="bundleapp.active">
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<parameter name="app_name" type="string" in="'nullapp'"/>
+					<parameter name="event_name" type="string" in="'PacketInEvent'"/>
+					<parameter name="eth_type" type="string" in="'0x0806'"/>
+				</parameters>
+			</function>
+			<log>null app active</log>
+		</onevent>
+		<onevent event="bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
 					<parameter name="app_name" type="string" in="'nullapp'"/>									
 				</parameters>
 			</function>
+		</onevent>
+		
+		<onevent event="~bundleapp.shutdown">
+			<!-- YY 2017-08-21 -->
+			
 		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
