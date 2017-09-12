@@ -9,6 +9,11 @@
 			Nanjing StarOS Inc. All rights reserved.
 -->
 	<variable name="applicationmgr" reference="global.ApplicationManager"/>
+	<!--<onevent event="bundleapp.startup">	
+	<onevent event="~bundleapp.shutdown">
+	<onevent event="bundleapp.active">	
+	<onevent event="bundleapp.deactive">
+	-->
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
