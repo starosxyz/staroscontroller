@@ -104,7 +104,7 @@
 					<parameter name="name" type="string"/>	
 					<parameter name="peer" type="string"/>
 					<parameter name="state" type="string"/>	
-					<parameter name="supported" type="string"/>
+					<parameter name="supported" type="string"/>														
 				</parameters>
 				<function name="addPort" class="m_ports">
 					<parameters>
@@ -118,7 +118,7 @@
 						<parameter name="name" type="string" in="context.name.toString()"/>	
 						<parameter name="peer" type="string" in="context.peer.toString()"/>
 						<parameter name="state" type="string" in="context.state.toString()"/>	
-						<parameter name="supported" type="string" in="context.supported.toString()"/>		
+						<parameter name="supported" type="string" in="context.supported.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -144,12 +144,14 @@
 				<parameters>
 					<parameter name="outmetermgr" type="class"/>
 				</parameters>
+				<log> Get MeterManager </log>
 				<set name="outmetermgr" value="thisclass.m_metermgr"/>
 			</function>
 			<function name="GetGroupManager">
 				<parameters>
 					<parameter name="outgroupmgr" type="class"/>
 				</parameters>
+				<log> Get GroupManager </log>
 				<set name="outgroupmgr" value="thisclass.m_groupmgr"/>
 			</function>
 			<function name="GetDatapathId">
@@ -182,19 +184,19 @@
 				
 				<script><![CDATA[
 						var onearray = new Object();
-						onearray.available='true';
-						onearray._iconid_available='active';
-						onearray.name="of:"+thisclass.m_datapathid.toString();
-						onearray.id="of:"+thisclass.m_datapathid.toString();
-						onearray.masterid=thisclass.m_masterid.toString();
-						//-------------qiulei 20170818------------
-						onearray.num_ports=context.portCount.toLong();
-						onearray.mfr=thisclass.m_mfrdesc.toString();
-						onearray.hw=thisclass.m_hwdesc.toString();
-						onearray.sw=thisclass.m_swdesc.toString();
-						onearray.protocol=thisclass.m_protocol.toString();
-						onearray.chassisid="";
-						onearray.serial=thisclass.m_serialnum.toString();			
+							onearray.available='true';
+							onearray._iconid_available='active';
+							onearray.name="of:"+thisclass.m_datapathid.toString();
+							onearray.id="of:"+thisclass.m_datapathid.toString();
+							onearray.masterid=thisclass.m_masterid.toString();
+							//-------------qiulei 20170818------------
+							onearray.num_ports=context.portCount.toLong();
+							onearray.mfr=thisclass.m_mfrdesc.toString();
+							onearray.hw=thisclass.m_hwdesc.toString();
+							onearray.sw=thisclass.m_swdesc.toString();
+							onearray.protocol=thisclass.m_protocol.toString();
+							onearray.chassisid="";
+							onearray.serial=thisclass.m_serialnum.toString();			
 						var strjson = JSON.stringify(onearray);
 						context.deviceinfojson.setValue(strjson);
 				]]></script>
@@ -549,13 +551,14 @@
 			
 			
 			<!--TimeOut-->
-					<function name="TimeOut">
-						<function name="GroupStateRequest" class="m_groupmgr"/>
-						<function name="SendFlowRequest" class="m_flowmgr"/>				
-						<function name="SendPortStateRequest" class="m_ports"/>
-						<function name="SendTableRequest" class="m_tablemgr"/>							
-					</function>
-										<!--Get Port State Info , 2017/8/24 -->
+			<function name="TimeOut">
+				<function name="GroupStateRequest" class="m_groupmgr"/>
+				
+				<function name="SendFlowRequest" class="m_flowmgr"/>				
+				<function name="SendPortStateRequest" class="m_ports"/>
+				<function name="SendTableRequest" class="m_tablemgr"/>
+			</function>
+			<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
 					<parameter name="jsonstring" type="string"/>
@@ -597,7 +600,7 @@
 					</parameters>
 				</function>
 				<set name="json" value="context.jsondata.toString()"/>
-			</function>
+			</function>			
 			
 		</public>
 	</class>

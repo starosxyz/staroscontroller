@@ -4,12 +4,13 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_topology.xml"/>
 	<!--WebGUI-->
+	<!--{"code":404,"message":"HTTP 404 Not Found"}-->
 	<function name="HandlAPIRequest">
 		<parameters>
 			<parameter name="requestpath" type="string"/>
 			<parameter name="method" type="string"/>
 			<parameter name="eventdata" type="string"/>
-		<parameter name="transportid" type="string"/>
+			<parameter name="transportid" type="string"/>
 		</parameters>
 		<variable name="functionname" type="string"/>
 		<variable name="httpparam" type="params"/>
@@ -19,10 +20,10 @@
 		<variable name="authresult" type="string"/>
 		<messageblock name="authresultmsg"/>
 		<variable name="authjson" type="string"/>
-										<variable name="isAPI" type="boolean" value="false"/>
+		<variable name="isAPI" type="boolean" value="false"/>
 		<variable name="injson" type="string"/>
 		<variable name="outjson" type="string"/>
-		<variable name="contenttype" type="string"/>
+		 <variable name="contenttype" type="string"/>
 		<variable name="filepath" type="string"/>
 
 		<variable name="errorjson" type="string"/>
@@ -59,26 +60,26 @@
 					<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 					<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
 					<reference variable="injson">
-						<jsonbody><![CDATA[ 
-						{
-						"username":"<%=context.usernameparam.toString()%>",
-						"password":"<%=context.passwordparam.toString()%>"
-						}
-						]]>
-</jsonbody>
-						</reference>
-																				<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
-						<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
-						<log><![CDATA[AuthRequest outparam= '<%=context.outjson.toString()%>']]></log>
-						<script><![CDATA[
-									var info = JSON.parse(context.outjson.toString());
-									context.authresult.setValue(info.result);
-						]]></script>
+								<jsonbody><![CDATA[ 
+									{
+										"username":"<%=context.usernameparam.toString()%>",
+										"password":"<%=context.passwordparam.toString()%>"
+									}
+									]]></jsonbody>
+							</reference>
+						
+							<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
+							<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
+							<log><![CDATA[AuthRequest outparam= '<%=context.outjson.toString()%>']]></log>
+							<script><![CDATA[
+								var info = JSON.parse(context.outjson.toString());
+								context.authresult.setValue(info.result);
+							]]></script>
 						<log><![CDATA[auth reply json= '<%=context.authjson.toString()%>']]></log>
 						<if cond="context.authresult.toString() == 'error'">
 							<then>
 								<log>auth failure</log>
-									<reference variable="errorjson">
+								<reference variable="errorjson">
 									<jsonbody><![CDATA[ 
 										{"code":"404","message":"HTTP 404 Not Found"}
 									]]></jsonbody>
@@ -99,12 +100,12 @@
 				<function>
 					<set name="httpparam" paramname="Location" value="'/onos/v1/docs/index.html'"/>
 					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-									<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-									</function>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</function>
 				<exit/>
-							</then>
-						</if>
-														<script><![CDATA[
+			</then>
+		</if>
+		<script><![CDATA[
 					var x = context.requestpath.toString();
 					
 					if (x.indexOf("/onos/v1/docs")>=0)
@@ -172,33 +173,33 @@
 				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 			</then>
 			<else>
-		<log>isAPI is false!!!</log>
-		<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
-			<then>
-				<log>APIV1MapFunction true !!!!!!</log>
-					<set name="functionname" value="global.APIV1MapFunction.getParam(context.requestpath.toString())"/>
-					<function callback="functionname">
-						<parameters>
-							<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
-							<parameter name="method" type="string" in="context.method.toString()"/>
-							<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
-						</parameters>
-					</function>
-				</then>
-			<else>
-				<function>
-					<function name="HandleAPI" class="RestfulAPIManager">
-						<parameters>
-							<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
-							<parameter name="method" type="string" in="context.method.toString()"/>
-							<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
-						</parameters>
-					</function>
-					<log><![CDATA[Don't have the HandleAPI for requestpath= <%=context.requestpath.toString()%>]]></log>
-				</function>
+				<log>isAPI is false!!!</log>
+				<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
+					<then>
+						<log>APIV1MapFunction true !!!!!!</log>
+							<set name="functionname" value="global.APIV1MapFunction.getParam(context.requestpath.toString())"/>
+							<function callback="functionname">
+								<parameters>
+									<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
+									<parameter name="method" type="string" in="context.method.toString()"/>
+									<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
+								</parameters>
+							</function>
+					</then>
+					<else>
+						<function>
+							<function name="HandleAPI" class="RestfulAPIManager">
+								<parameters>
+									<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
+									<parameter name="method" type="string" in="context.method.toString()"/>
+									<parameter name="eventdata" type="string" in="context.eventdata.toString()"/>
+								</parameters>
+							</function>
+							<log><![CDATA[Don't have the HandleAPI for requestpath= <%=context.requestpath.toString()%>]]></log>
+						</function>
+					</else>
+				</if>
 			</else>
-		</if>
-		</else>
 		</if>
 </function>
 </starosxml>

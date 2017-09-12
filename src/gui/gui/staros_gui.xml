@@ -93,7 +93,8 @@
 							}
 						}
 					]]></script>
-																					<function name="FindSession" class="SessionManager">
+					
+					<function name="FindSession" class="SessionManager">
 						<parameters>
 							<parameter name="sessionid" type="string" in="context.usersession.toString()"/>
 							<parameter name="sessionobj" type="string" out="context.sessionobj"/>
@@ -101,7 +102,8 @@
 					</function>
 				</then>
 			</if>
-			<!-- hu verification user and password-->
+			
+<!-- hu verification user and password-->
 			<if cond="context.requestpath.toString() == '/onos/ui/j_security_check'">
 				<then>
 					<if cond="event.getParam('eventdata').toString()==''">
@@ -110,61 +112,61 @@
 						</then>
 						<else>
 							<function>
-						<script><![CDATA[
-							var x = event.getParam("eventdata").toString();
-							//j_username=karaf&j_password=karaf
-							var username=(x.split("&")[0]).split("=")[1];
-							var password=(x.split("&")[1]).split("=")[1];	
-							context.usernameparam.setValue(username);
-							context.passwordparam.setValue(password);
-						]]></script>
-						<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
-						<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
-																															<reference variable="injson">
-								<jsonbody><![CDATA[ 
-								{
-								"username":"<%=context.usernameparam.toString()%>",
-								"password":"<%=context.passwordparam.toString()%>"
-								}
-								]]>
-</jsonbody>
-							</reference>
-						<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
-							<script><![CDATA[
-									var info = JSON.parse(context.outjson.toString());
-								context.authresult.setValue(info.result);
-							]]></script>
-							<if cond="context.authresult.toString() == 'ok'">
-								<then>
-									<function>
-										<log><![CDATA[auth ok transportid= '<%=context.transportid.toString()%>']]></log>
-										<set name="httpparam" paramname="Location" value="'/onos/ui/index.html'"/>
-										<set name="sendjsessionid" value="restful.randjsessionid()"/>
-										<set name="httpparam" paramname="Set-Cookie" value="'JSESSIONID='+context.sendjsessionid.toString()+'; path=/'"/>
-										<log><![CDATA[huhuhuh!!!!!!!! sendjsessionid= '<%=context.sendjsessionid.toString()%>']]></log>
-										<function name="CreateSession" class="SessionManager">
-											<parameters>
-												<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
-											<parameter name="username" type="string" in="context.usernameparam.toString()"/>
-												</parameters>
-										</function>
-										<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-										
-									</function>
+								<script><![CDATA[
+									var x = event.getParam("eventdata").toString();
+									//j_username=karaf&j_password=karaf
+									var username=(x.split("&")[0]).split("=")[1];
+									var password=(x.split("&")[1]).split("=")[1];	
+									context.usernameparam.setValue(username);
+									context.passwordparam.setValue(password);
+								]]></script>
+								<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
+								<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
 
-								</then>
-								<else>
-									<log>auth failure</log>
-									<function>
-										<set name="httpparam" paramname="Location" value="'/onos/ui/error.html'"/>
-										<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-										<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-									</function>
-								</else>
-							</if>
-						</function>
-				</else>
+								<reference variable="injson">
+									<jsonbody><![CDATA[ 
+										{
+											"username":"<%=context.usernameparam.toString()%>",
+											"password":"<%=context.passwordparam.toString()%>"
+										}
+									]]></jsonbody>
+								</reference>
+								<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
+								<script><![CDATA[
+									var info = JSON.parse(context.outjson.toString());
+									context.authresult.setValue(info.result);
+								]]></script>
+								<if cond="context.authresult.toString() == 'ok'">
+									<then>
+										<function>
+											<log><![CDATA[auth ok transportid= '<%=context.transportid.toString()%>']]></log>
+											<set name="httpparam" paramname="Location" value="'/onos/ui/index.html'"/>
+											<set name="sendjsessionid" value="restful.randjsessionid()"/>
+											<set name="httpparam" paramname="Set-Cookie" value="'JSESSIONID='+context.sendjsessionid.toString()+'; path=/'"/>
+											<log><![CDATA[huhuhuh!!!!!!!! sendjsessionid= '<%=context.sendjsessionid.toString()%>']]></log>
+											<function name="CreateSession" class="SessionManager">
+												<parameters>
+													<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
+													<parameter name="username" type="string" in="context.usernameparam.toString()"/>
+												</parameters>
+											</function>
+											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+											
+										</function>
+
+									</then>
+									<else>
+										<log>auth failure</log>
+										<function>
+											<set name="httpparam" paramname="Location" value="'/onos/ui/error.html'"/>
+											<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+											<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+										</function>
+									</else>
+								</if>
+							</function>
+						</else>
 					</if>
 				</then>
 				<!-- hu get application contents-->
@@ -234,11 +236,10 @@
 				</function>
 			</elseif>
 			<elseif cond="context.requestpath.toString() == '/onos/ui/websock/core'">
-				<!--hu Verification websocket-->
+			<!--hu Verification websocket-->
 				<function>
 					<if cond="event.getParam('Authorization')==''">
-					
-<then>
+						<then>
 							<if cond="context.sessionobj!=null">
 								<then>
 									<function name="ResetTime" class="sessionobj"/>
@@ -339,7 +340,8 @@
 					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 				</function>
 			</elseif>
-						<elseif cond="context.requestpath.toString() == '/onos/ui/onos.js'">
+
+			<elseif cond="context.requestpath.toString() == '/onos/ui/onos.js'">
 				<function>
 					<script><![CDATA[
 						var x = context.requestpath.toString();
@@ -369,20 +371,20 @@
 			</elseif>
 			<elseif cond="context.requestpath.toString() == '/onos/ui/error.html'">
 				<function>
-					<script><![CDATA[
-						var x = context.requestpath.toString();
-						var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
-						context.filepath.setValue(filename);
+				<script><![CDATA[
+					var x = context.requestpath.toString();
+					var filename="/opt/staros.xyz/staroscontroller/starlang/gui/gui"+x;
+					context.filepath.setValue(filename);
 					context.contenttype.setValue('text/html');
-					  ]]></script>
+				  ]]></script>
 					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
-							<set name="httpparam" paramname="Connection" value="'Close'"/>
-							<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
-							<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
-								<html file="context.filepath"/>
-							</restful>
-							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-						</function>
+					<set name="httpparam" paramname="Connection" value="'Close'"/>
+					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+						<html file="context.filepath"/>
+					</restful>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+				</function>
 			</elseif>
 			<elseif cond="context.requestpath.toString() == '/onos/ui/index.html'">
 				<function>
@@ -397,17 +399,18 @@
 							<set name="httpparam" paramname="Location" value="'/onos/ui/login.html'"/>
 							<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
 							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-						<exit/>
+							<exit/>
 						</then>
 					</if>
-				<function name="ResetTime" class="sessionobj"/>
-						<function name="GetUsername" class="sessionobj">
-				<parameters>
+					<function name="ResetTime" class="sessionobj"/>
+
+					<function name="GetUsername" class="sessionobj">
+						<parameters>
 							<parameter name="username" type="string" out="context.username"/>
 						</parameters>
 					</function>
 					
-				<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+					<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
 					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
 					<set name="httpparam" paramname="Connection" value="'Close'"/>
 					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>

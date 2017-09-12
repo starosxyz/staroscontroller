@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--Restful API Service-->
 	<class name="CRestfulAPIEntry">
 		<private>
-			<variable name="m_bundleid" type="string" />
+			<variable name="m_bundleid" type="long" />
 			<variable name="m_eventname" type="string" />
 			<variable name="m_restfullurl" type="string" />
 		</private>
 		<public>
 			<function name="CRestfulAPIEntry">
 				<parameters>
-					<parameter name="bundleid" type="string"/>			
+					<parameter name="bundleid" type="long"/>			
 					<parameter name="eventname" type="string"/>
 					<parameter name="restfullurl" type="string"/>			
 				</parameters>
-				<set name="thisclass.m_bundleid" value="context.bundleid.toString()"/>
+				<set name="thisclass.m_bundleid" value="context.bundleid"/>
 				<set name="thisclass.m_eventname" value="context.eventname.toString()"/>
 				<set name="thisclass.m_restfullurl" value="context.restfullurl.toString()"/>
 			</function>
@@ -24,12 +25,10 @@
 					<!--return eventname-->
 					<parameter name="eventname" type="string"/>
 					<!--return bundleid-->
-					<parameter name="bundleid" type="string"/>
+					<parameter name="bundleid" type="long"/>
 				</parameters>
-				<parameters>
-					<parameter name="thisclass.m_eventname" type="string" out="context.eventname"/>
-					<parameter name="thisclass.m_bundleid" type="string" out="context.bundleid"/>
-				</parameters>
+				<set name="eventname" value="thisclass.m_eventname"/>
+				<set name="bundleid" value="thisclass.m_bundleid"/>
 			</function>
 			
 		</public>
@@ -42,68 +41,31 @@
 			<function name="CRestfulAPIManager">
 				<log>CRestfulAPIManager is create</log>
 			</function>
-			<function name="RegisterAPIHandler">
+			<function name="AddAPIHandler">
 				<parameters>
-					<parameter name="bundleid" type="string"/>			
-					<parameter name="eventname" type="string"/>
-					<parameter name="restfullurl" type="string"/>			
+					<parameter name="requestpath2222" type="string"/>
+					<parameter name="handler" type="class"/>
 				</parameters>
-				<variable name="apiobj" type="class" />
-				<new name="apiobj" class="CRestfulAPIEntry">
-					<parameters>
-						<parameter name="bundleid" type="string" in="context.bundleid.toString()"/>			
-						<parameter name="eventname" type="string" in="context.eventname.toString()"/>
-						<parameter name="restfullurl" type="string" in="context.restfullurl.toString()"/>		
-					</parameters>
-				</new>
-				<insert name="restfulapiContainer" key="context.restfullurl.toString()" value="context.apiobj"/>
+				<insert name="restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
 			</function>
-			
-			
-			
-			<function name="HandleAPI">
+			<function name="RemoveAPIHandler">
 				<parameters>
-					<parameter name="reqestpath" type="string"/>
-					<parameter name="method" type="string"/>
-					<parameter name="eventdata" type="string"/>
+					<parameter name="requestpath" type="string"/>
 				</parameters>
-				<variable name="eventparam" type="params"/>	
+				<remove name="restfulapiContainer" key="context.requestpath.toString()"/>
+			</function>
+			<function name="GetHandler">
+				<parameters>
+					<parameter name="requestpath" type="string"/>
+					<parameter name="handler" type="class"/>
+				</parameters>
 				<variable name="apientry" type="class"/>
-				<variable name="eventname" type="string"/>
-				<variable name="bundleid" type="string"/>
-				<variable name="errorjson" type="string"/>
-				<variable name="httpparam" type="params"/>
-				<!--qiulei 20170824 pm-->
 				<if cond="thisclass.restfulapiContainer.hasValue(context.reqestpath.toString())">
 					<then>
 						<function>
-							<log> have restfulapiContainer huhuh!!!!!!!!!! </log>
-							<set name="apientry" value="thisclass.restfulapiContainer.getValue(context.reqestpath.toString())"/>
-							<function name="GetAPIInfo" class="apientry">
-								<parameters>
-									<parameter name="eventname" type="string" out="context.eventname"/>
-									<parameter name="bundleid" type="string" out="context.bundleid"/>
-								</parameters>
-							</function>
-							<set name="eventparam" paramname="eventdata" value="context.eventdata.toString()"/>
-							<set name="eventparam" paramname="method" value="context.method.toString()"/>
-							<raise name="context.eventname.toString()" bundleid="context.bundleid.toLong()" param="context.eventparam"/>
+							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.reqestpath.toString())"/>
 						</function>
 					</then>
-				<else>
-					<log>  not have restfulapiContainer huhuh!!!!!!!!!! </log>
-						<reference variable="errorjson">
-								<jsonbody><![CDATA[ 
-{"code":"404","message":"HTTP 404 Not Found"}
-								]]></jsonbody>
-						</reference>
-						<set name="httpparam" paramname="Server" value="'StarOS'"/>
-						<set name="httpparam" paramname="Connection" value="'Close'"/>
-						<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
-						<restful name="restfulserver" action="RESPONSE" status="404" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
-							<jsonsrc src="errorjson"/>
-						</restful>
-					</else>
 				</if>
 			</function>
 		</public>

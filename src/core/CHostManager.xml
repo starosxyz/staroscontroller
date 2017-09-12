@@ -24,14 +24,14 @@
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
 			</function>
-				<function name="printhost">
-					<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]></log>
-							<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]></log>
-							<log><![CDATA[m_vlan <%=thisclass.m_vlan.toString()%>]]> </log>
-							<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
-							<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]></log>
-						</function>
-					<function name="ToString">
+			<function name="printhost">
+				<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]></log>
+				<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]></log>
+				<log><![CDATA[m_vlan <%=thisclass.m_vlan.toString()%>]]> </log>
+				<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
+				<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]></log>
+			</function>
+			<function name="ToString">
 				<parameters>
 					<parameter name="jsonstring" type="string" out="context.outjson"/>
 				</parameters>
@@ -47,7 +47,7 @@
 						context.jsonstring.setValue(strjson);
 					]]></script>
 					</function>
-						<function name="ToAddHost2Json">
+		<function name="ToAddHost2Json">
 				<parameters>
 					<parameter name="strjson" type="string"/>
 				</parameters>
@@ -94,15 +94,15 @@
 				
 			</function>
 		</public>
-					</class>
-				<class name="CHostManager">
+	</class>
+	<class name="CHostManager">
 		<private>
-				<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
-				</private>
+			<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
 		<public>
 			<function name="CHostManager">
 				<log>CHostManager is create</log>
-				<function name="addhostest"/>
+				<!--function name="addhostest"/-->
 			</function>
 			<function name="addHost">
 				<parameters>
@@ -130,7 +130,7 @@
 				<for var="i" from="0" to="context.hostContainer.size()-1">
 					<function>
 						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
-			<function name="printhost" class="context.onehostinfo"/>
+						<function name="printhost" class="context.onehostinfo"/>
 					</function>
 				</for>
 			</function>
@@ -149,31 +149,31 @@
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
 							</parameters>
 						</function>
- <insert name="hostlist" value="context.outjson.toString()"/>
+						<insert name="hostlist" value="context.outjson.toString()"/>
 					</function>
 				</for>
-			<script><![CDATA[
-						var json = new Object();
-						var myArray=new Array();                               
-						for(var i=0;i<context.hostlist.size();i++)
-						{
-							var host = context.hostlist.getValueByIndex(i);									
-							var info = JSON.parse(host);	
-							myArray.push(info);
-						}
-						
-						json['event']='hostDataResponse';	
-						var payload = new Object();
-						payload['hosts']=myArray;
-						json['payload']=payload;
-						
-						var msg = new Object();
-						msg["no_rows_msg"]="No Hosts found";
-						info["annots"]=msg;
-						
-						var strjson=JSON.stringify(json);
-						context.jsonstring.setValue(strjson);
-					]]></script>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array();                               
+					for(var i=0;i<context.hostlist.size();i++)
+					{
+						var host = context.hostlist.getValueByIndex(i);									
+						var info = JSON.parse(host);	
+						myArray.push(info);
+					}
+					
+					json['event']='hostDataResponse';	
+					var payload = new Object();
+					payload['hosts']=myArray;
+					json['payload']=payload;
+					
+					var msg = new Object();
+					msg["no_rows_msg"]="No Hosts found";
+					info["annots"]=msg;
+					
+					var strjson=JSON.stringify(json);
+					context.jsonstring.setValue(strjson);
+				]]></script>
 			</function>
 		<function name="GetHostLinkJsonData">
 				<parameters>

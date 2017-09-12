@@ -59,7 +59,7 @@
 			<parameters>
 				<parameter name="outdevice" type="class" out="context.deviceobj"/>
 				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
-				</parameters>
+			</parameters>
 		</function>
 		<!--hu 20170905-->
 		<if cond="context.deviceobj==null">

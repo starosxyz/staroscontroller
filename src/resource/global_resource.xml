@@ -15,13 +15,13 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CPacketService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CTopoService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CFlowService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CRestfulService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
-
-<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
 
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
@@ -38,8 +38,8 @@
 	<variable name="TopoService" type="class" global="true"/>
 	<variable name="FlowService" type="class" global="true"/>
 	<variable name="SessionManager" type="class" global="true"/>
-
-<variable name="TunnelManager" type="class" global="true"/>
+	<variable name="TunnelManager" type="class" global="true"/>
+	<variable name="RestfulService" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -59,6 +59,8 @@
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 		<new name="SessionManager" class="CSessionManager"/>
-	<new name="TunnelManager" class="CTunnelManager"/>
+		<new name="TunnelManager" class="CTunnelManager"/>
+		<!--yijian 2017.08.24 Add Restful -->
+		<new name="RestfulService" class="CRestfulService"/>
 	</function>
 </starosxml>

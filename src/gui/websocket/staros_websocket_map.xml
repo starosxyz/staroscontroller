@@ -37,8 +37,8 @@
 		<set name="WebSocketHandlerMap" paramname="processorDataRequest" value="'HandleProcessorDataRequest'"/>
 	<!-- YY 20180831 -->
 		<set name="WebSocketHandlerMap" paramname="tableDataRequest" value="'HandleTableDataRequest'"/>
-	<set name="WebSocketHandlerMap" paramname="tunnelDataRequest" value="'HandletunnelDataRequest'"/>
-	<!-- YY 20180912 -->
+		<set name="WebSocketHandlerMap" paramname="tunnelDataRequest" value="'HandletunnelDataRequest'"/>
+		<!-- YY 20180912 -->
 		<set name="WebSocketHandlerMap" paramname="updatePrefReq" value="'HandleHostLinkRequest'"/>
 	</function>
 </starosxml>

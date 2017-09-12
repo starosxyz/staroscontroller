@@ -41,7 +41,7 @@
 			</function>
 		</onevent>
 		
-		<onevent event="bundleapp.deactive">
+		<onevent event="~bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
 					<parameter name="app_name" type="string" in="'nullapp'"/>									

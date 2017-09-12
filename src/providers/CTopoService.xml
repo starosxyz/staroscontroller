@@ -172,6 +172,7 @@
 				</for>
 			</function>
 					
+			
 			<function name="getShortestPath">
 				<parameters>
 					<parameter name="link" type="string"/>

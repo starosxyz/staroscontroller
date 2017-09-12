@@ -31,19 +31,19 @@
 				<parameter name="deviceobject" type="class" out="context.deviceobj"/>
 			</parameters>
 		</function>
-		<if cond="context.deviceobj==null">
+		
+<if cond="context.deviceobj==null">
 			<then>
 				<log>deviceobj is null</log>
 				<exit/>
 			</then>
 		</if>
 		<function name="GetTableData" class="context.deviceobj">
-			<parameters>				
-				<parameter name="json" type="string" out="context.outjson"/>
-			</parameters>
-		</function>
-				
-<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+					<parameters>				
+						<parameter name="json" type="string" out="context.outjson"/>
+					</parameters>
+				</function>
+					<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>
 	</function>

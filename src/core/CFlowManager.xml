@@ -369,11 +369,11 @@
 				<if cond="context.flowentry!=null">
 					<then>
 						<function name="GetFlowJsonString" class="context.flowentry">
-					<parameters>
-						<parameter name="jsonstring" type="string" out="context.flowmodjson"/>
-					</parameters>
-				</function>				
-				</then>
+							<parameters>
+								<parameter name="jsonstring" type="string" out="context.flowmodjson"/>
+							</parameters>
+						</function>
+					</then>
 					<else>
 						<function>
 							<log>deviceinfo is null</log>
@@ -390,8 +390,7 @@
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>
 				
-				
-<!---qiulei 20170831 start2-->
+				<!---qiulei 20170831 start2-->
 				<variable name="BarrierStrJson" type="string"/>
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
@@ -437,12 +436,12 @@
 						</then>
 					</if>
 					<function name="FlowEntryToJsonString" class="context.flowobj">
-								<parameters>
-									<parameter name="flowjson" type="string" out="context.flowobjJson"/>
-								</parameters>
-							</function>
-							<insert name="flowinfos" value="context.flowobjJson.toString()"/>
-						</for>
+						<parameters>
+							<parameter name="flowjson" type="string" out="context.flowobjJson"/>
+						</parameters>
+					</function>
+					<insert name="flowinfos" value="context.flowobjJson.toString()"/>
+				</for>
 				<log><![CDATA[flowinfos size=<%=context.flowinfos.size()%>]]></log>
 				<script><![CDATA[
 					var json = new Object();
@@ -489,16 +488,16 @@
 							</then>
 							<else>
 								<script><![CDATA[
-							context.print(event.getParam('eventdata').toString());
-							var info = JSON.parse(event.getParam('eventdata').toString());
-							for (var i = 0; i < info.statslist.length; i++)
-							{
-								var flowstats = info.statslist[i];
-								var flowstrjson=JSON.stringify(flowstats);
-								context.flowpartlist.addValue(flowstrjson);
-							}
-						]]></script>
-					</else>
+									context.print(event.getParam('eventdata').toString());
+									var info = JSON.parse(event.getParam('eventdata').toString());
+									for (var i = 0; i < info.statslist.length; i++)
+									{
+										var flowstats = info.statslist[i];
+										var flowstrjson=JSON.stringify(flowstats);
+										context.flowpartlist.addValue(flowstrjson);
+									}
+								]]></script>
+							</else>
 						</if>
 					</function>
 				</wait>

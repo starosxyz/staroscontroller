@@ -57,10 +57,10 @@
         <function name="TestBRRequest">
                 <log>"send getconfig_request loading..."</log>
                 <function name="Send_OFPT13_BARRIER_REQUEST">
-                                                <parameters>
-                                <parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-                                <parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
-                        </parameters>
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+                     </parameters>
                 </function>
                 <log>"wait getconfig_reply loadint..."</log>
                 <wait event="openflow.OFPT13_BARRIER_REPLY" timeout="1000">

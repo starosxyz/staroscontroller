@@ -12,15 +12,15 @@
 		<private>
 			<variable name="m_appid" type="string"/>
 			<variable name="m_eventname" type="string"/>
-			<variable name="m_packets" type="long"/>			
-		<variable name="m_ethtype" type="string"/>		
+			<variable name="m_packets" type="long"/>		
+			<variable name="m_ethtype" type="string"/>		
 		</private>
 		<public>
 			<function name="CPacket">
 				<parameters>
 					<parameter name="appid" type="string"/>
 					<parameter name="eventname" type="string"/>
-				<parameter name="ethtype" type="string"/>
+					<parameter name="ethtype" type="string"/>
 				</parameters>
 				<set name="thisclass.m_appid" value="context.appid.toString()"/>
 				<set name="thisclass.m_eventname" value="context.eventname.toString()"/>
@@ -76,8 +76,8 @@
 			<function name="addProcessor">				
 				<parameters>
 					<parameter name="app_name" type="string"/>
-					<parameter name="event_name" type="string"/>			
-				<parameter name="eth_type" type="string"/>		
+					<parameter name="event_name" type="string"/>		
+					<parameter name="eth_type" type="string"/>		
 				</parameters>
 				<if cond="context.InstanceContainer.hasValue(context.app_name.toString())==false">
 					<then>
@@ -86,7 +86,7 @@
 							<parameters>
 								<parameter name="appid" type="string" in="context.app_name.toString()"/>
 								<parameter name="eventname" type="string" in="context.event_name.toString()"/>
-							<parameter name="ethtype" type="string" in="context.eth_type.toString()"/>
+								<parameter name="ethtype" type="string" in="context.eth_type.toString()"/>
 							</parameters>
 						</new>
 						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.packetobj"/>
@@ -112,7 +112,7 @@
 					<parameter name="strjson" type="string"/>
 					<parameter name="datapathid" type="string"/>
 					<parameter name="msgblock" type="messageblock"/>
-				</parameters>				
+				</parameters>
 				<variable name="appname" type="string"/>		
 				<variable name="eventname" type="string"/>		
 				<variable name="packetobj" type="class"/>	
@@ -153,7 +153,7 @@
 					</function>
 					
 				</for>
-			<function name="HostData">
+				<function name="HostData">
 					<parameters>
 						<parameter name="data" type="string" in="context.strjson.toString()"/>
 						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
@@ -200,7 +200,7 @@
 								<parameter name="port" type="string" in="context.local_port.toString()"/>
 							</parameters>
 						</function>
-			</then>
+					</then>
 				</if>
 				
 			</function>

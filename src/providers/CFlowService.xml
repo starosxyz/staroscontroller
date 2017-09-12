@@ -11,51 +11,51 @@
 	<class name="CFlowService">
 		<public>
 			<function name="InstallFlow">
-			<parameters>
-				<parameter name="outflowid" type="string"/>
-				<parameter name="strjson" type="string"/>
-				<parameter name="appId" type="string"/>
-				<parameter name="datapathid" type="string"/>
-			</parameters>
-			
+				<parameters>
+					<parameter name="outflowid" type="string"/>
+					<parameter name="strjson" type="string"/>
+					<parameter name="appId" type="string"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				
 				<log>##################################################################</log>
 				<log>insert CFlowService InstallFlow</log>				
 				<log><![CDATA[appId = <%=context.appId.toString()%>]]></log>	
 				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
 				<log>##################################################################</log>
-			<variable name="deviceobj" type="class"/>
-			<function name="getDevice" class="DeviceManager">
-				<parameters>
-					<parameter name="outdevice" type="class" out="context.deviceobj"/>
-						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-					</parameters>				
-			</function>
-			
+				<variable name="deviceobj" type="class"/>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="outdevice" type="class" out="context.deviceobj"/>
+							<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+						</parameters>				
+				</function>
+				
 				<if cond="context.deviceobj==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>
 				</if>
-			<variable name="flowmgrobj" type="class"/>
-			<function name="GetFlowManager" class="context.deviceobj">
-				<parameters>
-					<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
-				</parameters>			
-			</function>
-			
+				<variable name="flowmgrobj" type="class"/>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+				
 				<if cond="context.flowmgrobj==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>
 				</if>
-			<function name="InstallFlowTableRequest" class="context.flowmgrobj">
-				<parameters>
-					<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>
-					<parameter name="strjson" type="string" in="context.strjson.toString()"/>
-					<parameter name="appId" type="string" in="context.appId.toString()"/>
-				</parameters>
-			</function>
-		<log>CFlowService InstallFlow end</log>
+				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>
+						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+						<parameter name="appId" type="string" in="context.appId.toString()"/>
+					</parameters>
+				</function>
+				<log>CFlowService InstallFlow end</log>
 			</function>
 		
 		<function name="UnInstallFlow">

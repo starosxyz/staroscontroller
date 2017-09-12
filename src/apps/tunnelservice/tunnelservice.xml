@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+<!--
+	Author:
+			YY
+	Date:
+			2017-08-11
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<variable name="applicationmgr" reference="global.ApplicationManager"/>
+	<variable name="devicemgr" reference="global.DeviceManager"/>
+	<variable name="flowservice" reference="global.FlowService"/>
+	<variable name="restfulservice" reference="global.RestfulService"/>
+	<events>
+		<onevent event="bundleapp.startup">			
+			<!-- YY 2017-08-21 -->
+			<function name="RegistApplication" class="context.applicationmgr">
+				<parameters>
+					<parameter name="id" type="string" in="'tunnelservice'"/>
+					<parameter name="version" type="string" in="'1.0.0'"/>
+					<parameter name="category" type="string" in="'staros application'"/>
+					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
+					<parameter name="title" type="string" in="'Tunnel Service'"/>
+					<parameter name="desc" type="string" in="'Tunnel Service for Staros-controller'"/>		
+					<parameter name="url" type="string" in="'http://www.staros.xyz'"/>
+					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
+				</parameters>
+			</function>			
+			
+			<log>tunnelservice app startup</log>
+		</onevent>	
+		
+		<onevent event="bundleapp.active">
+			<log>tunnelservice bundleapp.active</log>
+			<function name="RegisterAPIHandler" class="restfulservice">
+				<parameters>
+					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
+					<parameter name="handleevent" type="string" in="'processapi'"/>
+					<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice'"/>			
+				</parameters>
+			</function>
+		</onevent>
+		
+		<onevent event="~bundleapp.deactive">
+			<log>tunnelservice bundleapp.deactive</log>
+		</onevent>
+		<onevent event="processapi">
+			<log>tunnelservice bundleapp.deactive</log>
+			<log><![CDATA[processapi method <%=event.getParam('method').toString()%>]]> </log>
+			<log><![CDATA[processapi eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
+		</onevent>
+		<onevent event="mytopadd">
+			
+		</onevent>
+		<onevent event="mytopremove">
+			
+		</onevent>
+		
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

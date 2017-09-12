@@ -55,8 +55,7 @@
 			</parameters>
 		</function>
 	</function>
-
-<!--YY 20170912-->
+	<!--YY 20170912-->
 	<function name="SendAddAllHost">
 		<function name="SendAddAllHostToWebClient" class="HostManager">
 			<parameters>

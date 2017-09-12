@@ -159,11 +159,11 @@
 							<if cond="context.deviceinfo != null">
 								<then>
 									<function name="GetTransportId" class="deviceinfo">
-								<parameters>
-									<parameter name="outtransport" type="string" out="transportid"/>
-								</parameters>
-							</function>
-						</then>
+										<parameters>
+											<parameter name="outtransport" type="string" out="transportid"/>
+										</parameters>
+									</function>
+								</then>
 							</if>
 						</function>
 					</then>
@@ -184,11 +184,11 @@
 						<if cond="context.deviceinfo != null">
 							<then>
 								<function name="GetTransportId" class="deviceinfo">
-							<parameters>
-								<parameter name="outtransport" type="string" out="context.devicetransportid"/>
-							</parameters>
-						</function>
-						</then>
+									<parameters>
+										<parameter name="outtransport" type="string" out="context.devicetransportid"/>
+									</parameters>
+								</function>
+							</then>
 						</if>
 						<log><![CDATA[devicetransportid =<%=context.devicetransportid.toString()%>]]></log>
 						<if cond="context.devicetransportid.toString() == context.transportid.toString()">
@@ -221,11 +221,11 @@
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="ToAddDeviceJson" class="context.switchdevice">
-							<parameters>
-								<parameter name="strjson" type="string" out="jsonstr"/>
-							</parameters>
-						</function>
-						</then>
+									<parameters>
+										<parameter name="strjson" type="string" out="jsonstr"/>
+									</parameters>
+								</function>
+							</then>
 						</if>
 						<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 							<jsonsrc src="jsonstr"/>
@@ -253,11 +253,11 @@
 						<if cond="context.srcdevice != null">
 							<then>
 								<function name="GetDatapathId" class="srcdevice">
-							<parameters>
-								<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
-							</parameters>
-						</function>
-						</then>
+									<parameters>
+										<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
+									</parameters>
+								</function>
+							</then>
 						</if>
 						<function>
 							<for var="j" from="0" to="context.deviceContainer.size()-1">
@@ -265,17 +265,17 @@
 								<if cond="context.dstdevice != null">
 									<then>
 										<function name="GetDatapathId" class="dstdevice">
-									<parameters>
-										<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
-									</parameters>
-								</function>
-								</then>
+											<parameters>
+												<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
+											</parameters>
+										</function>
+									</then>
 								</if>
 								<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 									<then>
 										<function>
 											<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>
-											<function name="getShortestPath" class="TopoService">
+																						<function name="getShortestPath" class="TopoService">
 												<parameters>												
 													<parameter name="link" type="string" in="context.strlink.toString()"/>
 													<parameter name="outjson" type="string" out="context.json"/>
@@ -354,12 +354,12 @@
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
-							<parameters>
-								<parameter name="strjson" type="string" out="jsonstr"/>
-							</parameters>
-						</function>
-						<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
-					</then>
+									<parameters>
+										<parameter name="strjson" type="string" out="jsonstr"/>
+									</parameters>
+								</function>
+								<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
+							</then>
 						</if>	
 						
 					</function>
@@ -407,11 +407,11 @@
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
-							<parameters>
-								<parameter name="strjson" type="string" out="jsonstr"/>
-							</parameters>
-						</function>
-						</then>
+									<parameters>
+										<parameter name="strjson" type="string" out="jsonstr"/>
+									</parameters>
+								</function>
+							</then>
 						</if>
 						<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
 					</function>
@@ -453,7 +453,7 @@
 						<if cond="context.thisswitch != null">
 							<then>
 								<function name="TimeOut" class="context.thisswitch"/>
-					</then>
+							</then>
 						</if>
 					</function>
 				</for>
@@ -473,11 +473,11 @@
 				<if cond="context.thisswitch != null">
 					<then>
 						<function name="ForDeviceDetailReqJson" class="thisswitch">
-					<parameters>
-						<parameter name="outjson" type="string" out="sendjsonstr"/>
-					</parameters>
-				</function>
-				</then>
+							<parameters>
+								<parameter name="outjson" type="string" out="sendjsonstr"/>
+							</parameters>
+						</function>
+					</then>
 				</if>
 				<log><![CDATA[DeviceDetailsReqJson sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
@@ -506,11 +506,11 @@
 							<if cond="context.srcdevice != null">
 								<then>
 									<function name="GetDatapathId" class="srcdevice">
-								<parameters>
-									<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
-								</parameters>
-							</function>
-							</then>
+										<parameters>
+											<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
+										</parameters>
+									</function>
+								</then>
 							</if>
 							<function>
 								<for var="j" from="0" to="context.deviceContainer.size()-1">
@@ -518,11 +518,11 @@
 									<if cond="context.srcdevice != null">
 										<then>
 											<function name="GetDatapathId" class="dstdevice">
-										<parameters>
-											<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
-										</parameters>
-									</function>
-									</then>
+												<parameters>
+													<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
+												</parameters>
+											</function>
+										</then>
 									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
@@ -639,11 +639,11 @@
 							<if cond="context.srcdevice != null">
 								<then>
 									<function name="GetDatapathId" class="srcdevice">
-								<parameters>
-									<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
-								</parameters>
-							</function>
-							</then>
+										<parameters>
+											<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
+										</parameters>
+									</function>
+								</then>
 							</if>	
 							<function>
 								<for var="j" from="0" to="context.deviceContainer.size()-1">
@@ -651,11 +651,11 @@
 									<if cond="context.dstdevice != null">
 										<then>
 											<function name="GetDatapathId" class="dstdevice">
-										<parameters>
-											<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
-										</parameters>
-									</function>
-									</then>
+												<parameters>
+													<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
+												</parameters>
+											</function>
+										</then>
 									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
@@ -741,11 +741,11 @@
 				<if cond="context.deviceobject != null">
 					<then>
 						<function name="SendDetails" class="deviceobject">
-					<parameters>
-						<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-					</parameters>	
-				</function>
-			</then>
+							<parameters>
+								<parameter name="transportid" type="string" in="context.transportid.toString()"/>
+							</parameters>	
+						</function>
+					</then>
 				</if>
 			</function>
 			<!--Send Packet To All Port By DeviceId-->
@@ -764,18 +764,19 @@
 						<if cond="context.device != null">
 							<then>
 								<function name="PacketOutToAllPort" class="context.device">
-							<parameters>	
-								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
-								<parameter name="msgblock" type="messageblock" in="context.msgblock"/>								
-							</parameters>
-						</function>		
+									<parameters>	
+										<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+										<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+										<parameter name="msgblock" type="messageblock" in="context.msgblock"/>								
+									</parameters>
+								</function>	
+							</then>
+						</if>
 					</then>
 				</if>
-			</then>
-				</if>
 			</function>
-						<!--
+			
+			<!--
 				PacketOutToAllDevicePort function Author: qiulei
 				Date: 20170912 am
 				effect(作用):向所有设备上的端口发,
@@ -816,8 +817,7 @@
 					<parameter name="inportid" type="string"/>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				
-<variable name="device" type="class"/>
+				<variable name="device" type="class"/>
 				<log>PacketOutToPort !!!!!!!!!!!!!!</log>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
@@ -825,16 +825,16 @@
 						<if cond="context.device != null">
 							<then>
 								<function name="PacketOutToPort" class="context.device">
-							<parameters>
-								<parameter name="outputport" type="string" in="context.outputport.toString()"/>
-								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
-								<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
-								<parameter name="inportid" type="string" in="context.inportid.toString()"/>
-							</parameters>
-						</function>
+									<parameters>
+										<parameter name="outputport" type="string" in="context.outputport.toString()"/>
+										<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+										<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+										<parameter name="inportid" type="string" in="context.inportid.toString()"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
 					</then>
-				</if>
-			</then>
 				</if>
 			</function>
 			
@@ -842,21 +842,21 @@
 				<parameters>	
 					<parameter name="transportid" type="string"/>
 				</parameters>
-				<variable name="device" type="class"/>
+				<variable name="device" type="class"/>				
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 						<if cond="context.device != null">
 							<then>
 								<function name="PacketOutToAllPort" class="context.device">
-							<parameters>	
-								<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-								<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
-							</parameters>
-						</function>		
+									<parameters>	
+										<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+										<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
+									</parameters>
+								</function>	
+							</then>
+						</if>	
 					</then>
-				</if>			
-			</then>
 				</if>			
 			</function>
 			<function name="SendTableRequest">
@@ -867,7 +867,7 @@
 						<if cond="context.device != null">
 							<then>
 								<function name="SendTableRequest" class="device"/>
-					</then>
+							</then>
 						</if>
 					</function>
 				</for>
@@ -885,13 +885,13 @@
 						<if cond="context.device != null">
 							<then>
 								<function name="GetPortsStateJsonData" class="context.device">
-							<parameters>	
-								<parameter name="jsonstring" type="string" out="context.jsonstring"/>
-							</parameters>
-						</function>		
+									<parameters>	
+										<parameter name="jsonstring" type="string" out="context.jsonstring"/>
+									</parameters>
+								</function>	
+							</then>
+						</if>		
 					</then>
-				</if>
-			</then>
 				</if>
 			</function>
 			
@@ -920,7 +920,8 @@
 				</for>
 				<log>===========DumpT2dEnd===============</log>
 			</function>
-					<!-- qiulei 20170912 am  Get the number of devices-->
+			
+			<!-- qiulei 20170912 am  Get the number of devices-->
 			<function name="GetDeviceCounts">
 				<parameters>
 					<parameter name="deviceCounts" type="long"/>	

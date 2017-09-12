@@ -38,7 +38,7 @@
 		<private>
 			<container name="tableContainer" type="hashmap" keytype="string" valuetype="class"/>
 			<variable name="m_transportid" type="string"/>
-		<variable name="m_tablejson" type="string"/>
+			<variable name="m_tablejson" type="string"/>
 		</private>
 		<public>
 
@@ -104,7 +104,7 @@
 			
 			<function name="SendTableRequest">
 				<variable name="xid" type="long"/>
-				<log>SendTableRequest !!!!!!!!!!!!!hu</log>
+				<!--<log>SendTableRequest !!!!!!!!!!!!!hu</log>-->
 				
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="tablestatslist" type="list"  valuetype="string"/>
@@ -118,8 +118,8 @@
 				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
 					<set name="thisclass.m_tablejson" value="event.getParam('eventdata').toString()"/>
 				</wait>
-				</function>
-					<!-- 
+			</function>
+			<!-- 
 				YY 20170831
 				return TableManager's data
 				1) put TableManager's variable m_tablejson package in JSON
@@ -129,25 +129,25 @@
 									type :	string
 									style :	out
 			-->
-					<function name="GetTableData">
-						<parameters>
-							<parameter name="data" type="string" />
-						</parameters>
-					<variable name="outjsonstring" type="string"/>
+			<function name="GetTableData">
+				<parameters>
+					<parameter name="data" type="string"/>
+				</parameters>				
+				<variable name="outjsonstring" type="string"/>
 				<script><![CDATA[
-							var payload = new Object();
-							var tablelist = JSON.parse(thisclass.m_tablejson.toString());
-							
-							var json = new Object();
-							json.event = "tableDataResponse";
-							var twoobject = new Object();
-							twoobject.no_rows_msg = "No tables found";
-							payload.tables = tablelist.tablestatslist;
-							payload.annots = twoobject;
-							json.payload = payload;
-							var strjson=JSON.stringify(json);												
-							context.outjsonstring.setValue(strjson);								
-						]]></script>				
+					var payload = new Object();
+					var tablelist = JSON.parse(thisclass.m_tablejson.toString());
+					
+					var json = new Object();
+					json.event = "tableDataResponse";
+					var twoobject = new Object();
+					twoobject.no_rows_msg = "No tables found";
+					payload.tables = tablelist.tablestatslist;
+					payload.annots = twoobject;
+					json.payload = payload;
+					var strjson=JSON.stringify(json);												
+					context.outjsonstring.setValue(strjson);								
+				]]></script>				
 				<set name="data" value="context.outjsonstring.toString()"/>
 			</function>
 		</public>
