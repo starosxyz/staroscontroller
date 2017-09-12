@@ -3,7 +3,6 @@
 	<function name="HandlehostDataRequest">
 	<variable name="outjson" type="string"/>
 		<log>HandlehostDataRequest</log>
-		<!--hupeng 20170731-->
 		<function name="GetHostJsonData" class="HostManager">	
 			<parameters>
 				<parameter name="jsonstring" type="string" out="context.outjson"/>
@@ -13,4 +12,82 @@
 			<jsonsrc src="outjson"/>
 			</websocket>		
 		</function>
+	<function name="HandleHostLinkRequest">
+		<variable name="json_key" type="string"/>
+		<variable name="json_insts" type="string" value=""/>
+		<variable name="json_summary" type="string" value=""/>
+		<variable name="json_detail" type="string" value=""/>
+		<variable name="json_hosts" type="string" value=""/>
+		<variable name="json_offdev" type="string" value=""/>
+		<variable name="json_dlbls" type="string" value=""/>
+		<variable name="json_porthl" type="string" value=""/>
+		<variable name="json_bg" type="string" value=""/>
+		<variable name="json_spr" type="string" value=""/>
+		<variable name="json_ovid" type="string" value=""/>
+		<variable name="json_toolbar" type="string" value=""/>
+		<variable name="json_type" type="string"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam("eventdata").toString());
+			var key = info.payload.key;
+			if (key=="topo_prefs")
+			{
+				var insts = info.payload.value.insts;
+				var summary = info.payload.value.summary;
+				var detail = info.payload.value.detail;
+				var hosts = info.payload.value.hosts;
+				var offdev = info.payload.value.offdev;
+				var dlbls = info.payload.value.dlbls;
+				var porthl = info.payload.value.porthl;
+				var bg = info.payload.value.bg;
+				var spr = info.payload.value.spr;
+				var ovid = info.payload.value.ovid;
+				var toolbar = info.payload.value.toolbar;
+				context.print("key="+key);
+				context.print("insts="+insts);
+				context.json_key.setValue(key);
+				context.json_insts.setValue(insts);
+				context.json_summary.setValue(summary);
+				context.json_detail.setValue(detail);
+				context.json_hosts.setValue(hosts);
+				context.json_offdev.setValue(offdev);
+				context.json_dlbls.setValue(dlbls);
+				context.json_porthl.setValue(porthl);
+				context.json_bg.setValue(bg);
+				context.json_spr.setValue(spr);
+				context.json_ovid.setValue(ovid);
+				context.json_toolbar.setValue(toolbar);
+				context.json_type.setValue("0");
+			}
+			else if (key=="topo_mapid")
+			{
+				context.json_type.setValue("1");
+			}
+			else
+			{
+				context.json_type.setValue("2");
+			}
+		]]></script>
+		<variable name="json" type="string"/>
+		<function name="GetHostLinkJsonData" class="HostManager">
+			<parameters>
+				<parameter name="key" type="string" in="context.json_key.toString()"/>
+				<parameter name="insts" type="string" in="context.json_insts.toString()"/>
+				<parameter name="summary" type="string" in="context.json_summary.toString()"/>
+				<parameter name="detail" type="string" in="context.json_detail.toString()"/>
+				<parameter name="hosts" type="string" in="context.json_hosts.toString()"/>
+				<parameter name="offdev" type="string" in="context.json_offdev.toString()"/>
+				<parameter name="dlbls" type="string" in="context.json_dlbls.toString()"/>
+				<parameter name="porthl" type="string" in="context.json_porthl.toString()"/>
+				<parameter name="bg" type="string" in="context.json_bg.toString()"/>
+				<parameter name="spr" type="string" in="context.json_spr.toString()"/>
+				<parameter name="ovid" type="string" in="context.json_ovid.toString()"/>
+				<parameter name="toolbar" type="string" in="context.json_toolbar.toString()"/>
+				<parameter name="type" type="string" in="context.json_type.toString()"/>				
+				<parameter name="outjson" type="string" out="context.json"/>
+			</parameters>			
+		</function>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="json"/>
+		</websocket>
+	</function>
 </starosxml>

@@ -13,15 +13,18 @@
 			<variable name="m_appid" type="string"/>
 			<variable name="m_eventname" type="string"/>
 			<variable name="m_packets" type="long"/>			
+		<variable name="m_ethtype" type="string"/>		
 		</private>
 		<public>
 			<function name="CPacket">
 				<parameters>
 					<parameter name="appid" type="string"/>
 					<parameter name="eventname" type="string"/>
+				<parameter name="ethtype" type="string"/>
 				</parameters>
 				<set name="thisclass.m_appid" value="context.appid.toString()"/>
 				<set name="thisclass.m_eventname" value="context.eventname.toString()"/>
+				<set name="thisclass.m_ethtype" value="context.ethtype.toString()"/>
 				<set name="thisclass.m_packets" value="0"/>
 			</function>
 			
@@ -74,6 +77,7 @@
 				<parameters>
 					<parameter name="app_name" type="string"/>
 					<parameter name="event_name" type="string"/>			
+				<parameter name="eth_type" type="string"/>		
 				</parameters>
 				<if cond="context.InstanceContainer.hasValue(context.app_name.toString())==false">
 					<then>
@@ -82,6 +86,7 @@
 							<parameters>
 								<parameter name="appid" type="string" in="context.app_name.toString()"/>
 								<parameter name="eventname" type="string" in="context.event_name.toString()"/>
+							<parameter name="ethtype" type="string" in="context.eth_type.toString()"/>
 							</parameters>
 						</new>
 						<insert name="InstanceContainer" key="context.app_name.toString()" value="context.packetobj"/>
@@ -108,9 +113,6 @@
 					<parameter name="datapathid" type="string"/>
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>				
-				<log>##########################20170917 YY#########################</log>
-				<log><![CDATA[ProcessPacket's strjson = <%=context.strjson.toString()%>]]></log>
-				<log>##########################20170917 YY#########################</log>
 				<variable name="appname" type="string"/>		
 				<variable name="eventname" type="string"/>		
 				<variable name="packetobj" type="class"/>	
@@ -119,7 +121,6 @@
 				<variable name="getpacketcount" type="long"/>			
 				<messageblock name="tempmsgblock"/>
 				<set name="tempmsgblock" value="context.msgblock"/>
-				<log><![CDATA[tempmsgblock=<%=context.tempmsgblock.getChainedLength()%>]]></log>
 				<for var="i" from="0" to="context.InstanceContainer.size()-1">
 					<set name="appname" value="context.InstanceContainer.getKeyByIndex(context.i.toLong())"/>
 					<set name="packetobj" value="context.InstanceContainer.getValueByIndex(context.i.toLong())"/>
@@ -165,8 +166,6 @@
 					<parameter name="data" type="string"/>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				<log><![CDATA[HostData's data = <%=context.data.toString()%>]]></log>
-				<log><![CDATA[HostData's datapathid = <%=context.datapathid.toString()%>]]></log>
 				<variable name="local_mac" type="string"/>
 				<variable name="local_ip" type="string"/>
 				<variable name="local_vlan" type="string"/>

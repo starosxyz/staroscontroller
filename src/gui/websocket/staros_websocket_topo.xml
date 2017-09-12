@@ -15,6 +15,7 @@
 		<function>
 			<function name="SendAddInstance"/>
 			<function name="SendAddAllDevice"/>
+			<function name="SendAddAllHost"/>
 			<function name="SendAddAllLink"/>
 		</function>
 	</function>
@@ -22,6 +23,7 @@
 		<function>
 			<function name="SendAddInstance"/>
 			<function name="SendAddAllDevice"/>
+			<function name="SendAddAllHost"/>
 			<function name="SendAddAllLink"/>
 			<function name="topoStartDone"/>
 		</function>
@@ -54,6 +56,14 @@
 		</function>
 	</function>
 
+<!--YY 20170912-->
+	<function name="SendAddAllHost">
+		<function name="SendAddAllHostToWebClient" class="HostManager">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+			</parameters>
+		</function>
+	</function>
 	<!--qiulei 20170912 am -->
 	<variable name="deviceCounts" type="long"/>
 	<function name="GetDeviceCounts" class="DeviceManager">

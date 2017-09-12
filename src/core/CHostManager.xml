@@ -47,7 +47,53 @@
 						context.jsonstring.setValue(strjson);
 					]]></script>
 					</function>
-						</public>
+						<function name="ToAddHost2Json">
+				<parameters>
+					<parameter name="strjson" type="string"/>
+				</parameters>
+				<variable name="addhostjson" type="string"/>
+				<reference variable="addhostjson">
+					<jsonbody>
+						<![CDATA[
+							{
+								"event":"addHost",
+								"payload":
+								{
+									"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+									"type":"endstation",
+									"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+									"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+									"cp":
+									{
+										"device":"<%=thisclass.m_deviceid.toString()%>",
+										"port":<%=thisclass.m_port.toString()%>
+									},
+									"labels":
+										[
+											"<%=thisclass.m_ip.toString()%>",
+											"<%=thisclass.m_mac.toString()%>"
+										],
+									"props":{},
+									"metaUi":
+									{
+										"x":317.73021781939826,
+										"y":199.57886255805693,
+										"equivLoc":
+										{
+										"lng":-98.18860657853635,
+										"lat":43.492555430485986
+										}
+									}
+								}
+							}	
+						]]>
+					</jsonbody>
+				</reference>
+				<log><![CDATA[ToAddHost2Json = <%=context.addhostjson.toString()%>]]></log>
+				<set name="strjson" value="context.addhostjson.toString()"/>
+				
+			</function>
+		</public>
 					</class>
 				<class name="CHostManager">
 		<private>
@@ -79,26 +125,6 @@
 				<insert name="hostContainer" key="context.mac+'/'+context.vlan" value="context.hostobj"/>
 			</function>
 
-			<function name="addhostest">
-				<function name="addHost">
-					<parameters>
-						<parameter name="mac" type="string" in="'00:00:00:01:01:01'"/>		
-						<parameter name="ip" type="string"  in="'10.1.1.1'"/>	
-						<parameter name="vlan" type="string"  in="'None'"/>
-						<parameter name="deviceid" type="string"  in="'of:1'"/>	
-						<parameter name="port" type="string"  in="'2'"/>				
-					</parameters>
-				</function>
-				<function name="addHost">
-					<parameters>
-						<parameter name="mac" type="string" in="'00:00:00:01:01:02'"/>		
-						<parameter name="ip" type="string"  in="'10.1.1.2'"/>	
-						<parameter name="vlan" type="string"  in="'None'"/>
-						<parameter name="deviceid" type="string"  in="'of:3'"/>	
-						<parameter name="port" type="string"  in="'3'"/>				
-					</parameters>
-				</function>
-				</function>
 			<function name="printhostmanager">
 				<variable name="onehostinfo" type="class"/>
 				<for var="i" from="0" to="context.hostContainer.size()-1">
@@ -148,6 +174,131 @@
 						var strjson=JSON.stringify(json);
 						context.jsonstring.setValue(strjson);
 					]]></script>
+			</function>
+		<function name="GetHostLinkJsonData">
+				<parameters>
+					<parameter name="key" type="string"/>
+					<parameter name="insts" type="string"/>
+					<parameter name="summary" type="string"/>
+					<parameter name="detail" type="string"/>
+					<parameter name="hosts" type="string"/>
+					<parameter name="offdev" type="string"/>
+					<parameter name="dlbls" type="string"/>
+					<parameter name="porthl" type="string"/>
+					<parameter name="bg" type="string"/>
+					<parameter name="spr" type="string"/>
+					<parameter name="ovid" type="string"/>
+					<parameter name="toolbar" type="string"/>
+					<parameter name="type" type="string"/>
+					<parameter name="outjson" type="string"/>					
+				</parameters>				
+				<if cond="context.type.toString()==0">
+					<then>
+						<script><![CDATA[
+							var json = new Object();
+							json.event = "updatePrefs";
+							var payload = new Object();
+							var oneobject = new Object();
+							oneobject.insts = context.insts.toString();
+							oneobject.summary = context.summary.toString();
+							oneobject.detail = context.detail.toString();
+							oneobject.hosts = context.hosts.toString();
+							oneobject.offdev = context.offdev.toString();
+							oneobject.dlbls = context.dlbls.toString();
+							oneobject.porthl = context.porthl.toString();
+							oneobject.bg = context.bg.toString();
+							oneobject.spr = context.spr.toString();
+							oneobject.ovid = context.ovid.toString();
+							oneobject.toolbar = context.toolbar.toString();
+							/*
+							var twoobject = new Object();
+							twoobject.mapid = "usa";
+							twoobject.mapscale = "1";
+							twoobject.mapfilepath = "*continental_us";
+							twoobject.tint = "off";
+							*/
+							/*
+							var threeobject = new Object();
+							threeobject.tx = 0;
+							threeobject.ty = 0;
+							threeobject.sc = 1;
+							*/
+							//var p_one = context.key.toString();
+							payload.topo_prefs = oneobject;
+							//payload[topo_mapid] = twoobject;
+							//payload[topo_zoom] = threeobject;
+							json.payload = payload;
+							var strjson = JSON.stringify(json);
+							context.outjson.setValue(strjson);
+							context.print("#####################topo_prefs############################");
+							context.print(context.outjson.toString());
+						]]></script>
+					</then>
+					<else>
+						<if cond="context.type.toString()==1">
+							<then>
+								<script><![CDATA[
+									var json = new Object();
+									json.event = "updatePrefs";
+									var payload = new Object();
+									var twoobject = new Object();
+									twoobject.mapid = "usa";
+									twoobject.mapscale = "1";
+									twoobject.mapfilepath = "*continental_us";
+									twoobject.tint = "off";
+									payload.topo_mapid = twoobject;
+									json.payload = payload;
+									var strjson = JSON.stringify(json);
+									context.outjson.setValue(strjson);
+									context.print("#####################topo_mapid############################");
+									context.print(context.outjson.toString());
+								]]></script>
+							</then>
+							<else>
+								<script><![CDATA[
+									var json = new Object();
+									json.event = "updatePrefs";
+									var payload = new Object();
+									var threeobject = new Object();
+									threeobject.tx = 0;
+									threeobject.ty = 0;
+									threeobject.sc = 1;
+									payload.topo_zoom = threeobject;
+									json.payload = payload;
+									var strjson = JSON.stringify(json);
+									context.outjson.setValue(strjson);
+									context.print("#####################topo_zoom############################");
+									context.print(context.outjson.toString());
+								]]></script>
+							</else>
+						</if>
+					</else>
+				</if>
+			</function>
+			<function name="SendAddAllHostToWebClient">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				</parameters>
+				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
+				<log>CHostManager SendAddAllHostToWebClient</log>
+				<variable name="sendjsonstr" type="string"/>				
+				<variable name="hostobj" type="class"/>				
+				<for var="i" from="0" to="context.hostContainer.size()-1">
+					<set name="hostobj" value="context.hostContainer.getValueByIndex(context.i.toString())"/>
+					<if cond="context.hostobj!=null">
+						<then>
+							<function name="ToAddHost2Json" class="context.hostobj">
+								<parameters>
+									<parameter name="strjson" type="string" out="context.sendjsonstr"/>
+								</parameters>
+							</function>
+							<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+								<jsonsrc src="sendjsonstr"/>
+							</websocket>
+						</then>
+					</if>										
+					
+				</for>				
 			</function>
 		</public>
 	</class>

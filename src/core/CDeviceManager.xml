@@ -243,6 +243,7 @@
 				<variable name="srcdevicedpid" type="string"/>
 				<variable name="dstdevicedpid" type="string"/>
 				<variable name="dstport" type="string"/>
+				<variable name="json" type="string"/>
 				<variable name="strlink" type="string" value=""/>
 				<variable name="binvalidlink" type="string" value="false"/>
 				<for var="i" from="0" to="context.deviceContainer.size()-1">
@@ -274,6 +275,13 @@
 									<then>
 										<function>
 											<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>
+											<function name="getShortestPath" class="TopoService">
+												<parameters>												
+													<parameter name="link" type="string" in="context.strlink.toString()"/>
+													<parameter name="outjson" type="string" out="context.json"/>
+												</parameters>												
+											</function>
+											
 											<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 												<script><![CDATA[
 														if (context.strlink.toString().length>0)
