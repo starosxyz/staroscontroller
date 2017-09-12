@@ -22,7 +22,6 @@ StarOS-Controller
 * 支持自定义类类型
 * 支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.
 * 支持container容器类型。 容器有list, hashmap, array等类型.
-Checkout our [website](http://www.staros.xyz)
 
 ### 开始
 ```
