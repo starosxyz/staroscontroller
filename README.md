@@ -43,7 +43,7 @@ Checkout our [website](http://www.staros.xyz)
 # starosctl listapp 
 # starosctl stopapp [appid] 
 ```
-### 路径
+### GUI
 * 控制器登UI地址:
 http://ip:9922/onos/ui/index.html
 
