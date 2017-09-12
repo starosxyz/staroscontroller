@@ -54,6 +54,14 @@
 		</function>
 	</function>
 
+	<!--qiulei 20170912 am -->
+	<variable name="deviceCounts" type="long"/>
+	<function name="GetDeviceCounts" class="DeviceManager">
+		<parameters>
+			<parameter name="deviceCounts" type="long" out="context.deviceCounts.toLong()"/>/>	
+		</parameters>
+	</function>
+	
 	<function name="ShowSummary">
 		<variable name="sendstrjson" type="string"/>
 		<function>
@@ -82,7 +90,7 @@
 						{
 						"Version":"1.10.0",
 						"-":"",
-						"Devices":"1",
+						"Devices":"<%=context.deviceCounts.toString()%>",
 						"Links":"0",
 						"Hosts":"0",
 						"Topology SCCs":"1",

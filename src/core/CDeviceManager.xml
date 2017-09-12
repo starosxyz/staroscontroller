@@ -767,6 +767,38 @@
 			</then>
 				</if>
 			</function>
+						<!--
+				PacketOutToAllDevicePort function Author: qiulei
+				Date: 20170912 am
+				effect(作用):向所有设备上的端口发,
+				thinking analysis(思路分析):通过deviceContainer 遍历所有device,
+											得到device对象调用该对象的PacketOutToAllPort方法向device设备上的所有端口发,-->
+			<function name="PacketOutToAllDevicePort">	
+				<parameters>
+					<parameter name="inportid" type="string"/>	
+					<parameter name="pkoutjson" type="string"/>
+					<parameter name="msgblock" type="messageblock"/>
+				</parameters>
+				
+				<variable name="device" type="class"/>
+				
+				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+					<function>
+						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<if cond="context.device != null">
+							<function name="PacketOutToAllPort" class="context.device">
+								<parameters>	
+									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
+									<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
+									<parameter name="msgblock" type="messageblock" in="context.msgblock"/>								
+								</parameters>
+							</function>
+						</if>
+					</function>
+				</for>
+			</function>
+
+			
 			<!--qiulei 2017.08.23   Send Packet To one Port By DeviceId   -->
 			<function name="PacketOutToPort">
 				<parameters>
@@ -879,6 +911,13 @@
 					<log><![CDATA[t2dkey=<%=context.t2dkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpT2dEnd===============</log>
+			</function>
+					<!-- qiulei 20170912 am  Get the number of devices-->
+			<function name="GetDeviceCounts">
+				<parameters>
+					<parameter name="deviceCounts" type="long"/>	
+				</parameters>
+				<set name="deviceCounts" value="context.deviceContainer.size()"/>	
 			</function>
 		</public>
 	</class>
