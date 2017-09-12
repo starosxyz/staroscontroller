@@ -45,12 +45,12 @@ Checkout our [website](http://www.staros.xyz)
 ```
 ### 路径
 ```
-# onos登录页面地址:
+# 控制器登UI地址:
 # http://ip:9922/onos/ui/index.html
 #
-# 控制器开发手册页面地址:
+# 控制器开发手册文档地址:
 # http://ip:9922/onos/v1/docs/index.html
 #
-# 控制器页面地址:
+# StarOS系统配置界面:
 # https://ip:8282/starcore/ui/index.html
 ```
