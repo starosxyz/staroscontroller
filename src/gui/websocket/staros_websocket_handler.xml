@@ -14,6 +14,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_showHighlights.xml"/>
 	<!--hupeng 20170804-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_host.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_tunnel.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_apps.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_settings.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_flows.xml"/>

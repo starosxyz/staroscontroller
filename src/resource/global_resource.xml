@@ -21,6 +21,8 @@
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 
+<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
+
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
 	<variable name="ClusterManager" type="class" global="true"/>
@@ -37,6 +39,7 @@
 	<variable name="FlowService" type="class" global="true"/>
 	<variable name="SessionManager" type="class" global="true"/>
 
+<variable name="TunnelManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -56,5 +59,6 @@
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 		<new name="SessionManager" class="CSessionManager"/>
+	<new name="TunnelManager" class="CTunnelManager"/>
 	</function>
 </starosxml>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+		<!--
+			Author:
+					hupeng
+			Date:
+					2017-09-12
+			Copyright: 
+					Nanjing StarOS Inc. All rights reserved.
+		-->
+	<class name="CTunnel">
+		<private>
+			<variable name="m_id" type="string"/>		
+			<variable name="m_name" type="string"/>
+			<variable name="m_one" type="string"/>
+			<variable name="m_two" type="string"/>				
+			<variable name="m_type" type="string"/>
+			<variable name="m_groupid" type="string"/>	
+			<variable name="m_bandwidth" type="string"/>
+			<variable name="m_path" type="string"/>
+		</private>
+		<public>
+			<function name="CTunnel">
+				<parameters>
+					<parameter name="id" type="string"/>		
+					<parameter name="name" type="string"/>	
+					<parameter name="one" type="string"/>
+					<parameter name="two" type="string"/>	
+					<parameter name="type" type="string"/>
+					<parameter name="groupid" type="string"/>
+					<parameter name="bandwidth" type="string"/>
+					<parameter name="path" type="string"/>
+				</parameters>
+					<set name="thisclass.m_id" value="context.id.toString()"/>
+					<set name="thisclass.m_name" value="context.name.toString()"/>
+					<set name="thisclass.m_one" value="context.one.toString()"/>
+					<set name="thisclass.m_two" value="context.two.toString()"/>
+					<set name="thisclass.m_type" value="context.type.toString()"/>
+					<set name="thisclass.m_groupid" value="context.groupid.toString()"/>
+					<set name="thisclass.m_bandwidth" value="context.bandwidth.toString()"/>
+					<set name="thisclass.m_path" value="context.path.toString()"/>
+				
+			</function>
+			<function name="printtunnel">
+				<log><![CDATA[m_mac <%=thisclass.m_id.toString()%>]]></log>
+				<log><![CDATA[m_ip <%=thisclass.m_name.toString()%>]]></log>
+				<log><![CDATA[m_vlan <%=thisclass.m_one.toString()%>]]> </log>
+				<log><![CDATA[m_deviceid <%=thisclass.m_two.toString()%>]]> </log>
+				<log><![CDATA[m_port <%=thisclass.m_type.toString()%>]]></log>
+				<log><![CDATA[m_port <%=thisclass.m_groupid.toString()%>]]></log>
+				<log><![CDATA[m_port <%=thisclass.m_bandwidth.toString()%>]]></log>
+				<log><![CDATA[m_port <%=thisclass.m_path.toString()%>]]></log>
+			</function>
+			<function name="ToString">
+				<parameters>
+					<parameter name="jsonstring" type="string" out="context.outjson"/>
+				</parameters>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.id=thisclass.m_id.toString();
+						onearray.name=thisclass.m_name.toString();
+						onearray.one=thisclass.m_one.toString();
+						onearray.two=thisclass.m_two.toString();
+						onearray.type=thisclass.m_type.toString();
+						onearray.group_id=thisclass.m_groupid.toString();
+						onearray.bandwidth=thisclass.m_bandwidth.toString();
+						onearray.path=thisclass.m_path.toString();
+						var strjson=JSON.stringify(onearray);
+						context.jsonstring.setValue(strjson);
+					]]></script>
+			</function>
+		</public>
+	</class>
+	<class name="CTunnelManager">
+		<private>
+			<container name="tunnelContainer" type="hashmap" keytype="string" valuetype="class"/>
+		</private>
+		<public>
+			<function name="CTunnelManager">
+				<log>CHostManager is create</log>
+				<function name="addtunneltest"/>
+			</function>
+			<function name="addTunnel">
+				<parameters>
+					<parameter name="id" type="string"/>		
+					<parameter name="name" type="string"/>	
+					<parameter name="one" type="string"/>
+					<parameter name="two" type="string"/>	
+					<parameter name="type" type="string"/>
+					<parameter name="groupid" type="string"/>
+					<parameter name="bandwidth" type="string"/>
+					<parameter name="path" type="string"/>				
+				</parameters>
+				<variable name="tunnelobj" type="class"/>	
+				<new name="tunnelobj" class="CTunnel">
+					<parameters>
+					<parameter name="id" type="string" in="context.id.toString()"/>		
+					<parameter name="name" type="string" in="context.name.toString()"/>	
+					<parameter name="one" type="string" in="context.one.toString()"/>
+					<parameter name="two" type="string" in="context.two.toString()"/>	
+					<parameter name="type" type="string" in="context.type.toString()"/>
+					<parameter name="groupid" type="string" in="context.groupid.toString()"/>
+					<parameter name="bandwidth" type="string" in="context.bandwidth.toString()"/>
+					<parameter name="path" type="string" in="context.path.toString()"/>			
+				</parameters>
+				</new>
+				<insert name="tunnelContainer" key="context.id.toString()" value="context.tunnelobj"/>
+			</function>
+			
+			<function name="addtunneltest">
+				<function name="addTunnel">
+					<parameters>
+					<parameter name="id" type="string" in="'1'"/>		
+					<parameter name="name" type="string" in="'tunnel1'"/>	
+					<parameter name="one" type="string" in="'one'"/>
+					<parameter name="two" type="string" in="'two'"/>	
+					<parameter name="type" type="string" in="'tunnel'"/>
+					<parameter name="groupid" type="string" in="'tunnel'"/>
+					<parameter name="bandwidth" type="string" in="'4'"/>
+					<parameter name="path" type="string" in="'/opt/staros'"/>							
+					</parameters>
+				</function>
+				<function name="addTunnel">
+					<parameters>
+					<parameter name="id" type="string" in="'2'"/>		
+					<parameter name="name" type="string" in="'tunnel2'"/>	
+					<parameter name="one" type="string" in="'one'"/>
+					<parameter name="two" type="string" in="'two'"/>	
+					<parameter name="type" type="string" in="'tunnel'"/>
+					<parameter name="groupid" type="string" in="'tunnel'"/>
+					<parameter name="bandwidth" type="string" in="'4'"/>
+					<parameter name="path" type="string" in="'/opt/staros'"/>			
+					</parameters>
+				</function>
+			</function>
+			
+			<function name="removetunnel">
+				<parameters>
+					<parameter name="id" type="string"/>					
+				</parameters>
+				<if cond="context.tunnelContainer.hasValue(context.id.toString())==true">
+					<then>
+						<remove name="tunnelContainer" key="context.id.toString()"/>
+					</then>
+				</if>	
+			</function>
+
+			<function name="printtunnelmanager">
+				<variable name="onetunnelinfo" type="class"/>
+				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+					<function>
+						<set name="onetunnelinfo" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="printtunnel" class="context.onetunnelinfo"/>
+					</function>
+				</for>
+			</function>
+			<function name="GetTunnelJsonData">
+				<parameters>
+					<parameter name="jsonstring" type="string"/>
+				</parameters>
+				<log>Ctunnelmanager GetTunnelJsonData</log>
+				<log><![CDATA[tunnelContainer !!!!!<%=context.tunnelContainer.size()%>]]></log>
+				<variable name="outjson" type="string"/>
+				<variable name="onetunnelinfo" type="class"/>
+				<container name="tunnellist" type="list" valuetype="string"/>
+				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+					<function>
+						<set name="onetunnelinfo" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+						<function name="ToString" class="context.onetunnelinfo">
+							<parameters>
+								<parameter name="jsonstring" type="string" out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="tunnellist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array();                               
+					for(var i=0;i<context.tunnellist.size();i++)
+					{
+						var tunnel = context.tunnellist.getValueByIndex(i);									
+						var info = JSON.parse(tunnel);	
+						myArray.push(info);
+					}
+					json['event']='tunnelDataResponse';	
+					var payload = new Object();
+					payload['tunnels']=myArray;
+					json['payload']=payload;
+					
+					var msg = new Object();
+					msg["No tunnels found"]="No tunnels found";
+					info["annots"]=msg;
+					var strjson=JSON.stringify(json);
+					context.print(strjson);
+					context.jsonstring.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starosxml>
