@@ -44,13 +44,11 @@ Checkout our [website](http://www.staros.xyz)
 # starosctl stopapp [appid] 
 ```
 ### 路径
-```
-# 控制器登UI地址:
-# http://ip:9922/onos/ui/index.html
-#
-# 控制器开发手册文档地址:
-# http://ip:9922/onos/v1/docs/index.html
-#
-# StarOS系统配置界面:
-# https://ip:8282/starcore/ui/index.html
-```
+* 控制器登UI地址:
+http://ip:9922/onos/ui/index.html
+
+* 控制器开发手册文档地址:
+ http://ip:9922/onos/v1/docs/index.html
+
+* StarOS系统配置界面:
+https://ip:8282/starcore/ui/index.html
