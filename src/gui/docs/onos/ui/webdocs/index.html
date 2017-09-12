@@ -29,12 +29,14 @@
 						<li><a href="#starlang" class="cc-active">StarLang编程语言</a></li>
 						<!--20170906 qiulei  WEB 登录界面-->
 						<li><a href="#webLoginInterface" class="cc-active">WEB 登录界面</a></li>
+						<!--20170911 qiulei-->
+						<li><a href="#runProgramming" class="cc-active">运行应用程序</a></li>
 
 						<li class="separator"></li>
 						<li><strong>编程指南</strong></li>
 						<li><a href="#class_type" class="cc-active">类</a></li>
 						<li><a href="#function_style" class="cc-active">函数编程</a></li>
-						<li><a href="#js_style" class="cc-active">Javscript编程</a></li>
+						<li><a href="#js_style" class="cc-active">Javascript编程</a></li>
 						<!--qiulei 20170829 add image  -->
 						<li><a href="#for_style" class="cc-active">XML中的for循环语法</a></li>
 						<li><a href="#if_style" class="cc-active">XML中的if判断语法</a></li>
@@ -44,6 +46,8 @@
 						<li><a href="#useHasmap_style" class="cc-active">如何使用Hashmap</a></li>
 						<li><a href="#websocket_how" class="cc-active">WebSocket编程</a></li>
 						<li><a href="#macroDefinition_style" class="cc-active">宏定义</a></li>
+						<!--qiulei 20170911-->
+						<li><a href="#writeAPP" class="cc-active">编写应用程序</a></li>
 						<li class="separator"></li>
 						<!--qiulei 20170901 -->
 						<li><strong>Json格式参考</strong></li>
@@ -109,13 +113,27 @@
 						<P class="p_location_style">路径:</p>
 						<P class="p_location_style">http://ip:port/onos/v1/docs/index.html</p>
 
+						<!--qiulei 20170911-->
+						<h3 id="runProgramming"> 运行应用程序</h3>
+						<pre class="prettyprint">
+							<xmp>
+<!--运行指定的app-->
+# starosctl startapp [appfile]
+<!--查看有哪些程序正在运行-->
+# starosctl listapp
+<!--根据appid关闭对应的应用程序-->
+# starosctl stopapp [appid]
+							</xmp>
+						</pre>
+						
+
 						<hr>
 						<h2> 编程指南</h2>
 						<p> XML语言</p>
 						<ul>
 							<li>面向对象类的编程 </li>
 							<li>面向过程的函数编程</li>
-							<li>Javscript编程</li>
+							<li>Javascript编程</li>
 						</ul>
 						<p> 下面介绍具体使用方法:</p>
 						<h3 id="class_type"> Class类</h3>
@@ -165,9 +183,9 @@
 						</pre>
 				
 				
-						<h3 id="js_style"> Javscript编程</h3>
+						<h3 id="js_style"> Javascript编程</h3>
 						<ul>
-							<li>Javscript编程</li>
+							<li>Javascript编程</li>
 						</ul>
 						<pre class="prettyprint">
 							<xmp>
@@ -510,6 +528,38 @@
 							</xmp>
 						</pre>
 <!--qiulei 20170901 am 添加宏定义适用于法 and-->
+						<h3 id="writeAPP"> 编写应用程序</h3>
+						<ul>
+							<li>编写应用程序基本结构如下:</li>
+						</ul>
+						<pre class="prettyprint">
+							<xmp>
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+
+	<events>
+	
+		<!--程序启动时处理该事件-->
+		<onevent event="bundleapp.startup">
+		</onevent>
+		
+		<!--程序停止时处理该事件-->
+		<onevent event="~bundleapp.shutdown">
+		</onevent>	
+		
+		<!--程序激活时处理该事件-->
+		<onevent event="bundleapp.active">
+		</onevent>
+		
+		<!--程序非激活时处理该事件-->
+		<onevent event="bundleapp.deactive">
+		</onevent>
+		
+	</events>
+	
+</starosxml>
+							</xmp>
+						</pre>
 					</div>
 				</div>
 			</section>

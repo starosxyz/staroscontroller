@@ -13,7 +13,7 @@
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
-			<function name="AddAppEvent" class="context.applicationmgr">
+			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'forwarding'"/>
 					<parameter name="version" type="string" in="'1.0.0'"/>
@@ -27,27 +27,35 @@
 				</parameters>
 			</function>			
 			
+			
+			<log>forwarding app startup</log>
+		</onevent>
+		
+		<onevent event="bundleapp.active">
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
 					<parameter name="app_name" type="string" in="'forwarding'"/>
-					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
+					<parameter name="event_name" type="string" in="'PacketInEvent'"/>
+					<parameter name="eth_type" type="string" in="'0x0806'"/>
 				</parameters>
 			</function>
-			<log>forwarding app startup</log>
-		</onevent>			
-		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
+		</onevent>
+		
+		<onevent event="bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
 					<parameter name="app_name" type="string" in="'nullapp'"/>									
 				</parameters>
 			</function>
 		</onevent>
+		
+		<onevent event="~bundleapp.shutdown">
+			<!-- YY 2017-08-21 -->
+			
+		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
-			<log dest="stdout">forwarding application get a PacketIn Message</log>
-			<log><![CDATA[datapathid=<%=event.getParam('datapathid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>		
+			<log dest="stdout">forwarding application get a PacketIn Message</log>	
 			<messageblock name="packetmsgblock"/>
 			<variable name="inportid" type="string"/>
 			<variable name="pkoutjson" type="string"/>
