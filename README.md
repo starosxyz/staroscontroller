@@ -43,4 +43,14 @@ Checkout our [website](http://www.staros.xyz)
 # starosctl listapp 
 # starosctl stopapp [appid] 
 ```
-
+### 路径
+```
+# onos登录页面地址:
+# http://ip:9922/onos/ui/index.html
+#
+# 控制器开发手册页面地址:
+# http://ip:9922/onos/v1/docs/index.html
+#
+# 控制器页面地址:
+# https://ip:8282/starcore/ui/index.html
+```
