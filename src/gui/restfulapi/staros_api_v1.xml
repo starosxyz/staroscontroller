@@ -38,6 +38,7 @@
 				<set name="httpparam" paramname="WWW-Authenticate" value="'Basic realm=\'StarOSDocs\''"/>
 				<restful name="restfulserver" action="RESPONSE" status="401" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
 				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+			<exit/>
 			</then>
 			<else>
 					<script><![CDATA[
@@ -90,10 +91,11 @@
 									<restful name="restfulserver" action="RESPONSE" status="404" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
 										<jsonsrc src="errorjson"/>
 									</restful>
+							<exit/>
 							</then>
 						</if>
 					
-			</else>
+</else>
 		</if>
 		<if cond="context.requestpath.toString()=='/onos/v1/docs'">
 			<then>

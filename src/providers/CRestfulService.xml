@@ -15,7 +15,7 @@
 				<variable name="apiobj" type="class" />
 				<new name="apiobj" class="CRestfulAPIEntry">
 					<parameters>
-						<parameter name="bundleid" type="long" in="context.bundleid"/>			
+						<parameter name="bundleid" type="long" in="context.bundleid.toLong()"/>			
 						<parameter name="eventname" type="string" in="context.handleevent.toString()"/>
 						<parameter name="restfullurl" type="string" in="context.requestpathtest.toString()"/>		
 					</parameters>
@@ -49,6 +49,7 @@
 				<variable name="eventname" type="string"/>
 				<variable name="bundleid" type="long"/>
 				<variable name="eventparam" type="params"/>
+				<variable name="httpparam" type="params"/>
 				<!--qiulei 20170824 pm-->
 				<function name="GetHandler" class="RestfulAPIManager">
 					<parameters>
@@ -66,6 +67,8 @@
 						</function>
 						<set name="eventparam" paramname="eventdata" value="context.eventdata.toString()"/>
 						<set name="eventparam" paramname="method" value="context.method.toString()"/>
+						<set name="eventparam" paramname="requestpath" value="context.requestpath.toString()"/>
+						<set name="eventparam" paramname="transportid" value="event.getParam('transportid').toString()"/>
 						<raise name="context.eventname.toString()" bundleid="context.bundleid.toLong()" param="context.eventparam"/>
 					</then>
 					<else>
@@ -84,6 +87,21 @@
 						</function>
 					</else>
 				</if>
+			</function>
+		<function name="SendResponse">	
+				<parameters>
+					<parameter name="transportid" type="string"/>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="httpparam" type="params"/>
+				<log>SendResponse huhuhu</log>
+				<log><![CDATA[json huhuhu <%=context.json.toString()%>]]> </log>
+				<set name="httpparam" paramname="Server" value="'StarOS'"/>
+				<set name="httpparam" paramname="Connection" value="'Close'"/>
+				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+					<jsonsrc src="json"/>
+				</restful>
 			</function>
 		</public>
 	</class>
