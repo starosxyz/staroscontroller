@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	
+	<!--qiulei 20170913-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnel.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelserviceapi.xml"/>
+	
 <!--
 	Author:
 			YY
@@ -12,6 +18,8 @@
 	<variable name="devicemgr" reference="global.DeviceManager"/>
 	<variable name="flowservice" reference="global.FlowService"/>
 	<variable name="restfulservice" reference="global.RestfulService"/>
+	<!--qiulei 20170913-->
+	<variable name="tunnelManagerObject" type="class" global="true"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -40,6 +48,10 @@
 					<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice'"/>			
 				</parameters>
 			</function>
+					<!--qiulei 20170913-->
+			
+			<new name="tunnelManagerObject" class="CTunnelManager"/>
+			<function name="RegisterHandler"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">

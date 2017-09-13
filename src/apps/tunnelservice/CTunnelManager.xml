@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+			Author:
+					qiulei
+			Date:
+					20170913
+			Copyright: 
+					Nanjing StarOS Inc. All rights reserved.
+		-->	
+	<class name="CTunnelManager">
+		<private>
+			<container name="tunnelContainer" type="hashmap" keytype="long" valuetype="class"/>
+			<variable name="id" type="long"/>
+		</private>
+		
+		<public>
+			<function name="CTunnelManager">
+				<set name="thisclass.id" value="0" />
+				<log>CTunnelManager is create</log>
+			</function>
+			
+			<!--qiulei 20170913-->
+			<function name="addTunnel">
+				<parameters>
+					<parameter name="id" type="long"/>
+					<parameter name="username" type="string"/>
+					<parameter name="inputPort" type="string"/>
+					<parameter name="outputPort" type="string"/>
+					<parameter name="invlan" type="long"/>
+					<parameter name="outvlan" type="long"/>
+					<parameter name="type" type="string"/>
+					<parameter name="state" type="string"/>
+					<parameter name="inputvlanid" type="long"/>
+					<parameter name="outputvlanid" type="long"/>
+					<parameter name="bandwidth" type="long"/>
+					<parameter name="inmeterid" type="long"/>
+					<parameter name="outmeterid" type="long"/>
+				</parameters>
+				
+				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
+				<set name="context.id" value="thisclass.id.toLong()" />
+				<variable name="tunnelObject" type="class"/>
+				<new name="tunnelObject" class="CTunnel">
+					<parameters>
+						<parameter name="id" type="long" in="thisclass.id.toLong()"/>
+						<parameter name="username" type="string" in="context.username.toString()"/>
+						<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
+						<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
+						<parameter name="invlan" type="long" in="context.invlan.toLong()"/>
+						<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
+						<parameter name="type" type="string" in="context.type.toString()"/>
+						<parameter name="state" type="string" in="context.state.toString()"/>
+						<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
+						<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
+						<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
+						<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
+						<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>
+					</parameters>
+				</new>
+				
+				<insert name="tunnelContainer" key="thisclass.id.toLong()" value="context.tunnelObject"/>
+				
+			</function>
+			<!--qiulei 20170913-->
+			<function name="removeTunnel">
+				<parameters>
+					<parameter name="tunnel_id" type="long"/>
+				</parameters>
+
+				<if cond="context.tunnelContainer.hasValue(context.tunnel_id.toLong())==true">
+					<then>
+						<function>
+							<remove name="tunnelContainer" key="context.tunnel_id.toLong()"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			
+			<function name="AllTunnelToJson">
+				<parameters>
+					<parameter name="AllTunnelJsonStr" type="string"/>
+				</parameters>
+			
+				<script><![CDATA[
+						var tunnelsArray = new Array();
+				]]></script>
+			
+				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+					<function>
+						<variable name="tunnelObject" type="class"/>
+						<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+						
+						<variable name="tunnelJsonString" type="string"/>
+						<if cond="context.tunnelObject != null">
+							<then>
+								<function name="OneTunnelObjectToJson" class="context.tunnelObject">
+									<parameters>
+										<parameter name="TunnelObjectToJson" type="string" out="context.tunnelJsonString"/>
+									</parameters>
+								</function>
+								
+								<script><![CDATA[
+										tunnelsArray.push(context.tunnelJsonString);
+								]]></script>
+								
+							</then>
+						</if>
+					</function>
+				</for>
+				
+				<script><![CDATA[
+						var strjson = JSON.stringify(tunnelsArray);
+						context.AllTunnelJsonStr.setValue(strjson);
+				]]></script>
+				
+			</function>
+		</public>
+	</class>
+</starosxml>
