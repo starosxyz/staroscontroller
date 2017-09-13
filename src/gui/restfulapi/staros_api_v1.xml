@@ -188,7 +188,7 @@
 					</then>
 					<else>
 						<function>
-							<function name="HandleAPI" class="RestfulAPIManager">
+							<function name="HandleAPI" class="RestfulService">
 								<parameters>
 									<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
 									<parameter name="method" type="string" in="context.method.toString()"/>

@@ -48,6 +48,7 @@
 				<variable name="handlerobj" type="class"/>
 				<variable name="eventname" type="string"/>
 				<variable name="bundleid" type="long"/>
+				<variable name="eventparam" type="params"/>
 				<!--qiulei 20170824 pm-->
 				<function name="GetHandler" class="RestfulAPIManager">
 					<parameters>

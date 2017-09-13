@@ -60,10 +60,10 @@
 					<parameter name="handler" type="class"/>
 				</parameters>
 				<variable name="apientry" type="class"/>
-				<if cond="thisclass.restfulapiContainer.hasValue(context.reqestpath.toString())">
+				<if cond="thisclass.restfulapiContainer.hasValue(context.requestpath.toString())">
 					<then>
 						<function>
-							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.reqestpath.toString())"/>
+							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpath.toString())"/>
 						</function>
 					</then>
 				</if>
