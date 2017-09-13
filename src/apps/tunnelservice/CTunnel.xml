@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--wangkang 2017/09/13 -->
+	<class name="CTunnel">
+		<private>
+			<variable name="m_id" type="long"/>
+			<variable name="m_username" type="string"/>
+			<variable name="m_inputPort" type="string"/>
+			<variable name="m_outputPort" type="string"/>
+			<variable name="m_invlan" type="long"/>
+			
+			<variable name="m_outvlan" type="long"/>
+			<variable name="m_type" type="string"/>
+			<variable name="m_state" type="string"/>
+			<variable name="m_inputvlanid" type="long"/>
+			<variable name="m_outputvlanid" type="long"/>
+			
+			<variable name="m_bandwidth" type="long"/>
+			<variable name="m_inmeterid" type="long"/>
+			<variable name="m_outmeterid" type="long"/>
+		</private>
+		<public>
+			<function name="CTunnel">
+				<parameters>
+					<parameter name="id" type="long"/>
+					<parameter name="username" type="string"/>
+					<parameter name="inputPort" type="string"/>
+					<parameter name="outputPort" type="string"/>
+					<parameter name="invlan" type="long"/>
+					
+					<parameter name="outvlan" type="long"/>
+					<parameter name="type" type="string"/>
+					<parameter name="state" type="string"/>
+					<parameter name="inputvlanid" type="long"/>
+					<parameter name="outputvlanid" type="long"/>
+					
+					<parameter name="bandwidth" type="long"/>
+					<parameter name="inmeterid" type="long"/>
+					<parameter name="outmeterid" type="long"/>
+				</parameters>
+				<set name="thisclass.m_id" value="context.id.toLong()"/>
+				<set name="thisclass.m_username" value="context.username.toString()"/>
+				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
+				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
+				<set name="thisclass.m_invlan" value="context.invlan.toLong()"/>
+				<set name="thisclass.m_outvlan" value="context.outvlan.toLong()"/>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_state" value="context.state.toString()"/>
+				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
+				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
+				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
+				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
+				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
+			</function>
+			<function name="GetTunnelId">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			<!--qiulei 20170913 pm-->
+			
+			<function name="GetTunnel_username">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_inputPort">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			
+			<function name="GetTunne_outputPort">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunne_invlan">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_outvlan">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_type">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_state">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+		
+			<function name="GetTunnel_inputvlanid">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_outputvlanid">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnel_bandwidth">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnelI_inmeterid">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<function name="GetTunnelI_outmeterid">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+			
+			<!--qiulei 20170913-->
+			
+			<parameters>
+				<parameter name="id" type="long"/>
+				<parameter name="username" type="string"/>
+				<parameter name="inputPort" type="string"/>
+				<parameter name="outputPort" type="string"/>
+				<parameter name="invlan" type="long"/>
+				
+				<parameter name="outvlan" type="long"/>
+				<parameter name="type" type="string"/>
+				<parameter name="state" type="string"/>
+				<parameter name="inputvlanid" type="long"/>
+				<parameter name="outputvlanid" type="long"/>
+				
+				<parameter name="bandwidth" type="long"/>
+				<parameter name="inmeterid" type="long"/>
+				<parameter name="outmeterid" type="long"/>
+			</parameters>
+			
+			<function name="OneTunnelObjectToJson">
+				<parameters>
+					<parameter name="TunnelObjectToJson" type="string"/>
+				</parameters>
+				<variable name="values" type="string" />
+				<reference variable="values">
+					<jsonbody><![CDATA[ 
+						{	
+							"id":"<%=thisclass.m_id.toLong()%>",
+							"username":"<%=thisclass.m_username.toString()%>",
+							"inputPort":"<%=thisclass.m_inputPort.toString()%>",
+							"outputPort":"<%=thisclass.m_outputPort.toString()%>",
+							"invlan":"<%=thisclass.m_invlan.toLong()%>",
+							
+							"outvlan":"<%=thisclass.m_outvlan.toLong()%>",
+							"type":"<%=thisclass.m_type.toString()%>",
+							"state":"<%=thisclass.m_state.toString()%>",
+							"inputvlanid":"<%=thisclass.m_inputvlanid.toLong()%>",
+							"outputvlanid":"<%=thisclass.m_outputvlanid.toLong()%>",
+							
+							"bandwidth":"<%=thisclass.m_bandwidth.toLong()%>",
+							"inmeterid":"<%=thisclass.m_inmeterid.toLong()%>",
+							"outmeterid":"<%=thisclass.m_outmeterid.toLong()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="TunnelObjectToJson" value="context.values.toString()"/>
+			</function>
+		</public>
+	</class>
+</starosxml>
