@@ -77,41 +77,41 @@
 				</if>
 			</function>
 			
-			<function name="AllTunnelToJson">
+			<function name="AllTunnelToJsonStr">
 				<parameters>
-					<parameter name="AllTunnelJsonStr" type="string"/>
+					<parameter name="AllTunnelJsonString" type="string"/>
 				</parameters>
 			
-				<script><![CDATA[
-						var tunnelsArray = new Array();
-				]]></script>
+				<container name="tunnelJsonString_List" type="list" valuetype="string"/>
 			
 				<for var="i" from="0" to="context.tunnelContainer.size()-1">
 					<function>
 						<variable name="tunnelObject" type="class"/>
 						<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
 						
-						<variable name="tunnelJsonString" type="string"/>
 						<if cond="context.tunnelObject != null">
 							<then>
-								<function name="OneTunnelObjectToJson" class="context.tunnelObject">
+								<variable name="OneTunnelJsonString" type="string"/>
+								<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
-										<parameter name="TunnelObjectToJson" type="string" out="context.tunnelJsonString"/>
+										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString.toString()"/>
 									</parameters>
 								</function>
 								
-								<script><![CDATA[
-										tunnelsArray.push(context.tunnelJsonString);
-								]]></script>
-								
+<insert name="tunnelJsonString_List" value="context.OneTunnelJsonString.toString()"/>
 							</then>
 						</if>
 					</function>
 				</for>
 				
 				<script><![CDATA[
+					var tunnelsArray = new Array();
+					for(var i=0;i<context.tunnelJsonString_List.size();i++){									
+						var jsonStr =context.tunnelJsonString_List.getValueByIndex(i);
+						tunnelsArray.push(jsonStr);
+					}
 						var strjson = JSON.stringify(tunnelsArray);
-						context.AllTunnelJsonStr.setValue(strjson);
+					context.AllTunnelJsonString.setValue(strjson);
 				]]></script>
 				
 			</function>

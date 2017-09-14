@@ -165,7 +165,7 @@
 				<parameter name="outmeterid" type="long"/>
 			</parameters>
 			
-			<function name="OneTunnelObjectToJson">
+			<function name="OneTunnelObjectToJsonString">
 				<parameters>
 					<parameter name="TunnelObjectToJson" type="string"/>
 				</parameters>
