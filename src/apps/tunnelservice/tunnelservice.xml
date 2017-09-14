@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+	
+	<!--qiulei 20170913-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnel.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelserviceapi.xml"/>
+	
 <!--
 	Author:
 			YY
@@ -12,6 +18,8 @@
 	<variable name="devicemgr" reference="global.DeviceManager"/>
 	<variable name="flowservice" reference="global.FlowService"/>
 	<variable name="restfulservice" reference="global.RestfulService"/>
+	<!--qiulei 20170913-->
+	<variable name="tunnelManagerObject" type="class" global="true"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -33,24 +41,14 @@
 		
 		<onevent event="bundleapp.active">
 			<log>tunnelservice bundleapp.active</log>
-			<function name="RegisterAPIHandler" class="restfulservice">
-				<parameters>
-					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
-					<parameter name="handleevent" type="string" in="'processapi'"/>
-					<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice'"/>			
-				</parameters>
-			</function>
+			<new name="tunnelManagerObject" class="CTunnelManager"/>
+			<function name="RegisterHandler"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
 			<log>tunnelservice bundleapp.deactive</log>
 		</onevent>
-		<onevent event="processapi">
-			<log>tunnelservice bundleapp.deactive</log>
-			<log><![CDATA[processapi method <%=event.getParam('method').toString()%>]]> </log>
-			<log><![CDATA[processapi eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
-		</onevent>
-		<onevent event="mytopadd">
+				<onevent event="mytopadd">
 			
 		</onevent>
 		<onevent event="mytopremove">

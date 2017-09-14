@@ -1,0 +1,1 @@
+curl -u admin:admin -H "Content-type: application/json" -X Get http://192.168.2.165:9922/onos/v1/tunnelservice
