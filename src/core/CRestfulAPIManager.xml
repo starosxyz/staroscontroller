@@ -41,17 +41,14 @@
 			<function name="CRestfulAPIManager">
 				<log>CRestfulAPIManager is create</log>
 			</function>
-			<variable name="requestpath22222" type="string"/>
-			<variable name="ispath" type="boolean"/>
 			<function name="AddAPIHandler">
 				<parameters>
 					<parameter name="requestpath2222" type="string"/>
 					<parameter name="handler" type="class"/>
 				</parameters>
-				<set name="requestpath22222" value="context.requestpath2222.toString()"/>
 				<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
 			</function>
-						<function name="RemoveAPIHandler">
+									<function name="RemoveAPIHandler">
 				<parameters>
 					<parameter name="requestpath" type="string"/>
 				</parameters>
@@ -63,25 +60,29 @@
 					<parameter name="requestpath" type="string"/>
 					<parameter name="handler" type="class"/>
 				</parameters>
-									<script><![CDATA[
+									<variable name="requestpaths2222" type="string"/>
+				<variable name="ispath" type="boolean"/>
+				<for var="i" from="0" to="context.restfulapiContainer.size()-1">
+					<set name="requestpaths2222" value="context.restfulapiContainer.getKeyByIndex(context.i.toLong())"/>
+					<script><![CDATA[
 						var requestpaths=context.requestpath.toString();
-						var requestpath22222=context.requestpath22222.toString();
-						context.print("result = "+requestpath22222.indexOf(requestpaths));
-						if(requestpath22222.indexOf(requestpaths)>=0){							
+
+							if(requestpaths.indexOf(context.requestpaths2222.toString())>=0){
 							context.ispath.setValue(true);
 						}else{
 							context.ispath.setValue(false);
 						}	
 					]]></script>
 				<log><![CDATA[requestpaths   huhu= <%=context.requestpath.toString()%>]]> </log>
-				<log><![CDATA[requestpath22222   huhu= <%=context.requestpath22222.toString()%>]]> </log>
+				<log><![CDATA[requestpaths2222   huhu= <%=context.requestpaths2222.toString()%>]]> </log>
 				<log><![CDATA[ispath   huhu= <%=context.ispath.toBoolean()%>]]> </log>
 				<if cond="context.ispath.toBoolean()==true">
 					<then>
 						<log>huhuhuhu !!!!true</log>
-							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpath.toString())"/>
+							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpaths2222.toString())"/>
 						</then>
 				</if>
+			</for>
 			</function>
 		</public>
 	</class>
