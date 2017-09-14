@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CswaggerFile">
+		<public>
+			<function name="Readjsonfile">
+				<parameters>
+					<parameter name="content" type="string"/>				
+				</parameters>
+				<variable name="ispath" type="boolean"/>
+				<variable name="jsonfilepath" type="string" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/onos/v1/apidoc/swagger.json'"/>
+				<messageblock name="filecontents"/>
+				<set name="isfile" value="context.isFile(context.jsonfilepath.toString())"/>
+				<if cond="context.isfile.toBoolean()==true">
+					<then>
+						<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
+						<log dest="stdout"><![CDATA[filecontents = '<%=context.filecontents.toString()%>']]></log>
+						<set name="content" value="context.filecontents.toString()"/>
+					</then>
+				</if>
+			</function>
+
+			<function name="WriteJsonfile">
+				<parameters>
+					<parameter name="content" type="string"/>				
+				</parameters>
+				<variable name="jsonfilepath" type="string" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/onos/v1/apidoc/swagger.json'"/>
+				<file method="writefile" name="context.jsonfilepath.toString()" data="context.content.toMessageBlock()"/>
+				<log dest="stdout"><![CDATA[content = '<%=context.content.toString()%>']]></log>
+			</function>
+		</public>
+	</class>
+</starosxml>
