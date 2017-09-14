@@ -72,13 +72,13 @@
 				<then>
 					<log>insert method get</log>
 					<function name="getTunnel"/>
-			</then>
-			<elseif cond="event.getParam('method').toString()=='PUT'">
-				<log>insert method put</log>										
+				</then>
+				<elseif cond="event.getParam('method').toString()=='PUT'">
+					<log>insert method put</log>										
 					<function name="updateTunnel"/>
 				</elseif>
 				<elseif cond="event.getParam('method').toString()=='POST'">
-						<log>insert method post</log>																						
+					<log>insert method post</log>																						
 					<function name="addTunnel"/>
 				</elseif>
 				<else>
@@ -90,35 +90,35 @@
 	</events>
 	<function name="getTunnel">
 		<log>insert method == get</log>
-							<variable name="outjson" type="string"/>
-							<function name="AllTunnelToJsonStr" class="context.tunnelManagerObject">
-								<parameters>
-									<parameter name="AllTunnelJsonString" type="string" out="context.outjson"/>
-								</parameters>
-							</function>
-							<function name="SendResponse" class="RestfulService">
-								<parameters>
-									<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-									<parameter name="json" type="string" in="context.outjson.toString()"/>
-								</parameters>
-							</function>
-						</function>
-							<function name="updateTunnel">
-								<log>insert method == put</log>
-									<variable name="resourceid" type="long"/>
-									<script><![CDATA[
-										var str = event.getParam('requestpath').toString();
+		<variable name="outjson" type="string"/>
+		<function name="AllTunnelToJsonStr" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="AllTunnelJsonString" type="string" out="context.outjson"/>
+			</parameters>
+		</function>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="updateTunnel">
+		<log>insert method == put</log>
+		<variable name="resourceid" type="long"/>
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");
-										var local_id = array[array.length-1];
-										context.resourceid.setValue(local_id);
-									]]></script>
-									<variable name="tunnel" type="class"/>
-									<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
-										<parameters>
-											<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
-											<parameter name="TunnelObject" type="class" out="context.tunnel"/>
-										</parameters>
-									</function>								
+			var local_id = array[array.length-1];
+			context.resourceid.setValue(local_id);
+		]]></script>
+		<variable name="tunnel" type="class"/>
+		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
+				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
+			</parameters>
+		</function>								
 		<variable name="username" type="string"/>
 		<variable name="inputPort" type="string"/>
 		<variable name="outputPort" type="string"/>
@@ -131,7 +131,7 @@
 		<variable name="bandwidth" type="long"/>
 		<variable name="inmeterid" type="long"/>
 		<variable name="outmeterid" type="long"/>									
-									<script><![CDATA[									
+		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.tunnel.username;
 			var local_inputport = json.tunnel.inputPort;
@@ -158,13 +158,12 @@
 			context.inmeterid.setValue(local_inmeterid);
 			context.outmeterid.setValue(local_outmeterid);
 		]]></script>
-									<function name="UpdateTunnel" class="context.tunnel">
-										
-<parameters>											
+		<function name="UpdateTunnel" class="context.tunnel">										
+			<parameters>											
 				<parameter name="username" type="string" in="context.username.toString()"/>
 				<parameter name="inputPort" type="string" in="context.outputPort.toString()"/>
 				<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
-									<parameter name="invlan" type="long" in="context.invlan.toLong()"/>											
+				<parameter name="invlan" type="long" in="context.invlan.toLong()"/>											
 				<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
 				<parameter name="type" type="string" in="context.type.toString()"/>
 				<parameter name="state" type="string" in="context.state.toString()"/>
@@ -175,129 +174,129 @@
 				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>
 			</parameters>
 		</function>									
-									<variable name="outjson" type="string"/>
-									<script><![CDATA[
-										var json = new Object();
-										var one = new Object();
+		<variable name="outjson" type="string"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
 			one.resourceId = ""+context.resourceid.toLong();
 			one.code = "0";
-										one.description = "ok";						
-										json.result = one;
-										var strjson=JSON.stringify(json);												
-										context.outjson.setValue(strjson);
-									]]></script>
-									<function name="SendResponse" class="RestfulService">
-										<parameters>
-											<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-											<parameter name="json" type="string" in="context.outjson.toString()"/>
-										</parameters>
-									</function>																
-								</function>
-									<function name="addTunnel">
-										<variable name="username" type="string"/>
-											<variable name="inputPort" type="string"/>
-											<variable name="outputPort" type="string"/>
-											<variable name="invlan" type="long"/>
-											<variable name="outvlan" type="long"/>
-											<variable name="type" type="string"/>
-											<variable name="state" type="string"/>
-											<variable name="inputvlanid" type="long"/>
-											<variable name="outputvlanid" type="long"/>
-											<variable name="bandwidth" type="long"/>
-											<variable name="inmeterid" type="long"/>
-											<variable name="outmeterid" type="long"/>
-											<variable name="resourceid" type="long"/>
-											<variable name="outjson" type="string"/>
-											<script><![CDATA[									
-												var json = JSON.parse(event.getParam('eventdata').toString());
-												var local_username = json.tunnel.username;
-												var local_inputport = json.tunnel.inputPort;
-												var local_outputPort = json.tunnel.outputPort;
-												var local_invlan = 100;
-												var local_outvlan = 100;
-												var local_type = json.tunnel.type;
-												var local_state = "active";
-												var local_inputvlanid = json.tunnel.inputvlanid;
-												var local_outputvlanid = json.tunnel.outputvlanid;
-												var local_bandwidth = json.tunnel.bandwidth;
-												var local_inmeterid = 200;
-												var local_outmeterid = 200;
-												context.username.setValue(local_username);
-												context.inputPort.setValue(local_inputport);
-												context.outputPort.setValue(local_outputPort);
-												context.invlan.setValue(local_invlan);
-												context.outvlan.setValue(local_outvlan);
-												context.type.setValue(local_type);
-												context.state.setValue(local_state);
-												context.inputvlanid.setValue(local_inputvlanid);
-												context.outputvlanid.setValue(local_outputvlanid);
-												context.bandwidth.setValue(local_bandwidth);
-												context.inmeterid.setValue(local_inmeterid);
-												context.outmeterid.setValue(local_outmeterid);
-											]]></script>
-											<function name="addTunnel" class="context.tunnelManagerObject">
-												<parameters>
-													<parameter name="id" type="long" out="context.resourceid"/>
-													<parameter name="username" type="string" in="context.username.toString()"/>
-													<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
-													<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
-													<parameter name="invlan" type="long" in="context.invlan.toLong()"/>
-													<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
-													<parameter name="type" type="string" in="context.type.toString()"/>
-													<parameter name="state" type="string" in="context.state.toString()"/>
-													<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
-													<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
-													<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
-													<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
-													<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>													
-												</parameters>
-											</function>
-											<script><![CDATA[
-												var json = new Object();
-												var one = new Object();
+			one.description = "ok";						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>																
+	</function>
+	<function name="addTunnel">
+		<variable name="username" type="string"/>
+		<variable name="inputPort" type="string"/>
+		<variable name="outputPort" type="string"/>
+		<variable name="invlan" type="long"/>
+		<variable name="outvlan" type="long"/>
+		<variable name="type" type="string"/>
+		<variable name="state" type="string"/>
+		<variable name="inputvlanid" type="long"/>
+		<variable name="outputvlanid" type="long"/>
+		<variable name="bandwidth" type="long"/>
+		<variable name="inmeterid" type="long"/>
+		<variable name="outmeterid" type="long"/>
+		<variable name="resourceid" type="long"/>
+		<variable name="outjson" type="string"/>
+		<script><![CDATA[									
+			var json = JSON.parse(event.getParam('eventdata').toString());
+			var local_username = json.tunnel.username;
+			var local_inputport = json.tunnel.inputPort;
+			var local_outputPort = json.tunnel.outputPort;
+			var local_invlan = 100;
+			var local_outvlan = 100;
+			var local_type = json.tunnel.type;
+			var local_state = "active";
+			var local_inputvlanid = json.tunnel.inputvlanid;
+			var local_outputvlanid = json.tunnel.outputvlanid;
+			var local_bandwidth = json.tunnel.bandwidth;
+			var local_inmeterid = 200;
+			var local_outmeterid = 200;
+			context.username.setValue(local_username);
+			context.inputPort.setValue(local_inputport);
+			context.outputPort.setValue(local_outputPort);
+			context.invlan.setValue(local_invlan);
+			context.outvlan.setValue(local_outvlan);
+			context.type.setValue(local_type);
+			context.state.setValue(local_state);
+			context.inputvlanid.setValue(local_inputvlanid);
+			context.outputvlanid.setValue(local_outputvlanid);
+			context.bandwidth.setValue(local_bandwidth);
+			context.inmeterid.setValue(local_inmeterid);
+			context.outmeterid.setValue(local_outmeterid);
+		]]></script>
+		<function name="addTunnel" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="id" type="long" out="context.resourceid"/>
+				<parameter name="username" type="string" in="context.username.toString()"/>
+				<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
+				<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
+				<parameter name="invlan" type="long" in="context.invlan.toLong()"/>
+				<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
+				<parameter name="type" type="string" in="context.type.toString()"/>
+				<parameter name="state" type="string" in="context.state.toString()"/>
+				<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
+				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
+				<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
+				<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
+				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>													
+			</parameters>
+		</function>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
 			one.resourceId = ""+context.resourceid.toLong();
 			one.code = "0";
-												one.description = "ok";						
-												json.result = one;
-												var strjson=JSON.stringify(json);												
-												context.outjson.setValue(strjson);
-											]]></script>
-											<function name="SendResponse" class="RestfulService">
-												<parameters>
-													<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-													<parameter name="json" type="string" in="context.outjson.toString()"/>
-												</parameters>
-											</function>
-										</function>
-										<function name="deleteTunnel">
-											<variable name="resourceid" type="long"/>
-											<script><![CDATA[
+			one.description = "ok";						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="deleteTunnel">
+		<variable name="resourceid" type="long"/>
+		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");			
 			var local_id = array[array.length-1];
 			context.resourceid.setValue(local_id);			
-											]]></script>
-											<function name="removeTunnel"class="context.tunnelManagerObject">
-												<parameters>
-													<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
-												</parameters>
-											</function>
-											<variable name="outjson" type="string"/>
+		]]></script>
+		<function name="removeTunnel"class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
+			</parameters>
+		</function>
+		<variable name="outjson" type="string"/>
 		<script><![CDATA[
-												var json = new Object();
-												var one = new Object();
+			var json = new Object();
+			var one = new Object();
 			one.resourceId = ""+context.resourceid.toLong();
 			one.code = "0";
-												one.description = "ok";						
-												json.result = one;
-												var strjson=JSON.stringify(json);												
-												context.outjson.setValue(strjson);
-											]]></script>
-											<function name="SendResponse" class="RestfulService">
-												<parameters>
-													<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-													<parameter name="json" type="string" in="context.outjson.toString()"/>
-												</parameters>
-											</function>
-										</function>
+			one.description = "ok";						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
 </starosxml>
