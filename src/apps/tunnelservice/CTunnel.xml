@@ -151,6 +151,7 @@
 				<parameters>
 					<parameter name="TunnelObjectToJson" type="string"/>
 				</parameters>
+				<log>insert CTunnel OneTunnelObjectToJsonString</log>
 				<variable name="values" type="string" />
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
@@ -173,7 +174,41 @@
 						}
 					]]></jsonbody>
 				</reference>
+				<log><![CDATA[context.values = <%=context.values.toString()%>]]></log>
 				<set name="TunnelObjectToJson" value="context.values.toString()"/>
+			</function>
+					<!--qiulei 20170913 update Tunnel-->
+			<function name="UpdateTunnel">
+				<parameters>
+					
+					<parameter name="username" type="string"/>
+					<parameter name="inputPort" type="string"/>
+					<parameter name="outputPort" type="string"/>
+					<parameter name="invlan" type="long"/>
+					
+					<parameter name="outvlan" type="long"/>
+					<parameter name="type" type="string"/>
+					<parameter name="state" type="string"/>
+					<parameter name="inputvlanid" type="long"/>
+					<parameter name="outputvlanid" type="long"/>
+					
+					<parameter name="bandwidth" type="long"/>
+					<parameter name="inmeterid" type="long"/>
+					<parameter name="outmeterid" type="long"/>
+				</parameters>
+				
+				<set name="thisclass.m_username" value="context.username.toString()"/>
+				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
+				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
+				<set name="thisclass.m_invlan" value="context.invlan.toLong()"/>
+				<set name="thisclass.m_outvlan" value="context.outvlan.toLong()"/>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_state" value="context.state.toString()"/>
+				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
+				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
+				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
+				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
+				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
 			</function>
 		</public>
 	</class>

@@ -82,17 +82,20 @@
 					<parameter name="AllTunnelJsonString" type="string"/>
 				</parameters>
 			
+<log>insert CTunnelManager AllTunnelToJsonStr</log>
 				<variable name="tunnelObject" type="class"/>
 				<variable name="OneTunnelJsonString" type="string"/>
 				<container name="tunnelJsonString_List" type="list" valuetype="string"/>
 			
 				<for var="i" from="0" to="context.tunnelContainer.size()-1">
 					<function>
-												<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+												<log>insert for</log>
+						<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
 						
 						<if cond="context.tunnelObject != null">
 							<then>
-																<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
+																<log>insert if</log>
+								<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
 										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString"/>
 									</parameters>
@@ -105,15 +108,51 @@
 				</for>
 				
 				<script><![CDATA[
+					var jsonroot = new Object();
 					var tunnelsArray = new Array();
 					for(var i=0;i<context.tunnelJsonString_List.size();i++){									
 						var jsonStr =context.tunnelJsonString_List.getValueByIndex(i);
-						tunnelsArray.push(jsonStr);
+						var jsonobj = JSON.parse(jsonStr);
+						tunnelsArray.push(jsonobj);
 					}
-						var strjson = JSON.stringify(tunnelsArray);
+					
+					jsonroot['tunnels']=tunnelsArray;
+					jsonroot['resultCode']="0";
+					jsonroot["resultDesc"]="ok";
+					var strjson = JSON.stringify(jsonroot);
 					context.AllTunnelJsonString.setValue(strjson);
 				]]></script>
 				
+			</function>
+		<!--qiulei 20170914 am get one tunnel object-->
+			<function name="GetOneTunnelObject">
+				<parameters>
+					<parameter name="tunnel_id" type="long"/>
+					<parameter name="TunnelObject" type="class"/>
+				</parameters>
+
+				<if cond="context.tunnelContainer.hasValue(context.tunnel_id.toLong())==true">
+					<then>
+						<function>
+							<lookup name="tunnelContainer" key="context.tunnel_id.toLong()" output="context.TunnelObject"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			
+			
+			
+			
+			
+			<function name="ActiveTunnel">
+				<log>CTunnelManager ActiveTunnel</log>
+			</function>
+			
+			
+			
+			
+			<function name="DeactiveTunnel">
+				<log>CTunnelManager DeactiveTunnel</log>
 			</function>
 		</public>
 	</class>
