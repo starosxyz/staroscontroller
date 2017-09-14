@@ -94,7 +94,7 @@
 							<then>
 																<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
-										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString.toString()"/>
+										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString"/>
 									</parameters>
 								</function>
 								
