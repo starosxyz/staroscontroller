@@ -82,17 +82,17 @@
 					<parameter name="AllTunnelJsonString" type="string"/>
 				</parameters>
 			
+				<variable name="tunnelObject" type="class"/>
+				<variable name="OneTunnelJsonString" type="string"/>
 				<container name="tunnelJsonString_List" type="list" valuetype="string"/>
 			
 				<for var="i" from="0" to="context.tunnelContainer.size()-1">
 					<function>
-						<variable name="tunnelObject" type="class"/>
-						<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+												<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
 						
 						<if cond="context.tunnelObject != null">
 							<then>
-								<variable name="OneTunnelJsonString" type="string"/>
-								<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
+																<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
 										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString.toString()"/>
 									</parameters>
