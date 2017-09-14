@@ -60,110 +60,92 @@
 			</function>
 			<!--qiulei 20170913 pm-->
 			
-			<function name="GetTunnel_username">
+<function name="GetTunnel_username">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_username" type="string"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_username" value="thisclass.m_username.toString()"/>
 			</function>
 			
 			<function name="GetTunnel_inputPort">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_inputPort" type="string"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_inputPort" value="thisclass.m_inputPort.toString()"/>
 			</function>
 			
 			
 			<function name="GetTunne_outputPort">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_outputPort" type="string"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_outputPort" value="thisclass.m_outputPort.toString()"/>
 			</function>
 			
 			<function name="GetTunne_invlan">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_invlan" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_invlan" value="thisclass.m_invlan.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_outvlan">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_outvlan" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_outvlan" value="thisclass.m_outvlan.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_type">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_type" type="string"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_type" value="thisclass.m_type.toString()"/>
 			</function>
 			
 			<function name="GetTunnel_state">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_state" type="string"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_state" value="thisclass.m_state.toString()"/>
 			</function>
 		
 			<function name="GetTunnel_inputvlanid">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_inputvlanid" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_inputvlanid" value="thisclass.m_inputvlanid.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_outputvlanid">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_outputvlanid" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_outputvlanid" value="thisclass.m_outputvlanid.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_bandwidth">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_bandwidth" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_bandwidth" value="thisclass.m_bandwidth.toLong()"/>
 			</function>
 			
 			<function name="GetTunnelI_inmeterid">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_inmeterid" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_inmeterid" value="thisclass.m_inmeterid.toLong()"/>
 			</function>
 			
 			<function name="GetTunnelI_outmeterid">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<parameter name="t_outmeterid" type="long"/>
 				</parameters>
-				<set name="outid" value="thisclass.m_id.toLong()"/>
+				<set name="t_outmeterid" value="thisclass.m_outmeterid.toLong()"/>
 			</function>
 			
 			<!--qiulei 20170913-->
-			
-			<parameters>
-				<parameter name="id" type="long"/>
-				<parameter name="username" type="string"/>
-				<parameter name="inputPort" type="string"/>
-				<parameter name="outputPort" type="string"/>
-				<parameter name="invlan" type="long"/>
-				
-				<parameter name="outvlan" type="long"/>
-				<parameter name="type" type="string"/>
-				<parameter name="state" type="string"/>
-				<parameter name="inputvlanid" type="long"/>
-				<parameter name="outputvlanid" type="long"/>
-				
-				<parameter name="bandwidth" type="long"/>
-				<parameter name="inmeterid" type="long"/>
-				<parameter name="outmeterid" type="long"/>
-			</parameters>
 			
 			<function name="OneTunnelObjectToJsonString">
 				<parameters>
