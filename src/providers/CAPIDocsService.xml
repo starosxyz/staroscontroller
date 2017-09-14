@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				YY
+		Date:
+				2017-09-14
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<class name="CAPIDocsService">
+		<public>
+			<function name="RegisterAPIDocs">
+				<parameters>
+					<parameter name="tag" type="string"/>
+					<parameter name="pathname" type="string"/>
+					<parameter name="pathconntent" type="string"/>
+					<parameter name="definitionname" type="string"/>
+					<parameter name="definitioncontent" type="string"/>
+				</parameters>
+				<log>Register api docs</log>
+				<variable name="swaggerjsonstring" type="string"/>
+				<function name="ReadJsonToSwagger">
+					<parameters>
+						<parameter name="json" type="string" out="context.swaggerjsonstring"/>
+					</parameters>						
+				</function>
+				<variable name="swaggerjsonout" type="string"/>				
+				<script><![CDATA[
+					var index = JSON.parse(context.swaggerjsonstring.toString());
+					var local_tag, local_path, local_definition;
+					local_tag = index.tags;
+					var tagjson = JSON.parse(context.tag.toString());
+					local_tag.push(tagjson);
+					local_local_path = index.paths;
+					var pathjson = JSON.parse(context.pathconntent.toString());
+					local_path[context.pathname.toString()] = pathjson;
+					local_definition = index.definitions;
+					var definitionjson = JSON.parse(context.definitioncontent.toString());					
+					local_definition[context.definitionname.toString()] = definitionjson;
+					index.tags = local_tag;
+					index.paths = local_path;
+					index.definitions = local_definition;
+					var strjsonout = JSON.stringify(index);
+					context.swaggerjsonout.setValue(strjsonout);
+				]]></script>				
+				<function name="WriteJsonToSwagger">
+					<parameters>
+						<parameter name="json" type="string" in="context.swaggerjsonout.toString()"/>
+					</parameters>						
+				</function>
+			</function>			
+		</public>
+	</class>
+</starosxml>
