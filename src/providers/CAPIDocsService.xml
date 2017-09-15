@@ -20,7 +20,7 @@
 				</parameters>
 				<log>Register api docs</log>
 				<variable name="swaggerjsonstring" type="string"/>
-				<function name="ReadJsonToSwagger">
+				<function name="Readjsonfile" class="SwaggerFile">
 					<parameters>
 						<parameter name="json" type="string" out="context.swaggerjsonstring"/>
 					</parameters>						
@@ -44,7 +44,7 @@
 					var strjsonout = JSON.stringify(index);
 					context.swaggerjsonout.setValue(strjsonout);
 				]]></script>				
-				<function name="WriteJsonToSwagger">
+				<function name="WriteJsonfile" class="SwaggerFile">
 					<parameters>
 						<parameter name="json" type="string" in="context.swaggerjsonout.toString()"/>
 					</parameters>						
