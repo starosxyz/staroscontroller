@@ -23,6 +23,7 @@
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CAPIDocsService.xml"/>
 
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<!--qiulei 20170811-->
@@ -42,6 +43,7 @@
 	<variable name="TunnelManager" type="class" global="true"/>
 	<variable name="RestfulService" type="class" global="true"/>
 	<variable name="SwaggerFile" type="class" global="true"/>
+	<variable name="APIDocsService" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -62,8 +64,10 @@
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 		<new name="SessionManager" class="CSessionManager"/>
 		<new name="TunnelManager" class="CTunnelManager"/>
-		<!--yijian 2017.08.24 Add Restful -->
+	<!--yijian 2017.08.24 Add Restful -->
 		<new name="RestfulService" class="CRestfulService"/>
-			<new name="SwaggerFile" class="CswaggerFile"/>
+		<new name="APIDocsService" class="CAPIDocsService"/>
+		
+		<new name="SwaggerFile" class="CswaggerFile"/>
 	</function>
 </starosxml>

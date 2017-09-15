@@ -26,8 +26,13 @@
 		<variable name="outjson" type="string"/>
 		 <variable name="contenttype" type="string"/>
 		<variable name="filepath" type="string"/>
-
+		
+		<variable name="swaggerjsonout" type="string"/>
 		<variable name="errorjson" type="string"/>
+		<variable name="content" type="string"/>
+		<variable name="isfile" type="boolean"/>
+		<variable name="jsonfilepath" type="string" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/onos/v1/apidoc/swagger.json'"/>
+		<messageblock name="filecontents"/>
 		<log>HandleAPI</log>
 		<log><![CDATA[HandleAPI request path <%=context.requestpath.toString()%>]]></log>
 		<log><![CDATA[Authorization !!!!! <%=event.getParam("Authorization").toString()%>]]></log>	
@@ -39,7 +44,7 @@
 				<set name="httpparam" paramname="WWW-Authenticate" value="'Basic realm=\'StarOSDocs\''"/>
 				<restful name="restfulserver" action="RESPONSE" status="401" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
 				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-			<exit/>
+				<exit/>
 			</then>
 			<else>
 					<script><![CDATA[
@@ -92,13 +97,39 @@
 									<restful name="restfulserver" action="RESPONSE" status="404" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
 										<jsonsrc src="errorjson"/>
 									</restful>
-							<exit/>
+									<exit/>
 							</then>
 						</if>
-					
-</else>
+			</else>
 		</if>
+
+		<if cond="context.requestpath.toString()=='/onos/v1/docs/apis/onos/v1/swagger.json'">
+			<then>
+				<set name="isfile" value="context.isFile(context.jsonfilepath.toString())"/>
+					<if cond="context.isfile.toBoolean()==true">
+						<then>
+							<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
+							<log dest="stdout"><![CDATA[filecontents = '']]></log>
+							<set name="content" value="context.filecontents.toString()"/>
+						</then>
+					</if>
+				<function name="dataHandle" class="APIDocsService">
+					<parameters>
+						<parameter name="swaggerjsonstring" type="string" in="context.content.toString()"/>
+						<parameter name="swaggerjsonout" type="string" out="context.swaggerjsonout"/>
+					</parameters>
+				</function>	
 				
+				<set name="httpparam" paramname="Server" value="'StarOS'"/>
+				<set name="httpparam" paramname="Connection" value="'Close'"/>
+				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+					<jsonsrc src="swaggerjsonout"/>
+				</restful>
+				
+			</then>
+		</if>
+		
 		<if cond="context.requestpath.toString()=='/onos/v1/editor'">
 			<then>
 				<function>
@@ -186,20 +217,19 @@
 			</then>
 		</if>
 		<script><![CDATA[
-					var x = context.requestpath.toString();
+			var x = context.requestpath.toString();
+			
+			if (x.indexOf("/onos/v1/docs")>=0)
+			{	
+				context.isAPI.setValue(true);
+			}else{
+				context.isAPI.setValue(false);
+			}
 					
-					if (x.indexOf("/onos/v1/docs")>=0)
-					{	
-						context.isAPI.setValue(true);
-					}else{
-						context.isAPI.setValue(false);
-					}
-					
-				  ]]></script>
+		]]></script>
 				  
 
-
-<if cond="context.isAPI.toBoolean()==true">
+		<if cond="context.isAPI.toBoolean()==true">
 			<then>
 			
 			<log>isAPI is true!!!</log>
