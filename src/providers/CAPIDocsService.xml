@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				YY
+		Date:
+				2017-09-15
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<class name="CPath">
+		<private>
+			<variable name="m_pathname" type="string"/>
+			<variable name="m_pathconntent" type="string"/>
+		</private>
+		<public>
+			<function name="CPath">
+				<parameters>
+					<parameter name="pathname" type="string"/>
+					<parameter name="pathconntent" type="string"/>
+				</parameters>
+				<set name="thisclass.m_pathname" value="context.pathname.toString()"/>
+				<set name="thisclass.m_pathconntent" value="context.pathconntent.toString()"/>
+			</function>
+			<function name="getData">
+				<parameters>
+					<parameter name="pathname" type="string"/>
+					<parameter name="pathconntent" type="string"/>
+				</parameters>
+				<set name="context.pathname" value="thisclass.m_pathname.toString()"/>
+				<set name="context.pathconntent" value="thisclass.m_pathconntent.toString()"/>
+			</function>
+		</public>
+	</class>
+
+	<class name="CDefinition">
+		<private>
+			<variable name="m_definitionname" type="string"/>
+			<variable name="m_definitioncontent" type="string"/>
+		</private>
+		<public>
+			<function name="CDefinition">
+				<parameters>
+					<parameter name="definitionname" type="string"/>
+					<parameter name="definitioncontent" type="string"/>
+				</parameters>
+				<set name="thisclass.m_definitionname" value="context.definitionname.toString()"/>
+				<set name="thisclass.m_definitioncontent" value="context.definitioncontent.toString()"/>
+			</function>	
+			<function name="getData">
+				<parameters>
+					<parameter name="definitionname" type="string"/>
+					<parameter name="definitioncontent" type="string"/>
+				</parameters>
+				<set name="context.definitionname" value="thisclass.m_definitionname.toString()"/>
+				<set name="context.definitioncontent" value="thisclass.m_definitioncontent.toString()"/>
+			</function>
+		</public>
+	</class>
+
+	<class name="CAPIDocsService">
+		<private>
+			<container name="TagContainer" type="list" valuetype="string"/>
+			<container name="PathContainer" type="hashmap" keytype="string" valuetype="string"/>
+			<container name="DefinitionContainer" type="hashmap" keytype="string" valuetype="string"/>
+		</private>
+		<public>
+			<function name="addTag">
+				<parameters>
+					<parameter name="tag" type="string"/>
+					</parameters>
+				<!--if cond="thisclass.TagContainer.hasValue(context.tag.toString())==false">
+					<then-->
+						<insert name="thisclass.TagContainer" value="context.tag.toString()"/>
+					<!--/then>
+				</if-->
+			</function>
+			<function name="removeTag">
+				<parameters>
+					<parameter name="tag" type="string"/>
+				</parameters>
+				<!--if cond="thisclass.TagContainer.hasValue(context.tag.toString())">
+					<then-->
+						<remove name="thisclass.TagContainer" value="context.tag.toString()"/>
+					<!--/then>
+				</if-->
+			</function>
+
+			<function name="addPath">
+				<parameters>
+					<parameter name="pathname" type="string"/>
+					<parameter name="pathconntent" type="string"/>
+				</parameters>
+				<variable name="path" type="class"/>
+				<new name="context.path" class="CPath">
+					<parameters>
+						<parameter name="pathname" type="string"in="context.pathname.toString()"/>
+					<parameter name="pathconntent" type="string"in="context.pathconntent.toString()"/>
+					</parameters>
+				</new>
+				<if cond="thisclass.PathContainer.hasValue(context.pathname.toString())==false">
+					<then>
+						<if cond="context.path!=null">
+							<then>
+								<insert name="thisclass.PathContainer" key="context.pathname.toString()" value="context.pathconntent.toString()"/>
+							</then>
+						</if>
+					</then>
+				</if>
+			</function>
+			<function name="removePath">
+				<parameters>
+					<parameter name="pathname" type="string"/>
+				</parameters>
+				<if cond="thisclass.PathContainer.hasValue(context.pathname.toString())">
+					<then>
+						<remove name="thisclass.PathContainer" key="context.pathname.toString()"/>
+					</then>
+				</if>
+			</function>
+
+			<function name="addDefinition">
+				<parameters>
+					<parameter name="definitionname" type="string"/>
+					<parameter name="definitioncontent" type="string"/>
+				</parameters>
+				<variable name="definition" type="class"/>
+				<new name="context.definition" class="CDefinition">
+					<parameters>
+						<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+						<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+					</parameters>
+				</new>
+				<if cond="thisclass.DefinitionContainer.hasValue(context.definitionname.toString())==false">
+					<then>
+						<if cond="context.definition!=null">
+							<then>
+								<insert name="thisclass.DefinitionContainer" key="context.definitionname.toString()" value="context.definitioncontent.toString()"/>
+							</then>
+						</if>
+					</then>
+				</if>
+			</function>
+			<function name="removeDefinition">
+				<parameters>
+					<parameter name="definitionname" type="string"/>
+				</parameters>
+				<if cond="thisclass.DefinitionContainer.hasValue(context.definitionname.toString())">
+					<then>
+						<remove name="thisclass.DefinitionContainer" key="context.definitionname.toString()"/>
+					</then>
+				</if>
+			</function>
+
+			<function name="dataHandle">
+				<parameters>
+					<parameter name="swaggerjsonstring" type="string"/>
+					<parameter name="swaggerjsonout" type="string"/>
+				</parameters>
+				<variable name="data" type="string"/>
+				<if cond="thisclass.TagContainer.size()==0||thisclass.PathContainer.size()==0||thisclass.DefinitionContainer.size()==0">
+					<then>
+						<log>Container is null</log>
+				<set name="context.data" value="context.swaggerjsonstring.toString()"/>
+					</then>
+					<else>
+						<!--function name="handleTag"/>
+						<function name="handlePath"/>
+						<function name="handleDefinition"/-->						
+						<variable name="tagstr" type="string"/>
+						<log><![CDATA[thisclass.TagContainer.size() = <%=thisclass.TagContainer.size()%>]]></log>
+						<for var="i" from="0" to="thisclass.TagContainer.size()-1">
+							<log>insert tag for</log>
+							<set name="context.tagstr" value="thisclass.TagContainer.getValueByIndex(context.i.toLong())"/>
+							<if cond="context.tagstr!=null">
+								<then>
+									<log>insert tag if</log>									
+									<script><![CDATA[
+										context.print(context.swaggerjsonstring.toString());
+										var info = JSON.parse(context.swaggerjsonstring.toString());
+										context.print();
+										var js_tags = info.tags;
+										context.print(js_tags);
+										var local_tag = JSON.parse(context.tagstr.toString());
+										js_tags.push(local_tag);
+										info.tags = js_tags;
+										var str = JSON.stringify(info);
+										context.data.setValue(str);
+									]]></script>
+								</then>
+							</if>
+						</for>
+						<log><![CDATA[handleTag data = <%=context.data.toString()%>]]></log>
+
+						<variable name="pathobj" type="class"/>
+						<variable name="pathnamestr" type="string"/>
+						<variable name="pathconntentstr" type="string"/>
+				<for var="i" from="0" to="thisclass.PathContainer.size()-1">
+							<set name="context.pathobj" value="thisclass.PathContainer.getValueByIndex(context.i.toLong())"/>
+							<if cond="context.pathobj!=null">
+								<then>
+									<function name="getData" class="context.pathobj">
+					<parameters>
+						<parameter name="pathname" type="string" out="context.pathnamestr"/>
+											<parameter name="pathconntent" type="string" out="context.pathconntentstr"/>
+					</parameters>						
+				</function>
+				<if cond="context.pathnamestr.toString()!=null">
+										<then>
+											<if cond="context.pathconntentstr.toString()!=null">
+												<then>
+													<script><![CDATA[
+														var info = JSON.parse(context.swaggerjsonstring.toString());
+														var js_paths = info.paths;
+														var local_path = JSON.parse(context.pathconntentstr.toString());
+														js_paths[context.pathnamestr.toString()] = local_path;
+														info.paths = js_paths;
+														var str = JSON.stringify(info);
+														context.data.setValue(str);
+													]]></script>
+												</then>
+											</if>
+										</then>
+									</if>
+								</then>
+							</if>
+						</for>
+						<log><![CDATA[handlePath data = <%=context.data.toString()%>]]></log>
+
+						<variable name="definitionobj" type="class"/>
+						<variable name="definitionnamestr" type="string"/>				
+				<variable name="definitionconntentstr" type="string"/>
+						<for var="i" from="0" to="thisclass.DefinitionContainer.size()-1">
+							<set name="context.definitionobj" value="thisclass.DefinitionContainer.getValueByIndex(context.i.toLong())"/>
+							<if cond="context.definitionobj!=null">
+								<then>
+									<function name="getData" class="context.definitionobj">
+										<parameters>
+											<parameter name="definitionname" type="string" out="context.definitionnamestr"/>
+											<parameter name="definitionconntent" type="string" out="context.definitionconntentstr"/>
+										</parameters>
+									</function>
+									<if cond="context.definitionnamestr.toString()!=null">
+										<then>
+											<if cond="context.definitionconntentstr.toString()!=null">
+												<then>
+													<script><![CDATA[
+														var info = JSON.parse(context.swaggerjsonstring.toString());
+														var js_definitions = info.definitions;
+														var local_definition = JSON.parse(context.definitionconntentstr.toString());
+														js_definitions[context.definitionnamestr.toString()] = local_definition;
+														info.paths = js_definitions;
+														var str = JSON.stringify(info);
+														context.data.setValue(str);
+													]]></script>
+												</then>
+											</if>
+										</then>
+									</if>
+								</then>
+							</if>
+						</for>
+						<log><![CDATA[handleDefinition data = <%=context.data.toString()%>]]></log>
+					</else>
+				</if>
+				<set name="context.swaggerjsonout" value="context.data.toString()"/>
+			</function>
+
+			<!--function name="handleTag">
+				<variable name="tagstr" type="string"/>
+				<log><![CDATA[thisclass.TagContainer.size() = <%=thisclass.TagContainer.size()%>]]></log>
+				<for var="i" from="0" to="thisclass.TagContainer.size()-1">
+					<log>insert tag for</log>
+					<set name="context.tagstr" value="thisclass.TagContainer.getValueByIndex(context.i.toLong())"/>
+					<if cond="context.tagstr!=null">
+						<then>
+							<log>insert tag if</log>
+							<script><![CDATA[
+								var info = JSON.parse(context.swaggerjsonstring.toString());
+								var js_tags = info.tags;
+								context.print(js_tags);
+								var local_tag = JSON.parse(context.tagstr.toString());
+								js_tags.push(local_tag);
+								info.tags = js_tags;
+								var str = JSON.stringify(info);
+								context.data.setValue(str);
+							]]></script>
+						</then>
+					</if>
+				</for>
+				<log><![CDATA[handleTag data = <%=context.data.toString()%>]]></log>
+			</function>
+
+			<function name="handlePath">
+				<variable name="pathobj" type="class"/>
+				<variable name="pathnamestr" type="string"/>
+				<variable name="pathconntentstr" type="string"/>
+				<for var="i" from="0" to="thisclass.PathContainer.size()-1">
+					<set name="context.pathobj" value="thisclass.PathContainer.getValueByIndex(context.i.toLong())"/>
+					<if cond="context.pathobj!=null">
+						<then>
+							<function name="getData" class="context.pathobj">
+								<parameters>
+									<parameter name="pathname" type="string" out="context.pathnamestr"/>
+									<parameter name="pathconntent" type="string" out="context.pathconntentstr"/>
+								</parameters>
+							</function>
+							<if cond="context.pathnamestr.toString()!=null">
+								<then>
+									<if cond="context.pathconntentstr.toString()!=null">
+										<then>
+											<script><![CDATA[
+												var info = JSON.parse(context.swaggerjsonstring.toString());
+												var js_paths = info.paths;
+												var local_path = JSON.parse(context.pathconntentstr.toString());
+												js_paths[context.pathnamestr.toString()] = local_path;
+												info.paths = js_paths;
+												var str = JSON.stringify(info);
+												context.data.setValue(str);
+											]]></script>
+										</then>
+									</if>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>
+				<log><![CDATA[handlePath data = <%=context.data.toString()%>]]></log>
+			</function>
+
+			<function name="handleDefinition">
+				<variable name="definitionobj" type="class"/>
+				<variable name="definitionnamestr" type="string"/>
+				<variable name="definitionconntentstr" type="string"/>
+				<for var="i" from="0" to="thisclass.DefinitionContainer.size()-1">
+					<set name="context.definitionobj" value="thisclass.DefinitionContainer.getValueByIndex(context.i.toLong())"/>
+					<if cond="context.definitionobj!=null">
+						<then>
+							<function name="getData" class="context.definitionobj">
+								<parameters>
+									<parameter name="definitionname" type="string" out="context.definitionnamestr"/>
+									<parameter name="definitionconntent" type="string" out="context.definitionconntentstr"/>
+								</parameters>
+							</function>
+							<if cond="context.definitionnamestr.toString()!=null">
+								<then>
+									<if cond="context.definitionconntentstr.toString()!=null">
+										<then>
+											<script><![CDATA[
+												var info = JSON.parse(context.swaggerjsonstring.toString());
+												var js_definitions = info.definitions;
+												var local_definition = JSON.parse(context.definitionconntentstr.toString());
+												js_definitions[context.definitionnamestr.toString()] = local_definition;
+												info.paths = js_definitions;
+												var str = JSON.stringify(info);
+												context.data.setValue(str);
+											]]></script>
+										</then>
+									</if>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>
+				<log><![CDATA[handleDefinition data = <%=context.data.toString()%>]]></log>
+			</function-->
+
+			<!--function name="RegisterAPIDocs">
+				<parameters>
+					<parameter name="tag" type="string"/>
+					<parameter name="pathname" type="string"/>
+					<parameter name="pathconntent" type="string"/>
+					<parameter name="definitionname" type="string"/>
+					<parameter name="definitioncontent" type="string"/>
+				</parameters>
+				<log>Register api docs</log>
+				<variable name="docsobj" type="class"/>
+				<new name="docsobj" class="CAPIDocs">
+					<parameters>
+						<parameter name="tag" type="string" in="context.tag.toString()"/>
+						<parameter name="pathname" type="string" in="context.pathname.toString()"/>
+						<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+						<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+						<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+					</parameters>
+				</new>
+				<if cond="context.docsobj!=null">
+					<then>
+						<insert name="thisclass.ApiContainer" key="context.pathname.toString()" value="context.docsobj"/>
+					</then>
+				</if>
+				<variable name="swaggerjsonstring" type="string"/>
+				<function name="Readjsonfile" class="SwaggerFile">
+					<parameters>
+						<parameter name="json" type="string" out="context.swaggerjsonstring"/>
+					</parameters>
+				</function>
+				<variable name="swaggerjsonout" type="string"/>
+				<script><![CDATA[
+					var index = JSON.parse(context.swaggerjsonstring.toString());
+					var local_tag, local_path, local_definition;
+					local_tag = index.tags;
+					var tagjson = JSON.parse(context.tag.toString());
+					local_tag.push(tagjson);
+					local_path = index.paths;
+					var pathjson = JSON.parse(context.pathconntent.toString());
+					local_path[context.pathname.toString()] = pathjson;
+					local_definition = index.definitions;
+					var definitionjson = JSON.parse(context.definitioncontent.toString());					
+					local_definition[context.definitionname.toString()] = definitionjson;
+					index.tags = local_tag;
+					index.paths = local_path;
+					index.definitions = local_definition;
+					var strjsonout = JSON.stringify(index);
+					context.swaggerjsonout.setValue(strjsonout);
+				]]></script>
+			</function>
+								<function name="findApiDocs">
+<parameters>
+					<parameter name="pathname" value="string"/>
+					<parameter name="apidocs" value="class"/>
+</parameters>						
+				<if cond="thisclass.ApiContainer.hasValue(context.pathname.toString())">
+					<then>
+						<lookup name="thisclass.ApiContainer" key="context.pathname.toString()" output="context.apidocs"/>
+					</then>
+				</if>
+</function>			
+			<function name="removeApiDocs">
+				<parameters>
+					<parameter name="pathname" value="string"/>
+				</parameters>
+				<if cond="thisclass.ApiContainer.hasValue(context.pathname.toString())">
+					<then>
+						<remove name="thisclass.ApiContainer" key="context.pathname.toString()"/>
+					</then>
+				</if>
+			</function-->
+		</public>
+	</class>
+</starosxml>
