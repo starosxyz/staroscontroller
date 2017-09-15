@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				qiulei
+		Date:
+				2017-09-15
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->	
+	<function name="AllTunnel">
+		<log>qiulei 2017.09.15  enter AllTunnel function</log>
+		
+		<variable name="tag" type="string"/>
+		<variable name="pathname" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<reference variable="tag">
+			<jsonbody><![CDATA[ 
+				{
+					"name": "tunnelservice",
+					"description": "Query and Manage Tunnel Service"
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<set name="pathname" value="'/tunnelservice/tunnels'" />
+		
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Returns all Tunnels",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Tunnels"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		
+		
+		<set name="definitionname" value="'Tunnels'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+					"type": "object",
+					"title": "tunnels",
+					"required": [
+						"tunnels",
+						"resultCode",
+						"resultDesc"
+					],
+					"properties": {
+						"tunnels": {
+							"type": "array",
+							"xml": {
+								"name": "tunnels",
+								"wrapped": true
+							},
+							"items": {
+								"type": "object",
+								"title": "tunnel",
+								"required": [
+									"id",
+									"username",
+									"inputPort",
+									"inputvlanid",
+									"outputPort",
+									"outputvlanid",
+									"bandwidth",
+									"type",
+									"state"
+								],
+								"properties": {
+									"id": {
+										"type": "string",
+										"example": "1"
+									},
+									"username": {
+										"type": "string",
+										"example": "admin"
+									},
+									"inputPort": {
+										"type": "string",
+										"example": "23"
+									},
+									"inputvlanid": {
+										"type": "string",
+										"example": "2"
+									},
+									"outputPort": {
+										"type": "string",
+										"example": "3"
+									},
+									"outputvlanid": {
+										"type": "string",
+										"example": "3"
+									},
+									"bandwidth": {
+										"type": "string",
+										"example": "222"
+									},
+									"type": {
+										"type": "string",
+										"example": "vlan"
+									},
+									"state": {
+										"type": "string",
+										"example": "ACTIVE"
+									}
+								}
+							}
+						},
+						"resultCode": {
+							"type": "string",
+							"example": "1"
+						},
+						"resultDesc": {
+							"type": "string",
+							"example": "ok"
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<function name="addTag" class="APIDocsService">
+			<parameters>
+				<parameter name="tag" type="string" in="context.tag.toString()"/>
+			</parameters>
+			<log><![CDATA[qiulei 2017.09.15  Tag= '<%=context.tag.toString()%>']]></log>
+		</function>
+		
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.pathname.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+			<log><![CDATA[qiulei 2017.09.15  pathname= '<%=context.pathname.toString()%>']]></log>
+			<log><![CDATA[qiulei 2017.09.15  pathconntent= '<%=context.pathconntent.toString()%>']]></log>
+		</function>
+		
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+			<log><![CDATA[qiulei 2017.09.15  definitionname= '<%=context.definitionname.toString()%>']]></log>
+			<log><![CDATA[qiulei 2017.09.15  definitioncontent= '<%=context.definitioncontent.toString()%>']]></log>
+		</function>
+	</function>
+	
+</starosxml>

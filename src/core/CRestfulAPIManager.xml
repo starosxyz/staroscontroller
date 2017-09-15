@@ -48,7 +48,7 @@
 				</parameters>
 				<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
 			</function>
-									<function name="RemoveAPIHandler">
+												<function name="RemoveAPIHandler">
 				<parameters>
 					<parameter name="requestpath" type="string"/>
 				</parameters>

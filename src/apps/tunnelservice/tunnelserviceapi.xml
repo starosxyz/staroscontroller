@@ -9,6 +9,7 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->	
 	<function name="RegisterHandler">
+		<log>insert tunnelserviceapi RegisterHandler</log>
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			

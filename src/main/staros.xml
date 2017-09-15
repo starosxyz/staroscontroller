@@ -17,6 +17,9 @@
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 
+<!--qiulei 20170915 Friday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelServiceDocsApi.xml"/>
+	
 	<logconfig dest="stdout|file" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<events>
 		<!--Session StarUp-->
@@ -60,6 +63,8 @@
 			<function name="InitActionsMap"/>
 			<function name="InitActionsNameMap"/>
 			
+<!--qiulei 20170915-->
+			<function name="AllTunnel"/>
 			<!--qiulei 20170828 Monday-->
 			<set name="eventname"  value="'TimeOutEvent'"/>
 			<raise name="context.eventname.toString()"/>

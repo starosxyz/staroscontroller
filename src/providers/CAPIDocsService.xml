@@ -175,8 +175,8 @@
 							<if cond="context.tagstr!=null">
 								<then>
 									<log>insert tag if</log>									
+									<log><![CDATA[context.swaggerjsonstring.toString() = <%=context.swaggerjsonstring.toString()%>]]></log>
 									<script><![CDATA[
-										context.print(context.swaggerjsonstring.toString());
 										var info = JSON.parse(context.swaggerjsonstring.toString());
 										context.print();
 										var js_tags = info.tags;
