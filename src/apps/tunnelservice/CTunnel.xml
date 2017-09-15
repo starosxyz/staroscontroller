@@ -59,8 +59,7 @@
 				<set name="outid" value="thisclass.m_id.toLong()"/>
 			</function>
 			<!--qiulei 20170913 pm-->
-			
-<function name="GetTunnel_username">
+			<function name="GetTunnel_username">
 				<parameters>
 					<parameter name="t_username" type="string"/>
 				</parameters>
@@ -109,7 +108,7 @@
 				</parameters>
 				<set name="t_state" value="thisclass.m_state.toString()"/>
 			</function>
-		
+			
 			<function name="GetTunnel_inputvlanid">
 				<parameters>
 					<parameter name="t_inputvlanid" type="long"/>
@@ -146,7 +145,7 @@
 			</function>
 			
 			<!--qiulei 20170913-->
-			
+
 			<function name="OneTunnelObjectToJsonString">
 				<parameters>
 					<parameter name="TunnelObjectToJson" type="string"/>
@@ -177,7 +176,8 @@
 				<log><![CDATA[context.values = <%=context.values.toString()%>]]></log>
 				<set name="TunnelObjectToJson" value="context.values.toString()"/>
 			</function>
-					<!--qiulei 20170913 update Tunnel-->
+			
+			<!--qiulei 20170913 update Tunnel-->
 			<function name="UpdateTunnel">
 				<parameters>
 					
@@ -209,6 +209,211 @@
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
 				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
+			</function>
+			
+			<!-- wangkang 2017/09/15 -->
+			<function name="ActiveTunnel">
+				<log>Active Tunnel</log>
+				<function name="InstallMeter"/>
+				<function name="InstallFlow"/>
+			</function>
+			<function name="DeactiveTunnel">
+				<log>Deactive Tunnel</log>
+				<function name="UnInstallMeter"/>
+				<function name="UnInstallFlow"/>
+			</function>
+			
+			<function name="FindMeterManager">
+				<parameters>
+					<parameter name="outmetermgrobj" type="class"/>
+				</parameters>
+				<variable name="deviceobj" type="class"/>
+				<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+				
+				<function name="GetDeviceByTransportId" class="DeviceManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+					</parameters>
+				</function>
+				<if cond="context.deviceobj != null">
+					<then>
+						<log>##### Deviceobj is not null #####</log>
+						<function name="GetMeterManager" class="context.deviceobj">
+							<parameters>
+								<parameter name="outmetermgr" type="class" out="context.outmetermgrobj"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+			</function>
+			
+			<function name="FindFlowManager">
+				<parameters>
+					<parameter name="outflowmgrobj" type="class"/>
+				</parameters>
+				<variable name="deviceobj" type="class"/>
+				<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+				
+				<function name="GetDeviceByTransportId" class="DeviceManager">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+					</parameters>
+				</function>
+				<if cond="context.deviceobj != null">
+					<then>
+						<log>##### Deviceobj is not null #####</log>
+						<function name="GetFlowManager" class="context.deviceobj">
+							<parameters>
+								<parameter name="outflowmgr" type="class" out="context.outflowmgrobj"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+			</function>
+			
+			<function name="InstallMeter">			
+				<variable name="modstrjson" type="string"/>
+				<variable name="resourceid" type="string" value=""/>
+				<variable name="onemetermgr" type="class"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
+							"flag":"1",
+							"meterid":"1",
+							"meterbandlist":[
+								{
+									"bandtype":"1",
+									"rate":"1000",
+									"burstsize":"1000"
+								},
+								{
+									"bandtype":"2",
+									"preclevel":"1000"
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="FindMeterManager">
+					<parameters>
+						<parameter name="outmetermgrobj" type="class" out="context.onemetermgr"/>
+					</parameters>
+				</function>
+				<if cond="context.onemetermgr != null">
+					<then>
+						<function name="InstallMeterRequest" class="context.onemetermgr">
+							<parameters>
+								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+								<parameter name="meterid" type="string"/>
+								<parameter name="appid" type="string" in="'core'"/>
+							</parameters>
+							<set name="thisclass.m_inmeterid" value="context.meterid.toLong()"/>
+						</function>	
+					</then>	
+				</if>
+			</function>
+			
+			<function name="UnInstallMeter">
+				<variable name="onemetermgr" type="class"/>
+				<function name="FindMeterManager">
+					<parameters>
+						<parameter name="outmetermgrobj" type="class" out="context.onemetermgr"/>
+					</parameters>
+				</function>
+				<if cond="context.onemetermgr != null">
+					<then>
+						<function name="UnInstallMeterRequest" class="context.onemetermgr">
+							<parameters>
+								<parameter name="meterid" type="string" in="thisclass.m_inmeterid.toString()"/>
+							</parameters>
+						</function>
+					</then>	
+				</if>
+			</function>
+			
+			<function name="InstallFlow">
+				<log dest="stdout">InstallFlow wangkang 2017/09/15</log>
+				<variable name="modstrjson" type="string"/>
+				<variable name="oneflowmgr" type="class"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0806"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="FindFlowManager">
+					<parameters>
+						<parameter name="outflowmgrobj" type="class" out="context.oneflowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>InstallFlowTableRequest</log>
+						<!--
+						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
+								
+						</function>	
+						-->
+					</then>	
+				</if>
+			</function>
+			
+			<function name="UnInstallFlow">
+				<variable name="oneflowmgr" type="class"/>
+				<function name="FindFlowManager">
+					<parameters>
+						<parameter name="outflowmgrobj" type="class" out="context.oneflowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>UnInstallFlowTableRequest</log>
+						<!--
+						<function name="UnInstallFlowTableRequest" class="context.oneflowmgr">
+
+						</function>
+						-->
+					</then>	
+				</if>
 			</function>
 		</public>
 	</class>
