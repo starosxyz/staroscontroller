@@ -432,7 +432,7 @@
 				
 				
 				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<for var="oneDevicePair" in="context.flowsContainer">
 					
 					<set name="flowobj" value="context.oneDevicePair.second()"/>
 					<if cond="context.flowobj==null">

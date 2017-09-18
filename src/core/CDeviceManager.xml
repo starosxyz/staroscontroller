@@ -176,9 +176,10 @@
 				<variable name="deviceinfo" type="class"/>
 				<variable name="devicetransportid" type="string"/>
 				<variable name="devicedatapathid" type="string"/>
+				<variable name="oneremove" type="string"/>
 				<log><![CDATA[removeDeviceByTransportId device size=<%=context.deviceContainer.size()%>]]></log>
 				<log><![CDATA[transportid=<%=context.transportid.toString()%>]]></log>
-				
+				<container name="removelist" type="list" valuetype="string"/>
 				
 				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneapppair" in="context.deviceContainer">
@@ -202,13 +203,18 @@
 										<parameter name="outdatapathid" type="string" out="context.devicedatapathid"/>
 									</parameters>
 								</function>
-								<function name="removeDevice">
-									<parameters>
-										<parameter name="datapathid" type="string" in="context.devicedatapathid.toString()"/>
-									</parameters>
-								</function>
+								<insert name="removelist" value="context.devicedatapathid.toString()"/>
 							</then>
 						</if>
+					</function>
+				</for>
+				<for var="oneremove" in="context.removelist">
+					<function>
+						<function name="removeDevice">
+							<parameters>
+								<parameter name="datapathid" type="string" in="context.oneremove.toString()"/>
+							</parameters>
+						</function>
 					</function>
 				</for>
 			</function>

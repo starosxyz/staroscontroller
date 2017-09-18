@@ -189,11 +189,11 @@
 					flow.bytes = thisclass.m_bytes.toString();
 					flow.type = thisclass.m_type.toString();
 					var buckets=" ";
-					var firstring = context.bucketjsonlists.getFirst();
+					var firstring = context.bucketjsonlist.getFirst();
 					while(firstring != null)
 					{
 						buckets+=firstring;
-						firstring=context.bucketjsonlists.getNext();
+						firstring=context.bucketjsonlist.getNext();
 					}
 					flow.buckets=buckets;
 					var strjson=JSON.stringify(flow);
