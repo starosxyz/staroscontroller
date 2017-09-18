@@ -76,7 +76,7 @@
 			</function>
 		</onevent>
 		<onevent event="processrequest">
-			<log>tunnelserviceapi processrequest</log>
+			<log>tunnelserviceapi processrequest</log>			
 			<if cond="event.getParam('method').toString()=='GET'">
 				<then>
 					<log>insert method get</log>
@@ -112,7 +112,7 @@
 			</parameters>
 		</function>
 	</function>
-	<function name="updateTunnel">
+	<function name="updateTunnel">		
 		<log>insert method == put</log>
 		<variable name="resourceid" type="long"/>
 		<script><![CDATA[
@@ -167,7 +167,7 @@
 			context.inmeterid.setValue(local_inmeterid);
 			context.outmeterid.setValue(local_outmeterid);
 		]]></script>
-		<function name="UpdateTunnel" class="context.tunnel">										
+		<function name="UpdateTunnel" class="context.tunnel">
 			<parameters>											
 				<parameter name="username" type="string" in="context.username.toString()"/>
 				<parameter name="inputPort" type="string" in="context.outputPort.toString()"/>
@@ -199,7 +199,7 @@
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 				<parameter name="json" type="string" in="context.outjson.toString()"/>
 			</parameters>
-		</function>																
+		</function>
 	</function>
 	<function name="addTunnel">
 		<variable name="username" type="string"/>
@@ -285,7 +285,7 @@
 			var local_id = array[array.length-1];
 			context.resourceid.setValue(local_id);			
 		]]></script>
-		<function name="removeTunnel"class="context.tunnelManagerObject">
+		<function name="removeTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
 			</parameters>

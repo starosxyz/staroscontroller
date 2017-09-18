@@ -147,9 +147,10 @@
 
 			<function name="printtunnelmanager">
 				<variable name="onetunnelinfo" type="class"/>
-				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+				<container name="onetunnelContainer" type="pair" keytype="string" valuetype="class"/>
+				<for var="onetunnelContainer" in="context.tunnelContainer">
 					<function>
-						<set name="onetunnelinfo" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="onetunnelinfo" value="context.onetunnelContainer.second()"/>
 						<function name="printtunnel" class="context.onetunnelinfo"/>
 					</function>
 				</for>
@@ -163,9 +164,10 @@
 				<variable name="outjson" type="string"/>
 				<variable name="onetunnelinfo" type="class"/>
 				<container name="tunnellist" type="list" valuetype="string"/>
-				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+				<container name="onetunnelContainer" type="pair" keytype="string" valuetype="class"/>
+				<for var="onetunnelContainer" in="context.tunnelContainer">
 					<function>
-						<set name="onetunnelinfo" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="onetunnelinfo" value="context.onetunnelContainer.second()"/>
 						<function name="ToString" class="context.onetunnelinfo">
 							<parameters>
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
@@ -176,12 +178,14 @@
 				</for>
 				<script><![CDATA[
 					var json = new Object();
-					var myArray=new Array();                               
-					for(var i=0;i<context.tunnellist.size();i++)
+					var myArray=new Array(); 
+					var firststring = context.tunnellist.getFirst();
+					while(firststring != null)
 					{
-						var tunnel = context.tunnellist.getValueByIndex(i);									
+						var tunnel = firststring;									
 						var info = JSON.parse(tunnel);	
 						myArray.push(info);
+						firststring = context.tunnellist.getNext();
 					}
 					json['event']='tunnelDataResponse';	
 					var payload = new Object();

@@ -120,6 +120,7 @@
 				<container name="strbucketlist" type="list" valuetype="string"/>
 				<variable name="bucketobj" type="class"/>
 				<variable name="strbucket" type="string"/>
+				<variable name="strbucketlists" type="string"/>
 				<script><![CDATA[
 						var info = JSON.parse(thisclass.m_strjson.toString());
 						thisclass.m_type=info.grouptype;
@@ -133,9 +134,9 @@
 							}
 						}
 				]]></script>
-				<for var="i" from="0" to="context.strbucketlist.size()-1">
+				<for var="strbucketlists" in="context.strbucketlist">
 					<function>
-						<set name="strbucket" value="context.strbucketlist.getValueByIndex(context.i.toLong())"/>
+						<set name="strbucket" value="context.strbucketlists.toString()"/>
 						<log><![CDATA[strbucket=<%=context.strbucket.toString()%>]]></log>
 						<new name="bucketobj" class="CGroupBucket">
 							<parameters>
@@ -159,9 +160,11 @@
 				<log><![CDATA[m_packets=<%=thisclass.m_packets.toString()%>]]></log>
 				<log><![CDATA[m_bytes=<%=thisclass.m_bytes.toString()%>]]></log>
 				<log><![CDATA[m_buckets size=<%=context.m_buckets.size()%>]]></log>
-				<for var="i" from="0" to="context.m_buckets.size()-1">
+				<variable name="i" type="class"/>
+			
+				<for var="i" in="context.m_buckets">
 					<function>
-						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
+						<set name="bucketsobj" value="context.i"/>
 						<if cond="context.bucketsobj==null">
 							<then>
 								<log>bucketsobj is null</log>
@@ -186,9 +189,11 @@
 					flow.bytes = thisclass.m_bytes.toString();
 					flow.type = thisclass.m_type.toString();
 					var buckets=" ";
-					for(var i=0;i<context.bucketjsonlist.size();i++)
+					var firstring = context.bucketjsonlists.getFirst();
+					while(firstring != null)
 					{
-						buckets+=context.bucketjsonlist.getValueByIndex(i);
+						buckets+=firstring;
+						firstring=context.bucketjsonlists.getNext();
 					}
 					flow.buckets=buckets;
 					var strjson=JSON.stringify(flow);
@@ -201,9 +206,10 @@
 				<parameters>
 					<parameter name="groupjson" type="string"/>
 				</parameters>
-				<container name="bucketjsonlist" type="list" valuetype="string"/>
+				<container name="bucketjsonlist" type="array" valuetype="string"/>
 				<variable name="bucketsobj" type="class"/>
 				<variable name="bucketstring" type="class"/>
+				<variable name="i" type="long" value="0"/>
 				<log><![CDATA[FetchStateFromJson groupjson=<%=context.groupjson.toString()%>]]></log>
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.groupjson.toString());
@@ -218,10 +224,12 @@
 						context.bucketjsonlist.addValue(JSON.stringify(onebucket));
 					}
 				]]></script>
-				<for var="i" from="0" to="context.m_buckets.size()-1">
+				
+				<!--hu-->
+				
+				<for var="bucketsobj" in="context.m_buckets">
 					<function>
-						<set name="bucketsobj" value="context.m_buckets.getValueByIndex(context.i.toLong())"/>
-						<set name="bucketstring" value="context.bucketjsonlist.getValueByIndex(context.i.toLong())"/>
+						<set name="bucketstring" value="context.bucketjsonlist.getValue(context.i.toLong())"/>
 						<if cond="context.bucketsobj==null">
 							<then>
 								<log>bucketsobj is null</log>
@@ -233,6 +241,7 @@
 								<parameter name="jsonstring" type="string" in="context.bucketstring.toString()"/>
 							</parameters>
 						</function>
+						<set name="i" value="context.i.toLong()+1"/>
 					</function>
 				</for>
 			</function>
@@ -436,9 +445,10 @@
 				<container name="groupjsonlist" type="list" valuetype="string"/>
 				<variable name="groupobj" type="class"/>
 				<variable name="GroupInfoJson" type="string"/>
-					<for var="i" from="0" to="context.groupContainer.size()-1">
+				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
+					<for var="onegrouppair" in="context.groupContainer">
 					<function>
-						<set name="groupobj" value="context.groupContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="groupobj" value="context.onegrouppair.second()"/>
 						<function name="GroupToJsonString" class="groupobj">
 							<parameters>
 								<parameter name="groupjson" type="string" out="context.GroupInfoJson"/>
@@ -454,12 +464,14 @@
 					json['event'] = "groupDataResponse";
 					
 					var gArray=new Array();
-					for(var i=0;i<context.groupjsonlist.size();i++)
-					{
-						var oneStrJson = context.groupjsonlist.getValueByIndex(i);
+					var firststr=context.groupjsonlist.getFirst();
+					while(firststr!=null){
+						var oneStrJson=firststr;
 						var oneObject = JSON.parse(oneStrJson);
 						gArray.push(oneObject);
+						firststr=context.groupjsonlist.getNext();
 					}
+
 					payload['groups'] = gArray;
 					
 					var twobject = new Object();								
@@ -478,6 +490,7 @@
 				<variable name="groupid" type="string"/>
 				<variable name="groupobj" type="class"/>
 				<variable name="groupstate" type="string"/>
+				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>
 				<function name="OpenFlowMultiPartGroupRequest">
@@ -509,10 +522,11 @@
 					</function>
 				</wait>
 				<log>GroupStateRequest</log>
-				<for var="i" from="0" to="context.groupContainer.size()-1">
+				<for var="onegrouppair" in="context.groupContainer">
 					<function>
-						<set name="groupobj" value="context.groupContainer.getValueByIndex(context.i.toLong())"/>
-						<set name="groupid" value="context.groupContainer.getKeyByIndex(context.i.toLong())"/>
+						<set name="groupobj" value="context.onegrouppair.second()"/>
+						<set name="groupid" value="context.onegrouppair.first()"/>
+						
 						<if cond="context.liststate.hasValue(context.groupid.toString())==true">
 							<then>
 								<set name="groupstate" value="context.liststate.getValue(context.groupid.toString())"/>
@@ -548,9 +562,10 @@
 			</function>
 			<function name="DumpGroup">
 				<variable name="groupkey" type="string"/>
+				<container name="onestatepair" type="pair" keytype="string" valuetype="class"/> 
 				<log>===========DumpGroupStart===============</log>
-				<for var="i" from="0" to="context.groupContainer.size()-1">
-					<set name="groupkey" value="context.groupContainer.getKeyByIndex(context.i.toLong())"/>
+				<for var="onestatepair" in="context.groupContainer">
+					<set name="groupkey" value="context.onestatepair.first()"/>
 					<log><![CDATA[groupkey=<%=context.groupkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpGroupEnd===============</log>

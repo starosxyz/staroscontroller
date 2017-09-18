@@ -86,9 +86,10 @@
 				</parameters>
 				<variable name="instance" type="class"/>
 				<variable name="instancejson" type="string"/>
-				<for var="i" from="0" to="context.m_instanceContainer.size()-1">
+				<container name="oneinstancepair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneinstancepair" in="context.m_instanceContainer">
 					<function>			
-						<set name="instance" value="context.m_instanceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="instance" value="context.oneinstancepair.second()"/>
 						<function name="ToJson" class="instance">
 							<parameters>
 								<parameter name="jsonstring" type="string" out="instancejson"/>			

@@ -104,9 +104,10 @@
 				<variable name="settingobj" type="class" />
 				<container name="jsonlist" type="list" valuetype="string"/>
 				<variable name="strjson" type="string" />
-				<for var="i" from="0" to="context.settingContainer.size()-1">
+				<container name="onesettingContainer" type="pair" keytype="string" valuetype="class"/>
+				<for var="onesettingContainer" in="context.settingContainer">
 					<function>
-						<set name="settingobj" value="context.settingContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="settingobj" value="context.onesettingContainer.second()"/>
 						<function name="GetSettingJson" class="context.settingobj">
 							<parameters>
 								<parameter name="outjson" type="string" out="context.strjson"/>
@@ -116,13 +117,15 @@
 					</function>
 				</for>
 				<script><![CDATA[
-					var portsArray=new Array();                               
-					for(var i=0;i<context.jsonlist.size();i++)
+					var portsArray=new Array(); 
+					var firststring=context.jsonlist.getFirst();
+					while(firststring != null)
 					{
 						//context.print(i);			
-						var port = context.jsonlist.getValueByIndex(i);	
+						var port = firststring;	
 						var info = JSON.parse(port);						
 						portsArray.push(info);
+						firststring = context.jsonlist.getNext();
 					}
 					var strjson=JSON.stringify(portsArray);
 					context.outjson.setValue(strjson);

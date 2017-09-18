@@ -88,7 +88,7 @@
 					</else>
 				</if>
 			</function>
-		<function name="SendResponse">	
+			<function name="SendResponse">	
 				<parameters>
 					<parameter name="transportid" type="string"/>
 					<parameter name="json" type="string"/>

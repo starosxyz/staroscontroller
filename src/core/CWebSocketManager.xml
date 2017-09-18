@@ -40,9 +40,12 @@
 				</parameters>
 				<log><![CDATA[SendToAllClient strjson =<%=context.strjson.toString()%>]]></log>
 				<variable name="client" type="string"/>
-				<for var="i" from="0" to="context.clientContainer.size()-1">
+				<log><![CDATA[clientContainer size =<%=context.clientContainer.size()%>]]></log>
+				<container name="oneclientContainer" type="pair" keytype="string" valuetype="string"/>
+				<for var="oneclientContainer" in="context.clientContainer">
 					<function>
-						<set name="client" value="context.clientContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="client" value="context.oneclientContainer.second()"/>
+						<log><![CDATA[oneclientContainer value =<%=context.client.toString()%>]]></log>
 						<websocket name="restfulserver" method="SendText" transportid="context.client.toString()">
 							<jsonsrc src="strjson"/>
 						</websocket>

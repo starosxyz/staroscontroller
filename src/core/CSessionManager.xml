@@ -126,6 +126,7 @@
 				<variable name="sessionid" type="string" />
 				<container name="removelist" type="list" valuetype="string"/>
 				<variable name="sessionobj" type="class" />
+				<container name="oneSessionContainer" type="pair" keytype="string" valuetype="class"/>
 					<script><![CDATA[
 							function getCurrentTimerInMs() {
 								var timestamp=new Date().getTime();
@@ -135,9 +136,9 @@
 							context.current.setValue(getCurrentTimerInMs());
 					]]></script>
 				<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size()%>']]></log>
-					<for var="i" from="0" to="context.SessionContainer.size()-1">
-						<set name="sessionobj" value="context.SessionContainer.getValueByIndex(context.i.toLong())"/>
-						<set name="sessionid" value="context.SessionContainer.getKeyByIndex(context.i.toLong())"/>
+					<for var="oneSessionContainer" in="context.SessionContainer">
+						<set name="sessionobj" value="context.oneSessionContainer.second()"/>
+						<set name="sessionid" value="context.oneSessionContainer.first()"/>
 						<function name="Gettime" class="context.sessionobj">
 							<parameters>
 								<parameter name="time" type="long" out="context.oncurrent"/>	
@@ -153,8 +154,7 @@
 						</if>
 					</for>
 					<log><![CDATA[removelist size!!!!!= '<%=context.removelist.size()%>']]></log>
-					<for var="i" from="0" to="context.removelist.size()-1">
-						<set name="sessionid" value="context.removelist.getValueByIndex(context.i.toLong())"/>
+					<for var="sessionid" in="context.removelist">
 						<remove name="SessionContainer" key="context.sessionid.toString()"/>
 					</for>
 			</function>

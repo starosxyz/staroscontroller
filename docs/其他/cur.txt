@@ -1,1 +1,3 @@
-curl -u admin:admin -H "Content-type: application/json" -X Get http://192.168.2.165:9922/onos/v1/tunnelservice
+curl -u admin:admin -H "Content-type: application/json" -X Get http://192.168.228.128:9922/onos/v1/tunnelservice/tunnels
+
+curl -u admin:admin -H "Content-type: application/json" -X POST -d '{"tunnel": {"username": "test","type": "vlan","inputPort": "sdfsdf/33","outputPort": "sfgdfdd/33","inputvlanid": "12","outputvlanid": "12","bandwidth": "44333"}}' http://192.168.2.165:9922/onos/v1/tunnelservice/tunnels

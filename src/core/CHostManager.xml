@@ -127,9 +127,10 @@
 
 			<function name="printhostmanager">
 				<variable name="onehostinfo" type="class"/>
-				<for var="i" from="0" to="context.hostContainer.size()-1">
+				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onehostpair" in="context.hostContainer">
 					<function>
-						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="onehostinfo" value="context.onehostpair.second()"/>
 						<function name="printhost" class="context.onehostinfo"/>
 					</function>
 				</for>
@@ -141,9 +142,10 @@
 				<variable name="outjson" type="string"/>
 				<variable name="onehostinfo" type="class"/>
 				<container name="hostlist" type="list" valuetype="string"/>
-				<for var="i" from="0" to="context.hostContainer.size()-1">
+				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onehostpair" in="context.hostContainer">
 					<function>
-						<set name="onehostinfo" value="context.hostContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="onehostinfo" value="context.onehostpair.second()"/>
 						<function name="ToString" class="context.onehostinfo">
 							<parameters>
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
@@ -154,13 +156,15 @@
 				</for>
 				<script><![CDATA[
 					var json = new Object();
-					var myArray=new Array();                               
-					for(var i=0;i<context.hostlist.size();i++)
-					{
-						var host = context.hostlist.getValueByIndex(i);									
+					var myArray=new Array(); 
+					var firststr=context.hostlist.getFirst();
+					while(firststr!=null){
+						var host = firststr;									
 						var info = JSON.parse(host);	
 						myArray.push(info);
+						firststr=context.hostlist.getNext();
 					}
+
 					
 					json['event']='hostDataResponse';	
 					var payload = new Object();
@@ -282,9 +286,10 @@
 				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
 				<log>CHostManager SendAddAllHostToWebClient</log>
 				<variable name="sendjsonstr" type="string"/>				
-				<variable name="hostobj" type="class"/>				
-				<for var="i" from="0" to="context.hostContainer.size()-1">
-					<set name="hostobj" value="context.hostContainer.getValueByIndex(context.i.toString())"/>
+				<variable name="hostobj" type="class"/>	
+				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>				
+				<for var="onehostpair" in="context.hostContainer">
+					<set name="hostobj" value="context.onehostpair.second()"/>
 					<if cond="context.hostobj!=null">
 						<then>
 							<function name="ToAddHost2Json" class="context.hostobj">

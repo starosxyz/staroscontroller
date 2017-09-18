@@ -426,9 +426,15 @@
 				<variable name="flowobjJson" type="string"/>
 				<variable name="flowobj_deviceid" type="string"/>
 				<variable name="outjson" type="string"/>
-				<container name="flowinfos" type="list" valuetype="string"/>	
-				<for var="i" from="0" to="context.flowsContainer.size()-1">
-					<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.i.toLong())"/>
+				<container name="flowinfos" type="list" valuetype="string"/>
+
+				
+				
+				
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
+					
+					<set name="flowobj" value="context.oneDevicePair.second()"/>
 					<if cond="context.flowobj==null">
 						<then>
 							<log>flowobj is null</log>
@@ -449,12 +455,19 @@
 					json['event'] = "flowDataResponse";
 					
 					var myArray = new Array();
-					for(var i=0;i < context.flowinfos.size();i++)
-					{
-						var onestrjson = context.flowinfos.getValueByIndex(i);
-						var jsoninfo = JSON.parse(onestrjson);
+					
+					
+					//	qiulei 20170918 am
+					var firstString=context.flowinfos.getFirst();
+					while(firstString!=null){
+						
+						var jsoninfo = JSON.parse(firstString);
 						myArray.push(jsoninfo);
+						
+						firstString=context.flowinfos.getNext();
 					}
+					
+					
 					payload['flows'] = myArray;
 					
 					var twobject = new Object();								
@@ -469,6 +482,16 @@
 			</function>
 			<function name="SendFlowRequest">
 				<variable name="xid" type="long"/>
+				<variable name="flowobj" type="class"/>
+				<variable name="flowobj_flowid" type="string"/>
+				<variable name="json_cookie" type="string"/>
+				<variable name="local_packets" type="string"/>
+				<variable name="local_bytes" type="string"/>
+				<variable name="local_durationsec" type="string"/>
+				<variable name="local_durationnsec" type="string"/>
+				<container name="oneFlowsPair" type="pair" keytype="string" valuetype="class"/>
+				<variable name="oneFlowpartPair" type="string"/>
+				
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>							
 				
 				<container name="flowpartlist" type="list"  valuetype="string"/>
@@ -509,17 +532,11 @@
 					3) get packets bytes durationsec and durationnsec from data
 					4) put 4 datas set in Flow
 				-->
-				<variable name="flowobj" type="class"/>
-				<variable name="flowobj_flowid" type="string"/>
-				<variable name="json_cookie" type="string"/>
-				<variable name="local_packets" type="string"/>
-				<variable name="local_bytes" type="string"/>
-				<variable name="local_durationsec" type="string"/>
-				<variable name="local_durationnsec" type="string"/>
-				<for var="i" from="0" to="context.flowpartlist.size()-1">
-					<set name="flowpartstring" value="context.flowpartlist.getValueByIndex(context.i.toLong())"/>
-					<for var="j" from="0" to="context.flowsContainer.size()-1">
-						<set name="flowobj" value="context.flowsContainer.getValueByIndex(context.j.toLong())"/>
+				<for var="oneFlowpartPair" in="context.flowpartlist">
+					
+					<set name="flowpartstring" value="context.oneFlowpartPair.toString()"/>
+					<for var="oneFlowsPair" in="context.flowsContainer">
+						<set name="flowobj" value="context.oneFlowsPair.second()"/>
 						<if cond="context.flowobj==null">
 							<then>
 								<log>flowobj is null</log>
@@ -760,8 +777,13 @@
 			<function name="DumpFlow">
 				<variable name="flowkey" type="string"/>
 				<log>===========DumpFlowStart===============</log>
-				<for var="i" from="0" to="context.flowsContainer.size()-1">
-					<set name="flowkey" value="context.flowsContainer.getKeyByIndex(context.i.toLong())"/>
+				
+				
+				<container name="oneFlowPair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneFlowPair" in="context.flowsContainer">
+				
+					<set name="flowkey" value="context.oneFlowPair.first()"/>
+				
 					<log><![CDATA[flowkey=<%=context.flowkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpFlowEnd===============</log>

@@ -178,9 +178,13 @@
 				<variable name="devicedatapathid" type="string"/>
 				<log><![CDATA[removeDeviceByTransportId device size=<%=context.deviceContainer.size()%>]]></log>
 				<log><![CDATA[transportid=<%=context.transportid.toString()%>]]></log>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
-					<function>			
-						<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+				
+				
+				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneapppair" in="context.deviceContainer">
+					<function>
+						<set name="deviceinfo" value="context.oneapppair.second()"/>
+						
 						<if cond="context.deviceinfo != null">
 							<then>
 								<function name="GetTransportId" class="deviceinfo">
@@ -214,12 +218,19 @@
 				</parameters>
 				<variable name="jsonstr" type="string"/>
 				<variable name="switchdevice" type="class"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
+				
+				<log>2017.09.18 enter CDeviceManager.SendAddAllDeviceToWebClient method</log>
+				
+				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneapppair" in="context.deviceContainer">
 					<log><![CDATA[SendAddAllDeviceToWebClient device size=<%=context.deviceContainer.size()%>]]></log>
 					<function>
-						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="switchdevice" value="context.oneapppair.second()"/>
+						
 						<if cond="context.switchdevice != null">
 							<then>
+								
+								<log>2017.09.18 enter CDeviceManager.SendAddAllDeviceToWebClient method    switchdevice is Not null</log>
 								<function name="ToAddDeviceJson" class="context.switchdevice">
 									<parameters>
 										<parameter name="strjson" type="string" out="jsonstr"/>
@@ -237,6 +248,7 @@
 				<parameters>
 					<parameter name="transportid" type="string"/>
 				</parameters>
+				<log>2017.09.18 enter CDeviceManager.SendAddAllLinkToWebClient method</log>
 				<variable name="srcdevice" type="class"/>
 				<variable name="dstdevice" type="class"/>
 				<variable name="srcport" type="string"/>
@@ -246,10 +258,13 @@
 				<variable name="json" type="string"/>
 				<variable name="strlink" type="string" value=""/>
 				<variable name="binvalidlink" type="string" value="false"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
-					<log><![CDATA[deviceLength=<%=context.deviceContainer.size()%>]]></log>
+				
+				
+				<container name="oneDevicePair1" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair1" in="context.deviceContainer">
+					<log><![CDATA[SendAddAllDeviceToWebClient device size=<%=context.deviceContainer.size()%>]]></log>
 					<function>
-						<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="srcdevice" value="context.oneDevicePair1.second()"/>
 						<if cond="context.srcdevice != null">
 							<then>
 								<function name="GetDatapathId" class="srcdevice">
@@ -260,8 +275,10 @@
 							</then>
 						</if>
 						<function>
-							<for var="j" from="0" to="context.deviceContainer.size()-1">
-								<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
+							<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
+							<for var="oneDevicePair2" in="context.deviceContainer">
+								<set name="dstdevice" value="context.oneDevicePair2.second()"/>
+								<log>2017.09.18 enter CDeviceManager.SendAddAllLinkToWebClient method    ent inner for</log>
 								<if cond="context.dstdevice != null">
 									<then>
 										<function name="GetDatapathId" class="dstdevice">
@@ -275,12 +292,12 @@
 									<then>
 										<function>
 											<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>
-																						<function name="getShortestPath" class="TopoService">
-												<parameters>												
-													<parameter name="link" type="string" in="context.strlink.toString()"/>
-													<parameter name="outjson" type="string" out="context.json"/>
-												</parameters>												
-											</function>
+												<function name="getShortestPath" class="TopoService">
+													<parameters>												
+														<parameter name="link" type="string" in="context.strlink.toString()"/>
+														<parameter name="outjson" type="string" out="context.json"/>
+													</parameters>												
+												</function>
 											
 											<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 												<script><![CDATA[
@@ -348,9 +365,10 @@
 				<container name="deviceinfolist" type="list" valuetype="string"/>
 				
 				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
 					<function>
-						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="switchdevice" value="context.oneDevicePair.second()"/>
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
@@ -368,11 +386,15 @@
 					var json = new Object();
 					var myArray=new Array();  
 					
-					for(var i=0;i<context.deviceinfolist.size();i++)
-					{									
-						var onearray = JSON.parse(context.deviceinfolist.getValueByIndex(i));
+					
+					//	qiulei 20170918
+					var firstString=context.deviceinfolist.getFirst();
+					while(firstString!=null){
+						var onearray = JSON.parse(firstString);
 						myArray.push(onearray);
+						firstString=context.deviceinfolist.getNext();
 					}
+					
 					json['event']='deviceDataResponse';
 					
 					var payload = new Object();
@@ -401,9 +423,10 @@
 				<container name="deviceinfolist" type="list" valuetype="string"/>
 				
 				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
 					<function>
-						<set name="switchdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="switchdevice" value="context.oneDevicePair.second()"/>
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
@@ -420,11 +443,15 @@
 					var json = new Object();
 					var myArray=new Array();  
 					
-					for(var i=0;i<context.deviceinfolist.size();i++)
-					{									
-						var onearray = JSON.parse(context.deviceinfolist.getValueByIndex(i));
+					
+					//	qiulei 20170918
+					var firstString=context.deviceinfolist.getFirst();
+					while(firstString!=null){
+						var onearray = JSON.parse(firstString);
 						myArray.push(onearray);
+						firstString=context.deviceinfolist.getNext();
 					}
+					
 					json['event']='deviceDataResponse';
 					
 					var payload = new Object();
@@ -447,9 +474,11 @@
 				<variable name="thisswitch" type="class"/>
 				<variable name="transportid" type="string"/>
 				<log>Device Manager Detect</log>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">
+				
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
 					<function>
-						<set name="thisswitch" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="thisswitch" value="context.oneDevicePair.second()"/>
 						<if cond="context.thisswitch != null">
 							<then>
 								<function name="TimeOut" class="context.thisswitch"/>
@@ -499,41 +528,58 @@
 				<container name="linklist" type="list" valuetype="string"/>
 				<variable name="srcdevice" type="class"/>
 				<variable name="dstdevice" type="class"/>
-				<function>					
-					<for var="i" from="0" to="context.deviceContainer.size()-1">			
+				<function>	
+
+				
+					<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+					<for var="oneDevicePair" in="context.deviceContainer">
 						<function>
-							<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<log>2017.9.18 oneDevicePair </log>
+							<set name="srcdevice" value="context.oneDevicePair.second()"/>
+							<log><![CDATA[2017.9.18 oneDevicePair  context.oneDevicePair.second()=<%=context.oneDevicePair.first()%>>]]></log>
 							<if cond="context.srcdevice != null">
 								<then>
+								
+									<log>2017.9.18 srcdevice 非空 </log>
 									<function name="GetDatapathId" class="srcdevice">
 										<parameters>
 											<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 										</parameters>
 									</function>
+									<log><![CDATA[srcdevicedpid=<%=context.srcdevicedpid.toString()%>>]]></log>
 								</then>
 							</if>
 							<function>
-								<for var="j" from="0" to="context.deviceContainer.size()-1">
-									<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
-									<if cond="context.srcdevice != null">
+							
+								<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
+								<for var="oneDevicePair2" in="context.deviceContainer">
+									<log>第二层</log>
+									<set name="dstdevice" value="context.oneDevicePair2.second()"/>
+									<if cond="context.dstdevice != null">
 										<then>
+											<log>第二层 第一个if</log>
 											<function name="GetDatapathId" class="dstdevice">
 												<parameters>
 													<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 												</parameters>
 											</function>
+											<log><![CDATA[dstdevicedpid=<%=context.dstdevicedpid.toString()%>>]]></log>
 										</then>
 									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
+											<log>第二层 第二个if</log>
 											<function>
 												<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>									
+												<log><![CDATA[strlink = <%=context.strlink.toString()%>]]></log>
 												<script><![CDATA[
 														if (context.strlink.toString().length>0)
 														{
+															context.print("进入js 第一个if");
 															var info = JSON.parse(context.strlink.toString());
 															if (info.paths.length == 1)
 															{
+																context.print("进入js 第二个if");
 																var array = new Object();
 																array.one = "of:" + context.srcdevicedpid.toString() + "/" + info.paths[0].src.port;
 																array.two = "of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].dst.port;
@@ -577,12 +623,16 @@
 					<script><![CDATA[				
 						var json = new Object();
 						var myArray=new Array();
-						for(var i=0;i<context.linklist.size();i++)
-						{
-							var onestrjson = context.linklist.getValueByIndex(i);
-							var jsoninfo = JSON.parse(onestrjson);
+						
+						//	qiulei 20170918
+						var firstString=context.linklist.getFirst();
+						while(firstString!=null){
+							var jsoninfo = JSON.parse(firstString);
 							myArray.push(jsoninfo);
+							
+							firstString=context.linklist.getNext();
 						}
+						
 						json['event'] = "linkDataResponse";							
 						var payload = new Object();
 						payload['links'] = myArray;				
@@ -632,10 +682,11 @@
 				<variable name="srcdevice" type="class"/>
 				<variable name="dstdevice" type="class"/>
 				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
-				<function>					
-					<for var="i" from="0" to="context.deviceContainer.size()-1">			
+				<function>
+					<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+					<for var="oneDevicePair" in="context.deviceContainer">
 						<function>
-							<set name="srcdevice" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+							<set name="srcdevice" value="context.oneDevicePair.second()"/>
 							<if cond="context.srcdevice != null">
 								<then>
 									<function name="GetDatapathId" class="srcdevice">
@@ -646,8 +697,10 @@
 								</then>
 							</if>	
 							<function>
-								<for var="j" from="0" to="context.deviceContainer.size()-1">
-									<set name="dstdevice" value="context.deviceContainer.getValueByIndex(context.j.toLong())"/>
+								<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
+								<for var="oneDevicePair2" in="context.deviceContainer">
+									<set name="dstdevice" value="context.oneDevicePair2.second()"/>
+									
 									<if cond="context.dstdevice != null">
 										<then>
 											<function name="GetDatapathId" class="dstdevice">
@@ -702,12 +755,17 @@
 					<script><![CDATA[				
 						var json = new Object();
 						var myArray=new Array();
-						for(var i=0;i<context.linklist.size();i++)
-						{
-							var onestrjson = context.linklist.getValueByIndex(i);
-							var jsoninfo = JSON.parse(onestrjson);
+						
+						//	qiulei 20170918 am
+						var firstString=context.linklist.getFirst();
+						while(firstString!=null){
+							
+							var jsoninfo = JSON.parse(firstString);
 							myArray.push(jsoninfo);
+							
+							firstString=context.linklist.getNext();
 						}
+						
 						json['event'] = "showHighlights";							
 						var payload = new Object();
 						var devices = new Array();	
@@ -791,9 +849,11 @@
 				
 				<variable name="device" type="class"/>
 				
-				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
 					<function>
-						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="device" value="context.oneDevicePair.second()"/>
+					
 						<if cond="context.device != null">
 							<function name="PacketOutToAllPort" class="context.device">
 								<parameters>	
@@ -861,9 +921,12 @@
 			</function>
 			<function name="SendTableRequest">
 				<variable name="device" type="class"/>
-				<for var="i" from="0" to="context.deviceContainer.size()-1">			
+				
+				
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
 					<function>
-						<set name="device" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="device" value="context.oneDevicePair.second()"/>
 						<if cond="context.device != null">
 							<then>
 								<function name="SendTableRequest" class="device"/>
@@ -914,8 +977,11 @@
 			<function name="DumpT2d">
 				<variable name="t2dkey" type="string"/>
 				<log>===========DumpT2dStart===============</log>
-				<for var="i" from="0" to="context.t2dContainer.size()-1">
-					<set name="t2dkey" value="context.t2dContainer.getKeyByIndex(context.i.toLong())"/>
+				
+				
+				<container name="oneDevicePair" type="pair" keytype="string" valuetype="string"/>
+				<for var="oneDevicePair" in="context.t2dContainer">
+					<set name="t2dkey" value="context.oneDevicePair.first()"/>
 					<log><![CDATA[t2dkey=<%=context.t2dkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpT2dEnd===============</log>

@@ -119,9 +119,10 @@
 				<variable name="eventparam" type="params"/>
 				<variable name="m_bundleid" type="long"/>
 				<variable name="eventname" type="string"/>
-				<for var="i" from="0" to="context.TopoContainer.size()-1">
-					<set name="id" value="context.TopoContainer.getKeyByIndex(context.i.toLong())"/>
-					<set name="data" value="context.TopoContainer.getValueByIndex(context.i.toLong())"/>
+				<container name="i" type="pair" keytype="string" valuetype="class"/>
+				<for var="context.i" in="context.TopoContainer">
+					<set name="id" value="context.i.first()"/>
+					<set name="data" value="context.i.second()"/>
 					<function name="GetBundleID" class="ApplicationManager">
 						<parameters>
 							<parameter name="appid" type="string" in="context.id.toString()"/>
@@ -151,9 +152,10 @@
 				<variable name="eventparam" type="params"/>
 				<variable name="m_bundleid" type="long"/>
 				<variable name="eventname" type="string"/>
-				<for var="i" from="0" to="context.TopoContainer.size()-1">
-					<set name="id" value="context.TopoContainer.getKeyByIndex(context.i.toLong())"/>
-					<set name="data" value="context.TopoContainer.getValueByIndex(context.i.toLong())"/>
+				<container name="i" type="pair" keytype="string" valuetype="class"/>
+				<for var="context.i" in="context.TopoContainer">
+					<set name="id" value="context.i.first()"/>
+					<set name="data" value="context.i.second()"/>
 					<function name="GetBundleID" class="ApplicationManager">
 						<parameters>
 							<parameter name="appid" type="string" in="context.id.toString()"/>

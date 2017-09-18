@@ -96,8 +96,9 @@
 				
 			<function name="dumpinfo">
 				<variable name="tables" type="string"/>
-					<for var="i" from="0" to="context.tableContainer.size()-1">
-						<set name="tables" value="context.tableContainer.getKeyByIndex(context.i.toLong())"/>
+				<container name="onetableContainer" type="pair" keytype="string" valuetype="class"/>
+					<for var="onetableContainer" in="context.tableContainer">
+						<set name="tables" value="context.onetableContainer.first()"/>
 						<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
 					</for>
 			</function>

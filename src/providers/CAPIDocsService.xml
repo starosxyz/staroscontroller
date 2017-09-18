@@ -68,7 +68,7 @@
 			<function name="addTag">
 				<parameters>
 					<parameter name="tag" type="string"/>
-					</parameters>
+				</parameters>
 				<!--if cond="thisclass.TagContainer.hasValue(context.tag.toString())==false">
 					<then-->
 						<insert name="thisclass.TagContainer" value="context.tag.toString()"/>
@@ -94,8 +94,8 @@
 				<variable name="path" type="class"/>
 				<new name="context.path" class="CPath">
 					<parameters>
-						<parameter name="pathname" type="string"in="context.pathname.toString()"/>
-					<parameter name="pathconntent" type="string"in="context.pathconntent.toString()"/>
+						<parameter name="pathname" type="string" in="context.pathname.toString()"/>
+						<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
 					</parameters>
 				</new>
 				<if cond="thisclass.PathContainer.hasValue(context.pathname.toString())==false">
@@ -158,23 +158,33 @@
 					<parameter name="swaggerjsonout" type="string"/>
 				</parameters>
 				<variable name="data" type="string"/>
+				<variable name="tagstr" type="string"/>
+				
+				<variable name="pathobj" type="class"/>
+				<variable name="pathnamestr" type="string"/>
+				<variable name="pathconntentstr" type="string"/>
+				<container name="onePathContainer" type="pair" keytype="string" valuetype="string"/>
+				
+				<variable name="definitionobj" type="class"/>
+				<variable name="definitionnamestr" type="string"/>
+				<variable name="definitionconntentstr" type="string"/>
+				<container name="oneDefinitionContainer" type="pair" keytype="string" valuetype="string"/>
+				
 				<if cond="thisclass.TagContainer.size()==0||thisclass.PathContainer.size()==0||thisclass.DefinitionContainer.size()==0">
 					<then>
 						<log>Container is null</log>
-				<set name="context.data" value="context.swaggerjsonstring.toString()"/>
+						<set name="context.data" value="context.swaggerjsonstring.toString()"/>
 					</then>
 					<else>
 						<!--function name="handleTag"/>
 						<function name="handlePath"/>
-						<function name="handleDefinition"/-->						
-						<variable name="tagstr" type="string"/>
+						<function name="handleDefinition"/-->												
 						<log><![CDATA[thisclass.TagContainer.size() = <%=thisclass.TagContainer.size()%>]]></log>
-						<for var="i" from="0" to="thisclass.TagContainer.size()-1">
+						<for var="tagstr" in="thisclass.TagContainer">
 							<log>insert tag for</log>
-							<set name="context.tagstr" value="thisclass.TagContainer.getValueByIndex(context.i.toLong())"/>
 							<if cond="context.tagstr!=null">
 								<then>
-									<log>insert tag if</log>									
+									<log>insert tag if</log>
 									<log><![CDATA[context.swaggerjsonstring.toString() = <%=context.swaggerjsonstring.toString()%>]]></log>
 									<script><![CDATA[
 										var info = JSON.parse(context.swaggerjsonstring.toString());
@@ -192,20 +202,17 @@
 						</for>
 						<log><![CDATA[handleTag data = <%=context.data.toString()%>]]></log>
 
-						<variable name="pathobj" type="class"/>
-						<variable name="pathnamestr" type="string"/>
-						<variable name="pathconntentstr" type="string"/>
-				<for var="i" from="0" to="thisclass.PathContainer.size()-1">
-							<set name="context.pathobj" value="thisclass.PathContainer.getValueByIndex(context.i.toLong())"/>
+						<for var="onePathContainer" in="thisclass.PathContainer">
+							<set name="context.pathobj" value="thisclass.onePathContainer.second()"/>
 							<if cond="context.pathobj!=null">
 								<then>
 									<function name="getData" class="context.pathobj">
-					<parameters>
-						<parameter name="pathname" type="string" out="context.pathnamestr"/>
+										<parameters>
+											<parameter name="pathname" type="string" out="context.pathnamestr"/>
 											<parameter name="pathconntent" type="string" out="context.pathconntentstr"/>
-					</parameters>						
-				</function>
-				<if cond="context.pathnamestr.toString()!=null">
+										</parameters>
+									</function>
+									<if cond="context.pathnamestr.toString()!=null">
 										<then>
 											<if cond="context.pathconntentstr.toString()!=null">
 												<then>
@@ -226,12 +233,9 @@
 							</if>
 						</for>
 						<log><![CDATA[handlePath data = <%=context.data.toString()%>]]></log>
-
-						<variable name="definitionobj" type="class"/>
-						<variable name="definitionnamestr" type="string"/>				
-				<variable name="definitionconntentstr" type="string"/>
-						<for var="i" from="0" to="thisclass.DefinitionContainer.size()-1">
-							<set name="context.definitionobj" value="thisclass.DefinitionContainer.getValueByIndex(context.i.toLong())"/>
+						
+						<for var="oneDefinitionContainer" in="thisclass.DefinitionContainer">
+							<set name="context.definitionobj" value="thisclass.oneDefinitionContainer.second()"/>
 							<if cond="context.definitionobj!=null">
 								<then>
 									<function name="getData" class="context.definitionobj">
@@ -406,7 +410,7 @@
 					var pathjson = JSON.parse(context.pathconntent.toString());
 					local_path[context.pathname.toString()] = pathjson;
 					local_definition = index.definitions;
-					var definitionjson = JSON.parse(context.definitioncontent.toString());					
+					var definitionjson = JSON.parse(context.definitioncontent.toString());
 					local_definition[context.definitionname.toString()] = definitionjson;
 					index.tags = local_tag;
 					index.paths = local_path;
@@ -415,17 +419,18 @@
 					context.swaggerjsonout.setValue(strjsonout);
 				]]></script>
 			</function>
-								<function name="findApiDocs">
-<parameters>
+
+			<function name="findApiDocs">
+				<parameters>
 					<parameter name="pathname" value="string"/>
 					<parameter name="apidocs" value="class"/>
-</parameters>						
+				</parameters>
 				<if cond="thisclass.ApiContainer.hasValue(context.pathname.toString())">
 					<then>
 						<lookup name="thisclass.ApiContainer" key="context.pathname.toString()" output="context.apidocs"/>
 					</then>
 				</if>
-</function>			
+			</function>
 			<function name="removeApiDocs">
 				<parameters>
 					<parameter name="pathname" value="string"/>
