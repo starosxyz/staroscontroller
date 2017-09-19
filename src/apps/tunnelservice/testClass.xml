@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--测试用的-->
+	<class name="CTestClass">
+		<private>
+			<variable name="m_id" type="long"/>
+			<variable name="m_username" type="string"/>
+			
+		</private>
+		<public>
+			<function name="CTunnel">
+				<parameters>
+					<parameter name="id" type="long"/>
+					<parameter name="username" type="string"/>
+					
+				</parameters>
+				<set name="thisclass.m_id" value="context.id.toLong()"/>
+				<set name="thisclass.m_username" value="context.username.toString()"/>
+				
+			</function>
+			<function name="GetTunnelId">
+				<parameters>
+					<parameter name="outid" type="long"/>
+				</parameters>
+				<set name="outid" value="thisclass.m_id.toLong()"/>
+			</function>
+		
+			<function name="GetTunnel_username">
+				<parameters>
+					<parameter name="t_username" type="string"/>
+				</parameters>
+				<set name="t_username" value="thisclass.m_username.toString()"/>
+			</function>
+		</public>
+	</class>
+</starosxml>

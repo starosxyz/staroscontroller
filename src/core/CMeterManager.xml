@@ -40,7 +40,7 @@
 	</class>
 	<class name="CMeter">
 		<private>
-			<variable name="m_id" type="string"/>
+			<variable name="m_id" type="long"/>
 			<variable name="m_appid" type="string"/>
 			<variable name="m_state" type="string"/>
 			<variable name="m_packets" type="string"/>
@@ -57,11 +57,11 @@
 				<parameters>
 					<parameter name="appid" type="string"/>
 					<parameter name="strjson" type="string"/>
-					<parameter name="meterid" type="string"/>
+					<parameter name="meterid" type="long"/>
 				</parameters>
 				<set name="thisclass.m_appid" value="context.appid.toString()"/>
 				<set name="thisclass.m_meterjson" value="context.strjson.toString()"/>
-				<set name="thisclass.m_id" value="context.meterid.toString()"/>
+				<set name="thisclass.m_id" value="context.meterid.toLong()"/>
 				<set name="thisclass.m_state" value="'Added'"/>
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bytes" value="'0'"/>
@@ -110,11 +110,11 @@
 								</parameters>
 				<variable name="oneband" type="class"/>
 				<new name="oneband" class="CBand">
-										<parameters>
+					<parameters>
 						<parameter name="type" type="string" in="context.type.toString()"/>
 						<parameter name="packets" type="string" in="context.packets.toString()"/>
 						<parameter name="bytes" type="string" in="context.bytes.toString()"/>
-										</parameters>
+					</parameters>
 				</new>
 				<remove name="BandContainer" key="context.type.toString()"/>
 				<insert name="BandContainer" key="context.type.toString()" value="context.oneband"/>
@@ -122,7 +122,7 @@
 					<!--qiulei 2017.08.25 Friday pm-->
 			<function name="getMeterInfo">
 				<parameters>
-					<variable name="id" type="string"/>
+					<variable name="id" type="long"/>
 					<variable name="appid" type="string"/>
 					<variable name="state" type="string"/>
 					<variable name="packets" type="string"/>
@@ -191,7 +191,7 @@
 				</function>
 				<script><![CDATA[
 					var onearray = new Object();
-						onearray.id=thisclass.m_id.toString();
+						onearray.id=thisclass.m_id.toLong();
 						onearray.app_id=thisclass.m_appid.toString();
 						onearray.state=thisclass.m_state.toString();
 						onearray.packets=thisclass.m_packets.toString();
@@ -215,10 +215,10 @@
 	</class>
 	<class name="CMeterManager">
 		<private>
-			<container name="merterContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<container name="merterContainer" type="hashmap" keytype="long" valuetype="class"/>
 			<variable name="m_transportid" type="string"/>
-			<variable name="m_defaultmeterid" type="string"/>
-			<variable name="m_errorid" type="string"/>
+			<variable name="m_defaultmeterid" type="long"/>
+			<variable name="m_errorid" type="long"/>
 			<variable name="m_meterid" type="long"/>
 		</private>
 		<public>
@@ -234,28 +234,26 @@
 			<function name="InstallMeterRequest">
 				<parameters>
 					<parameter name="strjson" type="string"/>
-					<parameter name="meterid" type="string"/>
+					<parameter name="meterid" type="long"/>
 					<parameter name="appid" type="string"/>
 				</parameters>
-				<variable name="tmpmeterid" type="long"/>
-				<set name="tmpmeterid" value="thisclass.m_meterid.toLong()"/>
-				<set name="meterid" value="context.tmpmeterid.toString()"/>
+				<set name="meterid" value="thisclass.m_meterid.toLong()"/>
 				<script><![CDATA[
 						var info = JSON.parse(context.strjson.toString());
-						info.meterid=context.tmpmeterid.toString();
+						info.meterid=context.meterid.toString();
 				]]></script>
 				<variable name="meterobj" type="class"/>
 				<new name="meterobj" class="CMeter">
 					<parameters>
 						<parameter name="appid" type="string" in="context.appid.toString()"/>
 						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
-						<parameter name="meterid" type="string" in="context.tmpmeterid.toString()"/>
+						<parameter name="meterid" type="long" in="context.meterid.toLong()"/>
 					</parameters>
 				</new>
-				<if cond="thisclass.merterContainer.hasValue(context.meterid.toString())==false">
+				<if cond="thisclass.merterContainer.hasValue(context.meterid.toLong())==false">
 					<then>
 						<function>
-							<insert name="merterContainer" key="context.meterid.toString()" value="context.meterobj"/>
+							<insert name="merterContainer" key="context.meterid.toLong()" value="context.meterobj"/>
 							<function name="Send_OFPT13_METER_MOD">
 								<parameters>
 									<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
@@ -272,16 +270,16 @@
 			</function>
 			<function name="UnInstallMeterRequest">
 				<parameters>
-					<parameter name="meterid" type="string"/>
+					<parameter name="meterid" type="long"/>
 				</parameters>
 				<variable name="transportid" type="string"/>
 				<variable name="meterobj" type="class"/>
 				<variable name="flowmodjson" type="string"/>
 				<variable name="sendflowmodjson" type="string"/>
-				<if cond="context.merterContainer.hasValue(context.meterid.toString()) ==true">
+				<if cond="context.merterContainer.hasValue(context.meterid.toLong()) ==true">
 					<then>
 						<function>
-							<lookup name="merterContainer" key="context.meterid.toString()" output="context.meterobj"/>
+							<lookup name="merterContainer" key="context.meterid.toLong()" output="context.meterobj"/>
 						</function>
 					</then>
 					<else>
@@ -308,7 +306,7 @@
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
 					</parameters>
 				</function>
-				<remove name="merterContainer" key="context.meterid.toString()"/>
+				<remove name="merterContainer" key="context.meterid.toLong()"/>
 			</function>
 			<function name="testaddmeter">			
 				<variable name="modstrjson" type="string"/>
@@ -337,7 +335,7 @@
 				<function name="InstallMeterRequest">
 					<parameters>
 						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="meterid" type="string" out="thisclass.m_defaultmeterid"/>
+						<parameter name="meterid" type="long" out="thisclass.m_defaultmeterid"/>
 						<parameter name="appid" type="string" in="'core'"/>
 					</parameters>
 				</function>
@@ -371,7 +369,7 @@
 				<function name="InstallMeterRequest">
 					<parameters>
 						<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="meterid" type="string" out="thisclass.m_errorid"/>
+						<parameter name="meterid" type="long" out="thisclass.m_errorid"/>
 						<parameter name="appid" type="string" in="'core'"/>
 					</parameters>
 				</function>
@@ -380,7 +378,7 @@
 			<function name="testremovemeter">			
 				<function name="UnInstallMeterRequest">
 					<parameters>
-						<parameter name="meterid" type="string" in="thisclass.m_defaultmeterid"/>
+						<parameter name="meterid" type="long" in="thisclass.m_defaultmeterid"/>
 					</parameters>
 			</function>
 				
@@ -395,7 +393,7 @@
 				<container name="meterjsonlist" type="list" valuetype="string"/>
 				<variable name="meterobj" type="class"/>
 				<variable name="meterInfoJson" type="string"/>
-				<container name="onemerterpair" type="pair" keytype="string" valuetype="class"/>
+				<container name="onemerterpair" type="pair" keytype="long" valuetype="class"/>
 				<for var="onemerterpair" in="context.merterContainer">
 					<function>
 						<set name="meterobj" value="context.onemerterpair.second()"/>
@@ -440,29 +438,29 @@
 			<!-- wangkang 2017/09/07-->
 			<function name="FindMeter">
 				<parameters>
-					<parameter name="inmeterid" type="string"/>
+					<parameter name="inmeterid" type="long"/>
 					<parameter name="outmeter" type="class"/>
 				</parameters>
 				<log>##### Find a meter class #####</log>
-				<log><![CDATA[inmeterid=<%=context.inmeterid.toString()%>]]></log>
+				<log><![CDATA[inmeterid=<%=context.inmeterid.toLong()%>]]></log>
 				<log><![CDATA[merterContainer size=<%=context.merterContainer.size()%>]]></log>
 				<function name="DumpMeter"/>
-				<if cond="context.merterContainer.hasValue(context.inmeterid.toString()) == true">
+				<if cond="context.merterContainer.hasValue(context.inmeterid.toLong()) == true">
 					<then>
 						<log>##### inmeterid is found #####</log>
 						<function>
-							<lookup name="merterContainer" key="context.inmeterid.toString()" output="context.outmeter"/>
+							<lookup name="merterContainer" key="context.inmeterid.toLong()" output="context.outmeter"/>
 						</function>
 					</then>
 				</if>
 			</function>
 			<function name="DumpMeter">
-				<variable name="meterkey" type="string"/>
-				<container name="onemeterpair" type="pair" keytype="string" valuetype="class"/>
+				<variable name="meterkey" type="long"/>
+				<container name="onemeterpair" type="pair" keytype="long" valuetype="class"/>
 				<log>===========DumpMeterStart===============</log>
 				<for var="onemeterpair" in="context.merterContainer">
 					<set name="meterkey" value="context.onemeterpair.first()"/>
-					<log><![CDATA[meterkey=<%=context.meterkey.toString()%>]]></log>
+					<log><![CDATA[meterkey=<%=context.meterkey.toLong()%>]]></log>
 				</for>
 				<log>===========DumpMeterEnd===============</log>
 			</function>

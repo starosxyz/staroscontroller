@@ -287,12 +287,8 @@
 							"meterbandlist":[
 								{
 									"bandtype":"1",
-									"rate":"1000",
-									"burstsize":"1000"
-								},
-								{
-									"bandtype":"2",
-									"preclevel":"1000"
+									"rate":"<%=thisclass.m_bandwidth%>",
+									"burstsize":"0"
 								}
 							]
 						}	
@@ -308,10 +304,9 @@
 						<function name="InstallMeterRequest" class="context.onemetermgr">
 							<parameters>
 								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="meterid" type="string"/>
+								<parameter name="meterid" type="long" out="thisclass.m_inmeterid"/>
 								<parameter name="appid" type="string" in="'core'"/>
 							</parameters>
-							<set name="thisclass.m_inmeterid" value="context.meterid.toLong()"/>
 						</function>	
 					</then>	
 				</if>
@@ -328,7 +323,7 @@
 					<then>
 						<function name="UnInstallMeterRequest" class="context.onemetermgr">
 							<parameters>
-								<parameter name="meterid" type="string" in="thisclass.m_inmeterid.toString()"/>
+								<parameter name="meterid" type="long" in="thisclass.m_inmeterid.toLong()"/>
 							</parameters>
 						</function>
 					</then>	

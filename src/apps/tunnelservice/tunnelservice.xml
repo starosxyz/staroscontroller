@@ -5,6 +5,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnel.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelserviceapi.xml"/>
+	<!--qiulei 20170915 Friday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelServiceDocsApi.xml"/>
 	
 	
 <!--
@@ -20,7 +22,7 @@
 	<variable name="flowservice" reference="global.FlowService"/>
 	<variable name="restfulservice" reference="global.RestfulService"/>
 	<!--qiulei 20170913-->
-	<variable name="tunnelManagerObject" type="class" global="true"/>
+	<variable name="tunnelManagerObject" type="class"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -35,7 +37,8 @@
 					<parameter name="url" type="string" in="'http://www.staros.xyz'"/>
 					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
 				</parameters>
-			</function>			
+			</function>
+			
 			
 			
 			<log>tunnelservice app startup</log>
@@ -45,10 +48,16 @@
 			<log>tunnelservice bundleapp.active</log>			
 			<new name="tunnelManagerObject" class="CTunnelManager"/>
 			<function name="RegisterHandler"/>
+			
+			<!--qiulei 20170915-->
+			<function name="AddDocsAPITunnel"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
 			<log>tunnelservice bundleapp.deactive</log>
+			
+			<function name="UnRegisterHandler"/>
+			<function name="RemoveDocsAPITunnel"/>
 		</onevent>
 
 		<onevent event="mytopadd">

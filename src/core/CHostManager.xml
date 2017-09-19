@@ -146,7 +146,7 @@
 				<for var="onehostpair" in="context.hostContainer">
 					<function>
 						<set name="onehostinfo" value="context.onehostpair.second()"/>
-						<function name="ToString" class="context.onehostinfo">
+						<function name="ToString" class="onehostinfo">
 							<parameters>
 								<parameter name="jsonstring" type="string" out="context.outjson"/>
 							</parameters>
@@ -292,7 +292,7 @@
 					<set name="hostobj" value="context.onehostpair.second()"/>
 					<if cond="context.hostobj!=null">
 						<then>
-							<function name="ToAddHost2Json" class="context.hostobj">
+							<function name="ToAddHost2Json" class="hostobj">
 								<parameters>
 									<parameter name="strjson" type="string" out="context.sendjsonstr"/>
 								</parameters>

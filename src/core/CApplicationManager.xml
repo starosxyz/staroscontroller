@@ -163,21 +163,29 @@
 			
 			<function name="ActiveApplication">
 				<variable name="filecontent" type="string" value="'0'"/>
-				<activebundle bundleid="thisclass.bundleid"/>
-				<set name="thisclass.state" value="'ACTIVE'"/>
-				<set name="thisclass._iconid_state" value="'active'"/>
-				<set name="filecontent" value="'1'"/>
-				<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
+				<if cond="thisclass.state.toString()=='ACTIVE'">
+					<then>
+						<exit/>
+					</then>
+					<else>
+						<activebundle bundleid="thisclass.bundleid"/>
+						<set name="thisclass.state" value="'ACTIVE'"/>
+						<set name="thisclass._iconid_state" value="'active'"/>
+						<set name="filecontent" value="'1'"/>
+						<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
+						
+						<script><![CDATA[
+							context.print(thisclass.id.toString());
+							var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active";
+							context.pathends.setValue(pathend);
+						]]></script>
+						<file method="deletefile" name="context.pathends.toString()"/>
+						<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
+						<log dest="stdout"><![CDATA[pathends!!!!!!!!!!!=<%=context.pathends.toString()%>]]></log>
+						<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
+					</else>
+				</if>
 				
-				<script><![CDATA[
-					context.print(thisclass.id.toString());
-					var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active";
-					context.pathends.setValue(pathend);
-				]]></script>
-				<file method="deletefile" name="context.pathends.toString()"/>
-				<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
-				<log dest="stdout"><![CDATA[pathends!!!!!!!!!!!=<%=context.pathends.toString()%>]]></log>
-				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
 			</function>
 			
 			<!-- 
@@ -186,20 +194,27 @@
 					deactive application
 			-->
 			<function name="DeactiveApplication">
-
-				<variable name="filecontent" type="string" value="'0'"/>
-				<deactivebundle bundleid="thisclass.bundleid"/>
-				<set name="thisclass.state" value="'INSTALLED'"/>
-				<set name="thisclass._iconid_state" value="'appInactive'"/>
-				<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
+				<if cond="thisclass.state.toString()=='INSTALLED'">
+					<then>
+						<exit/>
+					</then>
+					<else>
+						<variable name="filecontent" type="string" value="'0'"/>
+						<deactivebundle bundleid="thisclass.bundleid"/>
+						<set name="thisclass.state" value="'INSTALLED'"/>
+						<set name="thisclass._iconid_state" value="'appInactive'"/>
+						<log><![CDATA[id!!!!!!!!!!!=<%=thisclass.id.toString()%>]]></log>
 						<script><![CDATA[
-						context.print(thisclass.id.toString());
-						var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active";
-						context.pathends.setValue(pathend);
-					]]></script>
-				<file method="deletefile" name="context.pathends.toString()"/>
-				<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
-				<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
+							context.print(thisclass.id.toString());
+							var pathend ="/opt/staros.xyz/staroscontroller/starlang/apps/"+thisclass.id.toString()+"/active";
+							context.pathends.setValue(pathend);
+						]]></script>
+						<file method="deletefile" name="context.pathends.toString()"/>
+						<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
+						<log dest="stdout"><![CDATA[filecontent!!!!!!!!!!!=<%=context.filecontent.toString()%>]]></log>
+					</else>
+				</if>
+				
 			</function>
 			
 
@@ -354,7 +369,12 @@
 									<parameter name="apppathname" type="string" in="context.appfolder.toString()"/>	
 								</parameters>
 							</new>
-							<insert name="appsContainer" key="context.appname.toString()" value="context.appobject"/>
+							<if cond="context.appsContainer.hasValue(context.appname.toString())==false">
+								<then>
+									<insert name="appsContainer" key="context.appname.toString()" value="context.appobject"/>
+								</then>
+							</if>
+							
 							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>				
 						</then>
 					</if>

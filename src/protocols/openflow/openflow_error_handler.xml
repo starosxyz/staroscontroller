@@ -136,16 +136,18 @@
 		<variable name="meterobj" type="class"/>
 		<variable name="deviceobj" type="class"/>
 		<variable name="metermgrobj" type="class"/>
-		<variable name="meterid" type="string"/>
+		<variable name="meterid" type="long"/>
+		<variable name="tmpmeterid" type="string"/>
 		<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if(info.body)
 				{
-					context.meterid.setValue(info.body.meterid);
+					context.tmpmeterid.setValue(info.body.meterid);
 				}
 		]]></script>
-
-		<log><![CDATA[meterid=<%=context.meterid.toString()%>]]></log>
+		<set name="meterid" value="context.tmpmeterid.toLong()"/>
+		
+		<log><![CDATA[meterid=<%=context.meterid.toLong()%>]]></log>
 		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
 		<log>##### MessageType is 29 #####</log>
 		<function name="GetDeviceByTransportId" class="DeviceManager">
@@ -167,7 +169,7 @@
 						<log>##### metermgrobj is not null #####</log>
 						<function name="FindMeter" class="context.metermgrobj">
 							<parameters>
-								<parameter name="inmeterid" type="string" in="context.meterid.toString()"/>
+								<parameter name="inmeterid" type="long" in="context.meterid.toLong()"/>
 								<parameter name="outmeter" type="class" out="context.meterobj"/>
 							</parameters>
 						</function>

@@ -12,11 +12,16 @@
 		<private>
 			<container name="tunnelContainer" type="hashmap" keytype="long" valuetype="class"/>
 			<variable name="id" type="long"/>
+			
+			<variable name="invlan" type="long"/>
+			<variable name="outvlan" type="long"/>
 		</private>
 		
 		<public>
 			<function name="CTunnelManager">
 				<set name="thisclass.id" value="0" />
+				<set name="thisclass.invlan" value="0" />
+				<set name="thisclass.outvlan" value="0" />
 				<log>CTunnelManager is create</log>
 			</function>
 			
@@ -37,6 +42,26 @@
 					<parameter name="inmeterid" type="long"/>
 					<parameter name="outmeterid" type="long"/>
 				</parameters>
+				
+				<!--qiulei 20170919 pm-->
+				<if cond="thisclass.invlan > 4000">
+					<then>
+						<function>
+							<set name="thisclass.invlan" value="1" />
+						</function>
+					</then>
+				</if>
+				
+				<if cond="thisclass.outvlan > 4000">
+					<then>
+						<function>
+							<set name="thisclass.outvlan" value="1" />
+						</function>
+					</then>
+				</if>
+				
+				<set name="context.invlan" value="thisclass.invlan.toLong()+1" />
+				<set name="context.outvlan" value="thisclass.outvlan.toLong()+1" />
 				
 				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
 				<set name="context.id" value="thisclass.id.toLong()" />

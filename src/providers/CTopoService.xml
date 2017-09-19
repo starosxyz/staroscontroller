@@ -98,6 +98,7 @@
 				<parameters>
 					<parameter name="appid" type="string"/>
 				</parameters>
+				<log><![CDATA[TopoContainer size() = <%=context.TopoContainer.size()%>]]></log>
 				<remove name="TopoContainer" key="context.appid.toString()"/>
 			</function>
 			<function name="FindTopoListener">

@@ -10,6 +10,8 @@
 	-->	
 	<function name="RegisterHandler">
 		<log>insert tunnelserviceapi RegisterHandler</log>
+		
+		
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
@@ -32,6 +34,25 @@
 			</parameters>
 		</function>
 	</function>
+	
+	<function name="UnRegisterHandler">
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/active'"/>			
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/deactive'"/>			
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/tunnels'"/>			
+			</parameters>
+		</function>
+	</function>
+	
 	<events>
 		<onevent event="processactiverequest">
 			<log>tunnelserviceapi processactiverequest</log>

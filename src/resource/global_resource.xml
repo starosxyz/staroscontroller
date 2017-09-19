@@ -58,7 +58,7 @@
 		<new name="TopoService" class="CTopoService"/>
 		<new name="FlowService" class="CFlowService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
-		<new name="ApplicationManager" class="CApplicationManager"/>
+		
 		
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
@@ -69,5 +69,6 @@
 		<new name="APIDocsService" class="CAPIDocsService"/>
 		
 		<new name="SwaggerFile" class="CswaggerFile"/>
+		<new name="ApplicationManager" class="CApplicationManager"/>
 	</function>
 </starosxml>

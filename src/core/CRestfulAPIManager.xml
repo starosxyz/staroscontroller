@@ -38,6 +38,7 @@
 			<container name="restfulapiContainer" type="hashmap" keytype="string" valuetype="class"/>
 		</private>
 		<public>
+
 			<function name="CRestfulAPIManager">
 				<log>CRestfulAPIManager is create</log>
 			</function>
@@ -46,9 +47,15 @@
 					<parameter name="requestpath2222" type="string"/>			
 					<parameter name="handler" type="class"/>			
 				</parameters>
-				<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
-			</function>
+				<if cond="thisclass.restfulapiContainer.hasValue(context.requestpath2222.toString())==false">
+					<then>
+						<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
+					</then>
+				</if>
+				<log>restfulapiContainer is true</log>
 				
+			</function>
+			
 			<function name="RemoveAPIHandler">
 					<parameters>
 						<parameter name="requestpath" type="string" />		
