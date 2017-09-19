@@ -28,8 +28,8 @@
 					<parameter name="bundleid" type="long"/>
 				</parameters>
 				<set name="eventname" value="thisclass.m_eventname"/>
-				<set name="bundleid" value="thisclass.m_bundleid"/>
-			</function>
+					<set name="bundleid" value="thisclass.m_bundleid"/>
+				</function>
 			
 		</public>
 	</class>
@@ -43,15 +43,16 @@
 			</function>
 			<function name="AddAPIHandler">
 				<parameters>
-					<parameter name="requestpath2222" type="string"/>
-					<parameter name="handler" type="class"/>
+					<parameter name="requestpath2222" type="string"/>			
+					<parameter name="handler" type="class"/>			
 				</parameters>
 				<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
 			</function>
-									<function name="RemoveAPIHandler">
-				<parameters>
-					<parameter name="requestpath" type="string"/>
-				</parameters>
+				
+			<function name="RemoveAPIHandler">
+					<parameters>
+						<parameter name="requestpath" type="string" />		
+					</parameters>
 				<remove name="thisclass.restfulapiContainer" key="context.requestpath.toString()"/>
 			</function>
 			<!--hu-->
@@ -60,29 +61,30 @@
 					<parameter name="requestpath" type="string"/>
 					<parameter name="handler" type="class"/>
 				</parameters>
-									<variable name="requestpaths2222" type="string"/>
+				<variable name="requestpaths2222" type="string"/>
 				<variable name="ispath" type="boolean"/>
-				<for var="i" from="0" to="context.restfulapiContainer.size()-1">
-					<set name="requestpaths2222" value="context.restfulapiContainer.getKeyByIndex(context.i.toLong())"/>
+				<container name="onerestfulpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onerestfulpair" in="context.restfulapiContainer">
+					<set name="requestpaths2222" value="context.onerestfulpair.first()"/>
 					<script><![CDATA[
 						var requestpaths=context.requestpath.toString();
 
 							if(requestpaths.indexOf(context.requestpaths2222.toString())>=0){
-							context.ispath.setValue(true);
-						}else{
-							context.ispath.setValue(false);
-						}	
-					]]></script>
-				<log><![CDATA[requestpaths   huhu= <%=context.requestpath.toString()%>]]> </log>
-				<log><![CDATA[requestpaths2222   huhu= <%=context.requestpaths2222.toString()%>]]> </log>
-				<log><![CDATA[ispath   huhu= <%=context.ispath.toBoolean()%>]]> </log>
-				<if cond="context.ispath.toBoolean()==true">
-					<then>
-						<log>huhuhuhu !!!!true</log>
+								context.ispath.setValue(true);
+							}else{
+								context.ispath.setValue(false);
+						}			
+					]]></script>	
+					<log><![CDATA[requestpaths   huhu= <%=context.requestpath.toString()%>]]> </log>
+					<log><![CDATA[requestpaths2222   huhu= <%=context.requestpaths2222.toString()%>]]> </log>
+					<log><![CDATA[ispath   huhu= <%=context.ispath.toBoolean()%>]]> </log>
+					<if cond="context.ispath.toBoolean()==true">
+						<then>
+							<log>huhuhuhu !!!!true</log>
 							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpaths2222.toString())"/>
 						</then>
-				</if>
-			</for>
+					</if>
+				</for>
 			</function>
 		</public>
 	</class>

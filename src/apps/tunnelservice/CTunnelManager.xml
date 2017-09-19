@@ -81,27 +81,24 @@
 				<parameters>
 					<parameter name="AllTunnelJsonString" type="string"/>
 				</parameters>
-			
-<log>insert CTunnelManager AllTunnelToJsonStr</log>
+				<log>insert CTunnelManager AllTunnelToJsonStr</log>
 				<variable name="tunnelObject" type="class"/>
 				<variable name="OneTunnelJsonString" type="string"/>
 				<container name="tunnelJsonString_List" type="list" valuetype="string"/>
-			
-				<for var="i" from="0" to="context.tunnelContainer.size()-1">
+				<container name="i" type="pair" keytype="long" valuetype="class"/>
+				<for var="context.i" in="context.tunnelContainer">
 					<function>
-												<log>insert for</log>
-						<set name="tunnelObject" value="context.tunnelContainer.getValueByIndex(context.i.toLong())"/>
-						
+						<log>insert for</log>
+						<set name="context.tunnelObject" value="context.i.second()"/>
 						<if cond="context.tunnelObject != null">
 							<then>
-																<log>insert if</log>
+								<log>insert if</log>
 								<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
 										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString"/>
 									</parameters>
 								</function>
-								
-<insert name="tunnelJsonString_List" value="context.OneTunnelJsonString.toString()"/>
+								<insert name="tunnelJsonString_List" value="context.OneTunnelJsonString.toString()"/>
 							</then>
 						</if>
 					</function>
@@ -110,10 +107,13 @@
 				<script><![CDATA[
 					var jsonroot = new Object();
 					var tunnelsArray = new Array();
-					for(var i=0;i<context.tunnelJsonString_List.size();i++){									
-						var jsonStr =context.tunnelJsonString_List.getValueByIndex(i);
+					var first_str = context.tunnelJsonString_List.getFirst();
+					var final_str = "";
+					while (first_str != null){
+						final_str += first_str;
 						var jsonobj = JSON.parse(jsonStr);
 						tunnelsArray.push(jsonobj);
+						first_str = context.tunnelJsonString_List.getNext();
 					}
 					
 					jsonroot['tunnels']=tunnelsArray;
@@ -124,7 +124,7 @@
 				]]></script>
 				
 			</function>
-		<!--qiulei 20170914 am get one tunnel object-->
+			<!--qiulei 20170914 am get one tunnel object-->
 			<function name="GetOneTunnelObject">
 				<parameters>
 					<parameter name="tunnel_id" type="long"/>

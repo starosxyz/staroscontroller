@@ -6,6 +6,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelserviceapi.xml"/>
 	
+	
 <!--
 	Author:
 			YY
@@ -36,11 +37,12 @@
 				</parameters>
 			</function>			
 			
+			
 			<log>tunnelservice app startup</log>
 		</onevent>	
 		
 		<onevent event="bundleapp.active">
-			<log>tunnelservice bundleapp.active</log>
+			<log>tunnelservice bundleapp.active</log>			
 			<new name="tunnelManagerObject" class="CTunnelManager"/>
 			<function name="RegisterHandler"/>
 		</onevent>
@@ -48,7 +50,8 @@
 		<onevent event="~bundleapp.deactive">
 			<log>tunnelservice bundleapp.deactive</log>
 		</onevent>
-				<onevent event="mytopadd">
+
+		<onevent event="mytopadd">
 			
 		</onevent>
 		<onevent event="mytopremove">

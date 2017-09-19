@@ -266,9 +266,8 @@
 		<!--qiulei 20170808 15:27-->
 		<onevent event="openflow.OFPT13_ECHO_REPLY">
 			<container name="deviceinfo" type="hashmap" keytype="string" valuetype="string"/>
-			<for var="i" from="0" to="context.deviceContainer.size()-1">
-				<function>			
-					<set name="deviceinfo" value="context.deviceContainer.getValueByIndex(context.i.toLong())"/>
+			<for var="context.deviceinfo" in="context.deviceContainer">
+				<function>					
 					<if cond="context.deviceinfo.getValue('transportid').toString() == event.getParam('transportid').toString()">
 						<then>
 							<function>

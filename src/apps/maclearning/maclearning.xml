@@ -88,8 +88,7 @@
 			<parameter name="datapathid" type="string"/>
 		</parameters>
 		<variable name="resourceid" type="string"/>
-		<for var="i" from="0" to="context.resourceid_list.size()-1">
-			<set name="resourceid" value="context.resourceid_list.getValueByIndex(context.i.toLong()"/>
+		<for var="context.resourceid" in="context.resourceid_list">			
 			<function name="UnInstallFlow" class="context.flowservice">
 				<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>			

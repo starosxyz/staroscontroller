@@ -6,12 +6,13 @@
                 <log>HandleGetDevices</log>
                 <script><![CDATA[
                                 var json = new Object();
-                                var myArray=new Array();                               
-                                for(var i=0;i<context.openflowserverobj.getDeviceCount();i++)
-                                {
-									context.print(i);
+                                var myArray=new Array();
+
+								var first=context.openflowserverobj.getDeviceFirst();
+								while(first!=null){
+									context.print(first);
 									context.print('================start===================');
-									var devices = context.openflowserverobj.getDeviceByIndex(i);									
+									var devices = first;									
 									if( devices == null)
 									{
 											context.print('device is null');
@@ -40,7 +41,9 @@
 									{
 										context.print('no param');
 									}
-                                }
+									first=context.openflowserverobj.getDeviceNext();								
+								}
+
                                 json['devices'] = myArray;
 								var strjson=JSON.stringify(json);
 								context.print(strjson);

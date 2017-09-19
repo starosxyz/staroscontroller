@@ -303,9 +303,10 @@
 				<variable name="portobj" type="class" />
 				<container name="jsonlist" type="list" valuetype="string"/>
 				<variable name="strjson" type="string" />
-				<for var="i" from="0" to="context.portContainer.size()-1">
+				<container name="oneportpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneportpair" in="context.portContainer">
 					<function>
-						<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="portobj" value="context.oneportpair.second()"/>
 						<function name="ForDeviceDetailReqJson" class="context.portobj">
 							<parameters>
 								<parameter name="outjson" type="string" out="context.strjson"/>
@@ -317,14 +318,17 @@
 					</for>
 				<log><![CDATA[ForDeviceDetailReqJson jsonlist size=<%=context.jsonlist.size()%>]]></log>
 				<script><![CDATA[
-					var portsArray=new Array();                               
-					for(var i=0;i<context.jsonlist.size();i++)
-					{
-						//context.print(i);			
-						var port = context.jsonlist.getValueByIndex(i);	
+					var portsArray=new Array();    
+
+					var firststr=context.jsonlist.getFirst();
+					while(firststr!=null){
+						context.print(firststr);
+						var port = firststr;	
 						var info = JSON.parse(port);						
 						portsArray.push(info);
+						firststr=context.jsonlist.getNext();
 					}
+
 					var strjson=JSON.stringify(portsArray);
 					context.outjson.setValue(strjson);
 				]]></script>
@@ -361,10 +365,11 @@
 				<variable name="portobj" type="class"/>
 				<variable name="isvalidataport" type="boolean"/>
 				<variable name="isedgeport" type="boolean"/>
-				<for var="i" from="0" to="context.portContainer.size()-1">
+				<container name="oneportpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneportpair" in="context.portContainer">
 					<log>insert CPortManager's PacketOutToAllPort's for</log>
-					<log><![CDATA[CPortManager's PacketOutToAllPort's for's i = <%=context.i.toLong()%>]]></log>
-					<set name="portobj" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+					
+					<set name="portobj" value="context.oneportpair.second()"/>
 					<function name="IsValidatePort" class="context.portobj">
 						<parameters>
 							<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
@@ -381,12 +386,12 @@
 						<then>
 							<log>insert CPortManager's PacketOutToAllPort's for's first if</log>
 							<function>
-								<if cond="context.inportid.toString()!=context.portContainer.getKeyByIndex(context.i.toLong())">
+								<if cond="context.inportid.toString()!=context.oneportpair.first()">
 									<then>
 										<log>insert CPortManager's PacketOutToAllPort's for's second if</log>
 										<function name="SendOpenFlowPacketOut">
 											<parameters>
-												<parameter name="outputport" type="string" in="context.portContainer.getKeyByIndex(context.i.toLong())"/>
+												<parameter name="outputport" type="string" in="context.oneportpair.first()"/>
 												<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
 												<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 												<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
@@ -472,8 +477,9 @@
 			</function>
 			<function name="dumpinfo">
 				<variable name="ports" type="string"/>
-				<for var="i" from="0" to="context.portContainer.size()-1">
-					<set name="ports" value="context.portContainer.getKeyByIndex(context.i.toLong())"/>
+				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onehostpair" in="context.portContainer">
+					<set name="ports" value="context.onehostpair.first()"/>
 					<log><![CDATA[dumpinfo: portno=<%=context.ports.toString()%>]]></log>
 				</for>
 			</function>
@@ -484,8 +490,9 @@
 				<variable name="ports" type="class"/>
 				<container name="infolist" type="list" valuetype="string"/>
 				<variable name="stringports" type="string"/>
-				<for var="i" from="0" to="context.portContainer.size()-1">
-					<set name="ports" value="context.portContainer.getValueByIndex(context.i.toLong())"/>
+				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onehostpair" in="context.portContainer">
+					<set name="ports" value="context.onehostpair.second()"/>
 					<function name="GetPortsStateJsonData" class="ports">
 						<parameters>	
 							<parameter name="jsonstring" type="string" out="context.stringports"/>
@@ -498,11 +505,12 @@
 					info["event"]="portDataResponse";
 					var arrayport =new Array();
 					var ports = new Object();
-					for (var i=0;i<context.infolist.size();i++)
-					{
-						var oneportstate = context.infolist.getValueByIndex(i);
+					var firstr=context.infolist.getFirst();
+					while(firstr!=null){
+						var oneportstate = firstr;
 						var jsoninfo = JSON.parse(oneportstate);
 						arrayport.push(jsoninfo);
+						firstr=context.infolist.getNext()
 					}
 					ports["ports"]=arrayport;
 					info["payload"]=ports;
@@ -520,6 +528,7 @@
 				<variable name="replyjson" type="string"/>
 				<container name="portinfo" type="hashmap" keytype="string" valuetype="string"/>
 				<container name="deviceportinfo" type="hashmap" keytype="string" valuetype="hashmap"/>
+				<container name="onedeviceportinfopair" type="pair" keytype="string" valuetype="hashmap"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<function>
 					<log dest="stdout">OpenFlowMultiPartPortDescRequest</log>
@@ -568,9 +577,9 @@
 							]]></script>
 
 							<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
-							<for var="i" from="0" to="context.deviceportinfo.size()-1">
+							<for var="onedeviceportinfopair" in="context.deviceportinfo">
 								<function>
-									<set name="portinfo" value="context.deviceportinfo.getValueByIndex(context.i.toLong())"/>
+									<set name="portinfo" value="context.onedeviceportinfopair.second()"/>
 									<function name="addPort">
 										<parameters>
 											<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
@@ -602,6 +611,7 @@
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="portstatelist" type="list"  valuetype="string"/>
 				<variable name="portstatestring" type="string"/>
+				<variable name="i" type="string"/>
 				<function name="OpenFlowMultiPartPortStatsRequest">
 					<parameters>
 						<parameter name="portno" type="string" in="'0xffffffff'"/>
@@ -624,8 +634,8 @@
 					</function>
 				</wait>
 				<log><![CDATA[portstatelist size=<%=context.portstatelist.size()%>]]></log>
-				<for var="i" from="0" to="context.portstatelist.size()-1">
-					<set name="portstatestring" value="context.portstatelist.getValueByIndex(context.i.toLong())"/>
+				<for var="i" in="context.portstatelist">
+					<set name="portstatestring" value="context.i.toString()"/>
 					<function name="UpdatePortState">
 						<parameters>
 							<parameter name="portstatestring" type="string" in="context.portstatestring.toString()"/>

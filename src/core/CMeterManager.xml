@@ -66,6 +66,7 @@
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bytes" value="'0'"/>
 				<container name="bandlist" type="hashmap" keytype="string" valuetype="string"/>
+				<container name="onebandpair" type="pair" keytype="string" valuetype="class"/>
 				<variable name="bandtype" type="string"/>
 				<variable name="bandjson" type="string"/>
 				<variable name="bandobj" type="class"/>
@@ -81,10 +82,10 @@
 							}
 						}
 				]]></script>
-				<for var="i" from="0" to="context.bandlist.size()-1">
+				<for var="onebandpair" in="context.bandlist">
 					<function>
-						<set name="bandjson" value="context.bandlist.getValueByIndex(context.i.toLong())"/>
-						<set name="bandtype" value="context.bandlist.getKeyByIndex(context.i.toLong())"/>
+						<set name="bandjson" value="context.onebandpair.second()"/>
+						<set name="bandtype" value="context.onebandpair.first()"/>
 						<new name="bandobj" class="CBand">
 							<parameters>
 								<parameter name="type" type="string" in="context.bandtype.toString()"/>
@@ -144,6 +145,7 @@
 				<container name="strbandlist" type="list" valuetype="string"/>
 				<variable name="bandobj" type="class"/>
 				<variable name="bandstring" type="string"/>
+				<container name="onebandpair" type="pair" keytype="string" valuetype="class"/>
 				<if cond="context.BandContainer.size() == 0">
 					<then>
 						<set name="bandformatter" value="'(No bands for this meter)'"/>
@@ -151,9 +153,9 @@
 					</then>
 					<else>
 						<function>
-							<for var="i" from="0" to="context.BandContainer.size()-1">
+							<for var="onebandpair" in="context.BandContainer">
 								<function>
-									<set name="bandobj" value="context.BandContainer.getValueByIndex(context.i.toLong())"/>
+									<set name="bandobj" value="context.onebandpair.second()"/>
 									<function name="BandFormatter" class="bandobj">
 										<parameters>
 											<parameter name="bandformatter" type="string" out="context.bandstring"/>
@@ -167,11 +169,13 @@
 				</if>
 				<script><![CDATA[
 					var totalstring="";
-					for(var i=0;i<context.strbandlist.size();i++)
-					{
-						totalstring+=context.strbandlist.getValueByIndex(i);
+					var firststr=context.strbandlist.getFirst();
+					while(firststr!=null){
+						totalstring+=firststr;
 						context.bandformatter.setValue(totalstring);
+						firststr=context.strbandlist.getNext();
 					}
+
 				]]></script>
 					</function>
 					<!--qiulei 20170825 -->
@@ -391,9 +395,10 @@
 				<container name="meterjsonlist" type="list" valuetype="string"/>
 				<variable name="meterobj" type="class"/>
 				<variable name="meterInfoJson" type="string"/>
-				<for var="i" from="0" to="context.merterContainer.size()-1">
+				<container name="onemerterpair" type="pair" keytype="string" valuetype="class"/>
+				<for var="onemerterpair" in="context.merterContainer">
 					<function>
-						<set name="meterobj" value="context.merterContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="meterobj" value="context.onemerterpair.second()"/>
 						<function name="getOneMeterInfoJsonStr" class="context.meterobj">
 							<parameters>
 								<parameter name="meterInfoJson" type="string" out="context.meterInfoJson"/>
@@ -409,12 +414,16 @@
 					json['event'] = "meterDataResponse";
 					
 					var MetersArray=new Array();
-					for(var i=0;i<context.meterjsonlist.size();i++)
-					{
-						var oneMeterStrJson = context.meterjsonlist.getValueByIndex(i);
+					
+					var firststr=context.meterjsonlist.getFirst();
+					while(firststr!=null){
+						var oneMeterStrJson = firststr;
 						var oneMeterObject = JSON.parse(oneMeterStrJson);
 						MetersArray.push(oneMeterObject);
+						firststr=context.meterjsonlist.getNext()
+					
 					}
+
 					payload['meters'] = MetersArray;
 					
 					var twobject = new Object();								
@@ -449,9 +458,10 @@
 			</function>
 			<function name="DumpMeter">
 				<variable name="meterkey" type="string"/>
+				<container name="onemeterpair" type="pair" keytype="string" valuetype="class"/>
 				<log>===========DumpMeterStart===============</log>
-				<for var="i" from="0" to="context.merterContainer.size()-1">
-					<set name="meterkey" value="context.merterContainer.getKeyByIndex(context.i.toLong())"/>
+				<for var="onemeterpair" in="context.merterContainer">
+					<set name="meterkey" value="context.onemeterpair.first()"/>
 					<log><![CDATA[meterkey=<%=context.meterkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpMeterEnd===============</log>

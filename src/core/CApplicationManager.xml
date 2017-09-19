@@ -294,13 +294,13 @@
 				<variable name="appfolder" type="string"/>
 				
 				<variable name="appobject" type="class" />
-				
+				<variable name="i" type="string" />
 				<messageblock name="filecontentss"/>
 				<readdir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
 				<log><![CDATA[dirlist size = '<%=context.listdir.size()%>']]></log>
 				<clear name="appsContainer"/>
-				<for var="i" from="0" to="context.listdir.size()-1">
-					<set name="appname" value="context.listdir.getValueByIndex(context.i.toLong())"/>
+				<for var="i" in="context.listdir">
+					<set name="appname" value="context.i.toString()"/>
 					<log><![CDATA[appname=<%=context.appname.toString()%>]]></log>
 					<set name="appdir" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()"/>
 					<if cond="context.isDir(context.appdir.toString())">
@@ -368,10 +368,11 @@
 				<variable name="jsononeapp" type="class" />
 				<container name="allapplist" type="list" valuetype="string" />
 				<variable name="appstring" type="string"/>
-				<for var="i" from="0" to="context.appsContainer.size()-1">
+				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneapppair" in="context.appsContainer">
 					<log><![CDATA[portLength=<%=context.appsContainer.size()%>]]></log>
 					<function>
-						<set name="jsononeapp" value="context.appsContainer.getValueByIndex(context.i.toLong())"/>
+						<set name="jsononeapp" value="context.oneapppair.second()"/>
 						<function name="ToJsonString" class="context.jsononeapp">
 							<parameters>
 								<parameter name="appjson" type="string" out="context.appstring"/>
@@ -386,14 +387,19 @@
 						var payload = new Object();
 						var apps = new Array();
 						json['event'] = "appDataResponse";
-						for(var i=0;i<context.allapplist.size();i++){
+						
+						//qiulei 20170918 am
+						var firstString=context.allapplist.getFirst();
+						while(firstString!=null){
 							var oneapps = new Object();
-							var values=context.allapplist.getValueByIndex(i).toString();	
+							var values=firstString;	
 							var oneappsinfo = JSON.parse(values);
 							//context.print(values);
 							//oneapps=values;
 							apps.push(oneappsinfo);
+							firstString=context.allapplist.getNext();
 						}
+						
 						payload['apps'] = apps;	
 						json['payload'] = payload;	
 						var strjson=JSON.stringify(json);
