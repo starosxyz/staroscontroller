@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				qiulei
+		Date:
+				2017-09-20
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<!--定义：tunnels-->
+	<function name="AddDefinitionTunnelsData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+
+		<set name="definitionname" value="'Tunnels'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+					"type": "object",
+					"title": "tunnels",
+					"required": [
+						"tunnels",
+						"resultCode",
+						"resultDesc"
+					],
+					"properties": {
+						"tunnels": {
+							"type": "array",
+							"xml": {
+								"name": "tunnels",
+								"wrapped": true
+							},
+							"items": {
+								"type": "object",
+								"title": "tunnel",
+								"required": [
+									"id",
+									"username",
+									"inputPort",
+									"inputvlanid",
+									"outputPort",
+									"outputvlanid",
+									"bandwidth",
+									"type",
+									"state"
+								],
+								"properties": {
+									"id": {
+										"type": "string",
+										"example": "1"
+									},
+									"username": {
+										"type": "string",
+										"example": "admin"
+									},
+									"inputPort": {
+										"type": "string",
+										"example": "23"
+									},
+									"inputvlanid": {
+										"type": "string",
+										"example": "2"
+									},
+									"outputPort": {
+										"type": "string",
+										"example": "3"
+									},
+									"outputvlanid": {
+										"type": "string",
+										"example": "3"
+									},
+									"bandwidth": {
+										"type": "string",
+										"example": "222"
+									},
+									"type": {
+										"type": "string",
+										"example": "vlan"
+									},
+									"state": {
+										"type": "string",
+										"example": "ACTIVE"
+									}
+								}
+							}
+						},
+						"resultCode": {
+							"type": "string",
+							"example": "1"
+						},
+						"resultDesc": {
+							"type": "string",
+							"example": "ok"
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<function name="RemoveDefinitionTunnelsData">
+		<variable name="definitionname" type="string"/>
+		
+		<set name="definitionname" value="'Tunnels'" />
+
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+
+
+
+
+
+	<!--定义：Result -->
+	<function name="AddDefinitionResultData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+
+		<set name="definitionname" value="'Result'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "result",
+		            "required": [
+		                "result"
+		            ],
+		            "properties": {
+		                "result": {
+		                    "type": "object",
+		                    "title": "result",
+		                    "required": [
+		                        "resourceId",
+						        "code",
+						        "description"
+		                    ],
+		                    "properties": {
+		                        "resourceId": {
+		                            "type": "string",
+		                            "example": "5"
+		                        },
+		                        "code": {
+		                            "type": "string",
+		                            "example": "0"
+		                        },
+		                        "description": {
+		                            "type": "string",
+		                            "example": "ok"
+		                        }
+		                    }
+		                }
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+	<function name="RemoveDefinitionResultData">
+		
+		<variable name="definitionname" type="string"/>
+
+		<set name="definitionname" value="'Result'" />
+
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+
+
+
+
+
+	<!--定义：tunnel -->
+	<function name="AddDefinitionTunnelData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'Tunnel'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "tunnel",
+		            "required": [
+						"username",
+						"type",
+						"inputPort",
+						"outputPort",
+						"inputvlanid",
+						"outputvlanid",
+						"bandwidth"
+		            ],
+		            "properties": {
+						"username": {
+							"type": "string",
+							"example": "test"
+						},
+						"type": {
+							"type": "string",
+							"example": "vlan"
+						},
+						"inputPort": {
+							"type": "string",
+							"example": "sdfsdf/33"
+						},
+						"outputPort": {
+							"type": "string",
+							"example": "sdfsdf/33"
+						},
+						"inputvlanid": {
+							"type": "string",
+							"example": "12"
+						},
+						"outputvlanid": {
+							"type": "string",
+							"example": "12"
+						},
+						"bandwidth": {
+							"type": "string",
+							"example": "44333"
+						}
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--删除：tunnel-->
+	<function name="RemovePutRequestDocsAPITunnel">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'Tunnel'" />
+		
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	
+	
+	
+	
+	
+	<!--定义：state-->
+	<function name="AdddefinitionStateData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'State'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "state",
+		            "required": [
+		                "state"
+		            ],
+		            "properties": {
+		                "state": {
+		                    "type": "string",
+							 "example": "active"
+		                }
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<!--删除：state-->
+	<function name="RemoveDefinitionStateData">
+		<variable name="definitionname" type="string"/>
+		<set name="definitionname" value="'State'" />
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<function name="RegistDefinition">
+		<function name="AddDefinitionTunnelsData"/>
+		<function name="AddDefinitionResultData"/>
+		<function name="AddDefinitionTunnelData"/>
+		<function name="AdddefinitionStateData"/>
+	</function>
+	
+	<function name="DestroyDefinition">
+		<function name="RemoveDefinitionTunnelsData"/>
+		<function name="RemoveDefinitionResultData"/>
+		<function name="RemovePutRequestDocsAPITunnel"/>
+		<function name="RemoveDefinitionStateData"/>
+	</function>
+</starosxml>

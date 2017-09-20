@@ -229,12 +229,13 @@
 				<parameters>
 					<parameter name="tag" type="string"/>
 					<parameter name="path" type="string"/>
-				</parameters>
-				<variable name="data" type="string"/>
+				</parameters>			
 				<variable name="pathobj" type="class"/>
 				<variable name="pathnamestr" type="string"/>
 				<variable name="pathconntentstr" type="string"/>
 				<container name="onePathContainer" type="pair" keytype="string" valuetype="class"/>
+				<variable name="handle_tag" type="string"/>
+				<set name="context.handle_tag" value="context.tag.toString()"/>
 				<log>insert handlePath</log>
 				<for var="onePathContainer" in="thisclass.PathContainer">
 					<set name="context.pathobj" value="context.onePathContainer.second()"/>
@@ -255,13 +256,13 @@
 											<log>insert handlePath 3rd if</log>
 											<script><![CDATA[
 												context.print("insert path js");
-												var info = JSON.parse(context.tag.toString());
+												var info = JSON.parse(context.handle_tag.toString());
 												var js_paths = info.paths;
 												var local_path = JSON.parse(context.pathconntentstr.toString());
 												js_paths[context.pathnamestr.toString()] = local_path;
 												info.paths = js_paths;
 												var str = JSON.stringify(info);
-												context.data.setValue(str);
+												context.handle_tag.setValue(str);
 												context.print("path js end");
 											]]></script>
 										</then>
@@ -271,19 +272,20 @@
 						</then>
 					</if>
 				</for>
-				<set name="context.path" value="context.data.toString()"/>
+				<set name="context.path" value="context.handle_tag.toString()"/>
 			</function>
 
 			<function name="handleDefinition">
 				<parameters>
 					<parameter name="path" type="string"/>
 					<parameter name="definition" type="string"/>
-				</parameters>				
-				<variable name="data" type="string"/>
+				</parameters>
 				<variable name="definitionobj" type="class"/>
 				<variable name="definitionnamestr" type="string"/>
 				<variable name="definitionconntentstr" type="string"/>
 				<container name="oneDefinitionContainer" type="pair" keytype="string" valuetype="class"/>
+				<variable name="handle_path" type="string"/>
+				<set name="context.handle_path" value="context.path.toString()"/>
 				<log>insert handleDefinition</log>
 				<for var="oneDefinitionContainer" in="thisclass.DefinitionContainer">
 					<set name="context.definitionobj" value="context.oneDefinitionContainer.second()"/>
@@ -304,16 +306,15 @@
 											<log>insert handleDefinition 3rd if</log>
 											<script><![CDATA[
 												context.print("insert definition js");
-												var info = JSON.parse(context.path.toString());
-												context.print("first json");
-												context.print("context.definitionconntentstr = "+context.definitionconntentstr.toString());
+												var info = JSON.parse(context.handle_path.toString());
+												context.print("first json");												
 												var js_definitions = info.definitions;
 												var local_definition = JSON.parse(context.definitionconntentstr.toString());
 												context.print("second json");
 												js_definitions[context.definitionnamestr.toString()] = local_definition;
 												info.definitions = js_definitions;
 												var str = JSON.stringify(info);
-												context.data.setValue(str);
+												context.handle_path.setValue(str);
 												context.print("definition js end");
 											]]></script>
 										</then>
@@ -323,7 +324,7 @@
 						</then>
 					</if>
 				</for>
-				<set name="context.definition" value="context.data.toString()"/>
+				<set name="context.definition" value="context.handle_path.toString()"/>
 			</function>
 
 

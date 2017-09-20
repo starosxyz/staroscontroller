@@ -180,7 +180,6 @@
 			<!--qiulei 20170913 update Tunnel-->
 			<function name="UpdateTunnel">
 				<parameters>
-					
 					<parameter name="username" type="string"/>
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
@@ -214,13 +213,43 @@
 			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
 				<log>Active Tunnel</log>
+				<!--
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
+				-->
+				<function name="GetShortPath"/>
 			</function>
 			<function name="DeactiveTunnel">
 				<log>Deactive Tunnel</log>
+				<!--
 				<function name="UnInstallMeter"/>
 				<function name="UnInstallFlow"/>
+				-->
+			</function>
+			
+			<function name="GetShortPath">
+				<log>################################</log>
+				<variable name="inputid" type="string"/>
+				<variable name="outputid" type="string"/>
+				<variable name="strlink" type="string"/>
+				<script><![CDATA[
+					var inputport = thisclass.m_inputPort.toString();
+					var oneinputid = inputPort.split("/")[0];
+					var outputport = thisclass.m_outputPort.toString();
+					var oneoutputid = outputPort.split("/")[0];
+					context.inputid.setValue(oneinputid);
+					context.outputid.setValue(oneoutputid);
+				]]></script>
+				<set name="strlink" value="context.openflowserverobj.getShortestPath(context.inputid.toString(), context.outputid.toString())"/>
+				<log>############## START ##################</log>
+				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+				<log>############## END ##################</log>
+				<function name="GetTunnelDeviceFromJson">
+					<parameters>
+						<parameter name="json" type="string" in="context.strlink.toString()"/>
+					</parameters>
+				</function>
+				
 			</function>
 			
 			<function name="FindMeterManager">

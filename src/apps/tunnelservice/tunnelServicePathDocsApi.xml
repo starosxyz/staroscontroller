@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				YY
+		Date:
+				2017-09-20
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->	
+	<function name="addPath">		
+		<function name="getAllTunnels"/>			
+		<function name="postTunnel"/>			
+		<function name="otherTunnelmethods"/>	
+	</function>
+
+	<function name="removePath">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/tunnelservice/tunnels'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/tunnelservice/tunnel'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/tunnelservice/tunnel/{resourceid}'"/>			
+			</parameters>
+		</function>
+	</function>
+
+	<function name="getAllTunnels">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Returns all Tunnels",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Tunnels"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/tunnelservice/tunnels'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="otherTunnelmethods">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>		
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Returns one Tunnel",
+						"description": "",
+						"parameters": [
+							{
+								"name": "resourceid",
+								"in": "path",
+								"schema": {
+									"$ref": "#/definitions/Tunnels"
+								},
+								"description": "JSON representation of device, node, mastership info",
+								"required": true
+							}
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Tunnels"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},					
+					"put": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Update a Tunnel",
+						"description": "",
+						"parameters": [
+							{
+								"name": "resourceid",
+								"in": "path",
+								"schema": {
+									"$ref": "#/definitions/Tunnels"
+								},
+								"description": "JSON representation of device, node, mastership info",
+								"required": true
+							}
+						],
+						"consumes": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation"
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					"delete": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Removes one Tunnel",
+						"description": "",
+						"parameters": [
+							{
+								"name": "resourceid",
+								"in": "path",
+								"type": "string",
+								"description": "device identifier",
+								"required": true
+							}
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation"
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/tunnelservice/tunnel/{resourceid}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="postTunnel">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Install a new Tunnel",
+						"description": "",
+						"parameters": [
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "boolean",
+								"description": "true to activate app also",
+								"required": true
+							}
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation"
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/tunnelservice/tunnel'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starosxml>

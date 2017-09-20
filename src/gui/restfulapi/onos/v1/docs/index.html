@@ -31,7 +31,7 @@
             if (url && url.length > 1) {
                 url = decodeURIComponent(url[1]);
             } else {
-                url = "/onos/v1/docs/apis/onos/v1/swagger.json";
+                url = "/onos/v1/docs/apisv1/swagger.json";
             }
 
             hljs.configure({
@@ -67,12 +67,17 @@
                     console.log.apply(console, arguments);
                 }
             }
+
+			 
+
         });
 
         function selectApi() {
             $('#input_baseUrl').val('/onos/v1/docs/apis' + $('select').val() + '/swagger.json');
             $('#explore').click();
         }
+
+
     </script>
 </head>
 

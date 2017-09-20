@@ -7,7 +7,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelserviceapi.xml"/>
 	<!--qiulei 20170915 Friday pm-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelServiceDocsApi.xml"/>
-	
+	<!-- wangkang 2017/09/20 -->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelDevice.xml"/>
 	
 <!--
 	Author:
@@ -23,9 +24,11 @@
 	<variable name="restfulservice" reference="global.RestfulService"/>
 	<!--qiulei 20170913-->
 	<variable name="tunnelManagerObject" type="class"/>
+	<variable name="tunnelDeviceManagerObject" type="class"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
+			<variable name="bundleid" taype="long" value="context.getCurrentBundleId()"/>
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'tunnelservice'"/>
@@ -35,10 +38,10 @@
 					<parameter name="title" type="string" in="'Tunnel Service'"/>
 					<parameter name="desc" type="string" in="'Tunnel Service for Staros-controller'"/>		
 					<parameter name="url" type="string" in="'http://www.staros.xyz'"/>
-					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
+					<parameter name="bundleid" type="long" in="context.bundleid.toLong()"/>
 				</parameters>
 			</function>
-			
+			<activebundle bundleid="context.bundleid.toLong()"/>
 			
 			
 			<log>tunnelservice app startup</log>
@@ -47,17 +50,23 @@
 		<onevent event="bundleapp.active">
 			<log>tunnelservice bundleapp.active</log>			
 			<new name="tunnelManagerObject" class="CTunnelManager"/>
+			<new name="tunnelDeviceManagerObject" class="CTunnelDeviceManager"/>
 			<function name="RegisterHandler"/>
 			
 			<!--qiulei 20170915-->
 			<function name="AddDocsAPITunnel"/>
+
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
 			<log>tunnelservice bundleapp.deactive</log>
-			
+			<delete name="tunnelManagerObject"/>
+			<delete name="tunnelDeviceManagerObject"/>
 			<function name="UnRegisterHandler"/>
 			<function name="RemoveDocsAPITunnel"/>
+
+			<!-- wangkang 2017/09/20 -->
+			<function name="Clearup"/>
 		</onevent>
 
 		<onevent event="mytopadd">

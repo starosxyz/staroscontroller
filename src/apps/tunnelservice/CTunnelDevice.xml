@@ -2,26 +2,27 @@
 	<!--wangkang 2017/09/19 -->
 	<class name="CTunnelDevice">
 		<private>
-			<variable name="m_deviceid" type="long"/>
+			<variable name="m_deviceid" type="string"/>
 			<variable name="m_inputPort" type="string"/>
 			<variable name="m_outputPort" type="string"/>
 		</private>	
 		<public>
 			<function name="CTunnelDevice">
 				<parameters>
-					<parameter name="deviceid" type="long"/>
+					<parameter name="deviceid" type="string"/>
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
 				</parameters>
+				<log>##### CTunnelDevice is create #####</log>
 				<set name="thisclass.m_deviceid" value="context.deviceid.toLong()"/>
 				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
 			</function>
 			<function name="GetTunnelDeviceId">
 				<parameters>
-					<parameter name="outtunneldeviceid" type="long"/>
+					<parameter name="outtunneldeviceid" type="string"/>
 				</parameters>
-				<set name="outtunneldeviceid" value="thisclass.m_deviceid.toLong()"/>
+				<set name="outtunneldeviceid" value="thisclass.m_deviceid.toString()"/>
 			</function>
 			<function name="GetInputPort">
 				<parameters>
@@ -51,16 +52,16 @@
 			
 			<function name="addTunnelDevice">
 				<parameters>
-					<parameter name="deviceid" type="long"/>
+					<parameter name="deviceid" type="string"/>
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
 				</parameters>
 				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
-				<set name="context.deviceid" value="thisclass.id.toLong()" />
+				<set name="context.deviceid" value="thisclass.id.toString()" />
 				<variable name="tunneldeviceObject" type="class"/>
 				<new name="tunneldeviceObject" class="CTunnelDevice">
 					<parameters>
-						<parameter name="deviceid" type="long" in="context.deviceid.toLong()"/>
+						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>
 						<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
 						<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
 					</parameters>
@@ -68,10 +69,60 @@
 				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
 			</function>
 			
+			<function name="removeTunnelDevice">
+				<parameters>
+					<parameter name="deviceid" type="string"/>
+				</parameters>
+				<variable name="onetunneldevice" type="class"/>
+				<variable name="onedeviceid" type="string"/>
+				<for var="onetunneldevice" in="tunneldeviceContainer">
+					<function name="GetTunnelDeviceId" class="onetunneldevice">
+						<parameters>
+							<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+						</parameters>
+					</function>
+					<if cond="context.onedeviceid.toString() == context.deviceid.toString()">
+						<then>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
+			</function>
+			
+			<function name="GetTunnelDeviceFromJson">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="dstport" type="string"/>
+				<variable name="srcport" type="string"/>
+				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
+				<script><![CDATA[
+					if (context.json.toString().length>0)
+					{
+						var info = JSON.parse(context.json.toString());
+						if (info.paths.length==1)
+						{
+							context.dstport.setValue(info.paths[0].dst.port);
+							context.srcport.setValue(info.paths[0].src.port);
+						}
+					}
+				]]></script>
+				
+				<function name="addTunnelDevice">
+					<parameters>
+						<parameter name="deviceid" type="string"/>
+						<parameter name="inputPort" type="string" in="context.srcport.toString()"/>
+						<parameter name="outputPort" type="string" in="context.dstport.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
 			<function name="Clearup">
 				<script><![CDATA[				
 					context.tunneldeviceContainer.clear();
 				]]></script>
 			</function>
-	</class>
+		</public>
+	</class>	
 </starosxml>
