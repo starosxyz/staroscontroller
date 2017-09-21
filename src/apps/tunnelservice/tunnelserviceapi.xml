@@ -16,21 +16,28 @@
 			<parameters>
 				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
 				<parameter name="handleevent" type="string" in="'processactiverequest'"/>
-				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/active'"/>			
+				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/tunnels/active'"/>			
 			</parameters>
 		</function>
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
 				<parameter name="handleevent" type="string" in="'processdeactiverequest'"/>
-				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/deactive'"/>			
+				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/tunnels/deactive'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
+				<parameter name="handleevent" type="string" in="'processtunnelsrequest'"/>
+				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/tunnels'"/>			
 			</parameters>
 		</function>
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
 				<parameter name="handleevent" type="string" in="'processrequest'"/>
-				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/tunnels'"/>			
+				<parameter name="requestpathtest" type="string" in="'/onos/v1/tunnelservice/tunnel'"/>			
 			</parameters>
 		</function>
 	</function>
@@ -38,17 +45,22 @@
 	<function name="UnRegisterHandler">
 		<function name="UnRegisterAPIHandler" class="restfulservice">
 			<parameters>
-				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/active'"/>			
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/tunnels/active'"/>			
 			</parameters>
 		</function>
 		<function name="UnRegisterAPIHandler" class="restfulservice">
 			<parameters>
-				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/deactive'"/>			
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/tunnels/deactive'"/>			
 			</parameters>
 		</function>
 		<function name="UnRegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/tunnels'"/>			
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<parameter name="requestpath" type="string" in="'/onos/v1/tunnelservice/tunnel'"/>			
 			</parameters>
 		</function>
 	</function>
@@ -96,6 +108,10 @@
 				</parameters>
 			</function>
 		</onevent>
+		<onevent event="processtunnelsrequest">
+			<log>tunnelserviceapi processtunnelsrequest</log>					
+			<function name="getAllTunnels"/>				
+		</onevent>
 		<onevent event="processrequest">
 			<log>tunnelserviceapi processrequest</log>			
 			<if cond="event.getParam('method').toString()=='GET'">
@@ -108,7 +124,7 @@
 					<function name="updateTunnel"/>
 				</elseif>
 				<elseif cond="event.getParam('method').toString()=='POST'">
-					<log>insert method post</log>																						
+					<log>insert method post</log>	
 					<function name="addTunnel"/>
 				</elseif>
 				<else>
@@ -118,8 +134,8 @@
 			</if>				
 		</onevent>
 	</events>
-	<function name="getTunnel">
-		<log>insert method == get</log>
+	<function name="getAllTunnels">		
+		<log>insert getAllTunnels</log>
 		<variable name="outjson" type="string"/>
 		<function name="AllTunnelToJsonStr" class="context.tunnelManagerObject">
 			<parameters>
@@ -133,16 +149,46 @@
 			</parameters>
 		</function>
 	</function>
-	<function name="updateTunnel">		
-		<log>insert method == put</log>
+	<function name="getTunnel">
+		<log>insert method == get</log>
 		<variable name="resourceid" type="long"/>
+		<variable name="tunnel" type="class"/>
+		<variable name="outjson" type="string"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");
 			var local_id = array[array.length-1];
 			context.resourceid.setValue(local_id);
-		]]></script>
+		]]></script>		
+		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
+				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
+			</parameters>
+		</function>
+		<function name="OneTunnelObjectToJsonString" class="context.tunnel">
+			<parameters>
+				<parameter name="TunnelObjectToJson" type="string" out="context.outjson"/>
+			</parameters>
+		</function>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="updateTunnel">		
+		<log>insert method == put</log>
+		<variable name="resourceid" type="long"/>
 		<variable name="tunnel" type="class"/>
+		<variable name="outjson" type="string"/>
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			var array = str.split("/");
+			var local_id = array[array.length-1];
+			context.resourceid.setValue(local_id);
+		]]></script>		
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
@@ -163,16 +209,16 @@
 		<variable name="outmeterid" type="long"/>									
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
-			var local_username = json.tunnel.username;
-			var local_inputport = json.tunnel.inputPort;
-			var local_outputPort = json.tunnel.outputPort;
+			var local_username = json.username;
+			var local_inputport = json.inputPort;
+			var local_outputPort = json.outputPort;
 			var local_invlan = 100;
 			var local_outvlan = 100;
-			var local_type = json.tunnel.type;
+			var local_type = json.type;
 			var local_state = "active";
-			var local_inputvlanid = json.tunnel.inputvlanid;
-			var local_outputvlanid = json.tunnel.outputvlanid;
-			var local_bandwidth = json.tunnel.bandwidth;
+			var local_inputvlanid = json.inputvlanid;
+			var local_outputvlanid = json.outputvlanid;
+			var local_bandwidth = json.bandwidth;
 			var local_inmeterid = 200;
 			var local_outmeterid = 200;
 			context.username.setValue(local_username);
@@ -198,13 +244,12 @@
 				<parameter name="type" type="string" in="context.type.toString()"/>
 				<parameter name="state" type="string" in="context.state.toString()"/>
 				<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
-				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>											
+				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>	
 				<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
 				<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
 				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>
 			</parameters>
-		</function>									
-		<variable name="outjson" type="string"/>
+		</function>			
 		<script><![CDATA[
 			var json = new Object();
 			var one = new Object();
@@ -239,16 +284,16 @@
 		<variable name="outjson" type="string"/>
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
-			var local_username = json.tunnel.username;
-			var local_inputport = json.tunnel.inputPort;
-			var local_outputPort = json.tunnel.outputPort;
+			var local_username = json.username;
+			var local_inputport = json.inputPort;
+			var local_outputPort = json.outputPort;
 			var local_invlan = 100;
 			var local_outvlan = 100;
-			var local_type = json.tunnel.type;
+			var local_type = json.type;
 			var local_state = "active";
-			var local_inputvlanid = json.tunnel.inputvlanid;
-			var local_outputvlanid = json.tunnel.outputvlanid;
-			var local_bandwidth = json.tunnel.bandwidth;
+			var local_inputvlanid = json.inputvlanid;
+			var local_outputvlanid = json.outputvlanid;
+			var local_bandwidth = json.bandwidth;
 			var local_inmeterid = 200;
 			var local_outmeterid = 200;
 			context.username.setValue(local_username);
@@ -300,6 +345,7 @@
 	</function>
 	<function name="deleteTunnel">
 		<variable name="resourceid" type="long"/>
+		<variable name="outjson" type="string"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");			
@@ -310,8 +356,7 @@
 			<parameters>
 				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
 			</parameters>
-		</function>
-		<variable name="outjson" type="string"/>
+		</function>		
 		<script><![CDATA[
 			var json = new Object();
 			var one = new Object();

@@ -9,9 +9,10 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->	
 	<function name="addPath">		
-		<function name="getAllTunnels"/>			
+		<function name="allTunnels"/>			
 		<function name="postTunnel"/>			
 		<function name="otherTunnelmethods"/>	
+		<function name="activeTunnel"/>
 	</function>
 
 	<function name="removePath">
@@ -32,7 +33,7 @@
 		</function>
 	</function>
 
-	<function name="getAllTunnels">
+	<function name="allTunnels">
 		<variable name="name" type="string"/>
 		<variable name="pathconntent" type="string"/>
 		<reference variable="pathconntent">
@@ -60,7 +61,7 @@
 							}
 						}
 					}
-				}
+				}				
 			]]></jsonbody>
 		</reference>
 		<set name="context.name" value="'/tunnelservice/tunnels'"/>
@@ -88,11 +89,9 @@
 							{
 								"name": "resourceid",
 								"in": "path",
-								"schema": {
-									"$ref": "#/definitions/Tunnels"
-								},
-								"description": "JSON representation of device, node, mastership info",
-								"required": true
+								"type": "string",
+								"description": "Get one tunnel by resourceid",
+								"required": true						
 							}
 						],
 						"produces": [
@@ -102,7 +101,7 @@
 							"200": {
 								"description": "successful operation",
 								"schema": {
-									"$ref": "#/definitions/Tunnels"
+									"$ref": "#/definitions/Tunnel"
 								}
 							},
 							"default": {
@@ -119,11 +118,19 @@
 						"parameters": [
 							{
 								"name": "resourceid",
-								"in": "path",
+								"in": "path",		
+								"type": "string",			
+								"description": "Updata one tunnel by resourceid",
+								"required": true
+							},
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
 								"schema": {
-									"$ref": "#/definitions/Tunnels"
+									"$ref": "#/definitions/Tunnel"
 								},
-								"description": "JSON representation of device, node, mastership info",
+								"description": "Update one tunnel",
 								"required": true
 							}
 						],
@@ -132,7 +139,10 @@
 						],
 						"responses": {
 							"200": {
-								"description": "successful operation"
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
 							},
 							"default": {
 								"description": "Unexpected error"
@@ -150,13 +160,16 @@
 								"name": "resourceid",
 								"in": "path",
 								"type": "string",
-								"description": "device identifier",
-								"required": true
+								"description": "Delete one tunnel by resourceid",
+								"required": "true"
 							}
 						],
 						"responses": {
 							"200": {
-								"description": "successful operation"
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
 							},
 							"default": {
 								"description": "Unexpected error"
@@ -191,9 +204,12 @@
 							{
 								"name": "stream",
 								"in": "body",
-								"type": "boolean",
-								"description": "true to activate app also",
-								"required": true
+								"type": "string",
+								"description": "Create one tunnel",
+								"required": true,
+								"schema": {
+									"$ref": "#/definitions/Tunnel"
+								}					
 							}
 						],
 						"consumes": [
@@ -204,7 +220,10 @@
 						],
 						"responses": {
 							"200": {
-								"description": "successful operation"
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
 							},
 							"default": {
 								"description": "Unexpected error"
@@ -215,6 +234,113 @@
 			]]></jsonbody>
 		</reference>
 		<set name="context.name" value="'/tunnelservice/tunnel'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="activeTunnel">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Active all Tunnels",
+						"description": "",
+						"parameters": [							
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					"delete": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Deactive all Tunnels",
+						"description": "",
+						"parameters": [							
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/tunnelservice/tunnels/active'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="deactiveTunnel">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"tunnelservice"
+						],
+						"summary": "Deactive all Tunnels",
+						"description": "",
+						"parameters": [							
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/tunnelservice/tunnels/deactive'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
 				<parameter name="pathname" type="string" in="context.name.toString()"/>

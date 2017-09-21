@@ -61,12 +61,12 @@
 		<onevent event="~bundleapp.deactive">
 			<log>tunnelservice bundleapp.deactive</log>
 			<delete name="tunnelManagerObject"/>
-			<delete name="tunnelDeviceManagerObject"/>
 			<function name="UnRegisterHandler"/>
 			<function name="RemoveDocsAPITunnel"/>
 
 			<!-- wangkang 2017/09/20 -->
-			<function name="Clearup"/>
+			<function name="Clearup" class="context.tunnelDeviceManagerObject"/>
+			<delete name="tunnelDeviceManagerObject"/>
 		</onevent>
 
 		<onevent event="mytopadd">

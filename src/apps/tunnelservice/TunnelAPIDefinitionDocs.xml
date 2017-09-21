@@ -207,18 +207,18 @@
 		<reference variable="definitioncontent">
 			<jsonbody><![CDATA[ 
 				{
-		            "type": "object",
-		            "title": "tunnel",
-		            "required": [
-						"username",
+					"type": "object",
+					"title": "tunnel",
+					"required": [
+						"tunnel",
 						"type",
 						"inputPort",
 						"outputPort",
 						"inputvlanid",
 						"outputvlanid",
 						"bandwidth"
-		            ],
-		            "properties": {
+					],
+					"properties": {
 						"username": {
 							"type": "string",
 							"example": "test"
@@ -247,7 +247,7 @@
 							"type": "string",
 							"example": "44333"
 						}
-		            }
+					}
 				}
 			]]></jsonbody>
 		</reference>

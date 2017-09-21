@@ -118,6 +118,59 @@
 				</function>
 			</function>
 			
+			<function name="FindTunnelDeviceFromlist">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="dstport" type="string"/>
+				<variable name="srcport" type="string"/>
+				<variable name="oneinputport" type="string"/>
+				<variable name="oneoutputport" type="string"/>
+				<variable name="onedeviceid" type="string"/>
+				<variable name="onetunneldevice" type="class"/>
+				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
+				<script><![CDATA[
+					if (context.json.toString().length>0)
+					{
+						var info = JSON.parse(context.json.toString());
+						if (info.paths.length==1)
+						{
+							context.dstport.setValue(info.paths[0].dst.port);
+							context.srcport.setValue(info.paths[0].src.port);
+						}
+					}
+				]]></script>
+				
+				<for var="onetunneldevice" in="tunneldeviceContainer">
+					<function name="GetInputPort" class="context.onetunneldevice">
+						<parameters>
+							<parameter name="inputPort" type="string" out="context.oneinputport"/>
+						</parameters>
+					</function>
+					<function name="GetOutputPort" class="context.onetunneldevice">
+						<parameters>
+							<parameter name="outputPort" type="string" out="context.oneoutputport"/>
+						</parameters>
+					</function>
+					<if cond="context.srcport.toString() == context.inputport.toString()">
+						<if cond="context.dstport.toString() == context.outputport.toString()">
+							<log>TunnelDevice is Find From List</log>
+							<function name="GetTunnelDeviceId" class="context.onetunneldevice">
+								<parameters>
+									<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+								</parameters>
+							</function>
+						</if>
+					</if>
+				</for>
+				<function name="removeTunnelDevice">
+					<parameters>
+						<parameter name="deviceid" type="string" in="context.onedeviceid"/>
+					</parameters>
+				</function>
+				<!--function name="GetShortPath" class=""/-->
+			</function>
+			
 			<function name="Clearup">
 				<script><![CDATA[				
 					context.tunneldeviceContainer.clear();

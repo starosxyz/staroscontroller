@@ -244,7 +244,7 @@
 				<log>############## START ##################</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 				<log>############## END ##################</log>
-				<function name="GetTunnelDeviceFromJson">
+				<function name="GetTunnelDeviceFromJson" class="context.tunnelDeviceManagerObject">
 					<parameters>
 						<parameter name="json" type="string" in="context.strlink.toString()"/>
 					</parameters>
