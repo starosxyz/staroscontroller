@@ -95,9 +95,8 @@
 					<parameter name="transportid" type="string"/>
 					<parameter name="json" type="string"/>
 				</parameters>
-				<variable name="httpparam" type="params"/>
-				<log>SendResponse huhuhu</log>
-				<log><![CDATA[json huhuhu <%=context.json.toString()%>]]> </log>
+				<variable name="httpparam" type="params"/>				
+				<log><![CDATA[<%=context.json.toString()%>]]> </log>
 				<set name="httpparam" paramname="Server" value="'StarOS'"/>
 				<set name="httpparam" paramname="Connection" value="'Close'"/>
 				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>

@@ -85,7 +85,7 @@
 				</new>
 				
 				<insert name="tunnelContainer" key="thisclass.id.toLong()" value="context.tunnelObject"/>
-				<log><![CDATA[数量：<%=context.tunnelContainer.size()%>  数量数量数量数量数量数量数量数量数量数量数量数量数量]]></log>
+				<set name="context.id" value="thisclass.id.toLong()"/>
 			</function>
 			<!--qiulei 20170913-->
 			<function name="removeTunnel">
@@ -106,31 +106,15 @@
 				<parameters>
 					<parameter name="AllTunnelJsonString" type="string"/>
 				</parameters>
-				<log>insert CTunnelManager AllTunnelToJsonStr</log>
 				<variable name="tunnelObject" type="class"/>
 				<variable name="OneTunnelJsonString" type="string"/>
 				<container name="tunnelJsonString_List" type="list" valuetype="string" />
 				<container name="i" type="pair" keytype="long" valuetype="class"/>
-				<log><![CDATA[转换为JSON之前 tunnelContainer 的元素个数：<%=context.tunnelContainer.size()%>  @@@@@@@@@@@]]></log>
-				
-				<variable name="number" type="long"/>
-				<set name="number" value="0" />
-				
-				<variable name="ifnumber" type="long"/>
-				<set name="ifnumber" value="0" />
-				
 				<for var="i" in="context.tunnelContainer">
 					<function>
-						<log>insert for</log>
-						<set name="number" value="context.number.toLong()+1" />
-						<log><![CDATA[for循环次数：<%=context.number.toLong()%>  @@@@@@@@@@@for循环次数]]></log>
-						
 						<set name="context.tunnelObject" value="context.i.second()"/>
 						<if cond="context.tunnelObject != null">
 							<then>
-								<log> tunnelObject not null</log>
-								<set name="ifnumber" value="context.ifnumber.toLong()+1" />
-								<log><![CDATA[if循环次数：<%=context.ifnumber.toLong()%>  @@@@@@@@@@@if循环次数]]></log>
 								<function name="OneTunnelObjectToJsonString" class="context.tunnelObject">
 									<parameters>
 										<parameter name="TunnelObjectToJson" type="string" out="context.OneTunnelJsonString"/>
@@ -138,18 +122,14 @@
 								</function>
 								<insert name="context.tunnelJsonString_List" value="context.OneTunnelJsonString.toString()"/>
 							</then>
-							<else>
-								<log> tunnelObject null</log>
-							</else> 
 						</if>
 					</function>
 				</for>
-				<log><![CDATA[转换为JSON之后tunnelContainer的元素数量：<%=context.tunnelContainer.size()%>  tunnelContainer的元素数量]]></log>
-				<log><![CDATA[转换为JSON之后 tunnelJsonString_List 的元素数量： <%=context.tunnelJsonString_List.size()%>  @@@@@@@@@@@]]></log>
+				
 				<script><![CDATA[
 					var jsonroot = new Object();
 					var tunnelsArray = new Array();
-					context.print(context.tunnelJsonString_List.size()+"   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+					
 					var first_str = context.tunnelJsonString_List.getFirst();
 					while (first_str != null){
 						var jsonobj = JSON.parse(first_str);
@@ -172,8 +152,7 @@
 					<parameter name="tunnel_id" type="long"/>
 					<parameter name="TunnelObject" type="class"/>
 				</parameters>
-				<log>#####################################################################################################</log>
-				<log><![CDATA[tunnel id = <%=context.tunnel_id.toString()%>]]></log>
+
 				<if cond="context.tunnelContainer.hasValue(context.tunnel_id.toLong())==true">
 					<then>
 						<function>

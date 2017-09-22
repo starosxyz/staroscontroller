@@ -1,0 +1,89 @@
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!-- wangkang 2017/09/22 -->
+	<class name="CTunnelDeviceManager">
+		<private>
+			<container name="tunneldeviceContainer" type="list" valuetype="class"/>
+			<variable name="id" type="long"/>
+		</private>
+		<public>
+			<function name="CTunnelDeviceManager">
+				<set name="thisclass.id" value="0" />
+				<log>CTunnelDeviceManager is create</log>
+			</function>
+			
+			<function name="addTunnelDevice">
+				<parameters>
+					<parameter name="inputPort" type="string"/>
+					<parameter name="outputPort" type="string"/>
+				</parameters>
+				<variable name="deviceid" type="string"/>
+				<set name="thisclass.id" value="thisclass.id.toLong()+1"/>
+				<set name="context.deviceid" value="thisclass.id.toString()"/>
+				<variable name="tunneldeviceObject" type="class"/>
+				<new name="tunneldeviceObject" class="CTunnelDevice">
+					<parameters>
+						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>
+						<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
+						<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
+					</parameters>
+				</new>
+				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
+			</function>
+			
+			<function name="removeTunnelDevice">
+				<parameters>
+					<parameter name="deviceid" type="string"/>
+				</parameters>
+				<variable name="onetunneldevice" type="class"/>
+				<variable name="onedeviceid" type="string"/>
+				<for var="onetunneldevice" in="tunneldeviceContainer">
+					<function name="GetTunnelDeviceId" class="onetunneldevice">
+						<parameters>
+							<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+						</parameters>
+					</function>
+					<if cond="context.onedeviceid.toString() == context.deviceid.toString()">
+						<then>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
+			</function>
+			
+			<function name="GetTunnelDeviceFromJson">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="dstport" type="string"/>
+				<variable name="srcport" type="string"/>
+				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
+				<script><![CDATA[
+					if (context.json.toString().length>0)
+					{
+						var info = JSON.parse(context.json.toString());
+						var devicesize = info.paths.length;
+						for(var i=0;i<devicesize;i++)
+						{
+							context.dstport.setValue(info.paths[i].dst.port);
+							context.srcport.setValue(info.paths[i].src.port);
+						}
+					}
+				]]></script>
+				
+				<function name="addTunnelDevice">
+					<parameters>
+						<parameter name="inputPort" type="string" in="context.srcport.toString()"/>
+						<parameter name="outputPort" type="string" in="context.dstport.toString()"/>
+					</parameters>
+				</function>
+			</function>
+					
+			<function name="Clearup">
+				<script><![CDATA[				
+					context.tunneldeviceContainer.clear();
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starosxml>	

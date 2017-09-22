@@ -5,6 +5,7 @@
 			<variable name="m_deviceid" type="string"/>
 			<variable name="m_inputPort" type="string"/>
 			<variable name="m_outputPort" type="string"/>
+			<variable name="m_flowid" type="string"/>
 		</private>	
 		<public>
 			<function name="CTunnelDevice">
@@ -36,145 +37,345 @@
 				</parameters>
 				<set name="outputPort" value="thisclass.m_outputPort.toString()"/>
 			</function>
-		</public>
-	</class>
-	
-	<class name="CTunnelDeviceManager">
-		<private>
-			<container name="tunneldeviceContainer" type="list" valuetype="class"/>
-			<variable name="id" type="long"/>
-		</private>
-		<public>
-			<function name="CTunnelDeviceManager">
-				<set name="thisclass.id" value="0" />
-				<log>CTunnelDeviceManager is create</log>
-			</function>
-			
-			<function name="addTunnelDevice">
+			<function name="installRuleAtSameDevice">
 				<parameters>
-					<parameter name="deviceid" type="string"/>
-					<parameter name="inputPort" type="string"/>
-					<parameter name="outputPort" type="string"/>
+					<parameter name="inport" type="string"/>
+					<parameter name="invlan" type="string"/>
+					<parameter name="outport" type="string"/>
+					<parameter name="meterid" type="long"/>
 				</parameters>
-				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
-				<set name="context.deviceid" value="thisclass.id.toString()" />
-				<variable name="tunneldeviceObject" type="class"/>
-				<new name="tunneldeviceObject" class="CTunnelDevice">
+				<variable name="modstrjson" type="string"/>
+				<variable name="onedevice" type="class"/>
+				<variable name="oneflowmgr" type="class"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=context.meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="findDevice" class="DeviceManager">
 					<parameters>
-						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>
-						<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
-						<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
-					</parameters>
-				</new>
-				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
-			</function>
-			
-			<function name="removeTunnelDevice">
-				<parameters>
-					<parameter name="deviceid" type="string"/>
-				</parameters>
-				<variable name="onetunneldevice" type="class"/>
-				<variable name="onedeviceid" type="string"/>
-				<for var="onetunneldevice" in="tunneldeviceContainer">
-					<function name="GetTunnelDeviceId" class="onetunneldevice">
-						<parameters>
-							<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
-						</parameters>
-					</function>
-					<if cond="context.onedeviceid.toString() == context.deviceid.toString()">
-						<then>
-							<exit/>
-						</then>
-					</if>
-				</for>
-				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
-			</function>
-			
-			<function name="GetTunnelDeviceFromJson">
-				<parameters>
-					<parameter name="json" type="string"/>
-				</parameters>
-				<variable name="dstport" type="string"/>
-				<variable name="srcport" type="string"/>
-				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
-				<script><![CDATA[
-					if (context.json.toString().length>0)
-					{
-						var info = JSON.parse(context.json.toString());
-						if (info.paths.length==1)
-						{
-							context.dstport.setValue(info.paths[0].dst.port);
-							context.srcport.setValue(info.paths[0].src.port);
-						}
-					}
-				]]></script>
-				
-				<function name="addTunnelDevice">
-					<parameters>
-						<parameter name="deviceid" type="string"/>
-						<parameter name="inputPort" type="string" in="context.srcport.toString()"/>
-						<parameter name="outputPort" type="string" in="context.dstport.toString()"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<parameter name="deviceobject" type="class" out="context.onedevice"/>
 					</parameters>
 				</function>
-			</function>
-			
-			<function name="FindTunnelDeviceFromlist">
-				<parameters>
-					<parameter name="json" type="string"/>
-				</parameters>
-				<variable name="dstport" type="string"/>
-				<variable name="srcport" type="string"/>
-				<variable name="oneinputport" type="string"/>
-				<variable name="oneoutputport" type="string"/>
-				<variable name="onedeviceid" type="string"/>
-				<variable name="onetunneldevice" type="class"/>
-				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
-				<script><![CDATA[
-					if (context.json.toString().length>0)
-					{
-						var info = JSON.parse(context.json.toString());
-						if (info.paths.length==1)
-						{
-							context.dstport.setValue(info.paths[0].dst.port);
-							context.srcport.setValue(info.paths[0].src.port);
-						}
-					}
-				]]></script>
-				
-				<for var="onetunneldevice" in="tunneldeviceContainer">
-					<function name="GetInputPort" class="context.onetunneldevice">
-						<parameters>
-							<parameter name="inputPort" type="string" out="context.oneinputport"/>
-						</parameters>
-					</function>
-					<function name="GetOutputPort" class="context.onetunneldevice">
-						<parameters>
-							<parameter name="outputPort" type="string" out="context.oneoutputport"/>
-						</parameters>
-					</function>
-					<if cond="context.srcport.toString() == context.inputport.toString()">
-						<if cond="context.dstport.toString() == context.outputport.toString()">
-							<log>TunnelDevice is Find From List</log>
-							<function name="GetTunnelDeviceId" class="context.onetunneldevice">
-								<parameters>
-									<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
-								</parameters>
-							</function>
-						</if>
-					</if>
-				</for>
-				<function name="removeTunnelDevice">
+				<function name="SetFlowManager" class="onedevice">
 					<parameters>
-						<parameter name="deviceid" type="string" in="context.onedeviceid"/>
+						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
 					</parameters>
 				</function>
-				<!--function name="GetShortPath" class=""/-->
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>InstallFlowTableRequest</log>		
+						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
+							<parameters>
+								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+								<parameter name="appId" type="string" in="'core'"/>
+							</parameters>
+						</function>
+					</then>	
+				</if>
 			</function>
-			
-			<function name="Clearup">
-				<script><![CDATA[				
-					context.tunneldeviceContainer.clear();
-				]]></script>
+			<function name="installRuleStart">
+				<parameters>
+					<parameter name="inport" type="string"/>
+					<parameter name="invlan" type="string"/>
+					<parameter name="outport" type="string"/>
+					<parameter name="meterid" type="long"/>
+				</parameters>
+				<variable name="modstrjson" type="string"/>
+				<variable name="oneflowmgr" type="class"/>
+				<variable name="onedevice" type="class"/>
+				
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=context.meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<parameter name="deviceobject" type="class" out="context.onedevice"/>
+					</parameters>
+				</function>
+				<function name="SetFlowManager" class="onedevice">
+					<parameters>
+						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>InstallFlowTableRequest</log>
+						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
+							<parameters>
+								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+								<parameter name="appId" type="string" in="'core'"/>
+							</parameters>
+						</function>
+					</then>	
+				</if>
+			</function>
+			<function name="installRuleMid">
+				<parameters>
+					<parameter name="inport" type="string"/>
+					<parameter name="invlan" type="string"/>
+					<parameter name="outport" type="string"/>
+				</parameters>
+				<variable name="modstrjson" type="string"/>
+				<variable name="oneflowmgr" type="class"/>
+				<variable name="onedevice" type="class"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<parameter name="deviceobject" type="class" out="context.onedevice"/>
+					</parameters>
+				</function>
+				<function name="SetFlowManager" class="onedevice">
+					<parameters>
+						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>InstallFlowTableRequest</log>
+						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
+							<parameters>
+								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+								<parameter name="appId" type="string" in="'core'"/>
+							</parameters>
+						</function>
+					</then>	
+				</if>
+			</function>
+			<function name="installRuleEnd">
+				<parameters>
+					<parameter name="inport" type="string"/>
+					<parameter name="invlan" type="string"/>
+					<parameter name="outport" type="string"/>
+					<parameter name="meterid" type="long"/>
+				</parameters>
+				<variable name="modstrjson" type="string"/>
+				<variable name="oneflowmgr" type="class"/>
+				<variable name="onedevice" type="class"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"18",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=context.meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<parameter name="deviceobject" type="class" out="context.onedevice"/>
+					</parameters>
+				</function>
+				<function name="SetFlowManager" class="onedevice">
+					<parameters>
+						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.oneflowmgr != null">
+					<then>
+						<log>InstallFlowTableRequest</log>
+						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
+							<parameters>
+								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+								<parameter name="appId" type="string" in="'core'"/>
+							</parameters>
+						</function>
+					</then>	
+				</if>
 			</function>
 		</public>
 	</class>	

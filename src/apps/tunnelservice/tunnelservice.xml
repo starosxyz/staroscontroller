@@ -9,6 +9,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/tunnelServiceDocsApi.xml"/>
 	<!-- wangkang 2017/09/20 -->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelDevice.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelDeviceManager.xml"/>
 	
 <!--
 	Author:
@@ -24,7 +25,6 @@
 	<variable name="restfulservice" reference="global.RestfulService"/>
 	<!--qiulei 20170913-->
 	<variable name="tunnelManagerObject" type="class"/>
-	<variable name="tunnelDeviceManagerObject" type="class"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -64,9 +64,6 @@
 			<function name="UnRegisterHandler"/>
 			<function name="RemoveDocsAPITunnel"/>
 
-			<!-- wangkang 2017/09/20 -->
-			<function name="Clearup" class="context.tunnelDeviceManagerObject"/>
-			<delete name="tunnelDeviceManagerObject"/>
 		</onevent>
 
 		<onevent event="mytopadd">

@@ -282,6 +282,7 @@
 		<variable name="outmeterid" type="long"/>
 		<variable name="resourceid" type="long"/>
 		<variable name="outjson" type="string"/>
+		<variable name="tunnel" type="class"/>
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
@@ -323,9 +324,23 @@
 				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
 				<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
 				<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
-				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>													
+				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>		
 			</parameters>
 		</function>
+		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
+				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
+			</parameters>			
+		</function>
+		<if cond="context.tunnel==null">
+			<then>
+				<log>tunnel is null</log>
+			</then>
+			<else>
+				<function name="ActiveTunnel" class="context.tunnel"/>
+			</else>
+		</if>		
 		<script><![CDATA[
 			var json = new Object();
 			var one = new Object();
@@ -352,6 +367,14 @@
 			var local_id = array[array.length-1];
 			context.resourceid.setValue(local_id);			
 		]]></script>
+		<if cond="context.tunnel==null">
+			<then>
+				<log>tunnel is null</log>
+			</then>
+			<else>
+				<function name="DeactiveTunnel" class="context.tunnel"/>
+			</else>
+		</if>			
 		<function name="removeTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>

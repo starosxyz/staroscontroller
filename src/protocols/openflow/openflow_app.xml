@@ -242,7 +242,14 @@
 				<log>####################################</log>
 				<script><![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.messagetype.setValue(info.body.type);
+							if(info.body != null)
+							{
+								context.messagetype.setValue(info.body.type);
+							}
+							else
+							{
+								context.messagetype.setValue('');
+							}
 				]]></script>
 				<log><![CDATA[messagetype=<%=context.messagetype.toString()%>]]></log>
 				<if cond="context.messagetype.toString() == '14'">

@@ -607,9 +607,15 @@
 										"matchfieldlist":[
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"5",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"ethtype":"0x0806"
+												"vlanid":"45"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"4"
 											}
 										]
 									},

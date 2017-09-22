@@ -18,6 +18,7 @@
 			<variable name="m_bandwidth" type="long"/>
 			<variable name="m_inmeterid" type="long"/>
 			<variable name="m_outmeterid" type="long"/>
+			<variable name="m_tunneldevicemgr" type="class"/>
 		</private>
 		<public>
 			<function name="CTunnel">
@@ -51,6 +52,7 @@
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
 				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
+				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
 			</function>
 			<function name="GetTunnelId">
 				<parameters>
@@ -212,7 +214,8 @@
 			
 			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
-				<log>Active Tunnel</log>
+				<log>==============================</log>
+				<log>##### Active Tunnel #####</log>
 				<!--
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
@@ -220,7 +223,7 @@
 				<function name="GetShortPath"/>
 			</function>
 			<function name="DeactiveTunnel">
-				<log>Deactive Tunnel</log>
+				<log>##### Deactive Tunnel #####</log>
 				<!--
 				<function name="UnInstallMeter"/>
 				<function name="UnInstallFlow"/>
@@ -234,22 +237,78 @@
 				<variable name="strlink" type="string"/>
 				<script><![CDATA[
 					var inputport = thisclass.m_inputPort.toString();
-					var oneinputid = inputPort.split("/")[0];
+					var oneinputid = (inputport.split("/")[0]).split(":")[1];					
 					var outputport = thisclass.m_outputPort.toString();
-					var oneoutputid = outputPort.split("/")[0];
+					var oneoutputid = (outputport.split("/")[0]).split(":")[1];
 					context.inputid.setValue(oneinputid);
 					context.outputid.setValue(oneoutputid);
 				]]></script>
-				<set name="strlink" value="context.openflowserverobj.getShortestPath(context.inputid.toString(), context.outputid.toString())"/>
-				<log>############## START ##################</log>
+				<log><![CDATA[inputid=<%=context.inputid.toString()%>]]></log>
+				<log><![CDATA[outputid=<%=context.outputid.toString()%>]]></log>
+				<set name="strlink" value="context.openflowserverobj.getShortestPath2(context.inputid.toString(), context.outputid.toString())"/>
+				<log>============= START =================</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
-				<log>############## END ##################</log>
-				<function name="GetTunnelDeviceFromJson" class="context.tunnelDeviceManagerObject">
+				<log>=============  END  =================</log>
+				<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
 					<parameters>
 						<parameter name="json" type="string" in="context.strlink.toString()"/>
 					</parameters>
 				</function>
+			</function>
+			
+			<!-- wangkang 2017/09/21-->
+			<function name="FindTunnelDeviceFromlist">
+				<parameters>
+					<parameter name="json" type="string"/>
+				</parameters>
+				<variable name="dstport" type="string"/>
+				<variable name="srcport" type="string"/>
+				<variable name="oneinputport" type="string"/>
+				<variable name="oneoutputport" type="string"/>
+				<variable name="onedeviceid" type="string"/>
+				<variable name="onetunneldevice" type="class"/>
+				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
+				<script><![CDATA[
+					if (context.json.toString().length>0)
+					{
+						var info = JSON.parse(context.json.toString());
+						if (info.paths.length==1)
+						{
+							context.dstport.setValue(info.paths[0].dst.port);
+							context.srcport.setValue(info.paths[0].src.port);
+						}
+					}
+				]]></script>
 				
+				<for var="onetunneldevice" in="thisclass.m_tunneldevicemgr.tunneldeviceContainer">
+					<function name="GetInputPort" class="context.onetunneldevice">
+						<parameters>
+							<parameter name="inputPort" type="string" out="context.oneinputport"/>
+						</parameters>
+					</function>
+					<function name="GetOutputPort" class="context.onetunneldevice">
+						<parameters>
+							<parameter name="outputPort" type="string" out="context.oneoutputport"/>
+						</parameters>
+					</function>
+					<if cond="context.srcport.toString() == context.inputport.toString()">
+						<if cond="context.dstport.toString() == context.outputport.toString()">
+							<log>TunnelDevice is Find From List</log>
+							<function name="GetTunnelDeviceId" class="context.onetunneldevice">
+								<parameters>
+									<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+								</parameters>
+							</function>
+							<exit/>
+						</if>
+					</if>
+				</for>
+				<function name="removeTunnelDevice" class="thisclass.m_tunneldevicemgr">
+					<parameters>
+						<parameter name="deviceid" type="string" in="context.onedeviceid"/>
+					</parameters>
+				</function>
+				<function name="GetShortPath"/>
 			</function>
 			
 			<function name="FindMeterManager">
