@@ -534,143 +534,6 @@
 			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
 		  </function>
 		</onevent>
-		<!-- 29 -->
-		<onevent event="openflow.OFPT13_METER_MOD">
-		  <function>
-			<log dest="stdout">Get a MeterMod Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-
-
-		<!--Request 13-0-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_DESC Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-1-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_FLOW Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-2-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_AGGREGATE Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-3-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_TABLE Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-4-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_PORT_STATS Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-5-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_QUEUE Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-6-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_GROUP Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-7-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_GROUP_DESC Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-8-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FEATURES">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_FEATURES Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-9-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER">
-		  <function>
-		  <variable name="mid" type="string"/>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_METER Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-			
-			
-			<script><![CDATA[
-					var info = JSON.parse(event.getParam('eventdata').toString());
-					context.mid.setValue(info.meterid);
-				]]></script>
-			<function name="Send_OFPT13_ECHO_REPLY">
-				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-					<parameter name="xid" type="long" in="context.mid.toLong()"/>
-				</parameters>
-			</function>
-			
-			
-		  </function>
-		</onevent>
-		<!--Request 13-10-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_METER_CONFIG Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-11-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_METER_FEATURES Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-12-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_TABLE_FEATURES Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
-		<!--Request 13-13-->
-		<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
-		  <function>
-			<log dest="stdout">Get a MultipartRequest.OFP13MP_PORT_DESC Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-		  </function>
-		</onevent>
 
 		<!--Reply 13-0-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC">
@@ -684,8 +547,24 @@
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_FLOW Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<variable name="deviceobj" type="class"/>
+			<function name="GetDeviceByTransportId" class="DeviceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceobj != null">
+				<then>
+					<function>
+						<function name="HandleOpenFlowMultiPartFlowResponse" class="context.deviceobj">
+							<parameters>
+								<parameter name="flowjson" type="string" in="event.getParam('eventdata').toString()"/>
+							</parameters>
+						</function>
+					</function>
+				</then>
+			</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-2-->
@@ -700,16 +579,48 @@
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_TABLE Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<variable name="deviceobj" type="class"/>
+			<function name="GetDeviceByTransportId" class="DeviceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceobj != null">
+				<then>
+					<function>
+						<function name="SetTableJson" class="context.deviceobj">
+							<parameters>
+								<parameter name="tablejson" type="string" in="event.getParam('eventdata').toString()"/>
+							</parameters>
+						</function>
+					</function>
+				</then>
+			</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-4-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_PORT_STATS Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<variable name="deviceobj" type="class"/>
+			<function name="GetDeviceByTransportId" class="DeviceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceobj != null">
+				<then>
+					<function>
+						<function name="HandlePortStateResponse" class="context.deviceobj">
+							<parameters>
+								<parameter name="portstatejson" type="string" in="event.getParam('eventdata').toString()"/>
+							</parameters>
+						</function>
+					</function>
+				</then>
+			</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-5-->
@@ -724,8 +635,24 @@
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_GROUP Message</log>
-			<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<variable name="deviceobj" type="class"/>
+			<function name="GetDeviceByTransportId" class="DeviceManager">
+				<parameters>
+					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceobj != null">
+				<then>
+					<function>
+						<function name="HandleGroupStateResponse" class="context.deviceobj">
+							<parameters>
+								<parameter name="groupjson" type="string" in="event.getParam('eventdata').toString()"/>
+							</parameters>
+						</function>
+					</function>
+				</then>
+			</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-7-->

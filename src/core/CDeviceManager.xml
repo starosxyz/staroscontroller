@@ -378,10 +378,10 @@
 				<container name="deviceinfolist" type="list" valuetype="string"/>
 				
 				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<container name="oneDevicePair_sendinfo" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair_sendinfo" in="context.deviceContainer">
 					<function>
-						<set name="switchdevice" value="context.oneDevicePair.second()"/>
+						<set name="switchdevice" value="context.oneDevicePair_sendinfo.second()"/>
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
@@ -436,10 +436,10 @@
 				<container name="deviceinfolist" type="list" valuetype="string"/>
 				
 				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<container name="oneDevicePair_senddetail" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair_senddetail" in="context.deviceContainer">
 					<function>
-						<set name="switchdevice" value="context.oneDevicePair.second()"/>
+						<set name="switchdevice" value="context.oneDevicePair_senddetail.second()"/>
 						<if cond="context.switchdevice != null">
 							<then>
 								<function name="GetDeviceInfoJson" class="context.switchdevice">
@@ -488,10 +488,10 @@
 				<variable name="transportid" type="string"/>
 				<log>Device Manager Detect</log>
 				
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<container name="oneDevicePair_Detect" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair_Detect" in="context.deviceContainer">
 					<function>
-						<set name="thisswitch" value="context.oneDevicePair.second()"/>
+						<set name="thisswitch" value="context.oneDevicePair_Detect.second()"/>
 						<if cond="context.thisswitch != null">
 							<then>
 								<function name="TimeOut" class="context.thisswitch"/>
@@ -542,14 +542,14 @@
 				<variable name="srcdevice" type="class"/>
 				<variable name="dstdevice" type="class"/>
 				<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
-					<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
+					<container name="oneDevicePair_sendlink" type="pair" keytype="string" valuetype="class"/>
 					<container name="listdevice" type="list" valuetype="string"/>
 				<function>	
-					<for var="oneDevicePair" in="context.deviceContainer">
+					<for var="oneDevicePair_sendlink" in="context.deviceContainer">
 						<function>
 						<log>2017.9.18 oneDevicePair </log>
-							<set name="srcdevice" value="context.oneDevicePair.second()"/>
-							<log><![CDATA[2017.9.18 oneDevicePair  context.oneDevicePair.second()=<%=context.oneDevicePair.first()%>>]]></log>
+							<set name="srcdevice" value="context.oneDevicePair_sendlink.second()"/>
+							<log><![CDATA[2017.9.18 oneDevicePair_sendlink  context.oneDevicePair_sendlink.second()=<%=context.oneDevicePair_sendlink.first()%>>]]></log>
 							<if cond="context.srcdevice != null">
 								<then>
 								
@@ -698,12 +698,12 @@
 				<variable name="dstdevice" type="class"/>
 				<container name="listdevice" type="list" valuetype="string"/>
 				<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
+				<container name="oneDevicePair_highlight" type="pair" keytype="string" valuetype="class"/>
 				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
 				<function>
-					<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-					<for var="oneDevicePair" in="context.deviceContainer">
+					<for var="oneDevicePair_highlight" in="context.deviceContainer">
 						<function>
-							<set name="srcdevice" value="context.oneDevicePair.second()"/>
+							<set name="srcdevice" value="context.oneDevicePair_highlight.second()"/>
 							<if cond="context.srcdevice != null">
 								<then>
 									<function name="GetDatapathId" class="srcdevice">
@@ -868,12 +868,13 @@
 				
 				<variable name="device" type="class"/>
 				
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<container name="oneDevicePair_packout" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair_packout" in="context.deviceContainer">
 					<function>
-						<set name="device" value="context.oneDevicePair.second()"/>
+						<set name="device" value="context.oneDevicePair_packout.second()"/>
 					
 						<if cond="context.device != null">
+							<then></then>
 							<function name="PacketOutToAllPort" class="context.device">
 								<parameters>	
 									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
@@ -942,10 +943,10 @@
 				<variable name="device" type="class"/>
 				
 				
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.deviceContainer">
+				<container name="oneDevicePair_tablerequest" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneDevicePair_tablerequest" in="context.deviceContainer">
 					<function>
-						<set name="device" value="context.oneDevicePair.second()"/>
+						<set name="device" value="context.oneDevicePair_tablerequest.second()"/>
 						<if cond="context.device != null">
 							<then>
 								<function name="SendTableRequest" class="device"/>
@@ -979,11 +980,11 @@
 			
 			<!-- wangkang 2017/09/01 -->
 			<function name="GetDeviceByTransportId">
-				<log>##### Get Device By TransportId #####</log>
 				<parameters>
 					<parameter name="transportid" type="string"/>
 					<parameter name="onedeviceobj" type="class"/>
 				</parameters>
+				<log>##### Get Device By TransportId #####</log>
 				<log><![CDATA[t2dContainer size=<%=context.t2dContainer.size()%>]]></log>
 				<function name="DumpT2d"/>
 				
@@ -998,9 +999,9 @@
 				<log>===========DumpT2dStart===============</log>
 				
 				
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="string"/>
-				<for var="oneDevicePair" in="context.t2dContainer">
-					<set name="t2dkey" value="context.oneDevicePair.first()"/>
+				<container name="oneDevicePair_dump" type="pair" keytype="string" valuetype="string"/>
+				<for var="oneDevicePair_dump" in="context.t2dContainer">
+					<set name="t2dkey" value="context.oneDevicePair_dump.first()"/>
 					<log><![CDATA[t2dkey=<%=context.t2dkey.toString()%>]]></log>
 				</for>
 				<log>===========DumpT2dEnd===============</log>

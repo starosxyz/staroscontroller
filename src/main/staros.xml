@@ -62,8 +62,8 @@
 			
 			<!--qiulei 20170828 Monday-->
 			<set name="eventname"  value="'TimeOutEvent'"/>
-			<raise name="context.eventname.toString()"/>
-			
+			<!--raise name="context.eventname.toString()"/-->
+			<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
 		  </function>
 		</onevent>
 		<!--Session Shutdown-->
@@ -77,10 +77,10 @@
 		<onevent event="TimeOutEvent">
 			<function >
 				<log>staros TimeOutEvent 2017.08.28</log>
-				<wait event="InvalidEvent" timeout="2000"/>
-				<raise name="'TimeOutEvent'"/>
 				<function name="OpenFlowDetect"/>
 				<function name="Timeout" class="SessionManager"/>
+				<!--wait event="InvalidEvent" timeout="2000"/-->
+				<!--raise name="'TimeOutEvent'"/-->
 			</function>
 		</onevent>
 	</events>

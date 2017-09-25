@@ -566,6 +566,36 @@
 				<function name="SendPortStateRequest" class="m_ports"/>
 				<function name="SendTableRequest" class="m_tablemgr"/>
 			</function>
+			<function name="HandleGroupStateResponse">
+				<parameters>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
+				<function name="HandleGroupStateResponse" class="m_groupmgr">
+					<parameters>
+						<parameter name="groupjson" type="string" in="context.groupjson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="HandleOpenFlowMultiPartFlowResponse">
+				<parameters>
+					<parameter name="flowjson" type="string"/>
+				</parameters>
+				<function name="HandleOpenFlowMultiPartFlowResponse" class="m_flowmgr">
+					<parameters>
+						<parameter name="flowjson" type="string" in="context.flowjson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="HandlePortStateResponse">
+				<parameters>
+					<parameter name="portstatejson" type="string"/>
+				</parameters>
+				<function name="HandlePortStateResponse" class="m_ports">
+					<parameters>
+						<parameter name="portstatejson" type="string" in="context.portstatejson.toString()"/>
+					</parameters>
+				</function>
+			</function>
 			<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
@@ -577,7 +607,16 @@
 					</parameters>
 				</function>
 			</function>
-			
+			<function name="SetTableJson">
+				<parameters>
+					<parameter name="tablejson" type="string"/>
+				</parameters>
+				<function name="SetTableJson" class="thisclass.m_tablemgr">
+					<parameters>
+						<parameter name="tablejson" type="string" in="context.tablejson.toString()"/>
+					</parameters>
+				</function>
+			</function>
 			<!--qiulei 20170825-->
 			<!--Call this function to get a value-->
 			<function name="GetMetermgr">

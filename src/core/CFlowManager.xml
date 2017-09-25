@@ -431,10 +431,10 @@
 				
 				
 				
-				<container name="oneDevicePair" type="pair" keytype="string" valuetype="class"/>
-				<for var="oneDevicePair" in="context.flowsContainer">
+				<container name="oneflowPair" type="pair" keytype="string" valuetype="class"/>
+				<for var="oneflowPair" in="context.flowsContainer">
 					
-					<set name="flowobj" value="context.oneDevicePair.second()"/>
+					<set name="flowobj" value="context.oneflowPair.second()"/>
 					<if cond="context.flowobj==null">
 						<then>
 							<log>flowobj is null</log>
@@ -480,8 +480,10 @@
 				]]></script>
 				<set name="jsonstring" value="context.outjson"/>
 			</function>
-			<function name="SendFlowRequest">
-				<variable name="xid" type="long"/>
+			<function name="HandleOpenFlowMultiPartFlowResponse">
+				<parameters>
+					<parameter name="flowjson" type="string"/>
+				</parameters>
 				<variable name="flowobj" type="class"/>
 				<variable name="flowobj_flowid" type="string"/>
 				<variable name="json_cookie" type="string"/>
@@ -492,38 +494,19 @@
 				<container name="oneFlowsPair" type="pair" keytype="string" valuetype="class"/>
 				<variable name="oneFlowpartPair" type="string"/>
 				
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>							
-				
+
 				<container name="flowpartlist" type="list"  valuetype="string"/>
 				<variable name="flowpartstring" type="string"/>											
-				<function name="OpenFlowMultiPartFlowRequest">
-					<parameters>						
-						<parameter name="xid" type="long" in="context.xid.toLong()"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>					
-					</parameters>
-				</function>
-				<log><![CDATA[transportid = <%=thisclass.m_transportid.toString()%>]]></log>
-				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()" xid="context.xid.toLong()">
-					<function>
-						<if cond="event.getName() == 'openflow.OFPT13_ERROR'">
-							<then>
-								<log>SendFlowRequest Got a Error</log>
-							</then>
-							<else>
-								<script><![CDATA[
-									context.print(event.getParam('eventdata').toString());
-									var info = JSON.parse(event.getParam('eventdata').toString());
-									for (var i = 0; i < info.statslist.length; i++)
-									{
-										var flowstats = info.statslist[i];
-										var flowstrjson=JSON.stringify(flowstats);
-										context.flowpartlist.addValue(flowstrjson);
-									}
-								]]></script>
-							</else>
-						</if>
-					</function>
-				</wait>
+
+				<script><![CDATA[
+					var info = JSON.parse(context.flowjson.toString());
+					for (var i = 0; i < info.statslist.length; i++)
+					{
+						var flowstats = info.statslist[i];
+						var flowstrjson=JSON.stringify(flowstats);
+						context.flowpartlist.addValue(flowstrjson);
+					}
+				]]></script>
 				<!--
 					YY
 					Set Flow's packets bytes durationsec and durationnsec
@@ -581,6 +564,20 @@
 						</if>
 					</for>
 				</for>
+			</function>
+			<function name="SendFlowRequest">
+				<variable name="xid" type="long"/>
+
+				
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>							
+				
+										
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>					
+					</parameters>
+				</function>
 				
 			</function>		
 			

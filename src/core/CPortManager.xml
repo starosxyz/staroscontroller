@@ -609,12 +609,37 @@
 			1)get portstatslist and portstatestring
 			2)send port portstatestring
 			-->
-			<function name="SendPortStateRequest">
-				<variable name="xid" type="long"/>
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+			<function name="HandlePortStateResponse">
+				<parameters>
+					<parameter name="portstatejson" type="string"/>
+				</parameters>
 				<container name="portstatelist" type="list"  valuetype="string"/>
 				<variable name="portstatestring" type="string"/>
 				<variable name="i" type="string"/>
+				<script><![CDATA[
+						var info = JSON.parse(context.portstatejson.toString());
+						if (info.portstatslist != null)
+						{
+							for(var i=0;i<info.portstatslist.length;i++)
+							{
+								var portstats = info.portstatslist[i];
+								var portstrjson=JSON.stringify(portstats);
+								context.portstatelist.addValue(portstrjson);
+							}
+						}
+					]]></script>
+				<log><![CDATA[portstatelist size=<%=context.portstatelist.size()%>]]></log>
+				<for var="i" in="context.portstatelist">
+					<function name="UpdatePortState">
+						<parameters>
+							<parameter name="portstatestring" type="string" in="context.i.toString()"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+			<function name="SendPortStateRequest">
+				<variable name="xid" type="long"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartPortStatsRequest">
 					<parameters>
 						<parameter name="portno" type="string" in="'0xffffffff'"/>
@@ -622,31 +647,6 @@
 						<parameter name="xid" type="long" in="context.xid.toLong()"/>
 					</parameters>
 				</function>
-				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
-					<function>
-						<script><![CDATA[
-								var info = JSON.parse(event.getParam('eventdata').toString());
-								if (info.portstatslist != null)
-								{
-									for(var i=0;i<info.portstatslist.length;i++)
-									{
-										var portstats = info.portstatslist[i];
-										var portstrjson=JSON.stringify(portstats);
-										context.portstatelist.addValue(portstrjson);
-									}
-								}
-							]]></script>
-					</function>
-				</wait>
-				<log><![CDATA[portstatelist size=<%=context.portstatelist.size()%>]]></log>
-				<for var="i" in="context.portstatelist">
-					<set name="portstatestring" value="context.i.toString()"/>
-					<function name="UpdatePortState">
-						<parameters>
-							<parameter name="portstatestring" type="string" in="context.portstatestring.toString()"/>
-						</parameters>
-					</function>
-				</for>
 			</function>
 		</public>
 	</class>
