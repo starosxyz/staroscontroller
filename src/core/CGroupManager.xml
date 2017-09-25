@@ -484,43 +484,27 @@
 					
 				]]></script>
 			</function>	
-			<!--Group State Request-->
-			<function name="GroupStateRequest">
-				<variable name="xid" type="string"/>
+			<function name="HandleGroupStateResponse">
+				<parameters>
+					<parameter name="groupjson" type="string"/>
+				</parameters>
 				<variable name="groupid" type="string"/>
 				<variable name="groupobj" type="class"/>
 				<variable name="groupstate" type="string"/>
 				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>
-				<function name="OpenFlowMultiPartGroupRequest">
-					<parameters>
-						<parameter name="xid" type="long" in="context.xid.toLong()"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-					</parameters>
-				</function>
-				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
-					<function>
-						<if cond="event.getName() == 'openflow.OFPT13_ERROR'">
-							<then>
-								<log>GroupStateRequest Got a Error</log>
-							</then>
-							<else>
-								<script><![CDATA[							
-									var info = JSON.parse(event.getParam('eventdata').toString());
-									if (info.statslist != null)
-									{
-										for(var i=0;i<info.statslist.length;i++)
-										{
-											var onestat=info.statslist[i];
-											context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
-										}
-									}
-								]]></script>
-							</else>
-						</if>
-					</function>
-				</wait>
+
+				<script><![CDATA[							
+					var info = JSON.parse(context.groupjson.toString());
+					if (info.statslist != null)
+					{
+						for(var i=0;i<info.statslist.length;i++)
+						{
+							var onestat=info.statslist[i];
+							context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
+						}
+					}
+				]]></script>
 				<log>GroupStateRequest</log>
 				<for var="onegrouppair" in="context.groupContainer">
 					<function>
@@ -539,6 +523,17 @@
 						</if>
 					</function>
 				</for>
+			</function>
+			<!--Group State Request-->
+			<function name="GroupStateRequest">
+				<variable name="xid" type="string"/>
+				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<function name="OpenFlowMultiPartGroupRequest">
+					<parameters>
+						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</function>
 			</function>	
 			
 			<!-- wangkang 2017/09/06-->

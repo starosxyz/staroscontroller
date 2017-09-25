@@ -116,9 +116,15 @@
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</function>
-				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
+				<!--wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
 					<set name="thisclass.m_tablejson" value="event.getParam('eventdata').toString()"/>
-				</wait>
+				</wait-->
+			</function>
+			<function name="SetTableJson">
+				<parameters>
+					<parameter name="tablejson" type="string"/>
+				</parameters>
+				<set name="thisclass.m_tablejson" value="context.tablejson.toString()"/>
 			</function>
 			<!-- 
 				YY 20170831
