@@ -122,7 +122,7 @@
 						<parameter name="port" type="string" in="context.port.toString()"/>				
 				</parameters>
 				</new>
-				<insert name="hostContainer" key="context.mac+'/'+context.vlan" value="context.hostobj"/>
+				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
 			</function>
 
 			<function name="printhostmanager">

@@ -13,12 +13,10 @@
 			
 			<function name="addTunnelDevice">
 				<parameters>
+					<parameter name="deviceid" type="string"/>
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
 				</parameters>
-				<variable name="deviceid" type="string"/>
-				<set name="thisclass.id" value="thisclass.id.toLong()+1"/>
-				<set name="context.deviceid" value="thisclass.id.toString()"/>
 				<variable name="tunneldeviceObject" type="class"/>
 				<new name="tunneldeviceObject" class="CTunnelDevice">
 					<parameters>
@@ -57,6 +55,11 @@
 				</parameters>
 				<variable name="dstport" type="string"/>
 				<variable name="srcport" type="string"/>
+				<container name="tempContainer" type="list" valuetype="hashmap"/>
+				<container name="mapContainer" type="hashmap" keytype="string" valuetype="string"/>
+				<iterator name="mapContaineriterator" type="list" valuetype="hashmap"/>
+				<iterator name="tempContainerfirst" type="list" valuetype="hashmap"/>
+				<iterator name="tempContainerend" type="list" valuetype="hashmap"/>
 				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
 				<script><![CDATA[
 					if (context.json.toString().length>0)
@@ -65,18 +68,29 @@
 						var devicesize = info.paths.length;
 						for(var i=0;i<devicesize;i++)
 						{
-							context.dstport.setValue(info.paths[i].dst.port);
-							context.srcport.setValue(info.paths[i].src.port);
+							var hashcontainer = context.createContainer("hashmap", "string", "string");
+							hashcontainer.addValue('device', info.paths[i].device);
+							hashcontainer.addValue('inport', info.paths[i].inport);
+							hashcontainer.addValue('outport', info.paths[i].outport);
+							context.tempContainer.addValue(hashcontainer);
 						}
 					}
 				]]></script>
+				<log><![CDATA[tempContainer size=<%=context.tempContainer.size()%>]]></log>
+				<set name="context.tempContainerfirst" value="context.tempContainer.begin()"/>
+				<set name="context.tempContainerend" value="context.tempContainer.end()"/>
 				
-				<function name="addTunnelDevice">
-					<parameters>
-						<parameter name="inputPort" type="string" in="context.srcport.toString()"/>
-						<parameter name="outputPort" type="string" in="context.dstport.toString()"/>
-					</parameters>
-				</function>
+				<for var="context.mapContaineriterator" from="context.tempContainerfirst" to="context.tempContainerend">
+					<set name="mapContainer" value="context.mapContaineriterator.value()"/>
+					<function name="addTunnelDevice">
+						<parameters>
+							<parameter name="deviceid" type="string" in="context.mapContainer.getValue('device').toString()"/>
+							<parameter name="inputPort" type="string" in="context.mapContainer.getValue('inport').toString()"/>
+							<parameter name="outputPort" type="string" in="context.mapContainer.getValue('outport').toString()"/>
+						</parameters>
+					</function>
+				</for>
+				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size()%>]]></log>
 			</function>
 					
 			<function name="Clearup">
@@ -84,6 +98,105 @@
 					context.tunneldeviceContainer.clear();
 				]]></script>
 			</function>
+			<function name="IsMyTopChange">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevice" type="string"/>
+					<parameter name="path" type="string"/>
+					<parameter name="ischanage" type="boolean" value="false"/>
+				</parameters>
+				<variable name="firstdevice" type="class"/>
+				<variable name="lastdevice" type="class"/>
+				<variable name="firstdeviceid" type="string"/>
+				<variable name="lastdeviceid" type="string"/>
+				<set name="firstdevice" value="context.tunneldeviceContainer.front()"/>
+				<set name="lastdevice" value="context.tunneldeviceContainer.back()"/>
+				<if cond="context.firstdevice!=null">
+					<then>
+						<function name="GetTunnelDeviceId" class="firstdevice">
+							<parameters>
+								<parameter name="outtunneldeviceid" type="string" out="context.firstdeviceid"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+				<if cond="context.lastdevice!=null">
+					<then>
+						<function name="GetTunnelDeviceId" class="lastdevice">
+							<parameters>
+								<parameter name="outtunneldeviceid" type="string" out="context.lastdeviceid"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+				<if cond="context.fromdevice.toString()==context.firstdeviceid.toString()">
+					<then>
+						<if cond="context.todevice.toString()==context.lastdeviceid.toString()">
+							<then>
+								<set name="context.ischanage" value="true"/>
+							</then>
+						</if>
+					</then>					
+				</if>
+			</function>
+			<function name="DeactiveTunnel">
+				<log>##### CTunnelDeviceManager function DeactiveTunnel #####</log>
+				<iterator name="tunnelContaineriterator" type="list" valuetype="class"/>
+				<iterator name="tunnelContainerfirst" type="list" valuetype="class"/>
+				<iterator name="tunnelContainerend" type="list" valuetype="class"/>				
+				<variable name="ontunneldevice" type="string"/>
+				<set name="tunnelContainerfirst" value="context.tunneldeviceContainer.begin()"/>
+				<set name="tunnelContainerend" value="context.tunneldeviceContainer.end()"/>
+				
+				<for var="context.tunnelContaineriterator" from="context.tunnelContainerfirst" to="context.tunnelContainerend">
+					<set name="ontunneldevice" value="context.tunnelContaineriterator.value()"/>
+					<if cond="context.ontunneldevice != null">
+						<then>
+							<function name="DeactiveTunnel" class="context.ontunneldevice"/>
+						</then>
+					</if>
+				</for>
+			</function>
+			
+			<function name="GetFirstDevice">
+				<parameters>
+					<parameter name="firstdevice" type="class"/>
+				</parameters>
+				<log> ##### Get First Device #####</log>
+				<set name="firstdevice" value="context.tunneldeviceContainer.front()"/>				
+			</function>
+			
+			<function name="GetLastDevice">
+				<parameters>
+					<parameter name="lastdevice" type="class"/>
+				</parameters>
+				<log> ##### Get Last Device #####</log>
+				<set name="lastdevice" value="context.tunneldeviceContainer.back()"/>
+			</function>
+			
+			<function name="GetMiddleDevice">
+				<parameters>
+					<parameter name="devicelist" type="list"/>
+				</parameters>
+				<log> ##### Get Middle Device List #####</log>
+				<iterator name="beginit" type="list" valuetype="class"/>
+				<iterator name="endit" type="list" valuetype="class"/>
+				<iterator name="middevice" type="list" valuetype="class"/>
+				<set name="beginit" value="context.tunneldeviceContainer.beginNext()"/>
+				<set name="endit" value="context.tunneldeviceContainer.endBefore()"/>
+				
+				<if cond="context.tunneldeviceContainer.size() > 2">
+					<then>
+						<for var="context.middevice" from="context.beginit" to="context.endit">
+							<insert name="devicelist" value="context.middevice.value()"/>	
+						</for>
+					</then>
+					<else>
+						<log>##### DeviceList is null #####</log>
+					</else>
+				</if>
+			</function>
+			
 		</public>
 	</class>
 </starosxml>	

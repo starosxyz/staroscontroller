@@ -102,7 +102,8 @@
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				<log><![CDATA[removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[start removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[start t2dContainer device size=<%=context.t2dContainer.size()%>]]></log>
 				<variable name="deviceobject" type="class"/>
 				<variable name="offlinejson" type="string"/>
 				<variable name="devicetransportid" type="string"/>
@@ -135,6 +136,8 @@
 						</function>
 					</then>
 				</if>
+				<log><![CDATA[end removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
+				<log><![CDATA[end t2dContainer device size=<%=context.t2dContainer.size()%>]]></log>
 			</function>
 			<function name="GetDatapathIdByTransportid">
 				<parameters>
@@ -181,7 +184,7 @@
 				<log><![CDATA[removeDeviceByTransportId device size=<%=context.deviceContainer.size()%>]]></log>
 				<log><![CDATA[transportid=<%=context.transportid.toString()%>]]></log>
 				
-<container name="removelist" type="list" valuetype="string"/>
+				<container name="removelist" type="list" valuetype="string"/>
 				
 				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneapppair" in="context.deviceContainer">
@@ -214,11 +217,11 @@
 				<for var="oneremove" in="context.removelist">
 					<function>
 						<function name="removeDevice">
-									<parameters>
-										<parameter name="datapathid" type="string" in="context.oneremove.toString()"/>
-									</parameters>
-								</function>
-							</function>
+							<parameters>
+								<parameter name="datapathid" type="string" in="context.oneremove.toString()"/>
+							</parameters>
+						</function>
+					</function>
 				</for>
 			</function>
 			<function name="SendAddAllDeviceToWebClient">

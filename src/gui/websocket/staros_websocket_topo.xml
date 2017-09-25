@@ -57,6 +57,7 @@
 	</function>
 	<!--YY 20170912-->
 	<function name="SendAddAllHost">
+	<log> topo SendAddAllHost  #################</log>
 		<function name="SendAddAllHostToWebClient" class="HostManager">
 			<parameters>
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>

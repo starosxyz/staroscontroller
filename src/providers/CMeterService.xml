@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				YY
+		Date:
+				2017-09-01
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<class name="CMeterService">
+		<public>
+			<function name="InstallMeter">
+				<parameters>
+					<parameter name="outmeterid" type="long"/>
+					<parameter name="meterjson" type="string"/>
+					<parameter name="appid" type="string"/>
+					<parameter name="datapathid" type="string"/>
+				</parameters>
+				<variable name="metermgrobj" type="class"/>
+				<variable name="deviceobj" type="class"/>
+				<log>##################################################################</log>
+				<log>insert CMeterService InstallMeter</log>				
+				<log><![CDATA[appId = <%=context.appid.toString()%>]]></log>	
+				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
+				<log>##################################################################</log>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="outdevice" type="class" out="context.deviceobj"/>
+						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
+
+				<function name="GetMeterManager" class="context.deviceobj">
+					<parameters>
+						<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+					</parameters>			
+				</function>
+
+				<if cond="context.metermgrobj==null">
+					<then>
+						<log>metermgrobj is null</log>
+					</then>
+				</if>
+				<function name="InstallMeterRequest" class="context.metermgrobj">
+					<parameters>
+						<parameter name="strjson" type="string" in="context.meterjson.toString()"/>
+						<parameter name="meterid" type="long" out="context.outmeterid"/>
+						<parameter name="appid" type="string" in="context.appid.toString()"/>
+					</parameters>
+				</function>
+				<log>CMeterervice InstallFlow end</log>
+			</function>
+		
+			<function name="UnInstallMeter">
+				<parameters>
+					<parameter name="datapathid" type="string"/>			
+					<parameter name="meterid" type="string"/>
+				</parameters>
+				
+				<log>##### CMeterService UnInstallMeter #####</log>
+				<variable name="metermgrobj" type="class"/>
+				<variable name="deviceobj" type="class"/>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+						<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				<if cond="context.deviceobj != null">
+					<then>
+						<function name="GetMeterManager" class="context.deviceobj">
+							<parameters>
+								<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+							</parameters>			
+						</function>
+						<if cond="context.metermgrobj != null">
+							<then>
+								<function name="UnInstallMeterRequest" class="context.metermgrobj">
+									<parameters>
+										<parameter name="meterid" type="string" in="context.meterid.toString()"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</function>
+		</public>
+	</class>
+</starosxml>

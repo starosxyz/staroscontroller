@@ -63,7 +63,9 @@
 				<parameter name="datapathid" type="string"/>			
 				<parameter name="flowid" type="string"/>
 			</parameters>
+			<log>CFlowService UnInstallFlow</log>
 			
+			<log>##### CFlowServer UnInstallFlow #####</log>
 			<variable name="deviceobj" type="class"/>
 			<function name="findDevice" class="DeviceManager">
 				<parameters>

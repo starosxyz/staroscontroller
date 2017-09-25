@@ -183,6 +183,15 @@
 		<variable name="resourceid" type="long"/>
 		<variable name="tunnel" type="class"/>
 		<variable name="outjson" type="string"/>
+		<variable name="username" type="string"/>
+		<variable name="inputPort" type="string"/>
+		<variable name="outputPort" type="string"/>
+		<variable name="type" type="string"/>
+		<variable name="state" type="string"/>
+		<variable name="inputvlanid" type="long"/>
+		<variable name="outputvlanid" type="long"/>
+		<variable name="bandwidth" type="long"/>
+		<variable name="putindexof" type="long" value="0"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");
@@ -194,60 +203,51 @@
 				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
 				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
 			</parameters>
-		</function>								
-		<variable name="username" type="string"/>
-		<variable name="inputPort" type="string"/>
-		<variable name="outputPort" type="string"/>
-		<variable name="invlan" type="long"/>
-		<variable name="outvlan" type="long"/>
-		<variable name="type" type="string"/>
-		<variable name="state" type="string"/>
-		<variable name="inputvlanid" type="long"/>
-		<variable name="outputvlanid" type="long"/>
-		<variable name="bandwidth" type="long"/>
-		<variable name="inmeterid" type="long"/>
-		<variable name="outmeterid" type="long"/>									
+		</function>
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
 			var local_inputport = json.inputPort;
 			var local_outputPort = json.outputPort;
-			var local_invlan = 100;
-			var local_outvlan = 100;
 			var local_type = json.type;
 			var local_state = "active";
 			var local_inputvlanid = json.inputvlanid;
 			var local_outputvlanid = json.outputvlanid;
 			var local_bandwidth = json.bandwidth;
-			var local_inmeterid = 200;
-			var local_outmeterid = 200;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
 			context.outputPort.setValue(local_outputPort);
-			context.invlan.setValue(local_invlan);
-			context.outvlan.setValue(local_outvlan);
 			context.type.setValue(local_type);
 			context.state.setValue(local_state);
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.bandwidth.setValue(local_bandwidth);
-			context.inmeterid.setValue(local_inmeterid);
-			context.outmeterid.setValue(local_outmeterid);
+			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
+			{
+				context.putindexof.setValue(1);
+			}
 		]]></script>
+		<if cond="context.putindexof.toLong()!=1">
+			<then>
+				<function name="ErrorResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
 		<function name="UpdateTunnel" class="context.tunnel">
 			<parameters>											
 				<parameter name="username" type="string" in="context.username.toString()"/>
 				<parameter name="inputPort" type="string" in="context.outputPort.toString()"/>
 				<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
-				<parameter name="invlan" type="long" in="context.invlan.toLong()"/>											
-				<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
 				<parameter name="type" type="string" in="context.type.toString()"/>
 				<parameter name="state" type="string" in="context.state.toString()"/>
 				<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
 				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>	
 				<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
-				<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
-				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>
 			</parameters>
 		</function>			
 		<script><![CDATA[
@@ -271,60 +271,60 @@
 		<variable name="username" type="string"/>
 		<variable name="inputPort" type="string"/>
 		<variable name="outputPort" type="string"/>
-		<variable name="invlan" type="long"/>
-		<variable name="outvlan" type="long"/>
 		<variable name="type" type="string"/>
 		<variable name="state" type="string"/>
 		<variable name="inputvlanid" type="long"/>
 		<variable name="outputvlanid" type="long"/>
 		<variable name="bandwidth" type="long"/>
-		<variable name="inmeterid" type="long"/>
-		<variable name="outmeterid" type="long"/>
 		<variable name="resourceid" type="long"/>
 		<variable name="outjson" type="string"/>
 		<variable name="tunnel" type="class"/>
+		<variable name="putindexof" type="long" value="0"/>
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
 			var local_inputport = json.inputPort;
 			var local_outputPort = json.outputPort;
-			var local_invlan = 100;
-			var local_outvlan = 100;
 			var local_type = json.type;
 			var local_state = "active";
 			var local_inputvlanid = json.inputvlanid;
 			var local_outputvlanid = json.outputvlanid;
 			var local_bandwidth = json.bandwidth;
-			var local_inmeterid = 200;
-			var local_outmeterid = 200;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
 			context.outputPort.setValue(local_outputPort);
-			context.invlan.setValue(local_invlan);
-			context.outvlan.setValue(local_outvlan);
 			context.type.setValue(local_type);
 			context.state.setValue(local_state);
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.bandwidth.setValue(local_bandwidth);
-			context.inmeterid.setValue(local_inmeterid);
-			context.outmeterid.setValue(local_outmeterid);
+			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
+			{
+				context.putindexof.setValue(1);
+			}
 		]]></script>
+		<if cond="context.putindexof.toLong()!=1">
+			<then>
+				<function name="ErrorResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
 		<function name="addTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="id" type="long" out="context.resourceid"/>
 				<parameter name="username" type="string" in="context.username.toString()"/>
 				<parameter name="inputPort" type="string" in="context.inputPort.toString()"/>
 				<parameter name="outputPort" type="string" in="context.outputPort.toString()"/>
-				<parameter name="invlan" type="long" in="context.invlan.toLong()"/>
-				<parameter name="outvlan" type="long" in="context.outvlan.toLong()"/>
 				<parameter name="type" type="string" in="context.type.toString()"/>
 				<parameter name="state" type="string" in="context.state.toString()"/>
 				<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
 				<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
 				<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
-				<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
-				<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>		
 			</parameters>
 		</function>
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
@@ -393,6 +393,29 @@
 		<function name="SendResponse" class="RestfulService">
 			<parameters>
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="json" type="string" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="ErrorResponse">
+		<parameters>
+			<parameter name="resourceid" type="long"/>
+			<parameter name="transportid" type="string"/>
+		</parameters>
+		<variable name="outjson" type="string"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+			one.resourceId = ""+context.resourceid.toLong();
+			one.code = "-1";
+			one.description = "Port id is wrong!";						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
 				<parameter name="json" type="string" in="context.outjson.toString()"/>
 			</parameters>
 		</function>

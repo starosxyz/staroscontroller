@@ -7,18 +7,22 @@
 			<variable name="m_username" type="string"/>
 			<variable name="m_inputPort" type="string"/>
 			<variable name="m_outputPort" type="string"/>
-			<variable name="m_invlan" type="long"/>
 			
-			<variable name="m_outvlan" type="long"/>
+			<variable name="m_serviceinvlan" type="long"/>			
+			<variable name="m_serviceoutvlan" type="long"/>
 			<variable name="m_type" type="string"/>
 			<variable name="m_state" type="string"/>
 			<variable name="m_inputvlanid" type="long"/>
 			<variable name="m_outputvlanid" type="long"/>
 			
 			<variable name="m_bandwidth" type="long"/>
-			<variable name="m_inmeterid" type="long"/>
-			<variable name="m_outmeterid" type="long"/>
 			<variable name="m_tunneldevicemgr" type="class"/>
+			<variable name="m_bisActive" type="boolean" value="false"/>
+			
+			<variable name="m_fromdevice" type="string"/>
+			<variable name="m_fromdeviceport" type="string"/>
+			<variable name="m_todevice" type="string"/>
+			<variable name="m_todeviceport" type="string"/>
 		</private>
 		<public>
 			<function name="CTunnel">
@@ -36,23 +40,31 @@
 					<parameter name="outputvlanid" type="long"/>
 					
 					<parameter name="bandwidth" type="long"/>
-					<parameter name="inmeterid" type="long"/>
-					<parameter name="outmeterid" type="long"/>
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toLong()"/>
 				<set name="thisclass.m_username" value="context.username.toString()"/>
 				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
-				<set name="thisclass.m_invlan" value="context.invlan.toLong()"/>
-				<set name="thisclass.m_outvlan" value="context.outvlan.toLong()"/>
+				<set name="thisclass.m_serviceinvlan" value="context.invlan.toLong()"/>
+				<set name="thisclass.m_serviceoutvlan" value="context.outvlan.toLong()"/>
 				<set name="thisclass.m_type" value="context.type.toString()"/>
 				<set name="thisclass.m_state" value="context.state.toString()"/>
 				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
 				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
-				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
-				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
 				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
+				<script><![CDATA[
+					var inputport = thisclass.m_inputPort.toString();
+					var oneinputid = (inputport.split("/")[0]).split(":")[1];	
+					var inputport = inputport.split("/")[1];			
+					var outputport = thisclass.m_outputPort.toString();
+					var oneoutputid = (outputport.split("/")[0]).split(":")[1];
+					var outputport = outputport.split("/")[1];
+					thisclass.m_fromdevice.setValue(oneinputid);
+					thisclass.m_todevice.setValue(oneoutputid);
+					thisclass.m_fromdeviceport.setValue(inputport);
+					thisclass.m_todeviceport.setValue(outputport);
+				]]></script>
 			</function>
 			<function name="GetTunnelId">
 				<parameters>
@@ -132,20 +144,6 @@
 				<set name="t_bandwidth" value="thisclass.m_bandwidth.toLong()"/>
 			</function>
 			
-			<function name="GetTunnelI_inmeterid">
-				<parameters>
-					<parameter name="t_inmeterid" type="long"/>
-				</parameters>
-				<set name="t_inmeterid" value="thisclass.m_inmeterid.toLong()"/>
-			</function>
-			
-			<function name="GetTunnelI_outmeterid">
-				<parameters>
-					<parameter name="t_outmeterid" type="long"/>
-				</parameters>
-				<set name="t_outmeterid" value="thisclass.m_outmeterid.toLong()"/>
-			</function>
-			
 			<!--qiulei 20170913-->
 
 			<function name="OneTunnelObjectToJsonString">
@@ -170,8 +168,6 @@
 							"outputvlanid":"<%=thisclass.m_outputvlanid.toLong()%>",
 							
 							"bandwidth":"<%=thisclass.m_bandwidth.toLong()%>",
-							"inmeterid":"<%=thisclass.m_inmeterid.toLong()%>",
-							"outmeterid":"<%=thisclass.m_outmeterid.toLong()%>"
 						}
 					]]></jsonbody>
 				</reference>
@@ -192,10 +188,7 @@
 					<parameter name="state" type="string"/>
 					<parameter name="inputvlanid" type="long"/>
 					<parameter name="outputvlanid" type="long"/>
-					
 					<parameter name="bandwidth" type="long"/>
-					<parameter name="inmeterid" type="long"/>
-					<parameter name="outmeterid" type="long"/>
 				</parameters>
 				
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -208,44 +201,123 @@
 				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
 				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
-				<set name="thisclass.m_inmeterid" value="context.inmeterid.toLong()"/>
-				<set name="thisclass.m_outmeterid" value="context.outmeterid.toLong()"/>
 			</function>
 			
 			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
 				<log>==============================</log>
 				<log>##### Active Tunnel #####</log>
+				<if cond="thisclass.m_bisActive.toBoolean()==true">
+					<then>
+						<function>
+							<log>Tunnel is Active already</log>
+							<exit/>
+						</function>
+					</then>
+				</if>
+				<variable name="firstdevice" type="class"/>
+				<variable name="lastdevice" type="class"/>
+				<variable name="onedevice" type="class"/>
+				<container name="middevice" type="list" valuetype="class"/>
+				<iterator name="middeviceiterator" type="list" valuetype="class"/>
+				<iterator name="middevicefirst" type="list" valuetype="class"/>
+				<iterator name="middeviceend" type="list" valuetype="class"/>
 				<!--
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
 				-->
 				<function name="GetShortPath"/>
+				
+				
+				<if cond="thisclass.m_tunneldevicemgr != null">
+					<then>
+						<log>##### m_tunneldevicemgr is not null #####</log>
+						<function name="GetFirstDevice" class="m_tunneldevicemgr">
+							<parameters>
+								<parameter name="firstdevice" type="class" out="context.firstdevice"/>
+							</parameters>
+						</function>
+						
+						<function name="GetLastDevice" class="m_tunneldevicemgr">
+							<parameters>
+								<parameter name="lastdevice" type="class" out="context.lastdevice"/>
+							</parameters>
+						</function>
+						
+						<function name="GetMiddleDevice" class="m_tunneldevicemgr">
+							<parameters>
+								<parameter name="devicelist" type="list" out="context.middevice"/>
+							</parameters>							
+						</function>
+					</then>
+				</if>
+				<if cond="context.firstdevice==context.lastdevice">
+					<then>
+						<function name="installRuleAtSameDevice" class="firstdevice">
+							<parameters>
+								<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
+								<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
+								<parameter name="outport" type="string" in="thisclass.m_todeviceport.toString()"/>
+								<parameter name="outvlan" type="string" in="thisclass.m_outputvlanid.toString()"/>
+								<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+							</parameters>
+						</function>
+						<exit/>
+					</then>
+				</if>
+				<function name="installRuleStart" class="firstdevice">
+					<parameters>
+						<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
+						<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
+						<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
+						<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
+						<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+					</parameters>
+				</function>
+				<function name="installRuleEnd" class="lastdevice">
+					<parameters>
+						<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
+						<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
+						<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
+						<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
+						<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+					</parameters>
+				</function>
+				<set name="middevicefirst" value="context.middevice.begin()"/>
+				<set name="middeviceend" value="context.middevice.end()"/>				
+				<for var="context.middeviceiterator" from="context.middevicefirst" to="context.middeviceend">
+					<set name="onedevice" value="context.middeviceiterator.value()"/>
+					<function name="installRuleMid" class="onedevice">
+						<parameters>
+							<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
+							<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
+						</parameters>
+					</function>
+				</for>
+				<set name="m_bisActive" value="true"/>
 			</function>
 			<function name="DeactiveTunnel">
 				<log>##### Deactive Tunnel #####</log>
-				<!--
-				<function name="UnInstallMeter"/>
-				<function name="UnInstallFlow"/>
-				-->
+				<if cond="thisclass.m_bisActive.toBoolean()==false">
+					<then>
+						<function>
+							<log>Tunnel is Deactive already</log>
+							<exit/>
+						</function>
+					</then>
+				</if>
+				<if cond="thisclass.m_tunneldevicemgr != null">
+					<then>
+						<function name="DeactiveTunnel" class="m_tunneldevicemgr"/>
+					</then>
+				</if>
+				<set name="m_bisActive" value="false"/>
 			</function>
 			
 			<function name="GetShortPath">
-				<log>################################</log>
-				<variable name="inputid" type="string"/>
-				<variable name="outputid" type="string"/>
+				<log>##### Get Shortest Path #####</log>
 				<variable name="strlink" type="string"/>
-				<script><![CDATA[
-					var inputport = thisclass.m_inputPort.toString();
-					var oneinputid = (inputport.split("/")[0]).split(":")[1];					
-					var outputport = thisclass.m_outputPort.toString();
-					var oneoutputid = (outputport.split("/")[0]).split(":")[1];
-					context.inputid.setValue(oneinputid);
-					context.outputid.setValue(oneoutputid);
-				]]></script>
-				<log><![CDATA[inputid=<%=context.inputid.toString()%>]]></log>
-				<log><![CDATA[outputid=<%=context.outputid.toString()%>]]></log>
-				<set name="strlink" value="context.openflowserverobj.getShortestPath2(context.inputid.toString(), context.outputid.toString())"/>
+				<set name="strlink" value="context.openflowserverobj.getShortestPath2(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
 				<log>============= START =================</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 				<log>=============  END  =================</log>
@@ -292,15 +364,19 @@
 						</parameters>
 					</function>
 					<if cond="context.srcport.toString() == context.inputport.toString()">
-						<if cond="context.dstport.toString() == context.outputport.toString()">
-							<log>TunnelDevice is Find From List</log>
-							<function name="GetTunnelDeviceId" class="context.onetunneldevice">
-								<parameters>
-									<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
-								</parameters>
-							</function>
-							<exit/>
-						</if>
+						<then>
+							<if cond="context.dstport.toString() == context.outputport.toString()">
+								<then>
+									<log>TunnelDevice is Find From List</log>
+									<function name="GetTunnelDeviceId" class="context.onetunneldevice">
+										<parameters>
+											<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+										</parameters>
+									</function>
+									<exit/>
+								</then>
+							</if>
+						</then>
 					</if>
 				</for>
 				<function name="removeTunnelDevice" class="thisclass.m_tunneldevicemgr">
@@ -311,193 +387,31 @@
 				<function name="GetShortPath"/>
 			</function>
 			
-			<function name="FindMeterManager">
+			<!--Topology change-->
+			<function name="mytopremove">
 				<parameters>
-					<parameter name="outmetermgrobj" type="class"/>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevice" type="string"/>
+					<parameter name="path" type="string"/>
 				</parameters>
-				<variable name="deviceobj" type="class"/>
-				<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-				
-				<function name="GetDeviceByTransportId" class="DeviceManager">
+				<variable name="isChange" type="boolean" value="false"/>
+				<log>Tunnel Top channge</log>
+				<function name="IsMyTopChange" class="m_tunneldevicemgr">
 					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+						<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
+						<parameter name="todevice" type="string" in="context.todevice.toString()"/>
+						<parameter name="path" type="string" in="context.path.toString()"/>
+						<parameter name="ischanage" type="boolean" out="context.isChange"/>
 					</parameters>
 				</function>
-				<if cond="context.deviceobj != null">
+				<if cond="context.isChange.toBoolean()==true">
 					<then>
-						<log>##### Deviceobj is not null #####</log>
-						<function name="GetMeterManager" class="context.deviceobj">
-							<parameters>
-								<parameter name="outmetermgr" type="class" out="context.outmetermgrobj"/>
-							</parameters>
-						</function>
+						<function name="DeactiveTunnel"/>
+						<function name="ActiveTunnel"/>
 					</then>
 				</if>
 			</function>
 			
-			<function name="FindFlowManager">
-				<parameters>
-					<parameter name="outflowmgrobj" type="class"/>
-				</parameters>
-				<variable name="deviceobj" type="class"/>
-				<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-				
-				<function name="GetDeviceByTransportId" class="DeviceManager">
-					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
-					</parameters>
-				</function>
-				<if cond="context.deviceobj != null">
-					<then>
-						<log>##### Deviceobj is not null #####</log>
-						<function name="GetFlowManager" class="context.deviceobj">
-							<parameters>
-								<parameter name="outflowmgr" type="class" out="context.outflowmgrobj"/>
-							</parameters>
-						</function>
-					</then>
-				</if>
-			</function>
-			
-			<function name="InstallMeter">			
-				<variable name="modstrjson" type="string"/>
-				<variable name="resourceid" type="string" value=""/>
-				<variable name="onemetermgr" type="class"/>
-				<reference variable="modstrjson">
-					<jsonbody><![CDATA[ 
-						{
-							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
-							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
-							"flag":"1",
-							"meterid":"1",
-							"meterbandlist":[
-								{
-									"bandtype":"1",
-									"rate":"<%=thisclass.m_bandwidth%>",
-									"burstsize":"0"
-								}
-							]
-						}	
-					]]></jsonbody>
-				</reference>
-				<function name="FindMeterManager">
-					<parameters>
-						<parameter name="outmetermgrobj" type="class" out="context.onemetermgr"/>
-					</parameters>
-				</function>
-				<if cond="context.onemetermgr != null">
-					<then>
-						<function name="InstallMeterRequest" class="context.onemetermgr">
-							<parameters>
-								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="meterid" type="long" out="thisclass.m_inmeterid"/>
-								<parameter name="appid" type="string" in="'core'"/>
-							</parameters>
-						</function>	
-					</then>	
-				</if>
-			</function>
-			
-			<function name="UnInstallMeter">
-				<variable name="onemetermgr" type="class"/>
-				<function name="FindMeterManager">
-					<parameters>
-						<parameter name="outmetermgrobj" type="class" out="context.onemetermgr"/>
-					</parameters>
-				</function>
-				<if cond="context.onemetermgr != null">
-					<then>
-						<function name="UnInstallMeterRequest" class="context.onemetermgr">
-							<parameters>
-								<parameter name="meterid" type="long" in="thisclass.m_inmeterid.toLong()"/>
-							</parameters>
-						</function>
-					</then>	
-				</if>
-			</function>
-			
-			<function name="InstallFlow">
-				<log dest="stdout">InstallFlow wangkang 2017/09/15</log>
-				<variable name="modstrjson" type="string"/>
-				<variable name="oneflowmgr" type="class"/>
-				<reference variable="modstrjson">
-					<jsonbody><![CDATA[ 
-							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
-								"cookie":"0",
-								"cookiemask":"0",
-								"tableid":"0",
-								"command":"0",
-								"idletimeout":"0",
-								"hardtimeout":"0",
-								"priority":"40000",
-								"bufferid":"0xffffffff",
-								"outport":"0xffffffff",
-								"outgroup":"0xffffffff",
-								"flags":"1",
-								"match":{
-										"type":"1",
-										"matchfieldlist":[
-											{
-												"oxmclass":"0x8000",
-												"oxmfield":"5",
-												"hasmask":"false",
-												"ethtype":"0x0806"
-											}
-										]
-									},
-								"instructionlist":[
-									{
-										"type":"4",
-										"actionlist":[
-											{
-												"type":"0",
-												"outport":"0xfffffffd",
-												"maxlen":"0xffff"
-											}
-										]
-									}
-								]
-							}
-					]]></jsonbody>
-				</reference>
-				<function name="FindFlowManager">
-					<parameters>
-						<parameter name="outflowmgrobj" type="class" out="context.oneflowmgr"/>
-					</parameters>
-				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>InstallFlowTableRequest</log>
-						<!--
-						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
-								
-						</function>	
-						-->
-					</then>	
-				</if>
-			</function>
-			
-			<function name="UnInstallFlow">
-				<variable name="oneflowmgr" type="class"/>
-				<function name="FindFlowManager">
-					<parameters>
-						<parameter name="outflowmgrobj" type="class" out="context.oneflowmgr"/>
-					</parameters>
-				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>UnInstallFlowTableRequest</log>
-						<!--
-						<function name="UnInstallFlowTableRequest" class="context.oneflowmgr">
-
-						</function>
-						-->
-					</then>	
-				</if>
-			</function>
 		</public>
 	</class>
 </starosxml>

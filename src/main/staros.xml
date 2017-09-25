@@ -78,9 +78,9 @@
 			<function >
 				<log>staros TimeOutEvent 2017.08.28</log>
 				<wait event="InvalidEvent" timeout="2000"/>
+				<raise name="'TimeOutEvent'"/>
 				<function name="OpenFlowDetect"/>
 				<function name="Timeout" class="SessionManager"/>
-				<raise name="'TimeOutEvent'"/>
 			</function>
 		</onevent>
 	</events>

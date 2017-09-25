@@ -22,13 +22,16 @@
 	<variable name="applicationmgr" reference="global.ApplicationManager"/>
 	<variable name="devicemgr" reference="global.DeviceManager"/>
 	<variable name="flowservice" reference="global.FlowService"/>
+	<variable name="meterservice" reference="global.MeterService"/>
 	<variable name="restfulservice" reference="global.RestfulService"/>
+	<variable name="toposervice" reference="global.TopoService"/>
 	<!--qiulei 20170913-->
 	<variable name="tunnelManagerObject" type="class"/>
+	<variable name="tunnelDeviceManagerObject" type="class"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
-			<variable name="bundleid" taype="long" value="context.getCurrentBundleId()"/>
+			<variable name="bundleid" type="long" value="context.getCurrentBundleId()"/>
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<parameter name="id" type="string" in="'tunnelservice'"/>
@@ -56,6 +59,14 @@
 			<!--qiulei 20170915-->
 			<function name="AddDocsAPITunnel"/>
 
+			<function name="addTopoListener" class="toposervice">				
+				<parameters>
+					<parameter name="appid" type="string" in="'tunnelservice'"/>
+					<parameter name="add_eventname" type="string" in="'mytopadd'"/>
+					<parameter name="remove_eventname" type="string" in="'mytopremove'"/>
+				</parameters>
+			</function>
+
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
@@ -63,14 +74,35 @@
 			<delete name="tunnelManagerObject"/>
 			<function name="UnRegisterHandler"/>
 			<function name="RemoveDocsAPITunnel"/>
-
+			<function name="removeTopoListener" class="toposervice">
+				<parameters>
+					<parameter name="appid" type="string" in="'tunnelservice'"/>
+				</parameters>
+			</function>
 		</onevent>
 
 		<onevent event="mytopadd">
-			
+			<function>
+				<log>tunnelservice mytopadd</log>
+				<log><![CDATA[fromdevice <%=event.getParam('fromedevice').toString()%>]]> </log>
+				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
+				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
+			</function>
 		</onevent>
 		<onevent event="mytopremove">
-			
+			<function>
+				<log>tunnelservice mytopremove</log>
+				<log><![CDATA[fromdevice <%=event.getParam('fromedevice').toString()%>]]> </log>
+				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
+				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
+				<function name="mytopremove" class="tunnelManagerObject">
+					<parameters>
+						<parameter name="fromdevice" type="string" in="event.getParam('fromedevice').toString()"/>
+						<parameter name="todevice" type="string" in="event.getParam('todevice').toString()"/>
+						<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+					</parameters>
+				</function>
+			</function>
 		</onevent>
 		
 		<onevent event="*">

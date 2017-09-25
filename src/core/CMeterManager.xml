@@ -241,6 +241,7 @@
 				<script><![CDATA[
 						var info = JSON.parse(context.strjson.toString());
 						info.meterid=context.meterid.toString();
+						info.command='1';
 				]]></script>
 				<variable name="meterobj" type="class"/>
 				<new name="meterobj" class="CMeter">
@@ -380,10 +381,8 @@
 					<parameters>
 						<parameter name="meterid" type="long" in="thisclass.m_defaultmeterid"/>
 					</parameters>
+				</function>
 			</function>
-				
-				
-</function>
 			<!--Meter json data qiulei 20170825-->
 			<function name="GetAllMeterJsonData">	
 				<parameters>

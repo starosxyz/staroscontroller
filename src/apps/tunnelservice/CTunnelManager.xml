@@ -21,7 +21,7 @@
 			<function name="CTunnelManager">
 				<set name="thisclass.id" value="0" />
 				<set name="thisclass.invlan" value="0" />
-				<set name="thisclass.outvlan" value="0" />
+				<set name="thisclass.outvlan" value="2000" />
 				<log>CTunnelManager is create</log>
 			</function>
 			
@@ -32,21 +32,21 @@
 					<parameter name="username" type="string"/>
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
-					<parameter name="invlan" type="long"/>
-					<parameter name="outvlan" type="long"/>
+					<!--parameter name="invlan" type="long"/>
+					<parameter name="outvlan" type="long"/-->
 					<parameter name="type" type="string"/>
 					<parameter name="state" type="string"/>
 					<parameter name="inputvlanid" type="long"/>
 					<parameter name="outputvlanid" type="long"/>
 					<parameter name="bandwidth" type="long"/>
-					<parameter name="inmeterid" type="long"/>
-					<parameter name="outmeterid" type="long"/>
+					<!--parameter name="inmeterid" type="long"/>
+					<parameter name="outmeterid" type="long"/-->
 				</parameters>
 				
 				<!--qiulei 20170919 pm-->
 				<set name="thisclass.invlan" value="thisclass.invlan.toLong()+1" />
 				<set name="thisclass.outvlan" value="thisclass.outvlan.toLong()+1" />
-				<if cond="thisclass.invlan > 4000">
+				<if cond="thisclass.invlan > 2000">
 					<then>
 						<function>
 							<set name="thisclass.invlan" value="1" />
@@ -57,13 +57,13 @@
 				<if cond="thisclass.outvlan > 4000">
 					<then>
 						<function>
-							<set name="thisclass.outvlan" value="1" />
+							<set name="thisclass.outvlan" value="2001" />
 						</function>
 					</then>
 				</if>
 
 				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
-				<!--set name="context.id" value="thisclass.id.toLong()" /-->
+				<set name="context.id" value="thisclass.id.toLong()"/>
 				
 				<variable name="tunnelObject" type="class"/>
 				<new name="tunnelObject" class="CTunnel">
@@ -79,13 +79,13 @@
 						<parameter name="inputvlanid" type="long" in="context.inputvlanid.toLong()"/>
 						<parameter name="outputvlanid" type="long" in="context.outputvlanid.toLong()"/>
 						<parameter name="bandwidth" type="long" in="context.bandwidth.toLong()"/>
-						<parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
-						<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/>
+						<!--parameter name="inmeterid" type="long" in="context.inmeterid.toLong()"/>
+						<parameter name="outmeterid" type="long" in="context.outmeterid.toLong()"/-->
 					</parameters>
 				</new>
 				
 				<insert name="tunnelContainer" key="thisclass.id.toLong()" value="context.tunnelObject"/>
-				<set name="context.id" value="thisclass.id.toLong()"/>
+				
 			</function>
 			<!--qiulei 20170913-->
 			<function name="removeTunnel">
@@ -175,6 +175,30 @@
 			
 			<function name="DeactiveTunnel">
 				<log>CTunnelManager DeactiveTunnel</log>
+			</function>
+			<!--yijian add-->
+			<function name="mytopremove">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevice" type="string"/>
+					<parameter name="path" type="string"/>
+				</parameters>
+				<iterator name="tunnelContaineriterator" type="hashmap" keytype="long" valuetype="class"/>
+				<iterator name="tunnelContainerfirst" type="hashmap" keytype="long" valuetype="class"/>
+				<iterator name="tunnelContainerend" type="hashmap" keytype="long" valuetype="class"/>
+				<variable name="onetunnel" type="class"/>
+				<set name="tunnelContainerfirst" value="context.tunnelContainer.begin()"/>
+				<set name="tunnelContainerend" value="context.tunnelContainer.end()"/>
+				<for var="context.tunnelContaineriterator" from="context.tunnelContainerfirst" to="context.tunnelContainerend">
+					<set name="onetunnel" value="context.tunnelContaineriterator.second()"/>
+					<function name="mytopremove" class="onetunnel">
+						<parameters>
+							<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
+							<parameter name="todevice" type="string" in="context.todevice.toString()"/>
+							<parameter name="path" type="string" in="context.path.toString()"/>
+						</parameters>
+					</function>
+				</for>
 			</function>
 		</public>
 	</class>

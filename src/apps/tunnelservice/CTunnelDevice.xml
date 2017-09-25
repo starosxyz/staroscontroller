@@ -1,11 +1,13 @@
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<!--wangkang 2017/09/19 -->
+	<!--hupeng 2017/09/25 -->
 	<class name="CTunnelDevice">
 		<private>
 			<variable name="m_deviceid" type="string"/>
 			<variable name="m_inputPort" type="string"/>
 			<variable name="m_outputPort" type="string"/>
 			<variable name="m_flowid" type="string"/>
+			<variable name="m_flowid2" type="string"/>
+			<variable name="m_meterid" type="long"/>
 		</private>	
 		<public>
 			<function name="CTunnelDevice">
@@ -42,12 +44,22 @@
 					<parameter name="inport" type="string"/>
 					<parameter name="invlan" type="string"/>
 					<parameter name="outport" type="string"/>
-					<parameter name="meterid" type="long"/>
+					<parameter name="outvlan" type="string"/>
+					<parameter name="bandwith" type="long"/>
 				</parameters>
-				<variable name="modstrjson" type="string"/>
+				<variable name="jsonout2in" type="string"/>
+				<variable name="jsonin2out" type="string"/>
 				<variable name="onedevice" type="class"/>
 				<variable name="oneflowmgr" type="class"/>
-				<reference variable="modstrjson">
+				<log>CTunnelDevice installRuleAtSameDevice</log>
+				
+				<function name="InstallMeter">	
+					<parameters>
+						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+				
+				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -92,48 +104,102 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.meterid.toLong()%>"
+										"meterid":"<%=context.m_meterid.toLong()%>"
 									}
 								]
 							}
 					]]></jsonbody>
 				</reference>
-				<function name="findDevice" class="DeviceManager">
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.outvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=context.m_meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
-						<parameter name="deviceobject" type="class" out="context.onedevice"/>
 					</parameters>
 				</function>
-				<function name="SetFlowManager" class="onedevice">
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
+						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>InstallFlowTableRequest</log>		
-						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
-							<parameters>
-								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="appId" type="string" in="'core'"/>
-							</parameters>
-						</function>
-					</then>	
-				</if>
 			</function>
 			<function name="installRuleStart">
 				<parameters>
 					<parameter name="inport" type="string"/>
 					<parameter name="invlan" type="string"/>
-					<parameter name="outport" type="string"/>
-					<parameter name="meterid" type="long"/>
+					<parameter name="serviceinvlan" type="string"/>
+					<parameter name="serviceoutvlan" type="string"/>
+					<parameter name="bandwith" type="long"/>
 				</parameters>
-				<variable name="modstrjson" type="string"/>
+				<log>Ctunnerdevice installRuleStart</log>
+				<variable name="jsonin2out" type="string"/>
+				<variable name="jsonout2in" type="string"/>
 				<variable name="oneflowmgr" type="class"/>
 				<variable name="onedevice" type="class"/>
-				
-				<reference variable="modstrjson">
+
+				<function name="InstallMeter">	
+					<parameters>
+						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+
+				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -153,15 +219,15 @@
 										"matchfieldlist":[
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
-												"hasmask":"false",
-												"vlanid":"<%=context.invlan.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
 												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
 											}
 										]
 									},
@@ -170,54 +236,118 @@
 										"type":"4",
 										"actionlist":[
 											{
+												"type":"17",
+												"ethertype":"0x8100",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"25",
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											},
+											{
 												"type":"0",
-												"outport":"<%=context.outport.toString()%>",
+												"outport":"<%=context.m_outputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toLong()%>"
 									}
 								]
 							}
 					]]></jsonbody>
 				</reference>
-				<function name="findDevice" class="DeviceManager">
+				
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.m_outputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"18",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=context.m_meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+			
+				
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
-						<parameter name="deviceobject" type="class" out="context.onedevice"/>
 					</parameters>
 				</function>
-				<function name="SetFlowManager" class="onedevice">
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
+						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>InstallFlowTableRequest</log>
-						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
-							<parameters>
-								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="appId" type="string" in="'core'"/>
-							</parameters>
-						</function>
-					</then>	
-				</if>
 			</function>
 			<function name="installRuleMid">
 				<parameters>
-					<parameter name="inport" type="string"/>
-					<parameter name="invlan" type="string"/>
-					<parameter name="outport" type="string"/>
+					<parameter name="serviceinvlan" type="string"/>
+					<parameter name="serviceoutvlan" type="string"/>
 				</parameters>
-				<variable name="modstrjson" type="string"/>
+				<variable name="jsonin2out" type="string"/>
+				<variable name="jsonout2in" type="string"/>
 				<variable name="oneflowmgr" type="class"/>
 				<variable name="onedevice" type="class"/>
-				<reference variable="modstrjson">
+				<log>CTunnelDevice installRuleMid</log>
+				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -239,13 +369,13 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"6",
 												"hasmask":"false",
-												"vlanid":"<%=context.invlan.toString()%>"
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.inport.toString()%>"
+												"inport":"<%=context.m_inputPort.toString()%>"
 											}
 										]
 									},
@@ -255,7 +385,7 @@
 										"actionlist":[
 											{
 												"type":"0",
-												"outport":"<%=context.outport.toString()%>",
+												"outport":"<%=context.m_outputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -264,41 +394,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-				<function name="findDevice" class="DeviceManager">
-					<parameters>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
-						<parameter name="deviceobject" type="class" out="context.onedevice"/>
-					</parameters>
-				</function>
-				<function name="SetFlowManager" class="onedevice">
-					<parameters>
-						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
-					</parameters>
-				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>InstallFlowTableRequest</log>
-						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
-							<parameters>
-								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="appId" type="string" in="'core'"/>
-							</parameters>
-						</function>
-					</then>	
-				</if>
-			</function>
-			<function name="installRuleEnd">
-				<parameters>
-					<parameter name="inport" type="string"/>
-					<parameter name="invlan" type="string"/>
-					<parameter name="outport" type="string"/>
-					<parameter name="meterid" type="long"/>
-				</parameters>
-				<variable name="modstrjson" type="string"/>
-				<variable name="oneflowmgr" type="class"/>
-				<variable name="onedevice" type="class"/>
-				<reference variable="modstrjson">
+				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -320,13 +416,96 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"6",
 												"hasmask":"false",
-												"vlanid":"<%=context.invlan.toString()%>"
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.inport.toString()%>"
+												"inport":"<%=context.m_outputPort.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.m_inputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlow" class="FlowService">
+					<parameters>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="FlowService">
+					<parameters>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
+						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="installRuleEnd">
+				<parameters>
+					<parameter name="serviceinvlan" type="string"/>
+					<parameter name="serviceoutvlan" type="string"/>
+					<parameter name="outport" type="string"/>
+					<parameter name="outvlan" type="string"/>
+					<parameter name="bandwith" type="long"/>
+				</parameters>
+				<variable name="jsonin2out" type="string"/>
+				<variable name="jsonout2in" type="string"/>
+				<variable name="oneflowmgr" type="class"/>
+				<variable name="onedevice" type="class"/>
+				<log>CTunnelDevice installRuleEnd</log>
+				<function name="InstallMeter">	
+					<parameters>
+						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.m_inputPort.toString()%>"
 											}
 										]
 									},
@@ -347,35 +526,151 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toLong()%>"
 									}
 								]
 							}
 					]]></jsonbody>
 				</reference>
-				<function name="findDevice" class="DeviceManager">
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.outvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"17",
+												"ethertype":"0x8100",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"25",
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.m_inputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									},
+									{
+										"type":"6",
+										"meterid":"<%=thisclass.m_meterid.toLong()%>"
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
+						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
-						<parameter name="deviceobject" type="class" out="context.onedevice"/>
 					</parameters>
 				</function>
-				<function name="SetFlowManager" class="onedevice">
+				<function name="InstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="inflowmgr" type="class" out="context.oneflowmgr"/>
+						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
+						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
+						<parameter name="appId" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.oneflowmgr != null">
-					<then>
-						<log>InstallFlowTableRequest</log>
-						<function name="InstallFlowTableRequest" class="context.oneflowmgr">
-							<parameters>
-								<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-								<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-								<parameter name="appId" type="string" in="'core'"/>
-							</parameters>
-						</function>
-					</then>	
-				</if>
+			</function>
+			<function name="InstallMeter">	
+				<parameters>
+					<parameter name="bandwith" type="string"/>
+				</parameters>		
+				<variable name="modstrjson" type="string"/>
+				
+				<log>Ctunnerdevice InstallMeter</log>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
+							"flag":"1",
+							"meterid":"1",
+							"meterbandlist":[
+								{
+									"bandtype":"1",
+									"rate":"<%=context.bandwith.toString()%>",
+									"burstsize":"0"
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="InstallMeter" class="MeterService">
+					<parameters>
+						<parameter name="outmeterid" type="long" out="thisclass.m_meterid"/>
+						<parameter name="meterjson" type="string" in="context.modstrjson.toString()"/>
+						<parameter name="appid" type="string" in="'tunnelservice'"/>
+						<parameter name="datapathid" type="string" in="context.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="DeactiveTunnel">
+				<!--DeactiveTunnel-->
+				<!--删除流表-->
+				<!--删除meter-->
+				<log>CTunnelDevice DeactiveTunnel</log>
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
+						<parameter name="flowid" type="string" in="thisclass.m_flowid.toString()"/>
+					</parameters>
+				</function>
+				<!--uninstall flow 2-->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
+						<parameter name="flowid" type="string" in="thisclass.m_flowid2.toString()"/>
+					</parameters>
+				</function>
+				<!--uninstall meter-->
+				<function name="UnInstallMeter" class="MeterService">
+					<parameters>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
+						<parameter name="meterid" type="string" in="thisclass.m_meterid.toString()"/>
+					</parameters>
+				</function>
 			</function>
 		</public>
 	</class>	

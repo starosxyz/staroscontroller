@@ -17,6 +17,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CTopoService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CFlowService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CRestfulService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CMeterService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
@@ -39,6 +40,7 @@
 	<variable name="PacketService" type="class" global="true"/>
 	<variable name="TopoService" type="class" global="true"/>
 	<variable name="FlowService" type="class" global="true"/>
+	<variable name="MeterService" type="class" global="true"/>
 	<variable name="SessionManager" type="class" global="true"/>
 	<variable name="TunnelManager" type="class" global="true"/>
 	<variable name="RestfulService" type="class" global="true"/>
@@ -57,6 +59,7 @@
 		<new name="PacketService" class="CPacketService"/>
 		<new name="TopoService" class="CTopoService"/>
 		<new name="FlowService" class="CFlowService"/>
+		<new name="MeterService" class="CMeterService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
 		
 		
@@ -64,7 +67,7 @@
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 		<new name="SessionManager" class="CSessionManager"/>
 		<new name="TunnelManager" class="CTunnelManager"/>
-	<!--yijian 2017.08.24 Add Restful -->
+		<!--yijian 2017.08.24 Add Restful -->
 		<new name="RestfulService" class="CRestfulService"/>
 		<new name="APIDocsService" class="CAPIDocsService"/>
 		

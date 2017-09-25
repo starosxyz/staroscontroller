@@ -553,25 +553,28 @@
 							<!--parse JSONString-->
 							<script><![CDATA[							
 								var info = JSON.parse(context.replyjson.toString());
-								context.print(info.portlist.length);
-								for(var i=0;i<info.portlist.length;i++)
+								if (info.portlist!=null)
 								{
-									//yijian add for null var
-									var ofport = context.createContainer("hashmap","string","string");
-									if (ofport != null)
+									context.print(info.portlist.length);
+									for(var i=0;i<info.portlist.length;i++)
 									{
-										ofport.addValue('advertised', info.portlist[i].advertised);
-										ofport.addValue('portno', info.portlist[i].portno);
-										ofport.addValue('config', info.portlist[i].config);
-										ofport.addValue('curr', info.portlist[i].curr);
-										ofport.addValue('currspeed', info.portlist[i].currspeed);
-										ofport.addValue('hwaddr', info.portlist[i].hwaddr);
-										ofport.addValue('maxspeed', info.portlist[i].maxspeed);
-										ofport.addValue('name', info.portlist[i].name);
-										ofport.addValue('peer', info.portlist[i].peer);
-										ofport.addValue('state', info.portlist[i].state);
-										ofport.addValue('supported', info.portlist[i].supported);
-										context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
+										//yijian add for null var
+										var ofport = context.createContainer("hashmap","string","string");
+										if (ofport != null)
+										{
+											ofport.addValue('advertised', info.portlist[i].advertised);
+											ofport.addValue('portno', info.portlist[i].portno);
+											ofport.addValue('config', info.portlist[i].config);
+											ofport.addValue('curr', info.portlist[i].curr);
+											ofport.addValue('currspeed', info.portlist[i].currspeed);
+											ofport.addValue('hwaddr', info.portlist[i].hwaddr);
+											ofport.addValue('maxspeed', info.portlist[i].maxspeed);
+											ofport.addValue('name', info.portlist[i].name);
+											ofport.addValue('peer', info.portlist[i].peer);
+											ofport.addValue('state', info.portlist[i].state);
+											ofport.addValue('supported', info.portlist[i].supported);
+											context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
+										}
 									}
 								}
 							]]></script>
@@ -623,12 +626,14 @@
 					<function>
 						<script><![CDATA[
 								var info = JSON.parse(event.getParam('eventdata').toString());
-								
-								for(var i=0;i<info.portstatslist.length;i++)
+								if (info.portstatslist != null)
 								{
-									var portstats = info.portstatslist[i];
-									var portstrjson=JSON.stringify(portstats);
-									context.portstatelist.addValue(portstrjson);
+									for(var i=0;i<info.portstatslist.length;i++)
+									{
+										var portstats = info.portstatslist[i];
+										var portstrjson=JSON.stringify(portstats);
+										context.portstatelist.addValue(portstrjson);
+									}
 								}
 							]]></script>
 					</function>
