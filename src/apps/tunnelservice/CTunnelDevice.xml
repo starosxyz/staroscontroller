@@ -167,7 +167,7 @@
 					]]></jsonbody>
 				</reference>
 				
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
 						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
@@ -175,7 +175,7 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
 						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
@@ -183,6 +183,18 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
+				<if cond="context.m_flowid.size() == 0">
+					<then>
+						<log>context.m_flowid.size() == 0</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2.size() == 0">
+					<then>
+						<log>context.m_flowid2.size() == 0</log>
+						<assert/>
+					</then>
+				</if>
 			</function>
 			<function name="installRuleStart">
 				<parameters>
@@ -325,7 +337,7 @@
 				</reference>
 			
 				
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
 						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
@@ -333,7 +345,7 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
 						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
@@ -449,7 +461,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
 						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
@@ -457,7 +469,7 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<function name="InstallFlow" class="FlowService">
+				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
 						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
@@ -633,7 +645,7 @@
 						{
 							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
 							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
-							"flag":"1",
+							"flag":"0x00000005",
 							"meterid":"1",
 							"meterbandlist":[
 								{
@@ -659,6 +671,7 @@
 				<!--删除流表-->
 				<!--删除meter-->
 				<log>CTunnelDevice DeactiveTunnel</log>
+				
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			

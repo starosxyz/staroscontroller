@@ -227,7 +227,7 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
-				<set name="thisclass.m_meterid" value="0"/>
+				<set name="thisclass.m_meterid" value="2"/>
 				<function name="testaddmeter"/>	
 				<function name="AddErrorMeter"/>
 			</function>
@@ -237,11 +237,14 @@
 					<parameter name="meterid" type="long"/>
 					<parameter name="appid" type="string"/>
 				</parameters>
+				<variable name="newflowmodjson" type="string"/>
 				<set name="meterid" value="thisclass.m_meterid.toLong()"/>
 				<script><![CDATA[
 						var info = JSON.parse(context.strjson.toString());
 						info.meterid=context.meterid.toString();
-						info.command='1';
+						info.command='0';
+						var strjson=JSON.stringify(info);
+						context.newflowmodjson.setValue(strjson);
 				]]></script>
 				<variable name="meterobj" type="class"/>
 				<new name="meterobj" class="CMeter">
@@ -258,7 +261,7 @@
 							<function name="Send_OFPT13_METER_MOD">
 								<parameters>
 									<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-									<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+									<parameter name="strjson" type="string" in="context.newflowmodjson.toString()"/>
 								</parameters>
 							</function>
 						</function>
@@ -297,7 +300,7 @@
 				</function>
 				<script><![CDATA[
 						var info = JSON.parse(context.flowmodjson.toString());
-						info.command='3';
+						info.command='2';
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>

@@ -17,7 +17,7 @@
 					<parameter name="appId" type="string"/>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				
+				<variable name="flowmgrobj" type="class"/>
 				<variable name="deviceobj" type="class"/>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
@@ -31,7 +31,7 @@
 						<log>deviceobj is null</log>
 					</then>
 				</if>
-				<variable name="flowmgrobj" type="class"/>
+
 				<function name="GetFlowManager" class="context.deviceobj">
 					<parameters>
 						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
@@ -45,7 +45,7 @@
 				</if>								
 				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
 					<parameters>
-						<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>
+						<parameter name="outflowid" type="string" out="context.outflowid"/>
 						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
 						<parameter name="appId" type="string" in="context.appId.toString()"/>
 					</parameters>
@@ -58,10 +58,14 @@
 				<parameter name="datapathid" type="string"/>			
 				<parameter name="flowid" type="string"/>
 			</parameters>
-			<log>CFlowService UnInstallFlow</log>
-			
-			<log>##### CFlowServer UnInstallFlow #####</log>
 			<variable name="deviceobj" type="class"/>
+			<log>CFlowService UnInstallFlow</log>
+			<log>##### CFlowServer UnInstallFlow #####</log>
+			<if cond="context.flowid.size() == 0">
+				<then>
+					<assert/>
+				</then>
+			</if>
 			<function name="findDevice" class="DeviceManager">
 				<parameters>
 					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>

@@ -349,6 +349,7 @@
 				<variable name="flowentry" type="class"/>
 				<variable name="sendflowmodjson" type="string"/>
 				<variable name="flowmodjson" type="string"/>
+				<log><![CDATA[UnInstallFlowTableRequest flowid <%=context.flowid.toString()%>]]></log>
 				<if cond="context.flowsContainer.hasValue(context.flowid.toString()) == true">
 					<then>
 						<function>
@@ -358,6 +359,7 @@
 					<else>
 						<function>
 							<log>UnInstallFlowTableRequest exit2</log>
+							<assert/>
 							<exit/>
 						</function>
 					</else>
@@ -376,6 +378,7 @@
 					<else>
 						<function>
 							<log>deviceinfo is null</log>
+							<assert/>
 							<exit/>
 						</function>
 					</else>
@@ -406,8 +409,6 @@
 					</parameters>
                 </function>
 				<!---qiulei 20170831 end2-->
-				
-				
 				
 				<function name="Send_OFPT13_FLOW_MOD">
 					<parameters>
@@ -561,7 +562,7 @@
 					</for>
 				</for>
 				
-</function>
+			</function>
 			<function name="SendFlowRequest">
 				<variable name="xid" type="long"/>
 

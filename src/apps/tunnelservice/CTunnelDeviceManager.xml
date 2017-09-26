@@ -49,7 +49,20 @@
 				</for>
 				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
 			</function>
-			
+			<function name="CreateTunnelDevice">
+				<parameters>
+					<parameter name="deviceid" type="string"/>
+				</parameters>
+				<variable name="tunneldeviceObject" type="class"/>
+				<new name="tunneldeviceObject" class="CTunnelDevice">
+					<parameters>
+						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>
+						<parameter name="inputPort" type="string" in="'null'"/>
+						<parameter name="outputPort" type="string" in="'null'"/>
+					</parameters>
+				</new>
+				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
+			</function>
 			<function name="GetTunnelDeviceFromJson">
 				<parameters>
 					<parameter name="json" type="string"/>
