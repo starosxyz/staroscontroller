@@ -17,7 +17,7 @@
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 	
-	<logconfig dest="stdout|file" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<logconfig dest="stdout" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<events>
 		<!--Session StarUp-->
 		<onevent event="bundleapp.startup">
@@ -64,7 +64,8 @@
 			<set name="eventname"  value="'TimeOutEvent'"/>
 			<!--raise name="context.eventname.toString()"/-->
 			<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
-		  </function>
+			
+</function>
 		</onevent>
 		<!--Session Shutdown-->
 		<onevent event="~bundleapp.shutdown">
@@ -79,7 +80,7 @@
 				<log>staros TimeOutEvent 2017.08.28</log>
 				<function name="OpenFlowDetect"/>
 				<function name="Timeout" class="SessionManager"/>
-				<!--wait event="InvalidEvent" timeout="2000"/-->
+			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
 			</function>
 		</onevent>

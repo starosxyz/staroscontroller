@@ -15,7 +15,6 @@
 				<set name="thisclass.m_bytes" value="'0'"/>
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bucketjson" value="context.bucketjson.toString()"/>
-				<log><![CDATA[CGroupBucket bucketjson=<%=thisclass.m_bucketjson.toString()%>]]></log>
 			</function>
 			<function name="UpdateState">
 				<parameters>
@@ -29,7 +28,6 @@
 				<parameters>
 					<parameter name="jsonstring" type="string"/>
 				</parameters>
-				<log><![CDATA[m_bucketjson=<%=thisclass.m_bucketjson.toString()%>]]></log>
 				<script><![CDATA[
 					var onebucket = JSON.parse(thisclass.m_bucketjson.toString());
 					var jsonstrign='Bytes: '+thisclass.m_bytes.toString()+' Packets: '+thisclass.m_packets.toString()+' Actions: ';
@@ -137,8 +135,7 @@
 				<for var="strbucketlists" in="context.strbucketlist">
 					<function>
 						<set name="strbucket" value="context.strbucketlists.toString()"/>
-						<log><![CDATA[strbucket=<%=context.strbucket.toString()%>]]></log>
-						<new name="bucketobj" class="CGroupBucket">
+						 <new name="bucketobj" class="CGroupBucket">
 							<parameters>
 									<parameter name="bucketjson" type="string" in="context.strbucket.toString()"/>
 							</parameters>
@@ -154,12 +151,6 @@
 				<variable name="outjson" type="string"/>
 				<variable name="bucketsobj" type="class"/>
 				<container name="bucketjsonlist" type="list" valuetype="string"/>
-				<log><![CDATA[m_strjson=<%=thisclass.m_strjson.toString()%>]]></log>
-				<log><![CDATA[m_appid=<%=thisclass.m_appid.toString()%>]]></log>
-				<log><![CDATA[m_state=<%=thisclass.m_state.toString()%>]]></log>
-				<log><![CDATA[m_packets=<%=thisclass.m_packets.toString()%>]]></log>
-				<log><![CDATA[m_bytes=<%=thisclass.m_bytes.toString()%>]]></log>
-				<log><![CDATA[m_buckets size=<%=context.m_buckets.size()%>]]></log>
 				<variable name="i" type="class"/>
 			
 				<for var="i" in="context.m_buckets">
@@ -179,7 +170,6 @@
 						<insert name="bucketjsonlist" value="context.outjson.toString()"/>
 					</function>
 				</for>
-				<log><![CDATA[bucketjsonlist size=<%=context.bucketjsonlist.size()%>]]></log>
 				<script><![CDATA[
 					var flow = new Object();
 					flow.id = thisclass.m_id.toString();
@@ -210,7 +200,6 @@
 				<variable name="bucketsobj" type="class"/>
 				<variable name="bucketstring" type="class"/>
 				<variable name="i" type="long" value="0"/>
-				<log><![CDATA[FetchStateFromJson groupjson=<%=context.groupjson.toString()%>]]></log>
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.groupjson.toString());
 					thisclass.m_ref_count=info.refcount;
@@ -248,7 +237,6 @@
 			
 			<!-- wangkang 2017/09/06 -->
 			<function name="SetState">
-				<log>##### Set GroupMessage State #####</log>
 				<parameters>
 					<parameter name="inmodstate" type="string"/>
 				</parameters>
@@ -333,7 +321,6 @@
 						<parameter name="outgroupstring" type="string" out="context.groupstring"/>
 					</parameters>
 				</function>
-				<!--log><![CDATA[groupstring=<%=context.groupstring.toString()%>]]></log-->
 				<script><![CDATA[
 						var info = JSON.parse(context.groupstring.toString());
 						info.command='2';
@@ -392,7 +379,6 @@
 			
 			<!-- wangkang 2017/09/06 -->
 			<function name="InstallErrorGroup">
-				<log dest="stdout">InstallErrorGroup wangkang 2017/09/06</log>
 				<variable name="modstrjson" type="string"/>
 				<variable name="returnresourceid" type="string"/>
 				<reference variable="modstrjson">
@@ -433,9 +419,7 @@
 					<parameters>
 						<parameter name="groupid" type="string" in="thisclass.m_testgroupid.toString()"/>
 					</parameters>
-				</function>
-				<log><![CDATA[testremovegroup testresourceid=<%=context.testresourceid.toString()%>]]></log>
-
+				</function>				
 			</function>
 			<!-- for Get Group Json Data-->
 			<function name="GetGroupJsonData">	
@@ -493,19 +477,17 @@
 				<variable name="groupstate" type="string"/>
 				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
 				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>
-
-				<script><![CDATA[							
+																<script><![CDATA[							
 					var info = JSON.parse(context.groupjson.toString());
-					if (info.statslist != null)
-					{
-						for(var i=0;i<info.statslist.length;i++)
-						{
-							var onestat=info.statslist[i];
-							context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
-						}
-					}
-				]]></script>
-				<log>GroupStateRequest</log>
+									if (info.statslist != null)
+									{
+										for(var i=0;i<info.statslist.length;i++)
+										{
+											var onestat=info.statslist[i];
+											context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
+										}
+									}
+								]]></script>							
 				<for var="onegrouppair" in="context.groupContainer">
 					<function>
 						<set name="groupobj" value="context.onegrouppair.second()"/>
@@ -523,8 +505,9 @@
 						</if>
 					</function>
 				</for>
-			</function>
-			<!--Group State Request-->
+			</function>	
+			
+<!--Group State Request-->
 			<function name="GroupStateRequest">
 				<variable name="xid" type="string"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
@@ -542,13 +525,9 @@
 					<parameter name="ingroupid" type="string"/>
 					<parameter name="outgroup" type="class"/>
 				</parameters>
-				<log>##### Find a group class #####</log>
-				<log><![CDATA[ingroupid=<%=context.ingroupid.toString()%>]]></log>
-				<log><![CDATA[groupContainer size=<%=context.groupContainer.size()%>]]></log>
 				<function name="DumpGroup"/>
 				<if cond="context.groupContainer.hasValue(context.ingroupid.toString()) == true">
 					<then>
-						<log>##### ingroupid is found #####</log>
 						<function>
 							<lookup name="groupContainer" key="context.ingroupid.toString()" output="context.outgroup"/>
 						</function>
@@ -558,12 +537,10 @@
 			<function name="DumpGroup">
 				<variable name="groupkey" type="string"/>
 				<container name="onestatepair" type="pair" keytype="string" valuetype="class"/> 
-				<log>===========DumpGroupStart===============</log>
 				<for var="onestatepair" in="context.groupContainer">
 					<set name="groupkey" value="context.onestatepair.first()"/>
 					<log><![CDATA[groupkey=<%=context.groupkey.toString()%>]]></log>
 				</for>
-				<log>===========DumpGroupEnd===============</log>
 			</function>
 		
 		</public>

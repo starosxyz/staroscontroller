@@ -159,8 +159,6 @@
 				<parameters>
 					<parameter name="jsonstring" type="string"/>
 				</parameters>
-				<log>Ctunnelmanager GetTunnelJsonData</log>
-				<log><![CDATA[tunnelContainer !!!!!<%=context.tunnelContainer.size()%>]]></log>
 				<variable name="outjson" type="string"/>
 				<variable name="onetunnelinfo" type="class"/>
 				<container name="tunnellist" type="list" valuetype="string"/>
@@ -196,7 +194,6 @@
 					msg["No tunnels found"]="No tunnels found";
 					info["annots"]=msg;
 					var strjson=JSON.stringify(json);
-					context.print(strjson);
 					context.jsonstring.setValue(strjson);
 				]]></script>
 			</function>

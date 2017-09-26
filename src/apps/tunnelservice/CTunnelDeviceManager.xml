@@ -17,6 +17,7 @@
 					<parameter name="inputPort" type="string"/>
 					<parameter name="outputPort" type="string"/>
 				</parameters>
+				<log><![CDATA[CTunnelDeviceManager addTunnelDevice deviceid = <%=context.deviceid.toString()%>]]></log>
 				<variable name="tunneldeviceObject" type="class"/>
 				<new name="tunneldeviceObject" class="CTunnelDevice">
 					<parameters>
@@ -82,6 +83,9 @@
 				
 				<for var="context.mapContaineriterator" from="context.tempContainerfirst" to="context.tempContainerend">
 					<set name="mapContainer" value="context.mapContaineriterator.value()"/>
+					<log><![CDATA[GetTunnelDeviceFromJson container device huhu=<%=context.mapContainer.getValue('device').toString()%>]]></log>
+					<log><![CDATA[GetTunnelDeviceFromJson container inport huhu=<%=context.mapContainer.getValue('inport').toString()%>]]></log>
+					<log><![CDATA[GetTunnelDeviceFromJson container outport huhu=<%=context.mapContainer.getValue('outport').toString()%>]]></log>
 					<function name="addTunnelDevice">
 						<parameters>
 							<parameter name="deviceid" type="string" in="context.mapContainer.getValue('device').toString()"/>
@@ -144,7 +148,7 @@
 				<iterator name="tunnelContaineriterator" type="list" valuetype="class"/>
 				<iterator name="tunnelContainerfirst" type="list" valuetype="class"/>
 				<iterator name="tunnelContainerend" type="list" valuetype="class"/>				
-				<variable name="ontunneldevice" type="string"/>
+				<variable name="ontunneldevice" type="class"/>
 				<set name="tunnelContainerfirst" value="context.tunneldeviceContainer.begin()"/>
 				<set name="tunnelContainerend" value="context.tunneldeviceContainer.end()"/>
 				
@@ -195,6 +199,18 @@
 						<log>##### DeviceList is null #####</log>
 					</else>
 				</if>
+			</function>
+			<function name="PrintTunnerDevice">
+				<variable name="onetunnel" type="class" />
+				<variable name="tunnel" type="class" />
+				<for var="onetunnel" in="context.tunneldeviceContainer">
+					<set name="tunnel" value="context.onetunnel"/>
+					<if cond="context.tunnel!=null">
+						<then>
+							<function name="Printtunnel" class="tunnel"/>
+						</then>
+					</if>
+				</for>
 			</function>
 			
 		</public>

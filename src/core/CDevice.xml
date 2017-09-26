@@ -144,21 +144,18 @@
 				<parameters>
 					<parameter name="outmetermgr" type="class"/>
 				</parameters>
-				<log> Get MeterManager </log>
 				<set name="outmetermgr" value="thisclass.m_metermgr"/>
 			</function>
 			<function name="GetGroupManager">
 				<parameters>
 					<parameter name="outgroupmgr" type="class"/>
 				</parameters>
-				<log> Get GroupManager </log>
 				<set name="outgroupmgr" value="thisclass.m_groupmgr"/>
 			</function>
 			<function name="GetDatapathId">
 				<parameters>
 					<parameter name="outdatapathid" type="string"/>
 				</parameters>
-				<log><![CDATA[GetDatapathId m_datapathid=<%=thisclass.m_datapathid.toString()%>]]></log>
 				<set name="outdatapathid" value="thisclass.m_datapathid.toString()"/>
 			</function>
 			<function name="GetTransportId">
@@ -208,7 +205,6 @@
 						var strjson = JSON.stringify(onearray);
 						context.deviceinfojson.setValue(strjson);
 				]]></script>
-				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
 				<set name="strjson" value="context.deviceinfojson.toString()"/>
 			</function>
 			<function name="GetDeviceInfoForDetailRequest">
@@ -237,7 +233,6 @@
 						var strjson = JSON.stringify(onearray);
 						context.deviceinfojson.setValue(strjson);
 				]]></script>
-				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
 				<set name="strjson" value="context.deviceinfojson.toString()"/>
 			</function>
 			<function name="GetDeviceDetailInfoForDetailRequest">
@@ -263,7 +258,6 @@
 						var strjson = JSON.stringify(onearray);
 						context.deviceinfojson.setValue(strjson);
 				]]></script>
-				<log><![CDATA[GetDeviceInfoJson deviceinfojson=<%=context.deviceinfojson.toString()%>]]></log>
 				<set name="strjson" value="context.deviceinfojson.toString()"/>
 			</function>
 			<function name="ToOnlineJson">
@@ -607,7 +601,8 @@
 					</parameters>
 				</function>
 			</function>
-			<function name="SetTableJson">
+			
+<function name="SetTableJson">
 				<parameters>
 					<parameter name="tablejson" type="string"/>
 				</parameters>

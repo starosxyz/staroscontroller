@@ -98,7 +98,6 @@
 				<parameters>
 					<parameter name="appid" type="string"/>
 				</parameters>
-				<log><![CDATA[TopoContainer size() = <%=context.TopoContainer.size()%>]]></log>
 				<remove name="TopoContainer" key="context.appid.toString()"/>
 			</function>
 			<function name="FindTopoListener">
@@ -220,8 +219,6 @@
 						</function>						
 						<set name="outjson" value="context.str.toString()"/>
 						<insert name="context.portlist" value="context.s2s"/>
-						<log>#########################################</log>
-						<log><![CDATA[context.portlist.size() = <%=context.portlist.size()%>]]></log>
 					</else>
 				</if>
 			</function>

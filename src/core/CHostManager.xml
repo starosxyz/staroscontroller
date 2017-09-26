@@ -89,7 +89,6 @@
 						]]>
 					</jsonbody>
 				</reference>
-				<log><![CDATA[ToAddHost2Json = <%=context.addhostjson.toString()%>]]></log>
 				<set name="strjson" value="context.addhostjson.toString()"/>
 				
 			</function>
@@ -101,8 +100,7 @@
 		</private>
 		<public>
 			<function name="CHostManager">
-				<log>CHostManager is create</log>
-				<!--function name="addhostest"/-->
+				<log>CHostManager is create</log>				
 			</function>
 			<function name="addHost">
 				<parameters>
@@ -122,6 +120,11 @@
 						<parameter name="port" type="string" in="context.port.toString()"/>				
 				</parameters>
 				</new>
+				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
+					<then>
+						<exit/>
+					</then>
+				</if>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
 			</function>
 
@@ -233,9 +236,7 @@
 							//payload[topo_zoom] = threeobject;
 							json.payload = payload;
 							var strjson = JSON.stringify(json);
-							context.outjson.setValue(strjson);
-							context.print("#####################topo_prefs############################");
-							context.print(context.outjson.toString());
+							context.outjson.setValue(strjson);							
 						]]></script>
 					</then>
 					<else>
@@ -253,9 +254,7 @@
 									payload.topo_mapid = twoobject;
 									json.payload = payload;
 									var strjson = JSON.stringify(json);
-									context.outjson.setValue(strjson);
-									context.print("#####################topo_mapid############################");
-									context.print(context.outjson.toString());
+									context.outjson.setValue(strjson);									
 								]]></script>
 							</then>
 							<else>
@@ -270,9 +269,7 @@
 									payload.topo_zoom = threeobject;
 									json.payload = payload;
 									var strjson = JSON.stringify(json);
-									context.outjson.setValue(strjson);
-									context.print("#####################topo_zoom############################");
-									context.print(context.outjson.toString());
+									context.outjson.setValue(strjson);									
 								]]></script>
 							</else>
 						</if>
@@ -281,10 +278,8 @@
 			</function>
 			<function name="SendAddAllHostToWebClient">
 				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<parameter name="transportid" type="string"/>
 				</parameters>
-				<log>%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</log>
-				<log>CHostManager SendAddAllHostToWebClient</log>
 				<variable name="sendjsonstr" type="string"/>				
 				<variable name="hostobj" type="class"/>	
 				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>				

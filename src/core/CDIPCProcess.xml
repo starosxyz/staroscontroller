@@ -5,8 +5,6 @@
 		<variable name="keys" type="string" />
 		<variable name="values" type="string" />
 		<set name="keys" value="event.getParam('processname').toString()"/>
-		<log><![CDATA[ProcessName= <%=event.getParam('processname').toString()%>]]></log>
-		<log><![CDATA[version= <%=event.getParam('Version').toString()%>]]></log>
 		<reference variable="values">
 				<jsonbody><![CDATA[ 
 					{

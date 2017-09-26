@@ -80,8 +80,7 @@
 						<parameter name="sessionid" type="string"/>
 						<parameter name="username" type="string"/>
 					</parameters>
-					<log>CreateSession</log>
-						<variable name="session" type="class"/>				
+					<variable name="session" type="class"/>				
 					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==false">
 							<then>
 								<new name="session" class="CSession">

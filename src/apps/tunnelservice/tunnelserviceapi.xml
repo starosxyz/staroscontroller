@@ -361,12 +361,19 @@
 	<function name="deleteTunnel">
 		<variable name="resourceid" type="long"/>
 		<variable name="outjson" type="string"/>
+		<variable name="tunnel" type="class"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");			
 			var local_id = array[array.length-1];
 			context.resourceid.setValue(local_id);			
 		]]></script>
+		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
+			<parameters>
+				<parameter name="tunnel_id" type="long" in="context.resourceid.toLong()"/>
+				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
+			</parameters>			
+		</function>
 		<if cond="context.tunnel==null">
 			<then>
 				<log>tunnel is null</log>

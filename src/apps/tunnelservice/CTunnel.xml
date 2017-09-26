@@ -66,6 +66,7 @@
 					thisclass.m_todeviceport.setValue(outputport);
 				]]></script>
 			</function>
+
 			<function name="GetTunnelId">
 				<parameters>
 					<parameter name="outid" type="long"/>
@@ -227,7 +228,6 @@
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
 				-->
-
 				<function name="GetShortPath">
 					<parameters>
 						<parameter name="result" type="boolean" out="context.getpathresult"/>
@@ -239,8 +239,10 @@
 						<exit/>
 					</then>
 				</if>
+				
 				<if cond="thisclass.m_tunneldevicemgr != null">
 					<then>
+						<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
 						<log>##### m_tunneldevicemgr is not null #####</log>
 						<function name="GetFirstDevice" class="m_tunneldevicemgr">
 							<parameters>
@@ -330,9 +332,12 @@
 				</parameters>
 				<log>##### Get Shortest Path #####</log>
 				<variable name="strlink" type="string"/>
+				<variable name="strlink2" type="string"/>
 				<set name="strlink" value="context.openflowserverobj.getShortestPath2(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
+				<set name="strlink2" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
 				<log>============= START =================</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+				<log><![CDATA[strlink2=<%=context.strlink2.toString()%>]]></log>
 				<log>=============  END  =================</log>
 				<if cond="context.strlink.toString()!=''">
 					<then>

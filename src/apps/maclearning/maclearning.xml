@@ -169,7 +169,6 @@
 		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
-			<log dest="stdout">maclearning application get a PacketIn Message</log>			
 			<messageblock name="packetmsgblock"/>
 			<variable name="inportid" type="string"/>
 			<variable name="pkoutjson" type="string"/>
@@ -199,10 +198,8 @@
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>			
 			<if cond="context.ethtype.toString()=='2054'">
 				<then>
-					<log>get a arp packet</log>
 					<if cond="context.dstmac.toString()=='ff:ff:ff:ff:ff:ff'">
 						<then>
-							<log>dstmac is ff:ff:ff:ff:ff:ff PacketOutToAllPort</log>
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
 									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
@@ -213,10 +210,8 @@
 							</function>
 						</then>					
 						<else>
-							<log><![CDATA[dstmac <%=context.dstmac.toString()%>]]> </log>
 							<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
 								<then>		
-									<log><![CDATA[dstmac <%=context.dstmac.toString()%> PacketOutToAllPort]]> </log>								
 									<function name="PacketOutToAllPort" class="context.devicemgr">
 										<parameters>
 											<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
@@ -226,8 +221,7 @@
 										</parameters>
 									</function>
 								</then>
-								<else>			
-									<log><![CDATA[dstmac <%=context.dstmac.toString()%> find outport=<%=context.machashmap.getValue(context.dstmac.toString()).toString()%> ]]> </log>								
+								<else>																
 									<function name="PacketOutToPort" class="context.devicemgr">
 										<parameters>	
 											<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
@@ -241,18 +235,15 @@
 							</if>
 						</else>
 					</if>
-					<log><![CDATA[srcmac <%=context.srcmac.toString()%> inportid=<%=context.inportid.toString()%> insert]]> </log>	
 					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
 				<then>
 					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
 				</then>
 			</if>
 			</then>
-				<else>			
-					<log><![CDATA[not arp packet]]> </log>	
+				<else>					
 					<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
-						<then>									
-							<log><![CDATA[not arp packet dstmac <%=context.dstmac.toString()%> can not find , PacketOutToAllPort]]> </log>							
+						<then>																					
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
 									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
@@ -263,7 +254,6 @@
 							</function>
 						</then>
 						<else>					
-							<log><![CDATA[not arp packet dstmac <%=context.dstmac.toString()%> find outport=<%=context.machashmap.getValue(context.dstmac.toString()).toString()%> ]]> </log>	
 							<function name="PacketOutToPort" class="context.devicemgr">
 								<parameters>	
 									<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
@@ -281,8 +271,7 @@
 								</parameters>
 							</function>
 						</else>
-					</if>
-					<log><![CDATA[not arp packet srcmac <%=context.srcmac.toString()%> inportid=<%=context.inportid.toString()%> insert]]> </log>	
+					</if>	
 					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
 						<then>
 							<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>

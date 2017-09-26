@@ -534,8 +534,7 @@
 			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
 		  </function>
 		</onevent>
-
-		<!--Reply 13-0-->
+						<!--Reply 13-0-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_DESC Message</log>
@@ -543,28 +542,28 @@
 			<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
 		  </function>
 		</onevent>
-		<!--Reply 13-1-->
+
+<!--Reply 13-1-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW">
 		  <function>
 			<log dest="stdout">Get a MultipartReply.OFP13MP_FLOW Message</log>
 			<variable name="deviceobj" type="class"/>
 			<function name="GetDeviceByTransportId" class="DeviceManager">
-				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
-				</parameters>
-			</function>
-			<if cond="context.deviceobj != null">
-				<then>
-					<function>
-						<function name="HandleOpenFlowMultiPartFlowResponse" class="context.deviceobj">
-							<parameters>
-								<parameter name="flowjson" type="string" in="event.getParam('eventdata').toString()"/>
-							</parameters>
-						</function>
-					</function>
-				</then>
-			</if>
+		  <parameters>
+			<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+			<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		  </function>
+		<if cond="context.deviceobj != null">
+		  <then>
+		  <function>
+			<function name="HandleOpenFlowMultiPartFlowResponse" class="context.deviceobj">			<parameters>
+			<parameter name="flowjson" type="string" in="event.getParam('eventdata').toString()"/>
+		  </parameters>
+		  </function>
+		</function>
+		</then>
+		</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-2-->
@@ -586,17 +585,19 @@
 					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
 				</parameters>
 			</function>
-			<if cond="context.deviceobj != null">
-				<then>
-					<function>
-						<function name="SetTableJson" class="context.deviceobj">
-							<parameters>
-								<parameter name="tablejson" type="string" in="event.getParam('eventdata').toString()"/>
-							</parameters>
-						</function>
-					</function>
-				</then>
-			</if>
+			
+<if cond="context.deviceobj != null">
+			
+<then>
+		  <function>
+		<function name="SetTableJson" class="context.deviceobj">
+		  <parameters>
+			<parameter name="tablejson" type="string" in="event.getParam('eventdata').toString()"/>
+			</parameters>
+			</function>
+		  </function>
+		</then>
+		</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-4-->
@@ -605,22 +606,22 @@
 			<log dest="stdout">Get a MultipartReply.OFP13MP_PORT_STATS Message</log>
 			<variable name="deviceobj" type="class"/>
 			<function name="GetDeviceByTransportId" class="DeviceManager">
-				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
-				</parameters>
-			</function>
-			<if cond="context.deviceobj != null">
-				<then>
-					<function>
-						<function name="HandlePortStateResponse" class="context.deviceobj">
-							<parameters>
-								<parameter name="portstatejson" type="string" in="event.getParam('eventdata').toString()"/>
-							</parameters>
-						</function>
+		  <parameters>
+			<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+			<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		  </function>
+		<if cond="context.deviceobj != null">
+			<then>
+				<function>
+					<function name="HandlePortStateResponse" class="context.deviceobj">
+					  	<parameters>
+							<parameter name="portstatejson" type="string" in="event.getParam('eventdata').toString()"/>
+						</parameters>
 					</function>
-				</then>
-			</if>
+				  </function>
+			</then>
+		</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-5-->
@@ -637,22 +638,21 @@
 			<log dest="stdout">Get a MultipartReply.OFP13MP_GROUP Message</log>
 			<variable name="deviceobj" type="class"/>
 			<function name="GetDeviceByTransportId" class="DeviceManager">
-				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-					<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
-				</parameters>
-			</function>
-			<if cond="context.deviceobj != null">
-				<then>
-					<function>
-						<function name="HandleGroupStateResponse" class="context.deviceobj">
-							<parameters>
+		  <parameters>
+			<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+			<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+			</parameters>
+		  </function>
+		<if cond="context.deviceobj != null">
+		<then>
+		  <function>
+			<function name="HandleGroupStateResponse" class="context.deviceobj">			<parameters>
 								<parameter name="groupjson" type="string" in="event.getParam('eventdata').toString()"/>
-							</parameters>
-						</function>
-					</function>
-				</then>
-			</if>
+			</parameters>
+		  </function>
+		</function>
+		</then>
+		</if>
 		  </function>
 		</onevent>
 		<!--Reply 13-7-->

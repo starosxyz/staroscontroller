@@ -51,8 +51,7 @@
 					<then>
 						<insert name="thisclass.restfulapiContainer" key="context.requestpath2222.toString()" value="context.handler"/>
 					</then>
-				</if>
-				<log>restfulapiContainer is true</log>
+				</if>				
 				
 			</function>
 			
@@ -82,12 +81,8 @@
 								context.ispath.setValue(false);
 						}			
 					]]></script>	
-					<log><![CDATA[requestpaths   huhu= <%=context.requestpath.toString()%>]]> </log>
-					<log><![CDATA[requestpaths2222   huhu= <%=context.requestpaths2222.toString()%>]]> </log>
-					<log><![CDATA[ispath   huhu= <%=context.ispath.toBoolean()%>]]> </log>
 					<if cond="context.ispath.toBoolean()==true">
-						<then>
-							<log>huhuhuhu !!!!true</log>
+						<then>						
 							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpaths2222.toString())"/>
 						</then>
 					</if>

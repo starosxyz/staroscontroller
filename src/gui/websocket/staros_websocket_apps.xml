@@ -9,7 +9,6 @@
 				<parameter name="appjson" type="string" out="context.outjson"/>
 			</parameters>
 		</function>
-		<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>		
@@ -18,7 +17,6 @@
 	<!--hupeng 20170731-->
 		<variable name="name" type="string"/>
 		<variable name="action" type="string"/>
-		<log><![CDATA[HandleappManagementRequest !!!!!!!!!!!= <%=event.getParam('eventdata').toString()%>]]></log>
 		<function>
 			<script><![CDATA[
 					var info = JSON.parse(event.getParam('eventdata').toString());
@@ -59,7 +57,6 @@
 		<variable name="outjson" type="string" value=""/>
 		<variable name="processname" type="string" value=""/>
 		<variable name="ishavapayload" type="boolean"/>
-		<log><![CDATA[HandleappDetailsRequest !!!!!!!!!!!!!!!!!!!= <%=event.getParam('eventdata').toString()%>]]></log>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());
 			var payloadstr=JSON.stringify(info.payload);
@@ -87,13 +84,11 @@
 				</function>
 			</then>
 			<else>
-				<log>hava no payload</log>
 				<function name="GetCurrentappname" class="ApplicationManager">
 					<parameters>
 						<parameter name="outappname" type="string" out="processname"/>
 					</parameters>
 				</function>
-				<log><![CDATA[current load app name !!!!!!!!!!!!!!!!!!!= <%=context.processname.toString()%>]]></log>
 				<function name="GetAppdetalJsonString" class="ApplicationManager">
 					<parameters>
 						<!--appjson is return value-->
@@ -103,7 +98,6 @@
 				</function>
 			</else>
 		</if>
-		<log><![CDATA[HandleAppDataRequest get response outjson= <%=context.outjson.toString()%>]]></log>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>	

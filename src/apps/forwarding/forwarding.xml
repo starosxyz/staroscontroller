@@ -54,8 +54,7 @@
 			
 		</onevent>
 		<onevent event="PacketInEvent">
-			<!-- YY 2017-08-21 -->
-			<log dest="stdout">forwarding application get a PacketIn Message</log>	
+			<!-- YY 2017-08-21 -->		
 			<messageblock name="packetmsgblock"/>
 			<variable name="inportid" type="string"/>
 			<variable name="pkoutjson" type="string"/>
@@ -72,8 +71,6 @@
 					context.pkoutjson.setValue(strjson);
 				}
 			]]></script>
-			<log><![CDATA[inportid=<%=context.inportid.toString()%>]]></log>
-			<log><![CDATA[pkoutjson=<%=context.pkoutjson.toString()%>]]></log>
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>
 			<log><![CDATA[packetmsgblock size=<%=context.packetmsgblock.getChainedLength()%>]]></log>
 			<function name="PacketOutToAllPort" class="context.devicemgr">

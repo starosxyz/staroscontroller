@@ -19,11 +19,6 @@
 				</parameters>
 				<variable name="metermgrobj" type="class"/>
 				<variable name="deviceobj" type="class"/>
-				<log>##################################################################</log>
-				<log>insert CMeterService InstallMeter</log>				
-				<log><![CDATA[appId = <%=context.appid.toString()%>]]></log>	
-				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
-				<log>##################################################################</log>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
 						<parameter name="outdevice" type="class" out="context.deviceobj"/>
@@ -34,6 +29,7 @@
 				<if cond="context.deviceobj==null">
 					<then>
 						<log>deviceobj is null</log>
+						<exit/>
 					</then>
 				</if>
 
@@ -46,6 +42,7 @@
 				<if cond="context.metermgrobj==null">
 					<then>
 						<log>metermgrobj is null</log>
+						<exit/>
 					</then>
 				</if>
 				<function name="InstallMeterRequest" class="context.metermgrobj">
@@ -61,7 +58,7 @@
 			<function name="UnInstallMeter">
 				<parameters>
 					<parameter name="datapathid" type="string"/>			
-					<parameter name="meterid" type="string"/>
+					<parameter name="meterid" type="long"/>
 				</parameters>
 				
 				<log>##### CMeterService UnInstallMeter #####</log>
@@ -84,7 +81,7 @@
 							<then>
 								<function name="UnInstallMeterRequest" class="context.metermgrobj">
 									<parameters>
-										<parameter name="meterid" type="string" in="context.meterid.toString()"/>
+										<parameter name="meterid" type="string" in="context.meterid.toLong()"/>
 									</parameters>
 								</function>
 							</then>

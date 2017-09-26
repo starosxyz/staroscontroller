@@ -104,9 +104,7 @@
 			</function>
 			
 			<function name="SendTableRequest">
-				<variable name="xid" type="long"/>
-				<!--<log>SendTableRequest !!!!!!!!!!!!!hu</log>-->
-				
+				<variable name="xid" type="long"/>							
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<container name="tablestatslist" type="list"  valuetype="string"/>
 				<variable name="tablestatestring" type="string"/>
@@ -116,16 +114,13 @@
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</function>
-				<!--wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE,openflow.OFPT13_ERROR" transportid="context.m_transportid.toString()" xid="context.xid.toLong()">
-					<set name="thisclass.m_tablejson" value="event.getParam('eventdata').toString()"/>
-				</wait-->
 			</function>
 			<function name="SetTableJson">
-				<parameters>
+					<parameters>
 					<parameter name="tablejson" type="string"/>
 				</parameters>
 				<set name="thisclass.m_tablejson" value="context.tablejson.toString()"/>
-			</function>
+				</function>
 			<!-- 
 				YY 20170831
 				return TableManager's data

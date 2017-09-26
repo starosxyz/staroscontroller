@@ -18,11 +18,6 @@
 					<parameter name="datapathid" type="string"/>
 				</parameters>
 				
-				<log>##################################################################</log>
-				<log>insert CFlowService InstallFlow</log>				
-				<log><![CDATA[appId = <%=context.appId.toString()%>]]></log>	
-				<log><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></log>	
-				<log>##################################################################</log>
 				<variable name="deviceobj" type="class"/>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
@@ -47,7 +42,7 @@
 					<then>
 						<log>deviceobj is null</log>
 					</then>
-				</if>
+				</if>								
 				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
 					<parameters>
 						<parameter name="outflowid" type="string" in="context.outflowid.toString()"/>

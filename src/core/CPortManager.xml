@@ -89,7 +89,6 @@
 				<parameters>
 					<parameter name="outjson" type="string"/>
 				</parameters>
-				<log>CPort ForDeviceDetailReqJson</log>
 				<variable name="outdetail" type="string" />
 				<script><![CDATA[
 					var onearray = new Object();
@@ -106,7 +105,6 @@
 					var strjson = JSON.stringify(onearray);
 					context.outdetail.setValue(strjson);
 				]]></script>
-			<log><![CDATA[ForDeviceDetailReqJson outdetail=<%=context.outdetail.toString()%>]]></log>
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
 			
@@ -167,19 +165,15 @@
 			<function name="IsValidatePort">
 				<parameters>
 					<parameter name="returnbool" type="boolean"/>
-				</parameters>
-				<log><![CDATA[thisclass.m_portno.toString()=<%=thisclass.m_portno.toString()%>]]></log>
-
+				</parameters>				
 				<if cond="thisclass.m_portno.toString()=='4294967295' || thisclass.m_portno.toString()=='4294967294' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='4294967288‬'|| thisclass.m_portno.toString()=='4294967289'|| thisclass.m_portno.toString()=='4294967290'|| thisclass.m_portno.toString()=='4294967291'|| thisclass.m_portno.toString()=='4294967292'|| thisclass.m_portno.toString()=='4294967293'">
 					<then>
 						<function>
-							<log>returnbool false</log>
 							<set name="returnbool" value="false"/>
 						</function>
 					</then>
 					<else>
 						<function>
-							<log>returnbool true</log>
 							<if cond="thisclass.m_state.toString()=='0'">
 								<then>
 									<function>
@@ -188,8 +182,6 @@
 								</then>
 								<else>
 									<function>
-										<log>thisclass.m_state.toString()!='0'</log>
-										<log><![CDATA[thisclass.m_state.toString() = <%=thisclass.m_state.toString()%>]]></log>
 										<set name="returnbool" value="false"/>
 									</function>
 								</else>
@@ -258,7 +250,6 @@
 					<parameter name="transportid" type="string"/>
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
-				<log>CPortManager is create</log>
 			<function name="MultiPartPortDescRequest"/>
 			</function>
 			<function name="addPort">
@@ -299,7 +290,6 @@
 				<parameters>
 					<parameter name="outjson" type="string"/>
 				</parameters>
-				<log>CDevice ForDeviceDetailReqJson</log>
 				<variable name="portobj" type="class" />
 				<container name="jsonlist" type="list" valuetype="string"/>
 				<variable name="strjson" type="string" />
@@ -312,11 +302,9 @@
 								<parameter name="outjson" type="string" out="context.strjson"/>
 							</parameters>
 							</function>
-						<log><![CDATA[ForDeviceDetailReqJson json=<%=context.strjson.toString()%>]]></log>
 						<insert name="jsonlist" value="context.strjson.toString()"/>
 						</function>
 					</for>
-				<log><![CDATA[ForDeviceDetailReqJson jsonlist size=<%=context.jsonlist.size()%>]]></log>
 				<script><![CDATA[
 					var portsArray=new Array();    
 
@@ -338,7 +326,6 @@
 				<parameters>
 					<parameter name="outjson" type="string"/>
 				</parameters>
-				<log><![CDATA[ForPortDetailReqJson !!!!!!!!!=<%=event.getParam("eventdata").toString()%>]]></log>
 				<script><![CDATA[
 					
 				]]></script>
@@ -348,9 +335,6 @@
 				<parameters>
 					<parameter name="portnumber" type="long"/>
 				</parameters>										
-				<log>============================================================================================</log>
-				<log><![CDATA[context.portContainer.size() size=<%=context.portContainer.size()%>]]></log>
-				<log>============================================================================================</log>
 				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 
@@ -361,14 +345,11 @@
 					<parameter name="pkoutjson" type="string"/>	
 					<parameter name="msgblock" type="messageblock"/>
 				</parameters>
-				<log>insert CPortManager's PacketOutToAllPort</log>				
 				<variable name="portobj" type="class"/>
 				<variable name="isvalidataport" type="boolean"/>
 				<variable name="isedgeport" type="boolean"/>
 				<container name="oneportpair" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneportpair" in="context.portContainer">
-					<log>insert CPortManager's PacketOutToAllPort's for</log>
-					
 					<set name="portobj" value="context.oneportpair.second()"/>
 					<function name="IsValidatePort" class="context.portobj">
 						<parameters>
@@ -384,11 +365,9 @@
 					
 					<if cond="(context.isvalidataport.toBoolean()==true) &amp;&amp;(context.isedgeport.toBoolean()==true)">
 						<then>
-							<log>insert CPortManager's PacketOutToAllPort's for's first if</log>
 							<function>
 								<if cond="context.inportid.toString()!=context.oneportpair.first()">
 									<then>
-										<log>insert CPortManager's PacketOutToAllPort's for's second if</log>
 										<function name="SendOpenFlowPacketOut">
 											<parameters>
 												<parameter name="outputport" type="string" in="context.oneportpair.first()"/>
@@ -414,13 +393,10 @@
 					<parameter name="msgblock" type="messageblock"/>
 					<parameter name="inportid" type="string"/>
 				</parameters>
-				<log>insert CPortManager's PacketOutToPort</log>
 				<variable name="portobj" type="class" />
 				<variable name="isvalidataport" type="boolean"/>				
-				<log><![CDATA[context.outputport =<%=context.outputport.toString()%>]]></log>							
 				<if cond="context.portContainer.hasValue(context.outputport.toString())">
 					<then>
-						<log>insert CPortManager's PacketOutToPort's for's first if</log>
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
 						<function name="IsValidatePort" class="context.portobj">
 							<parameters>
@@ -429,7 +405,6 @@
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">
 							<then>
-								<log>insert CPortManager's PacketOutToPort's for's second if</log>
 								<function name="SendOpenFlowPacketOut">
 									<parameters>
 										<parameter name="outputport" type="string" in="context.outputport.toString()"/>
@@ -459,8 +434,6 @@
 						context.portno.setValue(info.portno);
 					]]></script>
 				<function name="dumpinfo"/>
-				<log><![CDATA[UpdatePortState portno=<%=context.portno.toString()%>]]></log>
-				<log><![CDATA[portContainer size=<%=context.portContainer.size()%>]]></log>
 				<if cond="context.portContainer.hasValue(context.portno.toString())==true">
 					<then>
 						<set name="portobj" value="context.portContainer.getValue(context.portno.toString())"/>
@@ -480,7 +453,6 @@
 				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
 				<for var="onehostpair" in="context.portContainer">
 					<set name="ports" value="context.onehostpair.first()"/>
-					<log><![CDATA[dumpinfo: portno=<%=context.ports.toString()%>]]></log>
 				</for>
 			</function>
 			<function name="GetPortsStateJsonData">
@@ -531,8 +503,6 @@
 				<container name="onedeviceportinfopair" type="pair" keytype="string" valuetype="hashmap"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<function>
-					<log dest="stdout">OpenFlowMultiPartPortDescRequest</log>
-
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
 								{
@@ -548,9 +518,7 @@
 					</function>
 					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
 						<function>
-							<log>Hanle OpenFlowMultiPartPortDesc Reply</log>
 							<set name="replyjson" value="event.getParam('eventdata').toString()"/>
-							<!--parse JSONString-->
 							<script><![CDATA[							
 								var info = JSON.parse(context.replyjson.toString());
 								if (info.portlist!=null)
@@ -579,7 +547,6 @@
 								}
 							]]></script>
 
-							<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size()%>]]></log>
 							<for var="onedeviceportinfopair" in="context.deviceportinfo">
 								<function>
 									<set name="portinfo" value="context.onedeviceportinfopair.second()"/>
@@ -602,7 +569,6 @@
 							</for>
 						</function>
 					</wait>
-					<log>OpenFlowMultiPartPortDescRequest end</log>
 				</function>
 			</function>	
 			<!-- hu 20170904 SendPortStateRequest 
@@ -618,17 +584,16 @@
 				<variable name="i" type="string"/>
 				<script><![CDATA[
 						var info = JSON.parse(context.portstatejson.toString());
-						if (info.portstatslist != null)
-						{
-							for(var i=0;i<info.portstatslist.length;i++)
-							{
-								var portstats = info.portstatslist[i];
-								var portstrjson=JSON.stringify(portstats);
-								context.portstatelist.addValue(portstrjson);
-							}
-						}
-					]]></script>
-				<log><![CDATA[portstatelist size=<%=context.portstatelist.size()%>]]></log>
+								if (info.portstatslist != null)
+								{
+									for(var i=0;i<info.portstatslist.length;i++)
+									{
+										var portstats = info.portstatslist[i];
+										var portstrjson=JSON.stringify(portstats);
+										context.portstatelist.addValue(portstrjson);
+									}
+								}
+							]]></script>
 				<for var="i" in="context.portstatelist">
 					<function name="UpdatePortState">
 						<parameters>
@@ -637,7 +602,7 @@
 					</function>
 				</for>
 			</function>
-			<function name="SendPortStateRequest">
+		<function name="SendPortStateRequest">
 				<variable name="xid" type="long"/>
 				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartPortStatsRequest">

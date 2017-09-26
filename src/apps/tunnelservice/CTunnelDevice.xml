@@ -17,9 +17,14 @@
 					<parameter name="outputPort" type="string"/>
 				</parameters>
 				<log>##### CTunnelDevice is create #####</log>
-				<set name="thisclass.m_deviceid" value="context.deviceid.toLong()"/>
+				<log><![CDATA[CTunnelDevice deviceid = <%=context.deviceid.toString()%>]]></log>
+				<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
 				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
+			</function>
+			<function name="Printtunnel">
+				<log><![CDATA[Ctunnel m_inputPort=<%=context.m_inputPort.toString()%>]]></log>
+				<log><![CDATA[Ctunnel m_outputPort=<%=context.m_outputPort.toString()%>]]></log>
 			</function>
 			<function name="GetTunnelDeviceId">
 				<parameters>
@@ -198,7 +203,7 @@
 						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
 					</parameters>	
 				</function>
-
+								
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
@@ -249,7 +254,7 @@
 											},
 											{
 												"type":"0",
-												"outport":"<%=context.m_outputPort.toString()%>",
+												"outport":"<%=thisclass.m_outputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -285,7 +290,7 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.m_outputPort.toString()%>"
+												"inport":"<%=thisclass.m_outputPort.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -312,7 +317,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.m_meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toLong()%>"
 									}
 								]
 							}
@@ -336,6 +341,9 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
+				
+				<log><![CDATA[jsonin2out = <%=context.jsonin2out.toString()%>]]></log>
+				<log><![CDATA[jsonout2in = <%=context.jsonout2in.toString()%>]]></log>			
 			</function>
 			<function name="installRuleMid">
 				<parameters>
@@ -375,7 +383,7 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.m_inputPort.toString()%>"
+												"inport":"<%=thisclass.m_inputPort.toString()%>"
 											}
 										]
 									},
@@ -385,7 +393,7 @@
 										"actionlist":[
 											{
 												"type":"0",
-												"outport":"<%=context.m_outputPort.toString()%>",
+												"outport":"<%=thisclass.m_outputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -422,7 +430,7 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.m_outputPort.toString()%>"
+												"inport":"<%=thisclass.m_outputPort.toString()%>"
 											}
 										]
 									},
@@ -432,7 +440,7 @@
 										"actionlist":[
 											{
 												"type":"0",
-												"outport":"<%=context.m_inputPort.toString()%>",
+												"outport":"<%=thisclass.m_inputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -505,7 +513,7 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.m_inputPort.toString()%>"
+												"inport":"<%=thisclass.m_inputPort.toString()%>"
 											}
 										]
 									},
@@ -582,7 +590,7 @@
 											},
 											{
 												"type":"0",
-												"outport":"<%=context.m_inputPort.toString()%>",
+												"outport":"<%=thisclass.m_inputPort.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -642,7 +650,7 @@
 						<parameter name="outmeterid" type="long" out="thisclass.m_meterid"/>
 						<parameter name="meterjson" type="string" in="context.modstrjson.toString()"/>
 						<parameter name="appid" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="context.m_deviceid.toString()"/>
+						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -668,7 +676,7 @@
 				<function name="UnInstallMeter" class="MeterService">
 					<parameters>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
-						<parameter name="meterid" type="string" in="thisclass.m_meterid.toString()"/>
+						<parameter name="meterid" type="string" in="thisclass.m_meterid.toLong()"/>
 					</parameters>
 				</function>
 			</function>

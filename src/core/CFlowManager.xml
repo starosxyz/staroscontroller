@@ -59,7 +59,6 @@
 					<parameter name="flowjson" type="string"/>
 				</parameters>
 				<variable name="outjson" type="string"/>
-				<log><![CDATA[m_flowjson=<%=thisclass.m_flowjson.toString()%>]]></log>	
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.m_flowjson.toString());
 					var flow = new Object();
@@ -205,9 +204,6 @@
 					var strjson=JSON.stringify(flow);
 					context.outjson.setValue(strjson);					
 				]]></script>
-				<log>######################################################</log>
-				<log><![CDATA[outjson=<%=context.outjson.toString()%>]]></log>
-				<log>######################################################</log>
 				<set name="flowjson" value="context.outjson.toString()"/>
 			</function>
 			<!--
@@ -247,7 +243,6 @@
 			
 			<!-- wangkang 2017/09/01 -->
 			<function name="SetState">
-				<log>##### Set FlowMessage State #####</log>
 				<parameters>
 					<parameter name="inmodstate" type="string"/>
 				</parameters>
@@ -268,7 +263,6 @@
 				<parameters>
 					<parameter name="transportid" type="string"/>
 				</parameters>
-				<log>CFlowManager is create</log>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			</function>
 			<!--
@@ -290,23 +284,28 @@
 				<variable name="transportid" type="string"/>
 				<variable name="sendjson" type="string"/>
 				<set name="sresourceid" value="context.allocResourceId()"/>				
-				<!--qiulei modify 20170807-->				
+				<!--qiulei modify 20170807-->							
+				<if cond="context.strjson.toString()==''">
+					<then>
+						<log>strjson is null</log>
+						<exit/>
+					</then>
+				</if>
 				<new name="flowentry" class="CFlowEntry">
 					<parameters>
 						<parameter name="flowId" type="string" in="context.sresourceid.toString()"/>
 						<parameter name="appId" type="string" in="context.appId.toString()"/>
 						<parameter name="flowjson" type="string" in="context.strjson.toString()"/>
 					</parameters>
-				</new>							
-				<script><![CDATA[
-						var info = JSON.parse(context.strjson.toString());
-						info.cookie=context.sresourceid.toString();
-						var str_json=JSON.stringify(info);
-						context.sendjson.setValue(str_json);
+				</new>									
+				<script><![CDATA[				
+					var info = JSON.parse(context.strjson.toString());
+					info.cookie=context.sresourceid.toString();
+					var str_json=JSON.stringify(info);
+					context.sendjson.setValue(str_json);
 				]]></script>
 				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
-				<log><![CDATA[InstallFlowTableRequest transportid=<%=context.transportid.toString()%>]]></log>
 				
 				<!---qiulei 20170831 start-->
 				<variable name="BarrierStrJson" type="string"/>
@@ -448,7 +447,6 @@
 					</function>
 					<insert name="flowinfos" value="context.flowobjJson.toString()"/>
 				</for>
-				<log><![CDATA[flowinfos size=<%=context.flowinfos.size()%>]]></log>
 				<script><![CDATA[
 					var json = new Object();
 					var payload = new Object();							
@@ -494,20 +492,18 @@
 				<container name="oneFlowsPair" type="pair" keytype="string" valuetype="class"/>
 				<variable name="oneFlowpartPair" type="string"/>
 				
-
 				<container name="flowpartlist" type="list"  valuetype="string"/>
 				<variable name="flowpartstring" type="string"/>											
-
-				<script><![CDATA[
+																<script><![CDATA[
 					var info = JSON.parse(context.flowjson.toString());
-					for (var i = 0; i < info.statslist.length; i++)
-					{
-						var flowstats = info.statslist[i];
-						var flowstrjson=JSON.stringify(flowstats);
-						context.flowpartlist.addValue(flowstrjson);
-					}
-				]]></script>
-				<!--
+									for (var i = 0; i < info.statslist.length; i++)
+									{
+										var flowstats = info.statslist[i];
+										var flowstrjson=JSON.stringify(flowstats);
+										context.flowpartlist.addValue(flowstrjson);
+									}
+								]]></script>
+							<!--
 					YY
 					Set Flow's packets bytes durationsec and durationnsec
 					1) get data from event
@@ -564,7 +560,8 @@
 						</if>
 					</for>
 				</for>
-			</function>
+				
+</function>
 			<function name="SendFlowRequest">
 				<variable name="xid" type="long"/>
 
@@ -582,7 +579,6 @@
 			</function>		
 			
 			<function name="InstallARPFlow">
-				<log dest="stdout">InstallARPFlow qiulei 2017/07/27</log>
 				<variable name="modstrjson" type="string"/>
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
@@ -642,7 +638,6 @@
 			
 			<!--qiulei 2017/07/27-->
 			<function name="InstallDiscoveryFlow">
-				<log dest="stdout">InstallDiscoveryFlow qiulei 2017/07/27</log>
 				<variable name="modstrjson" type="string"/>
 				<variable name="resourceid" type="string" value=""/>
 				<reference variable="modstrjson">
@@ -696,8 +691,6 @@
 			</function>
 			
 			<function name="InstallDefaultFlow">
-				<log>InstallDefaultFlow</log>
-				<!--qiulei 2017/07/27-->
 				<function name="InstallARPFlow"/>
 				<function name="InstallDiscoveryFlow"/>
 				<function name="InstallErrorFlow"/>
@@ -705,7 +698,6 @@
 			
 			<!-- wangkang 2017/09/01 -->
 			<function name="InstallErrorFlow">
-				<log dest="stdout">InstallErrorFlow wangkang 2017/09/01</log>
 				<variable name="modstrjson" type="string"/>
 				<variable name="resourceid" type="string" value=""/>
 				<reference variable="modstrjson">
@@ -764,13 +756,9 @@
 					<parameter name="incookie" type="string"/>
 					<parameter name="outflowentry" type="class"/>
 				</parameters>
-				<log>##### Find a Flowentry class #####</log>
-				<log><![CDATA[incookie=<%=context.incookie.toString()%>]]></log>
-				<log><![CDATA[flowsContainer size=<%=context.flowsContainer.size()%>]]></log>
 				<function name="DumpFlow"/>
 				<if cond="context.flowsContainer.hasValue(context.incookie.toString()) == true">
 					<then>
-						<log>##### incookie is found #####</log>
 						<function>
 							<lookup name="flowsContainer" key="context.incookie.toString()" output="context.outflowentry"/>
 						</function>
@@ -779,17 +767,10 @@
 			</function>
 			<function name="DumpFlow">
 				<variable name="flowkey" type="string"/>
-				<log>===========DumpFlowStart===============</log>
-				
-				
 				<container name="oneFlowPair" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneFlowPair" in="context.flowsContainer">
-				
 					<set name="flowkey" value="context.oneFlowPair.first()"/>
-				
-					<log><![CDATA[flowkey=<%=context.flowkey.toString()%>]]></log>
-				</for>
-				<log>===========DumpFlowEnd===============</log>
+				</for>			
 			</function>
 		</public>
 	</class>

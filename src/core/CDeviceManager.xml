@@ -14,11 +14,28 @@
 					<parameter name="outdevice" type="class"/>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
+				<container name="devicepair" type="pair" keytype="string" valuetype="class"/>
+				<variable name="id" type="string"/>
+				<variable name="onedevice" type="class"/>
+				<for var="context.devicepair" in="context.deviceContainer">
+					<set name="context.onedevice" value="context.devicepair.second()"/>
+					<function name="GetDatapathId" class="context.onedevice">
+						<parameters>
+							<parameter name="outdatapathid" type="string" out="context.id"/>
+						</parameters>
+					</function>
+				</for>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<function>
 							<set name="outdevice" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 						</function>
+						<if cond="context.outdevice==null">
+							<then>
+								<log>insert second if</log>
+								<log>outdevice is null</log>
+							</then>
+						</if>
 					</then>
 				</if>
 			</function>
@@ -66,7 +83,6 @@
 						<parameter name="strjson" type="string" out="onlinejson"/>
 					</parameters>
 				</function>
-				<log><![CDATA[onlinejson =<%=context.onlinejson.toString()%>]]></log>
 				<function name="SendToAllClient" class="WebSocketManager">
 					<parameters>
 						<parameter name="strjson" type="string" in="context.onlinejson.toString()"/>
@@ -79,7 +95,6 @@
 				</function>
 				
 				
-				<log><![CDATA[addDevice outtransid =<%=context.outtransid.toString()%>]]></log>
 			</function>
 				
 			<function name="findDevice">
@@ -102,8 +117,6 @@
 				<parameters>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				<log><![CDATA[start removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
-				<log><![CDATA[start t2dContainer device size=<%=context.t2dContainer.size()%>]]></log>
 				<variable name="deviceobject" type="class"/>
 				<variable name="offlinejson" type="string"/>
 				<variable name="devicetransportid" type="string"/>
@@ -136,8 +149,6 @@
 						</function>
 					</then>
 				</if>
-				<log><![CDATA[end removeDevice device size=<%=context.deviceContainer.size()%>]]></log>
-				<log><![CDATA[end t2dContainer device size=<%=context.t2dContainer.size()%>]]></log>
 			</function>
 			<function name="GetDatapathIdByTransportid">
 				<parameters>
@@ -145,7 +156,6 @@
 					<parameter name="datapathid" type="string"/>
 				</parameters>
 				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
-				<log><![CDATA[CDeviceManager 145行  devicedatapathid =<%=context.datapathid.toString()%>]]></log>
 			</function>
 			<function name="GetTransportIdFromDevice">
 				<parameters>
@@ -181,9 +191,6 @@
 				<variable name="devicetransportid" type="string"/>
 				<variable name="devicedatapathid" type="string"/>
 				<variable name="oneremove" type="string"/>
-				<log><![CDATA[removeDeviceByTransportId device size=<%=context.deviceContainer.size()%>]]></log>
-				<log><![CDATA[transportid=<%=context.transportid.toString()%>]]></log>
-				
 				<container name="removelist" type="list" valuetype="string"/>
 				
 				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
@@ -200,7 +207,6 @@
 								</function>
 							</then>
 						</if>
-						<log><![CDATA[devicetransportid =<%=context.devicetransportid.toString()%>]]></log>
 						<if cond="context.devicetransportid.toString() == context.transportid.toString()">
 							<then>
 								<function name="GetDatapathId" class="deviceinfo">
@@ -209,7 +215,6 @@
 									</parameters>
 								</function>
 								<insert name="removelist" value="context.devicedatapathid.toString()"/>
-								<log><![CDATA[CDeviceManager 208行  devicedatapathid =<%=context.devicedatapathid.toString()%>]]></log>
 							</then>
 						</if>
 					</function>
@@ -231,19 +236,14 @@
 				<variable name="jsonstr" type="string"/>
 				<variable name="switchdevice" type="class"/>
 				
-				<log>2017.09.18 enter CDeviceManager.SendAddAllDeviceToWebClient method</log>
-				
 				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneapppair" in="context.deviceContainer">
-					<log><![CDATA[SendAddAllDeviceToWebClient device size=<%=context.deviceContainer.size()%>]]></log>
 					<function>
 						<set name="switchdevice" value="context.oneapppair.second()"/>
 						
 						<if cond="context.switchdevice != null">
 							<then>
-								
-								<log>2017.09.18 enter CDeviceManager.SendAddAllDeviceToWebClient method    switchdevice is Not null</log>
-								<function name="ToAddDeviceJson" class="context.switchdevice">
+									<function name="ToAddDeviceJson" class="context.switchdevice">
 									<parameters>
 										<parameter name="strjson" type="string" out="jsonstr"/>
 									</parameters>
@@ -277,7 +277,6 @@
 				<container name="oneDevicePair1" type="pair" keytype="string" valuetype="class"/>
 				<container name="listsrcdevice" type="list" valuetype="string"/>
 				<for var="oneDevicePair1" in="context.deviceContainer">
-					<log><![CDATA[SendAddAllDeviceToWebClient device size=<%=context.deviceContainer.size()%>]]></log>
 					<function>
 						<set name="srcdevice" value="context.oneDevicePair1.second()"/>
 						<if cond="context.srcdevice != null">
@@ -288,7 +287,6 @@
 									</parameters>
 								</function>
 								<insert name="listsrcdevice" value="context.srcdevicedpid.toString()"/>
-								<log><![CDATA[在CDeviceManager文件中283行  srcdevicedpid=<%=context.srcdevicedpid.toString()%>]]></log>
 							</then>
 						</if>
 						</function>
@@ -309,11 +307,8 @@
 							</if>
 							<if cond="context.srcdevicedpid2.toString()!=context.dstdevicedpid.toString()">
 								<then>
-									<log><![CDATA[在CDeviceManager文件中304行  srcdevicedpid2=<%=context.srcdevicedpid2.toString()%>]]></log>
-									<log><![CDATA[在CDeviceManager文件中304行  dstdevicedpid=<%=context.dstdevicedpid.toString()%>]]></log>
 									<function>
 										<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid2.toString(), context.dstdevicedpid.toString())"/>
-											<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 											<script><![CDATA[
 													if (context.strlink.toString().length>0)
 													{
@@ -376,8 +371,6 @@
 				<variable name="sendjsonstr" type="string"/>
 				<variable name="switchdevice" type="class"/>
 				<container name="deviceinfolist" type="list" valuetype="string"/>
-				
-				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
 				<container name="oneDevicePair_sendinfo" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneDevicePair_sendinfo" in="context.deviceContainer">
 					<function>
@@ -420,8 +413,6 @@
 					var strjson=JSON.stringify(json);
 					context.sendjsonstr.setValue(strjson);
 				]]></script>
-				<log><![CDATA[SendDeviceInfoToWebClient transportid=<%=context.transportid.toString()%>]]></log>
-				<log><![CDATA[SendDeviceInfoToWebClient sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 					<jsonsrc src="sendjsonstr"/>
 				</websocket>
@@ -434,8 +425,6 @@
 				<variable name="sendjsonstr" type="string"/>
 				<variable name="switchdevice" type="class"/>
 				<container name="deviceinfolist" type="list" valuetype="string"/>
-				
-				<log><![CDATA[SendDeviceInfoToWebClient devicesize=<%=context.deviceContainer.size()%>]]></log>
 				<container name="oneDevicePair_senddetail" type="pair" keytype="string" valuetype="class"/>
 				<for var="oneDevicePair_senddetail" in="context.deviceContainer">
 					<function>
@@ -477,8 +466,6 @@
 					var strjson=JSON.stringify(json);
 					context.sendjsonstr.setValue(strjson);
 				]]></script>
-				<log><![CDATA[SendDeviceInfoToWebClient transportid=<%=context.transportid.toString()%>]]></log>
-				<log><![CDATA[SendDeviceInfoToWebClient sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 					<jsonsrc src="sendjsonstr"/>
 				</websocket>
@@ -521,7 +508,6 @@
 						</function>
 					</then>
 				</if>
-				<log><![CDATA[DeviceDetailsReqJson sendjsonstr=<%=context.sendjsonstr.toString()%>]]></log>
 				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
 					<jsonsrc src="sendjsonstr"/>
 				</websocket>
@@ -549,53 +535,42 @@
 						<function>
 						<log>2017.9.18 oneDevicePair </log>
 							<set name="srcdevice" value="context.oneDevicePair_sendlink.second()"/>
-							<log><![CDATA[2017.9.18 oneDevicePair_sendlink  context.oneDevicePair_sendlink.second()=<%=context.oneDevicePair_sendlink.first()%>>]]></log>
 							<if cond="context.srcdevice != null">
 								<then>
 								
-									<log>2017.9.18 srcdevice 非空 </log>
 									<function name="GetDatapathId" class="srcdevice">
 										<parameters>
 											<parameter name="outdatapathid" type="string" out="srcdevicedpid"/>
 										</parameters>
 									</function>
-									<log><![CDATA[srcdevicedpid=<%=context.srcdevicedpid.toString()%>>]]></log>
 									<insert name="listdevice" value="context.srcdevicedpid.toString()"/>
 								</then>
 							</if>
 						</function>
-					</for>
-							
+					</for>							
 							<for var="srcdevicedpid" in="context.listdevice">
 								<function>
 								<for var="oneDevicePair2" in="context.deviceContainer">
-									<log>第二层</log>
 									<set name="dstdevice" value="context.oneDevicePair2.second()"/>
 									<if cond="context.dstdevice != null">
 										<then>
-											<log>第二层 第一个if</log>
 											<function name="GetDatapathId" class="dstdevice">
 												<parameters>
 													<parameter name="outdatapathid" type="string" out="dstdevicedpid"/>
 												</parameters>
 											</function>
-											<log><![CDATA[dstdevicedpid=<%=context.dstdevicedpid.toString()%>>]]></log>
 										</then>
 									</if>
 									<if cond="context.srcdevicedpid.toString()!=context.dstdevicedpid.toString()">
 										<then>
-											<log>第二层 第二个if</log>
 											<function>
-												<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>									
-												<log><![CDATA[第二strlink = <%=context.strlink.toString()%>]]></log>
+												<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid.toString(), context.dstdevicedpid.toString())"/>																		
 												<script><![CDATA[
 														if (context.strlink.toString().length>0)
 														{
-															context.print("进入js 第一个if");
 															var info = JSON.parse(context.strlink.toString());
 															if (info.paths.length == 1)
 															{
-																context.print("进入js 第二个if");
 																var array = new Object();
 																array.one = "of:" + context.srcdevicedpid.toString() + "/" + info.paths[0].src.port;
 																array.two = "of:" + context.dstdevicedpid.toString() + "/" + info.paths[0].dst.port;
@@ -634,7 +609,6 @@
 								</for>
 							</function>
 						</for>
-					<log><![CDATA[linklist size=<%=context.linklist.size()%>]]></log>
 					<script><![CDATA[				
 						var json = new Object();
 						var myArray=new Array();
@@ -658,8 +632,7 @@
 						payload['annots'] = annots_arr;	
 						json['payload'] = payload;				
 						var strjson=JSON.stringify(json);				
-						context.linkarray.setValue(strjson);				
-						context.print(strjson);
+						context.linkarray.setValue(strjson);
 						context.binvalidlink.setValue(true);
 					]]></script>
 				</function>
@@ -699,7 +672,6 @@
 				<container name="listdevice" type="list" valuetype="string"/>
 				<container name="oneDevicePair2" type="pair" keytype="string" valuetype="class"/>
 				<container name="oneDevicePair_highlight" type="pair" keytype="string" valuetype="class"/>
-				<log><![CDATA[sendhighlights!!!!!!!!!!!!!!! size=<%=context.deviceContainer.size()%>]]></log>
 				<function>
 					<for var="oneDevicePair_highlight" in="context.deviceContainer">
 						<function>
@@ -794,8 +766,7 @@
 						payload['links'] = myArray;						
 						json['payload'] = payload;				
 						var strjson=JSON.stringify(json);				
-						context.linkarray.setValue(strjson);				
-						context.print(strjson);
+						context.linkarray.setValue(strjson);								
 						
 						
 					]]></script>
@@ -961,7 +932,6 @@
 					<parameter name="jsonstring" type="string"/>
 				</parameters>
 				<variable name="device" type="class"/>
-				<log>GetPortsStateJsonData !!!!!!!!!!!!!!</log>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
@@ -984,27 +954,17 @@
 					<parameter name="transportid" type="string"/>
 					<parameter name="onedeviceobj" type="class"/>
 				</parameters>
-				<log>##### Get Device By TransportId #####</log>
-				<log><![CDATA[t2dContainer size=<%=context.t2dContainer.size()%>]]></log>
-				<function name="DumpT2d"/>
-				
+				<function name="DumpT2d"/>				
 				<variable name="datapathid" type="string"/>
 				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
 				<set name="onedeviceobj" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
-				<log><![CDATA[GetDeviceByTransportId datapathid=<%=context.datapathid.toString()%>]]></log>
-				<log><![CDATA[GetDeviceByTransportId transportid=<%=context.transportid.toString()%>]]></log>
 			</function>
 			<function name="DumpT2d">
-				<variable name="t2dkey" type="string"/>
-				<log>===========DumpT2dStart===============</log>
-				
-				
+				<variable name="t2dkey" type="string"/>								
 				<container name="oneDevicePair_dump" type="pair" keytype="string" valuetype="string"/>
 				<for var="oneDevicePair_dump" in="context.t2dContainer">
 					<set name="t2dkey" value="context.oneDevicePair_dump.first()"/>
-					<log><![CDATA[t2dkey=<%=context.t2dkey.toString()%>]]></log>
 				</for>
-				<log>===========DumpT2dEnd===============</log>
 			</function>
 			
 			<!-- qiulei 20170912 am  Get the number of devices-->

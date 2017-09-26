@@ -14,7 +14,6 @@
 		<!-- qiulei 20170802 pm -->
 		<onevent event="registerSession">
 			<function>
-				<log>registerSession--qiulei 20170802</log>
 				<container name="OneSessionIdInfoContainer" type="hashmap" keytype="string" valuetype="string"/>
 				<raise name="'registerSessionResponse'" bundleid="event.getParam('fromapp')"/>
 				<insert name="sessionIdContainer" key="event.getParam('fromapp')" value="OneSessionIdInfoContainer"/>
@@ -23,7 +22,6 @@
 		<!-- qiulei 20170802 pm -->
 		<onevent event="unRegisterSession">
 			<function>
-				<log>unRegisterSession--qiulei 20170802</log>
 				<raise name="'unRegisterSessionResponse'" bundleid="event.getParam('fromapp')"/>
 				<remove name="sessionIdContainer" key="event.getParam('fromapp')"/>
 			</function>
