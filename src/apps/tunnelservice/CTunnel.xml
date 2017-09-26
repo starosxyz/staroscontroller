@@ -205,6 +205,14 @@
 			
 			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
+				<variable name="firstdevice" type="class"/>
+				<variable name="lastdevice" type="class"/>
+				<variable name="onedevice" type="class"/>
+				<container name="middevice" type="list" valuetype="class"/>
+				<iterator name="middeviceiterator" type="list" valuetype="class"/>
+				<iterator name="middevicefirst" type="list" valuetype="class"/>
+				<iterator name="middeviceend" type="list" valuetype="class"/>
+				<variable name="getpathresult" type="boolean"/>
 				<log>==============================</log>
 				<log>##### Active Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==true">
@@ -215,20 +223,22 @@
 						</function>
 					</then>
 				</if>
-				<variable name="firstdevice" type="class"/>
-				<variable name="lastdevice" type="class"/>
-				<variable name="onedevice" type="class"/>
-				<container name="middevice" type="list" valuetype="class"/>
-				<iterator name="middeviceiterator" type="list" valuetype="class"/>
-				<iterator name="middevicefirst" type="list" valuetype="class"/>
-				<iterator name="middeviceend" type="list" valuetype="class"/>
 				<!--
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
 				-->
-				<function name="GetShortPath"/>
-				
-				
+
+				<function name="GetShortPath">
+					<parameters>
+						<parameter name="result" type="boolean" out="context.getpathresult"/>
+					</parameters>
+				</function>
+				<if cond="context.getpathresult.toBoolean()==false">
+					<then>
+						<log>getpathresult is false</log>
+						<exit/>
+					</then>
+				</if>
 				<if cond="thisclass.m_tunneldevicemgr != null">
 					<then>
 						<log>##### m_tunneldevicemgr is not null #####</log>
@@ -315,17 +325,30 @@
 			</function>
 			
 			<function name="GetShortPath">
+				<parameters>
+					<parameter name="result" type="boolean"/>
+				</parameters>
 				<log>##### Get Shortest Path #####</log>
 				<variable name="strlink" type="string"/>
 				<set name="strlink" value="context.openflowserverobj.getShortestPath2(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
 				<log>============= START =================</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 				<log>=============  END  =================</log>
-				<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
-					<parameters>
-						<parameter name="json" type="string" in="context.strlink.toString()"/>
-					</parameters>
-				</function>
+				<if cond="context.strlink.toString()!=''">
+					<then>
+						<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
+							<parameters>
+								<parameter name="json" type="string" in="context.strlink.toString()"/>
+							</parameters>
+						</function>
+						<log>result true</log>
+						<set name="result" value="true"/>
+					</then>
+					<else>
+						<log>result false</log>
+						<set name="result" value="false"/>
+					</else>
+				</if>
 			</function>
 			
 			<!-- wangkang 2017/09/21-->
