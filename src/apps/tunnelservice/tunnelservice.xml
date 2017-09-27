@@ -84,7 +84,7 @@
 		<onevent event="mytopadd">
 			<function>
 				<log>tunnelservice mytopadd</log>
-				<log><![CDATA[fromdevice <%=event.getParam('fromedevice').toString()%>]]> </log>
+				<log><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
 				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
 				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
 			</function>
@@ -92,12 +92,12 @@
 		<onevent event="mytopremove">
 			<function>
 				<log>tunnelservice mytopremove</log>
-				<log><![CDATA[fromdevice <%=event.getParam('fromedevice').toString()%>]]> </log>
+				<log><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
 				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
 				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
 				<function name="mytopremove" class="tunnelManagerObject">
 					<parameters>
-						<parameter name="fromdevice" type="string" in="event.getParam('fromedevice').toString()"/>
+						<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
 						<parameter name="todevice" type="string" in="event.getParam('todevice').toString()"/>
 						<parameter name="path" type="string" in="event.getParam('path').toString()"/>
 					</parameters>

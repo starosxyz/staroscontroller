@@ -9,7 +9,7 @@
 			Nanjing StarOS Inc. All rights reserved.
 -->
 	<function name="HandleLinkDataReq">
-		<function name="SendLinks" class="DeviceManager">	
+		<function name="SendLinks" class="TopoManager">	
 				<parameters>
 					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 				</parameters>

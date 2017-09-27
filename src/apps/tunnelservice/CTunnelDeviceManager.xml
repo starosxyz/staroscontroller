@@ -4,6 +4,9 @@
 		<private>
 			<container name="tunneldeviceContainer" type="list" valuetype="class"/>
 			<variable name="id" type="long"/>
+			
+			<!--qiulei 20170927 pm-->
+			<variable name="tunnelPath" type="string"/>
 		</private>
 		<public>
 			<function name="CTunnelDeviceManager">
@@ -49,6 +52,7 @@
 				</for>
 				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
 			</function>
+			
 			<function name="CreateTunnelDevice">
 				<parameters>
 					<parameter name="deviceid" type="string"/>
@@ -75,6 +79,7 @@
 				<iterator name="tempContainerfirst" type="list" valuetype="hashmap"/>
 				<iterator name="tempContainerend" type="list" valuetype="hashmap"/>
 				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
+				<set name="tunnelPath" value="context.json.toString()"/>
 				<script><![CDATA[
 					if (context.json.toString().length>0)
 					{
@@ -109,18 +114,42 @@
 				</for>
 				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size()%>]]></log>
 			</function>
+		
+			
+			
+			
 					
 			<function name="Clearup">
 				<script><![CDATA[				
 					context.tunneldeviceContainer.clear();
 				]]></script>
 			</function>
+			
 			<function name="IsMyTopChange">
 				<parameters>
 					<parameter name="fromdevice" type="string"/>
 					<parameter name="todevice" type="string"/>
 					<parameter name="path" type="string"/>
-					<parameter name="ischanage" type="boolean" value="false"/>
+					<parameter name="ischanage" type="boolean"/>
+				</parameters>
+				
+				<if cond="context.path.toString()==thisclass.tunnelDeviceJsonStr.toString()">
+					<then>
+						<set name="context.ischanage" value="true"/>
+					</then>
+					
+					<else>
+						<set name="context.ischanage" value="false"/>
+					</else>			
+				</if>
+			</function>
+			
+			<function name="IsMyTopChange_old">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevice" type="string"/>
+					<parameter name="path" type="string"/>
+					<parameter name="ischanage" type="boolean"/>
 				</parameters>
 				<variable name="firstdevice" type="class"/>
 				<variable name="lastdevice" type="class"/>
@@ -153,7 +182,13 @@
 								<set name="context.ischanage" value="true"/>
 							</then>
 						</if>
-					</then>					
+					</then>
+					<else>
+						<log><![CDATA[context.fromdevice.toString() = <%=context.fromdevice.toString()%>]]></log>
+						<log><![CDATA[context.firstdeviceid.toString() = <%=context.firstdeviceid.toString()%>]]></log>
+						<log><![CDATA[context.todevice.toString() = <%=context.todevice.toString()%>]]></log>
+						<log><![CDATA[context.lastdeviceid.toString() = <%=context.lastdeviceid.toString()%>]]></log>
+					</else>			
 				</if>
 			</function>
 			<function name="DeactiveTunnel">

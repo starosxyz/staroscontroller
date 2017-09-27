@@ -42,7 +42,7 @@
 		</function>
 	</function>
 	<function name="SendAddAllLink">
-		<function name="SendAddAllLinkToWebClient" class="DeviceManager">
+		<function name="SendAddAllLinkToWebClient" class="TopoManager">
 			<parameters>
 				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
 			</parameters>

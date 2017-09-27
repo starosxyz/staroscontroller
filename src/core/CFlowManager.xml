@@ -72,7 +72,6 @@
 					{						
 						var onematch = info.match.matchfieldlist[i];
 						var key = onematch.oxmfield;
-						context.print(key);
 						if (global.matchfieldName.hasParam(key)==true)
 						{
 							var keyname=global.matchfieldName.getParam(key).toString();
@@ -291,19 +290,20 @@
 						<exit/>
 					</then>
 				</if>
-				<new name="flowentry" class="CFlowEntry">
-					<parameters>
-						<parameter name="flowId" type="string" in="context.sresourceid.toString()"/>
-						<parameter name="appId" type="string" in="context.appId.toString()"/>
-						<parameter name="flowjson" type="string" in="context.strjson.toString()"/>
-					</parameters>
-				</new>									
 				<script><![CDATA[				
 					var info = JSON.parse(context.strjson.toString());
 					info.cookie=context.sresourceid.toString();
 					var str_json=JSON.stringify(info);
 					context.sendjson.setValue(str_json);
 				]]></script>
+				<new name="flowentry" class="CFlowEntry">
+					<parameters>
+						<parameter name="flowId" type="string" in="context.sresourceid.toString()"/>
+						<parameter name="appId" type="string" in="context.appId.toString()"/>
+						<parameter name="flowjson" type="string" in="context.sendjson.toString()"/>
+					</parameters>
+				</new>									
+				
 				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				
@@ -358,8 +358,7 @@
 					</then>
 					<else>
 						<function>
-							<log>UnInstallFlowTableRequest exit2</log>
-							<assert/>
+							<log>UnInstallFlowTableRequest exit2</log>							
 							<exit/>
 						</function>
 					</else>
@@ -409,6 +408,7 @@
 					</parameters>
                 </function>
 				<!---qiulei 20170831 end2-->
+				
 				
 				<function name="Send_OFPT13_FLOW_MOD">
 					<parameters>
@@ -601,15 +601,9 @@
 										"matchfieldlist":[
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"vlanid":"45"
-											},
-											{
-												"oxmclass":"0x8000",
-												"oxmfield":"0",
-												"hasmask":"false",
-												"inport":"4"
+												"ethtype":"0x0806"
 											}
 										]
 									},

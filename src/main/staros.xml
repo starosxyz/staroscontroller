@@ -17,7 +17,8 @@
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 	
-	<logconfig dest="stdout" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<logconfig dest="stdout" level="1" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<variable name="isAPIAuth" type="boolean" value="false"/>
 	<events>
 		<!--Session StarUp-->
 		<onevent event="bundleapp.startup">
@@ -28,7 +29,7 @@
 		  <variable name="eventname" type="string"/>
 		  <function>
 			<set name="injson" value="'[]'"/>
-			<log>##########STAROS application start#######</log>
+			<log level="100">##########STAROS application start#######</log>
 			<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
 			<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
 			<remotecall method="DiscoveryTestMethod">
@@ -65,6 +66,8 @@
 			<!--raise name="context.eventname.toString()"/-->
 			<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
 			
+			<function name="startDiscovery" class="TopoManager"/> 
+			
 </function>
 		</onevent>
 		<!--Session Shutdown-->
@@ -80,6 +83,12 @@
 				<log>staros TimeOutEvent 2017.08.28</log>
 				<function name="OpenFlowDetect"/>
 				<function name="Timeout" class="SessionManager"/>
+				
+				<function name="GettopoSize" class="TopoManager">
+					<parameters>
+						<parameter name="toposize" type="long"/>
+					</parameters>
+				</function>
 			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
 			</function>

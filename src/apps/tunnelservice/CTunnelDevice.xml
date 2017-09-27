@@ -183,7 +183,7 @@
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.m_flowid.size() == 0">
+			<if cond="context.m_flowid.size() == 0">
 					<then>
 						<log>context.m_flowid.size() == 0</log>
 						<assert/>
@@ -414,7 +414,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-				<reference variable="jsonin2out">
+				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
 								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
@@ -671,7 +671,6 @@
 				<!--删除流表-->
 				<!--删除meter-->
 				<log>CTunnelDevice DeactiveTunnel</log>
-				
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
@@ -686,10 +685,12 @@
 					</parameters>
 				</function>
 				<!--uninstall meter-->
+				<log><![CDATA[thisclass.m_deviceid.toString() = <%=thisclass.m_deviceid.toString()%>]]></log>
+				<log><![CDATA[thisclass.m_meterid.toLong() = <%=thisclass.m_meterid.toLong()%>]]></log>				
 				<function name="UnInstallMeter" class="MeterService">
 					<parameters>
 						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
-						<parameter name="meterid" type="string" in="thisclass.m_meterid.toLong()"/>
+						<parameter name="meterid" type="long" in="thisclass.m_meterid.toLong()"/>
 					</parameters>
 				</function>
 			</function>

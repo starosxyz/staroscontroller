@@ -21,6 +21,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoManager.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
@@ -46,6 +47,7 @@
 	<variable name="RestfulService" type="class" global="true"/>
 	<variable name="SwaggerFile" type="class" global="true"/>
 	<variable name="APIDocsService" type="class" global="true"/>
+	<variable name="TopoManager" type="class" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -72,6 +74,7 @@
 		<new name="APIDocsService" class="CAPIDocsService"/>
 		
 		<new name="SwaggerFile" class="CswaggerFile"/>
+		<new name="TopoManager" class="CTopoManager"/>
 		<new name="ApplicationManager" class="CApplicationManager"/>
 	</function>
 </starosxml>

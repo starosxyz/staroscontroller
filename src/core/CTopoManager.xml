@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CTopoManager">
+		<private>
+			<container name="topoContainer" type="hashmap" keytype="string" valuetype="list"/>
+		</private>
+		<public>
+			<function name="Addtopo">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevide" type="string"/>
+					<parameter name="path" type="string"/>
+				</parameters>
+				<log>CtopoManager Addtopo</log>
+				<variable name="topokey" type="string"/>
+				<container name="pathlist" type="list" valuetype="string"/>
+				<script>
+					<![CDATA[
+					var fromdevice=context.fromdevice.toString();
+					var todevice=context.todevide.toString();
+					var topokey=fromdevice+":"+todevice;
+					context.topokey.setValue(topokey);
+					]]>
+				</script>
+				<if cond="thisclass.topoContainer.hasValue(context.topokey.toString())==true">
+					<then>
+						<lookup name="topoContainer" key="context.topokey.toString()" out="context.pathlist"/>
+						<insert name="pathlist" value="context.path.toString()"/>
+					</then>
+					<else>
+						<insert name="pathlist" value="context.path.toString()"/>
+						<insert name="topoContainer" key="context.topokey.toString()" value="context.pathlist"/>
+					</else>
+				</if>
+
+			</function>
+			<function name="GettopoSize">
+				<parameters>
+					<parameter name="toposize" type="long" in="context.topoContainer.size()"/>
+				</parameters>
+				<log>
+					<![CDATA[topoContainer size=<%=context.topoContainer.size()%>]]>
+				</log>
+			</function>
+			<function name="Findtopo">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevide" type="string"/>
+					<parameter name="pathlist" type="list"/>
+				</parameters>
+				<log>CtopoManager Findtopo</log>
+				<variable name="topokey" type="string"/>
+				<script>
+					<![CDATA[
+					var fromdevice=context.fromdevice.toString();
+					var todevice=context.todevide.toString();
+					var topokey=fromdevice+":"+todevice;
+					context.topokey.setValue(topokey);
+					]]>
+				</script>
+				<if cond="thisclass.topoContainer.hasValue(context.topokey.toString())==true">
+					<then>
+						<lookup name="topoContainer" key="context.topokey.toString()" out="context.pathlist"/>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>
+			<function name="Removetopo">
+				<parameters>
+					<parameter name="fromdevice" type="string"/>
+					<parameter name="todevide" type="string"/>
+				</parameters>
+				<log>CtopoManager Removetopo</log>
+				<variable name="topokey" type="string"/>
+				<script>
+					<![CDATA[
+					var fromdevice=context.fromdevice.toString();
+					var todevice=context.todevide.toString();
+					var topokey=fromdevice+":"+todevice;
+					context.topokey.setValue(topokey);
+					]]>
+				</script>
+				<if cond="context.topoContainer.hasValue(context.topokey.toString())==true">
+					<then>
+						<remove name="topoContainer" key="context.topokey.toString()"/>
+					</then>
+				</if>
+			</function>
+			<function name="SendAddAllLinkToWebClient">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<container name="topo" type="list" valuetype="string"/>
+				<variable name="onetopo" type="string"/>
+				<variable name="fromdevice" type="string"/>
+				<variable name="todevice" type="string"/>
+				<variable name="srcport" type="string"/>
+				<variable name="dstport" type="string"/>
+				<variable name="topokey" type="string"/>
+				<variable name="binvalidlink" type="string" value="false"/>
+				<variable name="strlink" type="string" value=""/>
+				<container name="onetopoPair" type="pair" keytype="string" valuetype="list"/>
+				<for var="onetopoPair" in="context.topoContainer">
+					<set name="topo" value="context.onetopoPair.second()"/>
+					<set name="topokey" value="context.onetopoPair.first()"/>
+					<script>
+						<![CDATA[
+						var topodevice=context.topokey.toString();
+						var fromdevice=topodevice.split(":")[0];
+						context.fromdevice.setValue(fromdevice);
+						var todevice=topodevice.split(":")[1];
+						context.todevice.setValue(todevice);
+						]]>
+					</script>
+					<for var="onetopo" in="context.topo">
+						<set name="strlink" value="context.onetopo.toString()"/>
+						<if cond="context.fromdevice.toString()!=context.todevice.toString()">
+							<then>
+								<function>
+									<script>
+										<![CDATA[
+										if (context.strlink.toString().length>0)
+										{
+										
+										var info = JSON.parse(context.strlink.toString());
+										if (info.paths.length==1)
+										{
+										context.dstport.setValue(info.paths[0].dst.port);
+										context.srcport.setValue(info.paths[0].src.port);
+										context.binvalidlink.setValue('true');
+										}
+										else
+										{
+										context.binvalidlink.setValue('false');
+										}
+										}
+										else
+										{
+										context.binvalidlink.setValue('false');
+										}
+										]]>
+									</script>
+									<log leve="1"><![CDATA[binvalidlink=<%=context.binvalidlink.toString()%>]]></log>
+									<log leve="1"><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+									<function>
+										<if cond="context.binvalidlink.toString()=='true'">
+											<then>
+												<function>
+													<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+														<jsonbody>
+															<![CDATA[
+															{
+															"event":"addLink","payload":
+															{"id":"of:<%=context.fromdevice.toString()%>/<%=context.srcport.toString()%>-of:<%=context.todevice.toString()%>/<%=context.dstport.toString()%>",
+															"type":"direct",
+															"expected":false,
+															"online":true,
+															"linkWidth":1.2,
+															"src":"of:<%=context.fromdevice.toString()%>",
+															"srcPort":"<%=context.srcport.toString()%>",
+															"dst":"of:<%=context.todevice.toString()%>",
+															"dstPort":"<%=context.dstport.toString()%>"
+															}
+															}
+															]]>
+														</jsonbody>
+													</websocket>
+												</function>
+											</then>
+										</if>
+									</function>
+								</function>
+							</then>
+						</if>
+
+				</for>
+				</for>
+
+			</function>
+			<function name="SendLinks">
+				<parameters>
+					<parameter name="transportid" type="string"/>
+				</parameters>
+				<container name="topo" type="list" valuetype="string"/>
+				<variable name="onetopo" type="string"/>
+				<variable name="fromdevice" type="string"/>
+				<variable name="todevice" type="string"/>
+				<variable name="srcport" type="string"/>
+				<variable name="dstport" type="string"/>
+				<variable name="topokey" type="string"/>
+				<variable name="linkarray" type="string"/>
+				<variable name="binvalidlink" type="string" value="false"/>
+				<variable name="strlink" type="string" value=""/>
+				<container name="linklist" type="list" valuetype="string"/>
+				<container name="onetopoPair" type="pair" keytype="string" valuetype="list"/>
+				<for var="onetopoPair" in="context.topoContainer">
+					<set name="topo" value="context.onetopoPair.second()"/>
+					<set name="topokey" value="context.onetopoPair.first()"/>
+					<script>
+						<![CDATA[
+						var topodevice=context.topokey.toString();
+						var fromdevice=topodevice.split(":")[0];
+						context.fromdevice.setValue(fromdevice);
+						var todevice=topodevice.split(":")[1];
+						context.todevice.setValue(todevice);
+						]]>
+					</script>
+					<for var="onetopo" in="context.topo">
+						<set name="strlink" value="context.onetopo.toString()"/>
+						<if cond="context.fromdevice.toString()!=context.todevice.toString()">
+							<then>
+								<function>
+									<script>
+										<![CDATA[
+										if (context.strlink.toString().length>0)
+										{
+										var info = JSON.parse(context.strlink.toString());
+										if (info.paths.length == 1)
+										{
+										var array = new Object();
+										array.one = "of:" + context.fromdevice.toString() + "/" + info.paths[0].src.port;
+										array.two = "of:" + context.todevice.toString() + "/" + info.paths[0].dst.port;
+										array.type = "Direct";
+										array._iconid_state = "active";
+										array.direction = "A &harr; B";
+										array.durable = "false";
+										var strjson=JSON.stringify(array);
+										context.linklist.addValue(strjson);
+										context.binvalidlink.setValue('true');
+										}
+										else
+										{
+										context.binvalidlink.setValue('false');
+										}
+										}
+										else
+										{
+										context.binvalidlink.setValue('false');
+										}
+										]]>
+									</script>
+									<function>
+										<if cond="context.binvalidlink.toString()=='true'">
+											<then>
+												<function>
+													<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+														<jsonsrc src="linkarray"/>
+													</websocket>
+												</function>
+											</then>
+										</if>
+									</function>
+								</function>
+							</then>
+						</if>
+				</for>
+				</for>
+				<script>
+					<![CDATA[
+					var json = new Object();
+					var myArray=new Array();
+
+					//	qiulei 20170918
+					var firstString=context.linklist.getFirst();
+					while(firstString!=null){
+					var jsoninfo = JSON.parse(firstString);
+					myArray.push(jsoninfo);
+
+					firstString=context.linklist.getNext();
+					}
+
+					json['event'] = "linkDataResponse";
+					var payload = new Object();
+					payload['links'] = myArray;
+					var annots_arr = new Array();
+					var paytwoarray = new Object();
+					paytwoarray.no_rows_msg = "No links found";
+					annots_arr.push(paytwoarray);
+					payload['annots'] = annots_arr;
+					json['payload'] = payload;
+					var strjson=JSON.stringify(json);
+					context.linkarray.setValue(strjson);
+					context.binvalidlink.setValue(true);
+					]]>
+				</script>
+				<if cond="context.binvalidlink.toBoolean()==true">
+					<then>
+						<function>
+							<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+								<jsonsrc src="linkarray"/>
+							</websocket>
+						</function>
+					</then>
+				</if>
+
+			</function>
+			<function name="startDiscovery">
+				<discovery action="startdiscovery"/>
+			</function>
+			<function name="stopDiscovery">
+				<discovery action="stopdiscovery"/>
+			</function>
+		</public>
+	</class>
+</starosxml>

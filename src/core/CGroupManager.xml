@@ -274,23 +274,27 @@
 				<set name="tmpgroupid" value="thisclass.m_groupid.toLong()"/>
 				<set name="in_groupid" value="context.tmpgroupid.toString()"/>
 				<variable name="groupobj" type="class"/>
+				<variable name="outjson" type="string"/>
 				
 				<script><![CDATA[
 						var info = JSON.parse(context.in_strjson.toString());
 						info.groupid=context.tmpgroupid.toString();
+						var str_json=JSON.stringify(info);
+						context.outjson.setValue(str_json);
+
 				]]></script>
 				<!--qiulei modify 20170807-->
 				<function name="Send_OFPT13_GROUP_MOD">
 					<parameters>
 						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-						<parameter name="strjson" type="string" in="context.in_strjson.toString()"/>
+						<parameter name="strjson" type="string" in="context.outjson.toString()"/>
 					</parameters>
 				</function>
 				<new name="groupobj" class="CGroup">
 					<parameters>
 						<parameter name="id" type="string" in="context.in_groupid.toString()"/>
 						<parameter name="appid" type="string" in="context.in_appid.toString()"/>
-						<parameter name="groupjson" type="string" in="context.in_strjson.toString()"/>
+						<parameter name="groupjson" type="string" in="context.outjson.toString()"/>
 					</parameters>
 				</new>
 				<insert name="groupContainer" key="context.in_groupid.toString()" value="context.groupobj"/>

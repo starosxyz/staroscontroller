@@ -250,7 +250,7 @@
 				<new name="meterobj" class="CMeter">
 					<parameters>
 						<parameter name="appid" type="string" in="context.appid.toString()"/>
-						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+						<parameter name="strjson" type="string" in="context.newflowmodjson.toString()"/>
 						<parameter name="meterid" type="long" in="context.meterid.toLong()"/>
 					</parameters>
 				</new>
@@ -280,19 +280,21 @@
 				<variable name="meterobj" type="class"/>
 				<variable name="flowmodjson" type="string"/>
 				<variable name="sendflowmodjson" type="string"/>
-				<if cond="context.merterContainer.hasValue(context.meterid.toLong()) ==true">
+				<log><![CDATA[CMetermgr UnInstallMeterRequest meterid = <%=context.meterid.toLong()%>]]></log>				
+				<if cond="context.merterContainer.hasValue(context.meterid.toLong())==true">
 					<then>
 						<function>
+							<log><![CDATA[context.merterContainer has <%=context.meterid.toLong()%>]]></log>
 							<lookup name="merterContainer" key="context.meterid.toLong()" output="context.meterobj"/>
 						</function>
 					</then>
 					<else>
 						<function>
-							<log>UnInstallMeterRequest exit</log>
+							<log>UnInstallMeterRequest exit</log>							
 							<exit/>
 						</function>
 					</else>
-				</if>
+				</if>				
 				<function name="GetMeterJson" class="context.meterobj">
 					<parameters>
 						<parameter name="meterjson" type="string" out="context.flowmodjson"/>
@@ -310,7 +312,16 @@
 						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
 					</parameters>
 				</function>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size()%>]]></log>
 				<remove name="merterContainer" key="context.meterid.toLong()"/>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size()%>]]></log>
+				<container name="i" type="pair" keytype="long" valuetype="class"/>
+				<variable name="id" type="long"/>
+				<for var="context.i" in="thisclass.merterContainer">
+					<set name="context.id" value="context.i.first()"/>
+					<log><![CDATA[context.id = <%=context.id.toLong()%>]]></log>
+				</for>				
+				
 			</function>
 			<function name="testaddmeter">			
 				<variable name="modstrjson" type="string"/>

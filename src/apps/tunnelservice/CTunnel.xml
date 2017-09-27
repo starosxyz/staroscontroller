@@ -228,7 +228,6 @@
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
 				-->
-
 				<function name="GetShortPath">
 					<parameters>
 						<parameter name="result" type="boolean" out="context.getpathresult"/>
@@ -291,15 +290,16 @@
 				</function>
 				<function name="installRuleEnd" class="lastdevice">
 					<parameters>
-						<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
-						<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
 						<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
 						<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
+						<parameter name="outport" type="string" in="thisclass.m_todeviceport.toString()"/>
+						<parameter name="outvlan" type="string" in="thisclass.m_outputvlanid.toString()"/>
 						<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
 					</parameters>
 				</function>
+
 				<set name="middevicefirst" value="context.middevice.begin()"/>
-				<set name="middeviceend" value="context.middevice.end()"/>	
+				<set name="middeviceend" value="context.middevice.end()"/>				
 				<log><![CDATA[middevice size=<%=context.middevice.size()%>]]></log>			
 				<for var="context.middeviceiterator" from="context.middevicefirst" to="context.middeviceend">
 					<set name="onedevice" value="context.middeviceiterator.value()"/>
@@ -337,8 +337,7 @@
 				<log>##### Get Shortest Path #####</log>
 				<variable name="strlink" type="string"/>
 				<variable name="strlink2" type="string"/>
-
-				<if cond="thisclass.m_fromdevice.toString()==thisclass.m_todevice.toString()">
+								<if cond="thisclass.m_fromdevice.toString()==thisclass.m_todevice.toString()">
 					<then>
 						<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
 							<parameters>
@@ -349,27 +348,27 @@
 					</then>
 					<else>
 						<set name="strlink" value="context.openflowserverobj.getShortestPath2(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
-						<set name="strlink2" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
-						<log>============= START =================</log>
-						<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
-						<log><![CDATA[strlink2=<%=context.strlink2.toString()%>]]></log>
-						<log>=============  END  =================</log>
-						<if cond="context.strlink.toString()!=''">
-							<then>
-								<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
-									<parameters>
-										<parameter name="json" type="string" in="context.strlink.toString()"/>
-									</parameters>
-								</function>
-								<log>result true</log>
-								<set name="result" value="true"/>
-							</then>
-							<else>
-								<log>result false</log>
-								<set name="result" value="false"/>
-							</else>
-						</if>
+				<set name="strlink2" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
+				<log>============= START =================</log>
+				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+				<log><![CDATA[strlink2=<%=context.strlink2.toString()%>]]></log>
+				<log>=============  END  =================</log>
+				<if cond="context.strlink.toString()!=''">
+					<then>
+						<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
+							<parameters>
+								<parameter name="json" type="string" in="context.strlink.toString()"/>
+							</parameters>
+						</function>
+						<log>result true</log>
+						<set name="result" value="true"/>
+					</then>
+					<else>
+						<log>result false</log>
+						<set name="result" value="false"/>
 					</else>
+				</if>
+			</else>
 				</if>
 			</function>
 			
@@ -441,6 +440,7 @@
 				</parameters>
 				<variable name="isChange" type="boolean" value="false"/>
 				<log>Tunnel Top channge</log>
+				<log><![CDATA[CTunnel mytopremove fromdevice = <%=context.fromdevice.toString()%>]]></log>
 				<function name="IsMyTopChange" class="m_tunneldevicemgr">
 					<parameters>
 						<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
@@ -453,7 +453,7 @@
 					<then>
 						<function name="DeactiveTunnel"/>
 						<function name="ActiveTunnel"/>
-					</then>
+					</then>					
 				</if>
 			</function>
 			

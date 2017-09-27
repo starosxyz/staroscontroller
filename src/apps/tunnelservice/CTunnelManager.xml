@@ -161,18 +161,11 @@
 					</then>
 				</if>
 			</function>
-			
-			
-			
-			
-			
+						
 			<function name="ActiveTunnel">
 				<log>CTunnelManager ActiveTunnel</log>
-			</function>
-			
-			
-			
-			
+			</function>			
+						
 			<function name="DeactiveTunnel">
 				<log>CTunnelManager DeactiveTunnel</log>
 			</function>
@@ -183,6 +176,7 @@
 					<parameter name="todevice" type="string"/>
 					<parameter name="path" type="string"/>
 				</parameters>
+				<log>CTunnelManager mytopremove</log>
 				<iterator name="tunnelContaineriterator" type="hashmap" keytype="long" valuetype="class"/>
 				<iterator name="tunnelContainerfirst" type="hashmap" keytype="long" valuetype="class"/>
 				<iterator name="tunnelContainerend" type="hashmap" keytype="long" valuetype="class"/>
@@ -200,6 +194,152 @@
 					</function>
 				</for>
 			</function>
+
+			<function name="IsHasValue">
+				<parameters>
+					<parameter name="style" type="string"/>
+					<parameter name="data" type="string"/>
+					<parameter name="result" type="boolean"/>
+				</parameters>
+				<variable name="final_result" type="boolean"/>
+				<if cond="context.style.toString()=='inport'">
+					<then>
+						<function name="IsHasInPort">
+							<parameters>
+								<parameter name="data" type="string" in="context.data.toString()"/>
+								<parameter name="result" type="boolean" out="context.final_result"/>
+							</parameters>
+						</function>
+					</then>
+					<elseif cond="context.style.toString()=='outport'">
+						<function name="IsHasOutPort">
+							<parameters>
+								<parameter name="data" type="string" in="context.data.toString()"/>
+								<parameter name="result" type="boolean" out="context.final_result"/>
+							</parameters>
+						</function>
+					</elseif>
+					<elseif cond="context.style.toString()=='invlan'">
+						<function name="IsHasInVlan">
+							<parameters>
+								<parameter name="data" type="string" in="context.data.toString()"/>
+								<parameter name="result" type="boolean" out="context.final_result"/>
+							</parameters>
+						</function>
+					</elseif>
+					<else>
+						<function name="IsHasOutVlan">
+							<parameters>
+								<parameter name="data" type="string" in="context.data.toString()"/>
+								<parameter name="result" type="boolean" out="context.final_result"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+				<set name="context.result" value="context.final_result.toBoolean()"/>
+			</function>
+			
+			<function name="IsHasInPort">
+				<parameters>
+					<parameter name="data" type="string"/>
+					<parameter name="result" type="boolean"/>
+				</parameters>
+				<variable name="final_result" type="boolean" value="false"/>
+				<container name="tunnelpair" type="pair" keytype="long" valuetype="class"/>
+				<variable name="tunnel" type="class"/>
+				<variable name="port" type="string"/>
+				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
+					<set name="context.tunnel" value="context.tunnelpair.second()"/>
+					<function name="GetTunnel_inputPort" class="context.tunnel">
+						<parameters>
+							<parameter name="t_inputPort" type="string" out="context.port"/>
+						</parameters>
+					</function>
+					<if cond="context.port.toString() == context.data.toString()">
+						<then>
+							<set name="context.final_result" value="true"/>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<set name="context.result" value="context.final_result.toBoolean()"/>
+			</function>
+			<function name="IsHasOutPort">
+				<parameters>
+					<parameter name="data" type="string"/>
+					<parameter name="result" type="boolean"/>
+				</parameters>
+				<variable name="final_result" type="boolean" value="false"/>
+				<container name="tunnelpair" type="pair" keytype="long" valuetype="class"/>
+				<variable name="tunnel" type="class"/>
+				<variable name="port" type="string"/>
+				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
+					<set name="context.tunnel" value="context.tunnelpair.second()"/>
+					<function name="GetTunne_outputPort" class="context.tunnel">
+						<parameters>
+							<parameter name="t_outputPort" type="string" out="context.port"/>
+						</parameters>
+					</function>
+					<if cond="context.port.toString() == context.data.toString()">
+						<then>
+							<set name="context.final_result" value="true"/>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<set name="context.result" value="context.final_result.toBoolean()"/>
+			</function>
+			<function name="IsHasInVlan">
+				<parameters>
+					<parameter name="data" type="string"/>
+					<parameter name="result" type="boolean"/>
+				</parameters>
+				<variable name="final_result" type="boolean" value="false"/>
+				<container name="tunnelpair" type="pair" keytype="long" valuetype="class"/>
+				<variable name="tunnel" type="class"/>
+				<variable name="vlan" type="long"/>
+				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
+					<set name="context.tunnel" value="context.tunnelpair.second()"/>
+					<function name="GetTunnel_inputvlanid" class="context.tunnel">
+						<parameters>
+							<parameter name="t_inputvlanid" type="long" out="context.vlan"/>
+						</parameters>
+					</function>
+					<if cond="context.vlan.toString() == context.data.toString()">
+						<then>
+							<set name="context.final_result" value="true"/>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<set name="context.result" value="context.final_result.toBoolean()"/>
+			</function>
+			<function name="IsHasOutVlan">
+				<parameters>
+					<parameter name="data" type="string"/>
+					<parameter name="result" type="boolean"/>
+				</parameters>
+				<variable name="final_result" type="boolean" value="false"/>
+				<container name="tunnelpair" type="pair" keytype="long" valuetype="class"/>
+				<variable name="tunnel" type="class"/>
+				<variable name="vlan" type="long"/>
+				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
+					<set name="context.tunnel" value="context.tunnelpair.second()"/>
+					<function name="GetTunnel_outputvlanid" class="context.tunnel">
+						<parameters>
+							<parameter name="t_outputvlanid" type="long" out="context.vlan"/>
+						</parameters>
+					</function>
+					<if cond="context.vlan.toString() == context.data.toString()">
+						<then>
+							<set name="context.final_result" value="true"/>
+							<exit/>
+						</then>
+					</if>
+				</for>
+				<set name="context.result" value="context.final_result.toBoolean()"/>
+			</function>
+
 		</public>
 	</class>
 </starosxml>

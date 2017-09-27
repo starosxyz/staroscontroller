@@ -17,7 +17,8 @@
 					<parameter name="appId" type="string"/>
 					<parameter name="datapathid" type="string"/>
 				</parameters>
-				<variable name="flowmgrobj" type="class"/>
+				
+<variable name="flowmgrobj" type="class"/>
 				<variable name="deviceobj" type="class"/>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
@@ -31,8 +32,7 @@
 						<log>deviceobj is null</log>
 					</then>
 				</if>
-
-				<function name="GetFlowManager" class="context.deviceobj">
+								<function name="GetFlowManager" class="context.deviceobj">
 					<parameters>
 						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
 					</parameters>			
@@ -60,10 +60,11 @@
 			</parameters>
 			<variable name="deviceobj" type="class"/>
 			<log>CFlowService UnInstallFlow</log>
-			<log>##### CFlowServer UnInstallFlow #####</log>
+			
+<log>##### CFlowServer UnInstallFlow #####</log>
 			<if cond="context.flowid.size() == 0">
 				<then>
-					<assert/>
+					
 				</then>
 			</if>
 			<function name="findDevice" class="DeviceManager">
