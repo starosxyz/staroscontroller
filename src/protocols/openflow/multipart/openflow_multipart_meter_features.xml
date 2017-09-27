@@ -4,7 +4,7 @@
 		<parameters>
 			<parameter name="xid" type="long"/>
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartMeterFeaturesRequest</log>
+		<log>OpenFlowMultiPartMeterFeaturesRequest</log>
 		<variable name="strjson" type="string"/>
 		<log><![CDATA[OpenFlowMultiPartMeterFeaturesRequest xid=<%=context.xid.toLong()%>]]></log>
 		<reference variable="strjson">

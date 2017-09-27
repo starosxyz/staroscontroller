@@ -10,7 +10,7 @@
 -->
 	
 	<function name="SendOpenFlowConfig">
-		<log dest="stdout">SendOpenFlowConfig</log>
+		<log>SendOpenFlowConfig</log>
 		
 		<variable name="xid" type="long"/>
 		<variable name="msl" type="string"/>

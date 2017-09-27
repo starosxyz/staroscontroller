@@ -47,7 +47,7 @@
 					<if cond="context.isfile.toBoolean()==true">
 						<then>
 							<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-							<log dest="stdout"><![CDATA[filecontents = '']]></log>
+							<log><![CDATA[filecontents = '']]></log>
 							<set name="content" value="context.filecontents.toString()"/>
 						</then>
 					</if>
@@ -64,7 +64,7 @@
 				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
 					<jsonsrc src="swaggerjsonout"/>
 				</restful>
-
+				<exit/>
 			</then>
 		</if>
 		
@@ -75,7 +75,7 @@
 					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
 					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 				</function>
-
+				<exit/>
 			</then>
 		</if>
 		
@@ -151,6 +151,7 @@
 					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
 					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 				</function>
+				<exit/>
 			</then>
 		</if>
 		<script><![CDATA[
@@ -248,14 +249,10 @@
 				</if>
 			</else>
 			</if>
-		</then>				
-		</if>
-
-
-
-
-
-		<if cond="event.getParam('Authorization')==''">
+		</then>	
+		
+		<else>
+			<if cond="event.getParam('Authorization')==''">
 			<then>
 				<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
 				<set name="httpparam" paramname="Connection" value="'Close'"/>
@@ -327,7 +324,7 @@
 					<if cond="context.isfile.toBoolean()==true">
 						<then>
 							<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-							<log dest="stdout"><![CDATA[filecontents = '']]></log>
+							<log><![CDATA[filecontents = '']]></log>
 							<set name="content" value="context.filecontents.toString()"/>
 						</then>
 					</if>
@@ -529,5 +526,9 @@
 				</if>
 			</else>
 		</if>
+		</else>			
+		</if>
+
+
 </function>
 </starosxml>

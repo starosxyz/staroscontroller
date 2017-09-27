@@ -5,7 +5,7 @@
 			<parameter name="xid" type="long"/>
 		<parameter name="transportid" type="string"/>
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartGroupFeaturesRequest</log>
+		<log>OpenFlowMultiPartGroupFeaturesRequest</log>
 		<variable name="strjson" type="string"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 

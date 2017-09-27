@@ -4,7 +4,7 @@
 		<parameters>
 			<parameter name="xid" type="long"/>
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartQueueRequest</log>
+		<log>OpenFlowMultiPartQueueRequest</log>
 		<variable name="strjson" type="string"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
@@ -26,7 +26,7 @@
 		<parameters>
 			<parameter name="xid" type="long"/>
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartQueueReply</log>
+		<log>OpenFlowMultiPartQueueReply</log>
 		<variable name="strjson" type="string"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 

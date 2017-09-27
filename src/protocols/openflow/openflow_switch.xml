@@ -9,7 +9,7 @@
 			Nanjing StarOS Inc. All rights reserved.
 -->
 	<function name="SendOpenFlowFeatures">
-		<log dest="stdout">SendOpenFlowFeatures</log>
+		<log>SendOpenFlowFeatures</log>
 		
 		<variable name="mfrdesc" type="string"/>
 		<variable name="swdesc" type="string"/>
@@ -121,7 +121,7 @@
 		
 		<!--qiulei 20170807 -->
 		
-		<log dest="stdout">执行InstallDefaultFlow 2017.8.07</log>
+		<log>执行InstallDefaultFlow 2017.8.07</log>
 		<!--function name="InstallDefaultFlow">
 <parameters>
 				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>

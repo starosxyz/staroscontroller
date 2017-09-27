@@ -5,7 +5,7 @@
 			<parameter name="xid" type="long"/>
 			<parameter name="transportid" type="string"/>			
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartFlowRequest</log>
+		<log>OpenFlowMultiPartFlowRequest</log>
 		<variable name="strjson" type="string"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
@@ -33,7 +33,7 @@
 		<parameters>
 			<parameter name="xid" type="long"/>
 		</parameters>
-		<log dest="stdout">OpenFlowMultiPartFlowReply</log>
+		<log>OpenFlowMultiPartFlowReply</log>
 		<variable name="strjson" type="string"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 

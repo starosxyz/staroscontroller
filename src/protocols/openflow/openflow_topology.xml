@@ -3,7 +3,7 @@
 	<events>
 		<onevent event="Topology.OnPathRemoveEvent">
 			<function>
-				<log dest="stdout">Topology.OnPathRemoveEvent</log>
+				<log>Topology.OnPathRemoveEvent</log>
 				<variable name="removedata" type="string"/>
 				<script>
 					<![CDATA[
@@ -46,7 +46,7 @@
 		</onevent>
 		<onevent event="Topology.OnPathAddEvent">
 			<function>
-				<log dest="stdout">Topology.OnPathAddEvent</log>
+				<log>Topology.OnPathAddEvent</log>
 				<variable name="adddata" type="string"/>
 				<variable name="isTorF" type="string" value="false"/>
 				<script>

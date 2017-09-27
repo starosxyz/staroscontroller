@@ -29,12 +29,12 @@
 		<variable name="username" type="string"/>
 		<function>
 			<!--qiulie-->
-			<log dest="stdout"><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
-			<log dest="stdout"><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
-			<log dest="stdout"><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
-			<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
-			<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
-			<log dest="stdout"><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
+			<log><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
+			<log><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
+			<log><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
+			<log><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
+			<log><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
+			<log><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
 			<!--hu!!! get Jessionid-->
 			<if cond="event.getParam('cookie').toString()!=''">
 				<then>

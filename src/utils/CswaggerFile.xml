@@ -13,7 +13,7 @@
 				<if cond="context.isfile.toBoolean()==true">
 					<then>
 						<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-						<log dest="stdout"><![CDATA[filecontents = '<%=context.filecontents.toString()%>']]></log>
+						<log><![CDATA[filecontents = '<%=context.filecontents.toString()%>']]></log>
 						<set name="content" value="context.filecontents.toString()"/>
 					</then>
 				</if>
@@ -25,7 +25,7 @@
 				</parameters>
 				<variable name="jsonfilepath" type="string" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/onos/v1/apidoc/swagger.json'"/>
 				<file method="writefile" name="context.jsonfilepath.toString()" data="context.content.toMessageBlock()"/>
-				<log dest="stdout"><![CDATA[content = '<%=context.content.toString()%>']]></log>
+				<log><![CDATA[content = '<%=context.content.toString()%>']]></log>
 			</function>
 		</public>
 	</class>

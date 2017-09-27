@@ -4,7 +4,7 @@
 		<parameters>
 			<parameter name="xid" type="long"/>
 		</parameters>
-		<log dest="stdout">OpenFlowFeaturesRequest</log>
+		<log>OpenFlowFeaturesRequest</log>
 		<variable name="jsonvariable" type="string"/>
 		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
 		<reference variable="jsonvariable">

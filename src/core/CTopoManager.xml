@@ -36,11 +36,12 @@
 			</function>
 			<function name="GettopoSize">
 				<parameters>
-					<parameter name="toposize" type="long" in="context.topoContainer.size()"/>
+					<parameter name="toposize" type="long"/>
 				</parameters>
 				<log>
 					<![CDATA[topoContainer size=<%=context.topoContainer.size()%>]]>
 				</log>
+				<set name="toposize" value="context.topoContainer.size()"/>
 			</function>
 			<function name="Findtopo">
 				<parameters>
@@ -156,7 +157,7 @@
 															{"id":"of:<%=context.fromdevice.toString()%>/<%=context.srcport.toString()%>-of:<%=context.todevice.toString()%>/<%=context.dstport.toString()%>",
 															"type":"direct",
 															"expected":false,
-															"online":true,
+											 				"online":true,
 															"linkWidth":1.2,
 															"src":"of:<%=context.fromdevice.toString()%>",
 															"srcPort":"<%=context.srcport.toString()%>",
