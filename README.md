@@ -17,7 +17,7 @@ StarOS-Controller
 ### StarLang SDN编程语言
 * 支持面向对象的编程方式，类，数据封装，继承.
 * 支持运算位运算<<,>>,+,-,*,%,/,~,^,&.
-* 支持关键字for,while,if,function,openflow,netconf, restful等流程控制语法.
+* 支持关键字for,while,if,switch-case,function,openflow,netconf, restful等流程控制语法.
 * 支持数据类型，uint8_t, uint16_t, uint32_t,uint64_t, void,string, class, object,param,long等基本数据类型.
 * 支持自定义类类型
 * 支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.
@@ -45,8 +45,11 @@ StarOS-Controller
 * 控制器登UI地址:
 http://ip:9922/onos/ui/index.html
 
-* 控制器开发手册文档地址:
+* 控制器API地址:
  http://ip:9922/onos/v1/docs/index.html
+ 
+* 控制器开发手册文档地址:
+ http://ip:9922/onos/ui/webdocs/index.html
 
 * StarOS系统配置界面:
 https://ip:8282/starcore/ui/index.html
