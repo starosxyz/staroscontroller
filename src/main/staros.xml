@@ -83,12 +83,13 @@
 				<log>staros TimeOutEvent 2017.08.28</log>
 				<function name="OpenFlowDetect"/>
 				<function name="Timeout" class="SessionManager"/>
-				
+				<variable name="toposize" type="long"/>	
 				<function name="GettopoSize" class="TopoManager">
 					<parameters>
-						<parameter name="toposize" type="long"/>
+						<parameter name="toposize" type="long" out="context.toposize"/>
 					</parameters>
 				</function>
+				<log leve="1"><![CDATA[toposize= '<%=context.toposize.toLong()%>']]></log>
 			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
 			</function>

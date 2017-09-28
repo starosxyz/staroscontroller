@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<container name="dirlist" type="list" valuetype="string"/>
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="key" type="string"/>
+			<messageblock name="filecontent"/>
+			<variable name="testparams" type="string"/>
+			<function>
+				<log>session.ONSTART</log>
+				<log>get event name test</log>
+				<readdir dir="'/opt/staros.xyz/'" list="context.dirlist"/>
+				<log dest="stdout"><![CDATA[dirlist size = '<%=context.dirlist.size()%>']]></log>
+				<for var="i" from="0" to="context.dirlist.size()-1">
+					<function>
+						<log><![CDATA[dir= <%=context.dirlist.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+					</function>
+				</for> 
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

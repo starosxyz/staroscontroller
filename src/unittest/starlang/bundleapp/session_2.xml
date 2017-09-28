@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="testcalss1" reference="global.testcalss"/>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<log>bundleapp.startup</log>
+				<log><![CDATA[bundleapp.startup= <%=global.globalstring.toString()%>]]></log>
+				<function name="test" class="context.testcalss1"/>
+			</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+			<function>
+				<log>~bundleapp.shutdown</log>
+				<log><![CDATA[ bundleapp.ONSTART eventname= <%=event.getName()%>]]></log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

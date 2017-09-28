@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang-class name="sss">
+	<define namespace="sss" name="sdfsdfsd"/>
+	<function name="startopenflow">
+		<variable name="openflowparams" type="params"/>
+		<set name="openflowparams" paramname="listenip" value="'0.0.0.0'"/>
+		<set name="openflowparams" paramname="listenport" value="'6633'"/>
+		<set name="openflowparams" paramname="protocol" value="'tcp'"/>
+		<set name="openflowparams" paramname="cerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<set name="openflowparams" paramname="keyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<openflow method="SERVER" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
+	</function>
+	<function name="startopenflowclient">
+		<variable name="openflowparams" type="params"/>
+		<set name="openflowparams" paramname="controllerip" value="'0.0.0.0'"/>
+		<set name="openflowparams" paramname="controllerport" value="'6633'"/>
+		<set name="openflowparams" paramname="protocol" value="'tcp'"/>
+		<set name="openflowparams" paramname="cerfile" value="'tcp'"/>
+		<set name="openflowparams" paramname="keyfile" value="'tcp'"/>
+		<openflow method="CLIENT" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
+	</function>
+  <events>
+    <onevent event="class.starup">
+      <variable name="calloutSession" type="long"/>
+      <function>
+        <log dest="stdout">##########STAROS application start#######</log>
+      </function>
+    </onevent>
+    <onevent event="class.shutdown">
+      <function>
+        <log dest="stdout">##########STAROS session.ONSTART#######</log>
+		<function name="startopenflow"/>
+      </function>
+    </onevent>
+    <onevent event="openflow.Connected">
+      <function>
+		<variable name="openflowparams" type="params"/>
+		<set name="openflowparams" paramname="transportid" value="event.getParam('transportid').toString()"/>
+        <log dest="stdout">openflow.Connected</log>
+		<openflow method="openflow.OFPT13_HELLO" params="context.openflowparams">
+			<json>
+				<![CDATA[ 
+					{
+						"version":"4",
+						"type":"0",
+						"xid":"<%=event.getParam('transportid').toString()%>",
+						"elementtype":"1",
+						"elementlength":"8",
+						"elementbitmap":"10"
+					}
+				]]>
+			</json>
+		</openflow>
+		<openflow method="DISCONNECT" params="context.openflowparams"/>
+      </function>
+    </onevent>
+    <onevent event="openflow.Disconnected">
+      <function>
+        <log dest="stdout">openflow.Disconnected</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 0 -->
+    <onevent event="openflow.OFPT13_HELLO">
+      <function>
+        <log dest="stdout">Get a Hello Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 1 -->
+    <onevent event="openflow.OFPT13_ERROR">
+      <function>
+      	<log dest="stdout">Get a Error Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 2 -->
+    <onevent event="openflow.OFPT13_ECHO_REQUEST">
+      <function>
+      	<log dest="stdout">Get a EchoRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 3 -->
+    <onevent event="openflow.OFPT13_ECHO_REPLY">
+      <function>
+      	<log dest="stdout">Get a EchoReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 4 -->
+    <onevent event="openflow.OFPT13_EXPERIMENTER">
+      <function>
+      </function>
+    </onevent>
+	<!-- 5 -->
+    <onevent event="openflow.OFPT13_FEATURES_REQUEST">
+      <function>
+      	<log dest="stdout">Get a FeaturesRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 6 -->
+    <onevent event="openflow.OFPT13_FEATURES_REPLY">
+      <function>
+      	<log dest="stdout">Get a FeaturesReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 7 -->
+    <onevent event="openflow.OFPT13_GET_CONFIG_REQUEST">
+      <function>
+      	<log dest="stdout">Get a GetConfigRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 8 -->
+    <onevent event="openflow.OFPT13_GET_CONFIG_REPLY">
+      <function>
+      	<log dest="stdout">Get a GetConfigReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 9 -->
+    <onevent event="openflow.OFPT13_SET_CONFIG">
+      <function>
+      	<log dest="stdout">Get a SetConfig Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 10 -->
+    <onevent event="openflow.OFPT13_PACKET_IN">
+      <function>
+      	<log dest="stdout">Get a PacketIn Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 11 -->
+    <onevent event="openflow.OFPT13_FLOW_REMOVED">
+      <function>
+      	<log dest="stdout">Get a FlowRemoved Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 12 -->
+    <onevent event="openflow.OFPT13_PORT_STATUS">
+      <function>
+      	<log dest="stdout">Get a PortStatus Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 13 -->
+    <onevent event="openflow.OFPT13_PACKET_OUT">
+      <function>
+      	<log dest="stdout">Get a PacketOut Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 14 -->
+    <onevent event="openflow.OFPT13_FLOW_MOD">
+      <function>
+      	<log dest="stdout">Get a FlowMod Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 15 -->
+    <onevent event="openflow.OFPT13_GROUP_MOD">
+      <function>
+      	<log dest="stdout">Get a GroupMod Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 16 -->
+    <onevent event="openflow.OFPT13_PORT_MOD">
+      <function>
+      	<log dest="stdout">Get a PortMod Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 17 -->
+    <onevent event="openflow.OFPT13_TABLE_MOD">
+      <function>
+      	<log dest="stdout">Get a TableMod Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 18 -->
+    <onevent event="openflow.OFPT13_MULTIPART_REQUEST ">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 19 -->
+    <onevent event="openflow.OFPT13_MULTIPART_REPLY">
+      <function>
+      	<log dest="stdout">Get a MultipartReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 20 -->
+    <onevent event="openflow.OFPT13_BARRIER_REQUEST">
+      <function>
+      	<log dest="stdout">Get a BarrierRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 21 -->
+    <onevent event="openflow.OFPT13_BARRIER_REPLY">
+      <function>
+      	<log dest="stdout">Get a BarrierReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 22 -->
+    <onevent event="openflow.OFPT13_QUEUE_GET_CONFIG_REQUEST">
+      <function>
+      	<log dest="stdout">Get a QueueGetConfigRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 23 -->
+    <onevent event="openflow.OFPT13_QUEUE_GET_CONFIG_REPLY">
+      <function>
+      	<log dest="stdout">Get a QueueGetConfigReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 24 -->
+    <onevent event="openflow.OFPT13_ROLE_REQUEST">
+      <function>
+      	<log dest="stdout">Get a RoleRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 25 -->
+    <onevent event="openflow.OFPT13_ROLE_REPLY">
+      <function>
+      	<log dest="stdout">Get a RoleReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 26 -->
+    <onevent event="openflow.OFPT13_GET_ASYNC_REQUEST">
+      <function>
+      	<log dest="stdout">Get a GetAsyncRequest Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 27 -->
+    <onevent event="openflow.OFPT13_GET_ASYNC_REPLY">
+      <function>
+      	<log dest="stdout">Get a GetAsyncReply Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 28 -->
+    <onevent event="openflow.OFPT13_SET_ASYNC">
+      <function>
+      	<log dest="stdout">Get a SetAsync Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!-- 29 -->
+    <onevent event="openflow.OFPT13_METER_MOD">
+      <function>
+      	<log dest="stdout">Get a MeterMod Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	
+	
+	<!--Request 13-0-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-1-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_FLOW Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-2-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_AGGREGATE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-3-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_TABLE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-4-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_PORT_STATS Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-5-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_QUEUE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-6-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_GROUP Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-7-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_GROUP_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-8-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-9-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_METER Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-10-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_CONFIG">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_METER_CONFIG Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-11-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_METER_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_METER_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-12-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_TABLE_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Request 13-13-->
+	<onevent event="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartRequest.OFP13MP_PORT_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+
+    <!--Reply 13-0-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-1-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_FLOW Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-2-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_AGGREGATE">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_AGGREGATE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-3-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_TABLE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-4-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_PORT_STATS Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-5-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_QUEUE Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-6-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_GROUP Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-7-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_GROUP_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-8-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_GROUP_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-9-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_METER Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-10-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_CONFIG">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_METER_CONFIG Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-11-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_METER_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-12-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE_FEATURES">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_TABLE_FEATURES Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+	<!--Reply 13-13-->
+	<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC">
+      <function>
+      	<log dest="stdout">Get a MultipartReply.OFP13MP_PORT_DESC Message</log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+      </function>
+    </onevent>
+  </events>
+</starlang-class>

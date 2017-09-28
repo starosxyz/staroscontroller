@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<variable name="stringkey" type="string" value="'stringkey1'"/>
+	<variable name="stringvalue" type="string" value="'stringvalue1'"/>
+	<container name="containerhashmap" type="hashmap" keytype="string" valuetype="string"/>
+	<function name="starttest">
+		<script>
+			<![CDATA[
+				var hashcontainer = context.createContainer("hashmap", "string", "string");
+				var length=hashcontainer.size();
+				var stringkey='stringkey';
+				var stringvalue='stringvalue';
+				hashcontainer.addValue(stringkey, stringvalue);
+				hashcontainer.addValue(context.stringkey.toString(), context.stringvalue.toString());
+				context.print(hashcontainer.size());
+				context.containerhashmap.assign(hashcontainer);
+				context.print(context.containerhashmap.size());
+				
+				
+				for(var i=0;i<hashcontainer.size();i++)
+				{
+					var itemvalue = hashcontainer.getValueByIndex(i);
+					var itemkey = hashcontainer.getKeyByIndex(i);
+					context.print(itemvalue+' '+itemkey);
+				}
+				
+				if (hashcontainer.hasValue('stringkey1')==true)
+				{
+					context.print('hasvalue');
+				}
+				else
+				{
+					context.print('no hasvalue');
+				}
+				//sdfsdfsd
+				if (hashcontainer.hasValue(context.stringkey.toString())==true)
+				{
+					context.print('hasvalue1');
+				}
+				else
+				{
+					context.print('not hasvalue1');
+				}
+				
+				hashcontainer.removeValue(context.stringkey.toString());
+				hashcontainer.removeValue('sss');
+				context.print(hashcontainer.size());
+				hashcontainer.clear();
+				context.print(hashcontainer.size());
+				context.destroyContainer(hashcontainer);
+			]]>
+		</script>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="starttest"/>
+		</onevent>
+	</events>
+</starosxml>

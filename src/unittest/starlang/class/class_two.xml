@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<class name="CTestClassBase">
+		<private>
+			<container name="merterContainer" type="hashmap" keytype="string" valuetype="string"/>
+		</private>
+	</class>
+	<class name="CTestClass">
+		<private>
+			<container name="merterContainer" type="hashmap" keytype="string" valuetype="string"/>
+		</private>
+	</class>
+	<function name="testclasssss">
+		<log>testclasssss new object</log>
+		<variable name="testclass" type="class"/>
+		<variable name="testclass2" type="class"/>
+		<new name="testclass" class="CTestClassBase"/>
+		<new name="testclass2" class="CTestClass"/>
+	</function>
+	<events>
+		<onevent event="session.startup">
+			<function>
+				<log>session.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+					this.test;
+				  ]]></script>
+			</function>
+			<function name="testclasssss"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

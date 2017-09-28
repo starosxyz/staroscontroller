@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+	<include src="/root/localsvn/starlang-1.1.0/build/starlang_debug-1.1.0/unittest/callstack/callstack2.xml"/>
+	<variable name="newSession"/>
+	<logconfig dest="stdout"/>
+	<function name="test">
+		<variable name="strname1" type="string" value="'11111'"/>
+		<function>
+			<log>test</log>
+		</function>
+		<function name="test2"/>
+	</function>
+	<function name="test2">
+		<function>
+			<log>test2</log>
+		</function>
+		<log><![CDATA[strname1 <%=context.strname1.toString()%>]]> </log>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<container name="testcontainer" type="hashmap" keytype="string" valuetype="string"/>
+			<variable name="strname" type="string" value="'11111'"/>
+			<function>
+				<log>session.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+					this.test;
+				  ]]></script>
+			</function>
+			<set name="newSession" value="'22222'"/>
+			<log><![CDATA[newSession size <%=context.newSession.toString()%>]]> </log>
+			<log><![CDATA[strname size <%=context.strname.toString().length%>]]> </log>
+			<function name="test"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

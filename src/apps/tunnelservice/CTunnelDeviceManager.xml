@@ -133,7 +133,7 @@
 					<parameter name="ischanage" type="boolean"/>
 				</parameters>
 				
-				<if cond="context.path.toString()==thisclass.tunnelDeviceJsonStr.toString()">
+				<if cond="context.path.toString()==thisclass.tunnelPath.toString()">
 					<then>
 						<set name="context.ischanage" value="true"/>
 					</then>

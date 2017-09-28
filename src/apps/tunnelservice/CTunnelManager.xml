@@ -339,7 +339,12 @@
 				</for>
 				<set name="context.result" value="context.final_result.toBoolean()"/>
 			</function>
-
+			<function name="getTunnelNum">
+				<parameters>
+					<parameter name="size" type="long"/>
+				</parameters>
+				<set name="context.size" value="thisclass.tunnelContainer.size()"/>
+			</function>
 		</public>
 	</class>
 </starosxml>

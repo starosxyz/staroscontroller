@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="newSession"/>
+	<logconfig dest="stdout"/>
+	<function name="TestFunction">
+		<parameters>
+			<parameter name="CTesttestparamin" type="string"/>
+			<parameter name="CTesttestparamout" type="string"/>
+			<parameter name="listin" type="list"/>
+			<parameter name="listout" type="list"/>
+		</parameters>
+		<container name="outlist" type="list" valuetype="string"/>
+		<insert name="outlist" value="'listlistlist'"/>
+		<log><![CDATA[CTesttestparamin <%=context.CTesttestparamin.toString()%>]]> </log>
+		<log><![CDATA[listin size <%=context.listin.size()%>]]> </log>
+		<set name="CTesttestparamout" value="'1111111'"/>
+		<set name="listout" value="context.outlist"/>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="testparamin" type="string"/>
+			<variable name="testparamout" type="string"/>
+			<container name="inlist" type="list" valuetype="string"/>
+			<container name="outlist" type="list" valuetype="string"/>
+			<set name="testparamin" value="'222222222222222'"/>
+			<insert name="inlist" value="'listlistlist'"/>
+			<function name="TestFunction">
+				<parameters>
+					<parameter name="CTesttestparamin" type="string" in="context.testparamin"/>
+					<parameter name="CTesttestparamout" type="string" out="testparamout"/>
+					<parameter name="listin" type="list" in="context.inlist"/>
+					<parameter name="listout" type="list" out="context.outlist"/>
+				</parameters>
+			</function>
+			<log><![CDATA[testparamout <%=context.testparamout.toString()%>]]> </log>
+			<log><![CDATA[outlist <%=context.outlist.size()%>]]> </log>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

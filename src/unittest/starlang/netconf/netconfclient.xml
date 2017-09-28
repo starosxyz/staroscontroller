@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<function name="StarNetConfClient">
+		<variable name="clientparams" type="params"/>
+		<set name="clientparams" paramname="password" value="testpassword"/>
+		<set name="clientparams" paramname="username" value="testusername"/>
+		<set name="clientparams" paramname="keyFile" value="/opt/staros.xyz/staros/system/keyfile.pem"/>
+		<set name="clientparams" paramname="keepalive" value="disable"/>
+		<set name="clientparams" paramname="listenip" value="0.0.0.0"/>
+		<set name="clientparams" paramname="listenport" value="4455"/>
+		<netconf action="StartClient" params="clientparams" connectedevent="Netconf.connected" dataevent="Netconf.dataevent"/>
+		<wait event="Netconf.connected"/>
+		<netconf action="SendData" transportid="event.getParams('transportid')">
+			<xml>
+				<![CDATA[
+					<f></f>
+				]]>
+			</xml>
+		</netconf>
+	</function>
+	<events>
+		<onevent event="application.ONSTART">
+		<variable name="bstop" type="boolean" value="true"/>
+			<function>
+				<script><![CDATA[
+					var student = new Object(); 
+					student.name = "Lanny"; 
+					student.age = "25"; 
+					student.location = "China"; 
+					var json = JSON.stringify(student); 
+					context.nulltest.setValue(json);
+					var json = '{"name":"GDT","age":"15","University":"GDUT"}';
+					var info = JSON.parse(json);
+					context.nulltest.setValue(info.name);
+				]]></script>
+				<log><![CDATA[ nulltest= <%=context.nulltest.toString()%>]]></log>
+				<log>******************************************************************************************</log>
+				<log>*</log>
+				<log>*  Copyright (C) 2013-2017, Nanjing WFNEX Technology Co., Ltd</log>
+				<log>*</log>
+				<log>******************************************************************************************</log>
+				<while cond="context.bstop.toBoolean()">
+					<function>
+						<function name="Restfulclient"/>
+					</function>
+				</while>
+			</function>
+		</onevent>
+		<onevent event="session.ONSTART">
+			<variable name="dbdialog"/>
+			<function>
+				<log>session.ONSTART</log>
+				<!--raise name="application.check"/-->
+			</function>
+		</onevent>
+		<onevent event="test">
+			<variable name="dbdialog"/>
+			<variable name="testxml" type="long"/>
+			<variable name="strname" type="string"/>
+			<function>
+				<script><![CDATA[var str = '<fu>x</fu>';
+					var x = new XML('<root><fu>x2</fu><fu>xssss</fu></root>');
+					context.testxml.setValue(x.children().length());
+					context.strname.setValue(x.children()[0].toString());
+				  ]]></script>
+				<log dest="stdout"><![CDATA[SystemInit get a event '<%=context.testxml.toLong()%>']]></log>
+				<log dest="stdout"><![CDATA[strname= '<%=context.strname.toString()%>']]></log>
+				<log>get event name test</log>
+				<application method="LocalEventRequest" event="hellorequest">
+					<applicationdata>
+						<![CDATA[ 
+						hello world;
+						]]>
+					</applicationdata>
+				</application>
+				<wait event="hellorequest" timeout="1000"/>
+				<log>i am here</log>
+				<!--end reason="call. end."/-->
+			</function>
+		</onevent>
+		<onevent event="application.check">
+		  <function>
+			<log dest="stdout"><![CDATA[get a event '<%=event.getName()%>']]></log>
+			<function>
+			  <!--raise name="application.check"/-->
+			</function>
+		  </function>
+		</onevent>
+		<onevent event="restfulresponse.event">
+			<function>
+		<log level="stdout"><![CDATA[ http response event <%=event.getName()%>]]> </log>
+		<log dest="stdout"><![CDATA[http response status '<%=event.getParam("status").toString()%>']]></log>
+		<log dest="stdout"><![CDATA[http response content '<%=event.getParam("eventdata").toString()%>']]></log>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

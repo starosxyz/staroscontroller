@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<class name="CTestClassBase">
+		<private>
+			<variable name="variableprivate" type="string"/>
+			<function name="FunctioninCTestBasePrivate">
+				<function>
+					<set name="variableprivate" value="'variableprivate'"/>
+					<log>FunctioninCTestBasePrivate</log>
+					<log><![CDATA[variableprivate <%=context.variableprivate.toString()%>]]> </log>
+				</function>
+			</function>
+		</private>
+		<protected>
+			<variable name="variableprotected" type="string"/>
+			<function name="FunctioninCTestBaseProtected">
+				<function>
+					<set name="variableprotected" value="'variableprotected'"/>
+					<log>FunctioninCTestBaseProtected</log>
+					<log><![CDATA[variableprotected <%=context.variableprotected.toString()%>]]> </log>
+				</function>
+			</function>
+		</protected>
+		<public>
+			<variable name="variablepublic" type="string"/>
+			<function name="FunctioninCTestBasePublic">
+				<function>
+					<set name="variablepublic" value="'variablepublic'"/>
+					<log>FunctioninCTestBasePublic</log>
+					<log><![CDATA[variablepublic <%=context.variablepublic.toString()%>]]> </log>
+				</function>
+			</function>
+		</public>
+	</class>
+	<class name="CTestClass" extends="CTestClassBase">
+		<private>
+			<variable name="classstring2" type="string"/>
+		</private>
+		<public>
+			<function name="FunctioninCTest">
+				<function>
+					<function name="FunctioninCTestBaseProtected"/>
+					<set name="variableprivate" value="'classstring1_11'"/>
+					<set name="variableprotected" value="'classstring2'"/>
+					<set name="variablepublic" value="'classstring2'"/>
+					<log>FunctioninCTest</log>
+					<log><![CDATA[variableprivate <%=context.variableprivate.toString()%>]]> </log>
+					<log><![CDATA[variableprotected <%=context.variableprotected.toString()%>]]> </log>
+					<log><![CDATA[variablepublic <%=context.variablepublic.toString()%>]]> </log>
+				</function>
+			</function>
+			<function name="TestParamList">
+				<parameters>
+					<parameter name="testparam" type="string"/>
+					<parameter name="testoutparam" type="string"/>
+				</parameters>
+				<set name="classstring2" value="context.testparam.toString()"/>
+				<log><![CDATA[TestParamList <%=context.classstring2.toString()%>]]> </log>
+				<set name="testoutparam" value="context.testparam.toString()"/>
+			</function>
+		</public>
+	</class>
+	<function name="testclasssss">
+		<log>testclasssss new object</log>
+		<variable name="testclass" type="class"/>
+		<variable name="testoutput" type="string"/>
+		<new name="testclass" class="CTestClass"/>
+		<function name="FunctioninCTestBasePublic" class="context.testclass"/>
+		<function name="TestParamList" class="context.testclass">
+			<parameters>
+				<parameter name="testparam" type="string" in="'ssssssssss'"/>
+				<parameter name="testoutparam" type="string" out="testoutput"/>
+			</parameters>
+		</function>
+		<log><![CDATA[TestParamList  testoutput <%=context.testoutput.toString()%>]]> </log>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<log>bundleapp.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+					this.test;
+				  ]]></script>
+			</function>
+			<function name="testclasssss"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

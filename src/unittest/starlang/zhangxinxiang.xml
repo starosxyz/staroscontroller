@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--zhang xinxiang-->
+	<function name="TestMPPORTSTATS">
+		<log>"send portstats_request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<parameter name="portno" type="string" in="'8866'" />
+			</parameters>
+		</function>
+		<log>"wait portstats_reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	<function name="TestMPQUEUE">
+		<log>"send queue_request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<parameter name="portno" type="string" in="'8866'" />
+			</parameters>
+		</function>
+		<log>"wait queue_reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+	<function name="TestMPGROUP">
+		<log>"send group_request loading..."</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<parameter name="groupid" type="string" in="'123456'" />
+			</parameters>
+		</function>
+		<log>"wait group_reply loading..."</log>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP" timeout="1000">
+			<function>
+				<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+			</function>
+		</wait>
+	</function>
+</starosxml>

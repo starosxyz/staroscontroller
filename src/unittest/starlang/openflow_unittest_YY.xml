@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="TestMPTableRequest">
+		<log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE</log>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
+			<parameters>
+				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+			</parameters>
+		</function>
+		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
+			<function>
+				<log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE WAIT</log>
+				<log><![CDATA[servicer_reply event name=<%=event.getName().toString()%>]]></log>
+				<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+				<log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE WAIT_OUT</log>
+			</function>
+		</wait>
+		<log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE OUT</log>
+	</function>	
+</starosxml>

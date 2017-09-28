@@ -309,6 +309,8 @@
 								<then>
 									<function>
 										<set name="strlink" value="context.openflowserverobj.getShortestPath(context.srcdevicedpid2.toString(), context.dstdevicedpid.toString())"/>
+										<log leve="1"><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
+											
 											<script><![CDATA[
 													if (context.strlink.toString().length>0)
 													{

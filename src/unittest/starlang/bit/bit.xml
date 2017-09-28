@@ -1,0 +1,6 @@
+<operator right="data16" operator="<<" left="22"/> 
+<operator name="context.ss" right="context.sss" operator="+" left="context.ddd"/> 
+<operator name="context.ss" right="context.sss" operator="<<" left="context.ddd"/> 
+
+<operator name="context.ss" right="context.sss" operator="&" left="context.ddd"/> 
+

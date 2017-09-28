@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="newSession2"/>
+	<function name="test4">
+		<function>
+			<log>test</log>
+		</function>
+	</function>
+</starosxml>

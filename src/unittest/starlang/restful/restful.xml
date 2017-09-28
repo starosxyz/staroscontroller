@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starlang" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<function name="Restfulclient">
+		<variable name="netconfparams" type="params"/>
+		<set name="netconfparams" paramname="username" value="testname"/>
+		<set name="netconfparams" paramname="password" value="testpassword"/>
+		<restful action="REQUEST" url="" username="" method="get" password=" " httpparams="netconfparams" dataevent="restfulresponse.event">
+			<json>
+				<![CDATA[ 
+					hello world;
+				]]>
+			</json>
+		</restful>
+		<wait event="restfulresponse.event"/>
+		<log dest="stdout"><![CDATA[get net conf response a event '<%=event.getParam("sessionid").toString()%>']]></log>
+	</function>
+	<function name="RestfulServer">
+		<variable name="restfulparams" type="params"/>
+		<variable name="transportid" type="long"/>
+		<set name="restfulparams" paramname="listenip" value="10.1.1.1"/>
+		<set name="restfulparams" paramname="listenport" value="8800"/>
+		<set name="restfulparams" paramname="protocol" value="https"/>
+		<set name="restfulparams" paramname="cerfile" value="/opt/staros.xyz/starcore/system/cer.pem"/>
+		<set name="restfulparams" paramname="keyfile" value="/opt/staros.xyz/starcore/system/key.pem"/>
+		<restful action="SERVER" params="restfulparams" dataevent="restful.event"/>
+		<wait event="restful.event"/>
+		<log dest="stdout"><![CDATA[get net conf response a event '<%=event.getParam("transportid").toString()%>']]></log>
+		<set name="headparams" paramname="Content-Type" value="application/json; charset=utf-8"/>
+		<set name="transportid" value="event.getParam('transportid').toLong()"/>
+		<restful action="RESPONSE" status="200" text="OK" transportid="context.transportid" httpparams="headparams">
+			<json>
+				<![CDATA[ 
+					hello world;
+				]]>
+			</json>
+		</restful>
+	</function>
+</starosxml>

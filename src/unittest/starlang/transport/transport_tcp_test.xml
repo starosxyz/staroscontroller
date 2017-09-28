@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="tcpserver" type="object"/>
+	<variable name="tcpclient" type="object"/>
+	<variable name="teststring" type="string" value="'ssssss'"/>
+	<function name="TCPServer">
+		<variable name="transportparams" type="params"/>
+		<log>TCPServer</log>
+		<set name="transportparams" paramname="ip" value="'192.168.122.129'"/>
+		<set name="transportparams" paramname="port" value="'2223'"/>
+		<set name="transportparams" paramname="protocol" value="'tcp'"/>
+		<set name="transportparams" paramname="dataevent" value="'TCPServer.Recive.Event'"/>
+		<set name="transportparams" paramname="disconnectevent" value="'TCPServer.Disconnect.Event'"/>
+		<set name="transportparams" paramname="connectevent" value="'TCPServer.Connected.Event'"/>
+		<transport name="tcpserver" action="Server" params="transportparams" />
+	</function>
+	<function name="TCPClient">
+		<variable name="transportparams" type="params"/>
+		<log>TCPClient</log>
+		<set name="transportparams" paramname="ip" value="'192.168.122.129'"/>
+		<set name="transportparams" paramname="port" value="'2223'"/>
+		<set name="transportparams" paramname="protocol" value="'tcp'"/>
+		<set name="transportparams" paramname="dataevent" value="'TCPClient.Recive.Event'"/>
+		<set name="transportparams" paramname="disconnectevent" value="'TCPClient.Disconnect.Event'"/>
+		<set name="transportparams" paramname="connectevent" value="'TCPClient.Connected.Event'"/>
+		<transport name="tcpclient" action="Client" params="transportparams"/>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<function name="TCPServer"/>
+				<function name="TCPClient"/>
+			</function>
+		</onevent>
+		<onevent event="TCPServer.Recive.Event">
+			<messageblock name="msgblockparam"/>
+			<messageblock name="msgblockparam2" size="8"/>
+			<messageblock name="msgblockparam3" size="8"/>
+			<messageblock name="msgblockparam4" size="20"/>
+			<messageblock name="msgblockparam5" size="context.teststring.toString().length"/>
+			<variable name="data32" type="uint32_t"/>
+			<variable name="data16" type="uint16_t"/>
+			<variable name="data16_2" type="uint16_t"/>
+			<function>
+				<log>TCPData.Recive.Event</log>
+				<set name="msgblockparam" value="event.getMessageBlock()"/>
+				<log dest="stdout"><![CDATA[TCPServer.Recive msgblockparam size <%=context.msgblockparam.getChainedLength()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive msgblockparam5 size <%=context.msgblockparam5.getChainedCapacity()%>]]> </log>
+				<read name="msgblockparam" value="context.msgblockparam3"/>
+				<read name="msgblockparam" value="context.msgblockparam5"/>
+				<streamfrom name="msgblockparam3" value="context.data32"/>
+				<streamfrom name="msgblockparam3" value="context.data16"/>
+				<streamfrom name="msgblockparam3" value="context.data16_2"/>
+				<streamto name="msgblockparam2" value="context.data32"/>
+				<streamto name="msgblockparam2" value="context.data16"/>
+				<streamto name="msgblockparam2" value="context.data16_2"/>
+				<log dest="stdout"><![CDATA[TCPServer.Recive event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive Data <%=context.data32.toString()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive Data <%=context.data16.toString()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive Data <%=context.data16_2.toString()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive Data <%=context.msgblockparam5.toString()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Recive transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<write name="msgblockparam4" value="context.msgblockparam2"/>
+				<write name="msgblockparam4" value="context.msgblockparam5"/>
+				<transport name="tcpserver" action="SendMessage" transportid="event.getParam('transportid')">
+					<messageblocksrc src="context.msgblockparam4"/>
+				</transport>
+			</function>
+		</onevent>
+		<onevent event="TCPServer.Disconnect.Event">
+			<variable name="dbdialog"/>
+			<function>
+				<log>TCPData.Disconnect.Event</log>
+				<log dest="stdout"><![CDATA[TCPData.Disconnect event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPData.Disconnect transportid '<%=event.getParam("transportid").toString()%>']]></log>
+			</function>
+		</onevent>
+		<onevent event="TCPServer.Connected.Event">
+			<variable name="dbdialog"/>
+			<function>
+				<log>TCPData.Connected.Event</log>
+				<log dest="stdout"><![CDATA[TCPServer.Connected event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPServer.Connected transportid '<%=event.getParam("transportid").toString()%>']]></log>
+			</function>
+		</onevent>
+		<onevent event="TCPClient.Recive.Event">
+			<messageblock name="msgblockparam"/>
+			<messageblock name="msgblockparam2" size="8"/>
+			<messageblock name="msgblockparam3" size="8"/>
+			<messageblock name="msgblockparam4" size="20"/>
+			<messageblock name="msgblockparam5" size="context.teststring.toString().length"/>
+			<variable name="data32" type="uint32_t"/>
+			<variable name="data16" type="uint16_t"/>
+			<variable name="data16_2" type="uint16_t"/>
+			<function>
+				<log>TCPClient.Recive.Event</log>
+				<set name="msgblockparam" value="event.getMessageBlock()"/>
+				<read name="msgblockparam" value="context.msgblockparam3"/>
+				<read name="msgblockparam" value="context.msgblockparam5"/>
+				<streamfrom name="msgblockparam3" value="context.data32"/>
+				<streamfrom name="msgblockparam3" value="context.data16"/>
+				<streamfrom name="msgblockparam3" value="context.data16_2"/>
+				<streamto name="msgblockparam2" value="context.data32"/>
+				<streamto name="msgblockparam2" value="context.data16"/>
+				<streamto name="msgblockparam2" value="context.data16_2"/>
+				<write name="msgblockparam4" value="context.msgblockparam2"/>
+				<write name="msgblockparam4" value="context.msgblockparam5"/>
+				<log dest="stdout"><![CDATA[TCPClient.Recive event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPClient.Recive transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<transport name="tcpclient" action="SendMessage" transportid="event.getParam('transportid')">
+					<messageblocksrc src="context.msgblockparam4"/>
+				</transport>
+			</function>
+		</onevent>
+		<onevent event="TCPClient.Connected.Event">
+			<messageblock name="msgblockparam" size="8"/>
+			<variable name="strname" type="string"/>
+			<variable name="data32" type="uint32_t" value="12345"/>
+			<variable name="data16" type="uint16_t" value="6789"/>
+			<variable name="data16_2" type="uint16_t" value="1234"/>
+			<messageblock name="msgblockparam2" size="20"/>
+			<messageblock name="msgblockparam3"/>
+			<function>
+				<log>TCPClient.Connected.Event</log>
+				<log dest="stdout"><![CDATA[TCPClient.Connected event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPClient.Connected transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<set name="strname" value="'sdfsdfssssssssssssssssssssssssssssssssssdf'"/>
+				<set name="msgblockparam3" value="context.teststring.toMessageBlock()"/>
+				<log dest="stdout"><![CDATA[TCPClient.Connected msgblockparam3 <%=context.msgblockparam3.toString()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPClient.Connected msgblockparam3 size<%=context.msgblockparam3.getChainedLength()%>]]> </log>
+				<streamto name="msgblockparam" value="context.data32"/>
+				<streamto name="msgblockparam" value="context.data16"/>
+				<streamto name="msgblockparam" value="context.data16_2"/>
+				<write name="msgblockparam2" value="context.msgblockparam"/>
+				<write name="msgblockparam2" value="context.msgblockparam3"/>
+				<log dest="stdout"><![CDATA[TCPClient.Connected msgblockparam2 <%=context.msgblockparam2.getChainedLength()%>]]> </log>
+				<transport name="tcpclient" action="SendMessage" transportid="event.getParam('transportid').toString()">
+					<messageblocksrc src="context.msgblockparam2"/>
+				</transport>
+			</function>
+		</onevent>
+		<onevent event="TCPClient.Disconnect.Event">
+			<variable name="dbdialog"/>
+			<function>
+				<log>TCPClient.Disconnect.Event</log>
+				<log dest="stdout"><![CDATA[TCPClient.Disconnect event <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[TCPClient.Disconnect transportid '<%=event.getParam("transportid").toString()%>']]></log>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

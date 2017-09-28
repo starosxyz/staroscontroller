@@ -89,6 +89,8 @@ function install_rpm() {
 			rpm -ihv ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
+	rm -rf /opt/staros.xyz/dipc/scripts/startup.xml;
+	cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
 }
 
 function get_rpm() {
@@ -126,7 +128,7 @@ function get_rpm() {
 	else
 		wget -P ../package/centos/ https://github.com/starosxyz/staros/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
 	fi
-	cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
+	
 }
 
 function uninstall_rpm() {

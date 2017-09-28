@@ -81,13 +81,12 @@
 								var paramname = trim(arrayparam[0]);
 								
 								var paramvalue = trim(arrayparam[1]);
-								context.print("paramvalue  huhuhu!!"+paramvalue);
-								context.print("paramname   huhuhu!!"+paramname);
+
 								if (paramname=="JSESSIONID")
 								{
 									context.usersession.setValue(""+paramvalue);
-									context.print("insert into second if!");
-									context.print(context.usersession.toString);
+
+
 									break;
 								}
 							}
@@ -143,7 +142,6 @@
 											<set name="httpparam" paramname="Location" value="'/onos/ui/index.html'"/>
 											<set name="sendjsessionid" value="restful.randjsessionid()"/>
 											<set name="httpparam" paramname="Set-Cookie" value="'JSESSIONID='+context.sendjsessionid.toString()+'; path=/'"/>
-											<log><![CDATA[huhuhuh!!!!!!!! sendjsessionid= '<%=context.sendjsessionid.toString()%>']]></log>
 											<function name="CreateSession" class="SessionManager">
 												<parameters>
 													<parameter name="sessionid" type="string" in="context.sendjsessionid.toString()"/>
@@ -186,7 +184,7 @@
 													var filefirst=filenames.indexOf("=");
 													var filelast=filenames.indexOf(".xml");
 													var filename=filenames.substring(filefirst+2,filelast+4);
-													context.print("filename!!!!!!!!!!!!:"+filename);
+													context.print(filename);
 													var filenamefloderindex=filenames.indexOf("=");
 													var filenamefloderlastindex=filenames.indexOf(".xml");
 													var filenamefloder=filenames.substring(filenamefloderindex+2,filenamefloderlastindex);
@@ -194,13 +192,13 @@
 													context.appname.setValue(filenamefloder);
 													var absolutefilename="/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder+"/"+filename;
 													context.filepath.setValue("/opt/staros.xyz/staroscontroller/starlang/apps/"+filenamefloder);
-													context.print("absolutefilename!!!!!!!!!!!!:"+absolutefilename);
+													context.print(absolutefilename);
 													context.filename.setValue(absolutefilename);
 													var head=x.indexOf("<?xml");
-													context.print("head!!!!!!!!!!!!:"+head);
+													
 													var end=x.indexOf("</starosxml>");
 													var contents=x.substring(head,end+12);
-													context.print("contents!!!!!!!!!!!!:"+contents);
+											
 													context.xmldata.setValue(contents);
 												  ]]></script>
 											  
@@ -265,13 +263,10 @@
 								var decodedString = Base64.decode(str);  
 								var username=decodedString.split(":")[0];
 								var password=decodedString.split(":")[1];
-								context.print("username"+username);
-								context.print("password"+password);
 								context.usernameparam.setValue(username);
 								context.passwordparam.setValue(password);
 							]]></script>
-					
-											
+		
 							<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 							<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
 							<reference variable="injson">

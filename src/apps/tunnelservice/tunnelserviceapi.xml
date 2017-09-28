@@ -68,6 +68,24 @@
 	<events>
 		<onevent event="processactiverequest">
 			<log>tunnelserviceapi processactiverequest</log>
+			<variable name="size" type="long"/>
+			<function name="getTunnelNum" class="context.tunnelManagerObject">
+				<parameters>
+					<parameter name="size" type="long" out="context.size"/>
+				</parameters>
+			</function>
+			<if cond="context.size.toLong()==0">
+				<then>
+					<function name="ErrorDataResponse">
+						<parameters>
+							<parameter name="resourceid" type="long" in="-1"/>
+							<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+							<parameter name="description" type="string" in="'This tunnelcontanier size is null!'"/>
+						</parameters>
+					</function>
+					<exit/>
+				</then>
+			</if>
 			<function name="ActiveTunnel" class="context.tunnelManagerObject"/>
 			<variable name="outjson" type="string"/>
 			<script><![CDATA[
@@ -89,6 +107,24 @@
 		</onevent>
 		<onevent event="processdeactiverequest">
 			<log>tunnelserviceapi processdeactiverequest</log>
+			<variable name="size" type="long"/>
+			<function name="getTunnelNum" class="context.tunnelManagerObject">
+				<parameters>
+					<parameter name="size" type="long" out="context.size"/>
+				</parameters>
+			</function>
+			<if cond="context.size.toLong()==0">
+				<then>
+					<function name="ErrorDataResponse">
+						<parameters>
+							<parameter name="resourceid" type="long" in="-1"/>
+							<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+							<parameter name="description" type="string" in="'This tunnelcontanier size is null!'"/>
+						</parameters>
+					</function>
+					<exit/>
+				</then>
+			</if>
 			<function name="DeactiveTunnel" class="context.tunnelManagerObject"/>
 			<variable name="outjson" type="string"/>
 			<script><![CDATA[
@@ -166,6 +202,18 @@
 				<parameter name="TunnelObject" type="class" out="context.tunnel"/>
 			</parameters>
 		</function>
+		<if cond="context.tunnel==null">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This tunnel is null!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
 		<function name="OneTunnelObjectToJsonString" class="context.tunnel">
 			<parameters>
 				<parameter name="TunnelObjectToJson" type="string" out="context.outjson"/>
@@ -192,10 +240,17 @@
 		<variable name="outputvlanid" type="long"/>
 		<variable name="bandwidth" type="long"/>		
 		<variable name="putindexof" type="long" value="0"/>
-		<variable name="inputdevice" type="string"/>
-		<variable name="outputdevice" type="string"/>
+		<variable name="inputdevice" type="string" value=""/>
+		<variable name="outputdevice" type="string" value=""/>
 		<variable name="indevice" type="class"/>
 		<variable name="outdevice" type="class"/>
+		<variable name="IsAlikePort" type="boolean" value="false"/>
+		<variable name="indeviceportobj" type="class"/>
+		<variable name="indeivceportnum" type="long"/>
+		<variable name="innum" type="long"/>
+		<variable name="outdeviceportobj" type="class"/>
+		<variable name="outdeivceportnum" type="long"/>
+		<variable name="outnum" type="long"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");
@@ -226,19 +281,68 @@
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.bandwidth.setValue(local_bandwidth);
+			if (local_inputport == local_outputPort)
+			{
+				context.IsAlikePort.setValue(true);
+			}
 			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
 			{
 				context.putindexof.setValue(1);
+				if (local_inputport.split(":")[1] != '')
+				{
+					if (local_inputport.split(":")[1].split("/")[0] != '')
+					{
+						if (local_inputport.split("/")[1] != '')
+						{
+							context.innum.setValue(local_inputport.split("/")[1]);
+							context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+						}
+					}
+				}
+				if (local_outputPort.split(":")[1] != '')
+				{
+					if (local_outputPort.split(":")[1].split("/")[0] != '')
+					{
+						if (local_outputPort.split("/")[1] != '')
+						{
+							context.outnum.setValue(local_outputPort.split("/")[1]);
+							context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+						}						
+					}
+				}				
 			}
-			context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
-			context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
 		]]></script>
+		<if cond="context.IsAlikePort.toBoolean() == true">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'The port data can not alike!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
 		<if cond="context.putindexof.toLong()!=1">
 			<then>
-				<function name="ErrorPortResponse">
+				<function name="ErrorDataResponse">
 					<parameters>
 						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'Port is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<if cond="context.inputdevice.toString()=='' || context.outputdevice.toString()==''">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'Port is wrong!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -249,7 +353,7 @@
 				<parameter name="outdevice" type="class" out="context.indevice"/>
 				<parameter name="datapathid" type="string" in="context.inputdevice.toString()"/>
 			</parameters>
-		</function>
+		</function>		
 		<function name="getDevice" class="DeviceManager">
 			<parameters>
 				<parameter name="outdevice" type="class" out="context.outdevice"/>
@@ -259,10 +363,55 @@
 		<if cond="context.indevice==null || context.outdevice==null">
 			<then>
 				<log>indevicde is null or outdevice is null</log>
-				<function name="ErrorDPIDResponse">
+				<function name="ErrorDataResponse">
 					<parameters>
 						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.indevice">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.indeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.indeviceportobj">
+			<parameters>
+				<parameter name="portnumber" type="long" out="context.indeivceportnum"/>
+			</parameters>
+		</function>
+		<if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This portnum is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.outdevice">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.outdeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.outdeviceportobj">
+			<parameters>
+				<parameter name="portnumber" type="long" out="context.outdeivceportnum"/>
+			</parameters>
+		</function>
+		<if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This portnum is wrong!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -309,12 +458,19 @@
 		<variable name="resourceid" type="long"/>
 		<variable name="outjson" type="string"/>
 		<variable name="tunnel" type="class"/>
-		<variable name="inputdevice" type="string"/>
-		<variable name="outputdevice" type="string"/>
+		<variable name="inputdevice" type="string" value=""/>
+		<variable name="outputdevice" type="string" value=""/>
 		<variable name="indevice" type="class"/>
 		<variable name="outdevice" type="class"/>
 		<variable name="putindexof" type="long" value="0"/>
 		<variable name="result" type="boolean"/>
+		<variable name="IsAlikePort" type="boolean" value="false"/>
+		<variable name="indeviceportobj" type="class"/>
+		<variable name="indeivceportnum" type="long"/>
+		<variable name="innum" type="long"/>
+		<variable name="outdeviceportobj" type="class"/>
+		<variable name="outdeivceportnum" type="long"/>
+		<variable name="outnum" type="long"/>
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
@@ -333,14 +489,49 @@
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.bandwidth.setValue(local_bandwidth);
+			if (local_inputport == local_outputPort)
+			{
+				context.IsAlikePort.setValue(true);
+			}
 			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
 			{
 				context.putindexof.setValue(1);
-			}
-			context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
-			context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+				if (local_inputport.split(":")[1] != '')
+				{
+					if (local_inputport.split(":")[1].split("/")[0] != '')
+					{
+						if (local_inputport.split("/")[1] != '')
+						{
+							context.innum.setValue(local_inputport.split("/")[1]);
+							context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+						}
+					}
+				}
+				if (local_outputPort.split(":")[1] != '')
+				{
+					if (local_outputPort.split(":")[1].split("/")[0] != '')
+					{
+						if (local_outputPort.split("/")[1] != '')
+						{
+							context.outnum.setValue(local_outputPort.split("/")[1]);
+							context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+						}						
+					}
+				}				
+			}			
 		]]></script>
-
+		<if cond="context.IsAlikePort.toBoolean() == true">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'The port data can not alike!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
 		<function name="IsHasValue" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="style" type="string" in="'inport'"/>
@@ -355,6 +546,7 @@
 					<parameters>
 						<parameter name="resourceid" type="long" in="-1"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -374,6 +566,7 @@
 					<parameters>
 						<parameter name="resourceid" type="long" in="-1"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -393,6 +586,7 @@
 					<parameters>
 						<parameter name="resourceid" type="long" in="-1"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -412,18 +606,31 @@
 					<parameters>
 						<parameter name="resourceid" type="long" in="-1"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>		
+		<if cond="context.putindexof.toLong()!=1">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'Port is wrong!'"/>
 					</parameters>
 				</function>
 				<exit/>
 			</then>
 		</if>
-
-		<if cond="context.putindexof.toLong()!=1">
+		<if cond="context.inputdevice.toString()=='' || context.outputdevice.toString()==''">
 			<then>
-				<function name="ErrorPortResponse">
+				<function name="ErrorDataResponse">
 					<parameters>
-						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'Port is wrong!'"/>
 					</parameters>
 				</function>
 				<exit/>
@@ -434,25 +641,70 @@
 				<parameter name="outdevice" type="class" out="context.indevice"/>
 				<parameter name="datapathid" type="string" in="context.inputdevice.toString()"/>
 			</parameters>
-		</function>
+		</function>		
 		<function name="getDevice" class="DeviceManager">
 			<parameters>
 				<parameter name="outdevice" type="class" out="context.outdevice"/>
 				<parameter name="datapathid" type="string" in="context.outputdevice.toString()"/>
 			</parameters>
-		</function>
+		</function>		
 		<if cond="context.indevice==null || context.outdevice==null">
 			<then>
 				<log>indevicde is null or outdevice is null</log>
-				<function name="ErrorDPIDResponse">
+				<function name="ErrorDataResponse">
 					<parameters>
 						<parameter name="resourceid" type="long" in="-1"/>
 						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This id is wrong!'"/>
 					</parameters>
 				</function>
 				<exit/>
 			</then>
 		</if>
+		<function name="GetPortManager" class="context.indevice">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.indeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.indeviceportobj">
+			<parameters>
+				<parameter name="portnumber" type="long" out="context.indeivceportnum"/>
+			</parameters>
+		</function>
+		<if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This portnum is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.outdevice">
+			<parameters>
+				<parameter name="outportmgr" type="class" out="context.outdeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.outdeviceportobj">
+			<parameters>
+				<parameter name="portnumber" type="long" out="context.outdeivceportnum"/>
+			</parameters>
+		</function>
+		<if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="-1"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This portnum is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>		
 		<function name="addTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<parameter name="id" type="long" out="context.resourceid"/>
@@ -516,6 +768,14 @@
 		<if cond="context.tunnel==null">
 			<then>
 				<log>tunnel is null</log>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<parameter name="resourceid" type="long" in="context.resourceid.toLong()"/>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="description" type="string" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
 			</then>
 			<else>
 				<function name="DeactiveTunnel" class="context.tunnel"/>
@@ -543,56 +803,12 @@
 			</parameters>
 		</function>
 	</function>
-	<function name="ErrorPortResponse">
-		<parameters>
-			<parameter name="resourceid" type="long"/>
-			<parameter name="transportid" type="string"/>
-		</parameters>
-		<variable name="outjson" type="string"/>
-		<script><![CDATA[
-			var json = new Object();
-			var one = new Object();
-			one.resourceId = ""+context.resourceid.toLong();
-			one.code = "-1";
-			one.description = "Port id is wrong!";						
-			json.result = one;
-			var strjson=JSON.stringify(json);												
-			context.outjson.setValue(strjson);
-		]]></script>
-		<function name="SendResponse" class="RestfulService">
-			<parameters>
-				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-				<parameter name="json" type="string" in="context.outjson.toString()"/>
-			</parameters>
-		</function>
-	</function>
-	<function name="ErrorDPIDResponse">
-		<parameters>
-			<parameter name="resourceid" type="long"/>
-			<parameter name="transportid" type="string"/>
-		</parameters>
-		<variable name="outjson" type="string"/>
-		<script><![CDATA[
-			var json = new Object();
-			var one = new Object();
-			one.resourceId = ""+context.resourceid.toLong();
-			one.code = "-1";
-			one.description = "ID is wrong!";						
-			json.result = one;
-			var strjson=JSON.stringify(json);												
-			context.outjson.setValue(strjson);
-		]]></script>
-		<function name="SendResponse" class="RestfulService">
-			<parameters>
-				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-				<parameter name="json" type="string" in="context.outjson.toString()"/>
-			</parameters>
-		</function>
-	</function>
+	
 	<function name="ErrorDataResponse">
 		<parameters>
 			<parameter name="resourceid" type="long"/>
 			<parameter name="transportid" type="string"/>
+			<parameter name="description" type="string"/>
 		</parameters>
 		<variable name="outjson" type="string"/>
 		<script><![CDATA[
@@ -600,7 +816,7 @@
 			var one = new Object();
 			one.resourceId = ""+context.resourceid.toLong();
 			one.code = "-1";
-			one.description = "The tunnel is already had!";						
+			one.description = context.description.toString();						
 			json.result = one;
 			var strjson=JSON.stringify(json);												
 			context.outjson.setValue(strjson);
@@ -611,5 +827,5 @@
 				<parameter name="json" type="string" in="context.outjson.toString()"/>
 			</parameters>
 		</function>
-	</function>
+	</function>	
 </starosxml>

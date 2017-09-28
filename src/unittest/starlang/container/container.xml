@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<variable name="systemparam2" type="params"/>
+	<variable name="systemparam3" type="params"/>
+	<variable name="outparam" type="string"/>
+	<pair name="oncesis" keytype="string" valuetype="string"/>
+	<for var="oncesis" in="context.systemparam3">
+		<function>
+			<log><![CDATA[listlong counter <%=context.oncesis.first()%>]]> </log>
+			<log><![CDATA[listlong counter <%=context.oncesis.second()%>]]> </log>
+		</function>
+	</for>
+	<container name="listc" type="list" valuetype="string"/>
+	<container name="listlong" type="list" valuetype="long"/>
+	<container name="listparam" type="list" valuetype="params"/>
+	<container name="hashmapc" type="hashmap" valuetype="string"/>
+	<container name="hashmapc2" type="hashmap" valuetype="string"/>
+	<container name="hashmapc3" type="hashmap" valuetype="string"/>
+	<container name="hashmapc4" type="hashmap" valuetype="string"/>
+	<container name="hashmapcontaier" type="hashmap" valuetype="hashmap"/>
+	<container name="hashmapcontaier2" type="hashmap" valuetype="hashmap"/>
+	<container name="listhashmap" type="list" valuetype="hashmap"/>
+	<container name="hashmapcontaier3" type="hashmap" valuetype="list"/>
+	<function name="Test">
+		<parameters>
+			<parameter name="hashmeter" type="hashmap"/>
+		</parameters>
+			<variable name="outparam2" type="string"/>
+		<log><![CDATA[Test hashmeter <%=context.hashmeter.size()%>]]> </log>
+		<lookup name="hashmeter" key="1" output="context.outparam2"/>
+		<log><![CDATA[outparam2 <%=context.outparam2.toString()%>]]> </log>
+	</function>
+	<events>
+		<onevent event="session.startup">
+			<variable name="bstop" type="boolean" value="false"/>
+			<variable name="confAppSession"/>
+			<timer method="StartTimer" event="testtimer" timeout="'1000'"/>
+			<log>session.startup</log>
+			<!--while cond="context.bstop.toBoolean()"-->
+				<function>
+					<insert name="listc" value="'string1'"/>
+					<insert name="listc" value="'string2'"/>
+					<insert name="listc" value="'string3'"/>
+					<insert name="listc" value="'string3'"/>
+					<function>
+						<log><![CDATA[counter <%=context.listc.size()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getItem(0).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getItem(1).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getItem(2).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getItem(3).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getItem(4).toString()%>]]> </log>
+						<for var="i" from="0" to="context.listc.size()-1">
+							<function>
+								<log><![CDATA[counter <%=context.listc.getItem(context.i.toLong()).toString()%>]]> </log>
+							</function>
+						</for>
+					</function>
+					<insert name="listlong" value="1"/>
+					<insert name="listlong" value="2"/>
+					<insert name="listlong" value="3"/>
+					<insert name="listlong" value="4"/>
+					<for var="i" from="0" to="context.listlong.size()-1">
+						<function>
+							<log><![CDATA[listlong counter <%=context.listlong.getItem(context.i.toLong()).toLong()%>]]> </log>
+						</function>
+					</for>
+					<set name="systemparam" paramname="test" value="'param1_1'"/>
+					<set name="systemparam" paramname="test2" value="'param1_2'"/>
+					<set name="systemparam" paramname="test3" value="'param1_3'"/>
+					<set name="systemparam2" paramname="test" value="'param2_1'"/>
+					<set name="systemparam2" paramname="test2" value="'param2_2'"/>
+					<set name="systemparam2" paramname="test3" value="'param2_3'"/>	
+					<insert name="listparam" value="context.systemparam"/>
+					<insert name="listparam" value="context.systemparam2"/>
+					<set name="systemparam3" value="context.listparam.getItem(1)"/>
+					<log><![CDATA[systemparam3 value <%=context.systemparam3.getParam("test").toString()%>]]> </log>
+					<log><![CDATA[counter <%=context.listparam.size()%>]]> </log>
+					<insert name="hashmapc" key="1" value="'1'"/>
+					<insert name="hashmapc" key="2" value="'2'"/>
+					<insert name="hashmapc" key="3" value="'3'"/>
+					<insert name="hashmapc2" key="1" value="'1111'"/>
+					<insert name="hashmapc2" key="2" value="'2222'"/>
+					<insert name="hashmapc2" key="3" value="'3333'"/>
+					<insert name="hashmapc3" key="1" value="'11111111'"/>
+					<insert name="hashmapc3" key="2" value="'22222222'"/>
+					<insert name="hashmapc3" key="3" value="'333333333'"/>
+					<log><![CDATA[hashmapc <%=context.hashmapc.size()%>]]> </log>
+					<remove name="hashmapc" key="3"/>
+					<log><![CDATA[hashmapc <%=context.hashmapc.size()%>]]> </log>
+					<lookup name="hashmapc" key="1" output="context.outparam"/>
+					<log><![CDATA[outparam <%=context.outparam.toString()%>]]> </log>
+					<insert name="hashmapcontaier" key="1" value="context.hashmapc4"/>
+					<!--insert name="hashmapcontaier" key="2" value="context.hashmapc2"/-->
+					<!--insert name="hashmapcontaier" key="3" value="context.hashmapc3"/-->
+					<log><![CDATA[hashmapcontaier counter <%=context.hashmapcontaier.size()%>]]> </log>
+					<log><![CDATA[hashmapcontaier toJson <%=context.hashmapcontaier.toJson()%>]]> </log>
+					<log><![CDATA[hashmapcontaier2 toJson <%=context.hashmapcontaier2.toJson()%>]]> </log>
+					<insert name="listhashmap" value="context.hashmapc4"/>
+					<log><![CDATA[listhashmap toJson <%=context.listhashmap.toJson()%>]]> </log>
+					<insert name="listhashmap" value="context.hashmapc"/>
+					<insert name="listhashmap" value="context.hashmapc2"/>
+					<insert name="listhashmap" value="context.hashmapc3"/>
+					<insert name="hashmapcontaier3" key="1" value="context.listhashmap"/>
+					<insert name="hashmapcontaier3" key="2" value="context.listhashmap"/>
+					<insert name="hashmapcontaier3" key="3" value="context.listhashmap"/>
+					<log><![CDATA[hashmapcontaierssss toJson <%=context.hashmapcontaier3.toJson()%>]]> </log>
+			<function name="Test">
+				<parameters>
+				  <parameter name="hashmeter" type="hashmap" in="context.hashmapc"/>
+				</parameters>
+			</function>
+					<clear name="hashmapc"/>
+					<clear name="listparam"/>
+					<clear name="listlong"/>
+					<clear name="listc"/>
+					<log><![CDATA[hashmapc <%=context.hashmapc.size()%>]]> </log>
+					<log><![CDATA[listparam <%=context.listparam.size()%>]]> </log>
+					<log><![CDATA[listlong <%=context.listlong.size()%>]]> </log>
+					<log><![CDATA[listc <%=context.listc.size()%>]]> </log>
+					<end reason="sdfsdf"/>
+				</function>
+			<!--/while-->
+			<function name="Test">
+				<parameters>
+				  <parameter name="hashmeter" type="hashmap" in="context.hashmapc"/>
+				</parameters>
+			</function>
+		</onevent>
+		<onevent event="~session.shutdown">
+			<variable name="dbdialog"/>
+			<function>
+				<log>~session.shutdown</log>
+				<!--raise name="application.check"/-->
+			</function>
+		</onevent>
+		<onevent event="testtimer">
+			<variable name="dbdialog"/>
+			<function>
+				<log>testtimer</log>
+				<!--raise name="application.check"/-->
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

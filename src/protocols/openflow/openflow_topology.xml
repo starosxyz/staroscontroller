@@ -43,6 +43,15 @@
 				</parameters>
 			</function>
 
+			<function name="Removetopo" class="TopoManager">
+				<parameters>
+					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
+					<parameter name="todevide" type="string" in="event.getParam('todevice').toString()"/>
+					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+				</parameters>
+			</function>
+
+
 		</onevent>
 		<onevent event="Topology.OnPathAddEvent">
 			<function>
@@ -93,6 +102,7 @@
 					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>
+
 			
 			<function name="Addtopo" class="TopoManager">
 				<parameters>

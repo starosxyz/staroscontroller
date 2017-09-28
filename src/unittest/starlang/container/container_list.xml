@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+	<container name="listc" type="list" valuetype="string"/>
+	<container name="listout" type="list" valuetype="string"/>
+	<function name="TestParamList">
+		<parameters>
+			<parameter name="listparam" type="list"/>
+		</parameters>
+		<for var="i" from="0" to="context.listparam.size()-1">
+			<function>
+				<log><![CDATA[TestParamList <%=context.listparam.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+			</function>
+		</for>
+	</function>
+	<function name="TestOutParamList">
+		<parameters>
+			<parameter name="listparam" type="list"/>
+		</parameters>
+		<insert name="listparam" value="'asdfs'"/>
+		<insert name="listparam" value="'ssss'"/>
+		<insert name="listparam" value="'strffffing3'"/>
+		<insert name="listparam" value="'44444'"/>
+	</function>
+	<events>
+		<onevent event="session.startup">
+			<variable name="bstop" type="boolean" value="false"/>
+			<variable name="confAppSession"/>
+			<timer method="StartTimer" event="testtimer" timeout="'1000'"/>
+			<log>session.startup</log>
+			<!--while cond="context.bstop.toBoolean()"-->
+				<function>
+					<insert name="listc" value="'string1'"/>
+					<insert name="listc" value="'string2'"/>
+					<insert name="listc" value="'string3'"/>
+					<insert name="listc" value="'string3'"/>
+					<function>
+						<log><![CDATA[counter <%=context.listc.size()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(0).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(1).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(2).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(3).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(4).toString()%>]]> </log>
+						<for var="i" from="0" to="context.listc.size()-1">
+							<function>
+								<log><![CDATA[counter <%=context.listc.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+							</function>
+						</for>
+					</function>
+				</function>
+			<!--/while-->
+			<function name="TestOutParamList">
+				<parameters>
+				  <parameter name="listparam" type="list" out="context.listout"/>
+				</parameters>
+			</function>
+			<for var="i" from="0" to="context.listout.size()-1">
+				<function>
+					<log><![CDATA[listout <%=context.listout.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+				</function>
+			</for>
+		</onevent>
+	</events>
+</starosxml>
