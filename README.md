@@ -33,7 +33,6 @@ StarOS-Controller
 # source ./env.sh
 # make
 # mv staroscontroller /opt/staros.xyz/
-# cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
 # dipc start
 ```
 ### 运行应用程序
