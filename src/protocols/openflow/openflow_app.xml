@@ -297,7 +297,7 @@
 			<function>
 				<log>Get a EchoRequest Message</log>
 				<set name="openflowdevice" value="context.openflowserverobj.getDevice(event.getParam('transportid').toString())"/>
-				<log><![CDATA[getShortestPath=<%=context.openflowserverobj.getShortestPath('1','3')%>]]></log>
+				<log><![CDATA[getShortestLink=<%=context.openflowserverobj.getShortestLink('1','3')%>]]></log>
 				<function>
 					<log>Get a EchoRequest Message</log>
 					<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>

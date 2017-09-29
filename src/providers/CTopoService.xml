@@ -175,7 +175,7 @@
 			</function>
 					
 			
-			<function name="getShortestPath">
+			<function name="getShortestLink">
 				<parameters>
 					<parameter name="link" type="string"/>
 					<parameter name="outjson" type="string"/>

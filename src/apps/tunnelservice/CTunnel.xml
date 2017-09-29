@@ -347,8 +347,8 @@
 						<set name="result" value="true"/>
 					</then>
 					<else>
-						<set name="strlink" value="context.openflowserverobj.getShortestPath2(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
-				<set name="strlink2" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
+						<set name="strlink" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
+				<set name="strlink2" value="context.openflowserverobj.getShortestLink(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
 				<log>============= START =================</log>
 				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
 				<log><![CDATA[strlink2=<%=context.strlink2.toString()%>]]></log>
