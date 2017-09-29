@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				qiulei
+		Date:
+				2017-09-29
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->	
+	<function name="addPath">		
+		<function name="allTopology"/>			
+		<function name="postTopology"/>			
+		<function name="otherTopologymethods"/>	
+		<function name="activeTopology"/>
+	</function>
+
+	<function name="removePath">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/topologyservice/topologys'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/topologyservice/topology'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="'/topologyservice/topology/{formdevice}/{todevice}'"/>			
+			</parameters>
+		</function>
+	</function>
+
+	<function name="allTopology">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Returns all Topologys",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Topologys"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}				
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topologys'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="otherTopologymethods">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>		
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Returns one Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Get one topology by fromdevice & todevice",
+								"required": true						
+							},{
+								"name": "todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Get one topology by fromdevice & todevice",
+								"required": true						
+							}
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Topology"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},					
+					"put": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Update a Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice&todevice",
+								"in": "path",		
+								"type": "string",			
+								"description": "Updata one topology by resourceid",
+								"required": true
+							},
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
+								"schema": {
+									"$ref": "#/definitions/Topology"
+								},
+								"description": "Update one Topology",
+								"required": true
+							}
+						],
+						"consumes": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					"delete": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Removes one Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice&todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Topology by fromdevice&todevice",
+								"required": "true"
+							}
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="postTopology">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Install a new Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
+								"description": "Create one topology",
+								"required": true,
+								"schema": {
+									"$ref": "#/definitions/Topology"
+								}					
+							}
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topology'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="activeTopology">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Active all Topologys",
+						"description": "",
+						"parameters": [							
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					"delete": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Deactive all Topology",
+						"description": "",
+						"parameters": [							
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topologys/active'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="deactiveTopology">
+		<variable name="name" type="string"/>
+		<variable name="pathconntent" type="string"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Deactive all Topologys",
+						"description": "",
+						"parameters": [							
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Result"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topologys/deactive'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<parameter name="pathname" type="string" in="context.name.toString()"/>
+				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starosxml>

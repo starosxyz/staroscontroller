@@ -43,7 +43,7 @@
 				</parameters>
 			</function>
 
-			<function name="Removetopo" class="TopoManager">
+			<function name="RemovePath" class="TopoManager">
 				<parameters>
 					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
 					<parameter name="todevide" type="string" in="event.getParam('todevice').toString()"/>
@@ -104,7 +104,7 @@
 			</function>
 
 			
-			<function name="Addtopo" class="TopoManager">
+			<function name="AddPath" class="TopoManager">
 				<parameters>
 					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
 					<parameter name="todevide" type="string" in="event.getParam('todevice').toString()"/>

@@ -347,28 +347,36 @@
 						<set name="result" value="true"/>
 					</then>
 					<else>
-						<set name="strlink" value="context.openflowserverobj.getShortestPath(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
-				<set name="strlink2" value="context.openflowserverobj.getShortestLink(thisclass.m_fromdevice.toString(), thisclass.m_todevice.toString())"/>
-				<log>============= START =================</log>
-				<log><![CDATA[strlink=<%=context.strlink.toString()%>]]></log>
-				<log><![CDATA[strlink2=<%=context.strlink2.toString()%>]]></log>
-				<log>=============  END  =================</log>
-				<if cond="context.strlink.toString()!=''">
-					<then>
-						<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
+						<function name="getShortestPath" class="TopoService">
 							<parameters>
-								<parameter name="json" type="string" in="context.strlink.toString()"/>
+								<parameter name="fromdevice" type="string" in="thisclass.m_fromdevice.toString()"/>
+								<parameter name="todevice" type="string" in="thisclass.m_todevice.toString()"/>
+								<parameter name="outjson" type="string" out="context.strlink"/>
 							</parameters>
 						</function>
-						<log>result true</log>
-						<set name="result" value="true"/>
-					</then>
-					<else>
-						<log>result false</log>
-						<set name="result" value="false"/>
+						<function name="getShortestLink" class="TopoService">
+							<parameters>
+								<parameter name="fromdevice" type="string" in="thisclass.m_fromdevice.toString()"/>
+								<parameter name="todevice" type="string" in="thisclass.m_todevice.toString()"/>
+								<parameter name="outjson" type="string" out="context.strlink2"/>
+							</parameters>
+						</function>						
+						<if cond="context.strlink.toString()!=''">
+							<then>
+								<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
+									<parameters>
+										<parameter name="json" type="string" in="context.strlink.toString()"/>
+									</parameters>
+								</function>
+								<log>result true</log>
+								<set name="result" value="true"/>
+							</then>
+							<else>
+								<log>result false</log>
+								<set name="result" value="false"/>
+							</else>
+						</if>
 					</else>
-				</if>
-			</else>
 				</if>
 			</function>
 			

@@ -14,6 +14,11 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/actions_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/instrunction_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/group_type_map.xml"/>
+	
+	<!--qiulei 20170929-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/apidocs.xml"/>
+	
+	
 	<variable name="openflowserverobj" type="object" global="true"/>
 	<variable name="restfulserver" type="object" global="true"/>
 	
@@ -22,58 +27,63 @@
 	<events>
 		<!--Session StarUp-->
 		<onevent event="bundleapp.startup">
-		  <variable name="calloutSession" type="long"/>
-		  <variable name="outjson" type="string"/>
-		  <variable name="injson" type="string"/>
-		  <!--qiulei 20170828 Monday-->
-		  <variable name="eventname" type="string"/>
-		  <function>
-			<set name="injson" value="'[]'"/>
-			<log level="100">##########STAROS application start#######</log>
-			<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
-			<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
-			<remotecall method="DiscoveryTestMethod">
-					<applicationdata>
-						<![CDATA[ 
-						hello world;
-						]]>
-					</applicationdata>
-			</remotecall>
-			<wait event="hellorequest" timeout="1000"/>
-			<!--Init Flow Manager -->
-			
-			<function name="InitGlobalResource"/>
-			<function name="InitAPIMapFunction"/>
-			<!--hu peng 2017/07/28  change setting-->
-			<function name="InitSetting"/>
-			<function name="InitWebSocketHandlerMap"/>
-			<!--Start GUI and Restful API Service-->
-			<function name="Restfulserver"/>
-				<!--Start OpenFlow Controller protocol-->
-			<function name="startopenflow"/>
-			<function name="testcallback"/>
-			<!--function name="addhostest"/-->
-			<!--function name="startnullapp"/-->
-			<!--InitOpenFlow OXM Match Filed Map-->
-			<function name="InitOXMMatchFieldMap"/>
-			<function name="InitOXMMatchFieldNameMap"/>
-			<function name="InitInstrunctionMap"/>
-			<function name="InitActionsMap"/>
-			<function name="InitActionsNameMap"/>
-			
+			<variable name="calloutSession" type="long"/>
+			<variable name="outjson" type="string"/>
+			<variable name="injson" type="string"/>
 			<!--qiulei 20170828 Monday-->
-			<set name="eventname"  value="'TimeOutEvent'"/>
-			<!--raise name="context.eventname.toString()"/-->
-			<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
-			
-			<function name="startDiscovery" class="TopoManager"/> 
-			
-</function>
+			<variable name="eventname" type="string"/>
+			<function>
+				<set name="injson" value="'[]'"/>
+				<log level="100">##########STAROS application start#######</log>
+				<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
+				<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
+				<remotecall method="DiscoveryTestMethod">
+						<applicationdata>
+							<![CDATA[ 
+							hello world;
+							]]>
+						</applicationdata>
+				</remotecall>
+				<wait event="hellorequest" timeout="1000"/>
+				<!--Init Flow Manager -->
+
+				<function name="InitGlobalResource"/>
+				<function name="InitAPIMapFunction"/>
+				<!--hu peng 2017/07/28  change setting-->
+				<function name="InitSetting"/>
+				<function name="InitWebSocketHandlerMap"/>
+				<!--Start GUI and Restful API Service-->
+				<function name="Restfulserver"/>
+					<!--Start OpenFlow Controller protocol-->
+				<function name="startopenflow"/>
+				<function name="testcallback"/>
+				<!--function name="addhostest"/-->
+				<!--function name="startnullapp"/-->
+				<!--InitOpenFlow OXM Match Filed Map-->
+				<function name="InitOXMMatchFieldMap"/>
+				<function name="InitOXMMatchFieldNameMap"/>
+				<function name="InitInstrunctionMap"/>
+				<function name="InitActionsMap"/>
+				<function name="InitActionsNameMap"/>
+
+				<!--qiulei 20170828 Monday-->
+				<set name="eventname"  value="'TimeOutEvent'"/>
+				<!--raise name="context.eventname.toString()"/-->
+				<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
+
+				<function name="startDiscovery" class="TopoManager"/> 
+				
+				<!--qiulei 201700929 Monday-->
+				<function name="AddDocsAPITopology"/>
+			</function>
 		</onevent>
 		<!--Session Shutdown-->
 		<onevent event="~bundleapp.shutdown">
 		  <function>
 			<log>##########~bundleapp.shutdown#######</log>
+			
+			<!--qiulei 201700929 Monday-->
+			<function name="RemoveDocsAPITopology"/>
 		  </function>
 		</onevent>
 		

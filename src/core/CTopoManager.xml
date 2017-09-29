@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CTopoManager">
+		<!--
+		Author:
+		hupeng
+		Date:
+		2017-09-29
+		Copyright:
+		Nanjing StarOS Inc. All rights reserved.
+		-->
 		<private>
 			<container name="topoContainer" type="hashmap" keytype="string" valuetype="list"/>
 		</private>
 		<public>
-			<!--hu peng add topo-->
-			<function name="Addtopo">
+			<!-- add topo from (openflow-topology.xml) file
+			-->
+			<function name="AddPath">
 				<parameters>
 					<parameter name="fromdevice" type="string"/>
 					<parameter name="todevide" type="string"/>
@@ -35,16 +44,18 @@
 				</if>
 
 			</function>
+			<!-- get all topoContainer size -->
 			<function name="GettopoSize">
 				<parameters>
 					<parameter name="toposize" type="long"/>
 				</parameters>
 				<set name="toposize" value="thisclass.topoContainer.size()"/>
 			</function>
-			<function name="Findtopo">
+			<!--find pathlist from fromdevice and todevice -->
+			<function name="FindPath">
 				<parameters>
 					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevide" type="string"/>
+					<parameter name="todevice" type="string"/>
 					<parameter name="pathlist" type="list"/>
 				</parameters>
 				<log>CtopoManager Findtopo</log>
@@ -52,7 +63,7 @@
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
-					var todevice=context.todevide.toString();
+					var todevice=context.todevice.toString();
 					var topokey=fromdevice+":"+todevice;
 					context.topokey.setValue(topokey);
 					]]>
@@ -66,10 +77,13 @@
 					</else>
 				</if>
 			</function>
-			<function name="Removetopo">
+			<!-- remove onetopo
+			if topoContainer listpath as same as  pass path remove it
+			-->
+			<function name="RemovePath">
 				<parameters>
 					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevide" type="string"/>
+					<parameter name="todevice" type="string"/>
 					<parameter name="path" type="string"/>
 				</parameters>
 				<log>CtopoManager Removetopo</log>
@@ -80,7 +94,7 @@
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
-					var todevice=context.todevide.toString();
+					var todevice=context.todevice.toString();
 					var topokey=fromdevice+":"+todevice;
 					context.topokey.setValue(topokey);
 					]]>
@@ -169,7 +183,6 @@
 											}
 											]]>
 										</script>
-
 										<function>
 											<if cond="context.binvalidlink.toString()=='true'">
 												<then>
@@ -206,6 +219,8 @@
 				</for>
 
 			</function>
+
+			<!--send link to webclient -->
 			<function name="SendLinks">
 				<parameters>
 					<parameter name="transportid" type="string"/>

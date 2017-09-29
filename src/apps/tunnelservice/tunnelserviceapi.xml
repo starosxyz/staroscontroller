@@ -579,39 +579,6 @@
 				<parameter name="result" type="boolean" out="context.result"/>
 			</parameters>
 		</function>
-		<if cond="context.result.toBoolean()==true">
-			<then>
-				<log level="2">inputvlanid</log>
-				<function name="ErrorDataResponse">
-					<parameters>
-						<parameter name="resourceid" type="long" in="-1"/>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
-					</parameters>
-				</function>
-				<exit/>
-			</then>
-		</if>
-		<function name="IsHasValue" class="context.tunnelManagerObject">
-			<parameters>
-				<parameter name="style" type="string" in="'outvlan'"/>
-				<parameter name="data" type="string" in="context.outputvlanid.toString()"/>
-				<parameter name="result" type="boolean" out="context.result"/>
-			</parameters>
-		</function>
-		<if cond="context.result.toBoolean()==true">
-			<then>
-				<log level="2">outputvlanid</log>
-				<function name="ErrorDataResponse">
-					<parameters>
-						<parameter name="resourceid" type="long" in="-1"/>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="description" type="string" in="'This tunnel is already had!'"/>
-					</parameters>
-				</function>
-				<exit/>
-			</then>
-		</if>		
 		<if cond="context.putindexof.toLong()!=1">
 			<then>
 				<function name="ErrorDataResponse">

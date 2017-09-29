@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServiceDocsApi.xml"/>
+	
+	<function name="AddDocsAPITopology"/>
+	<function name="RemoveDocsAPITopology"/>
+</starosxml>

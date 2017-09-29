@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="newSession"/>
+	<logconfig dest="stdout"/>
+	<function name="test">
+		<function>
+			<log>test</log>
+		</function>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="path" type="string"/>
+			<variable name="link" type="string"/>
+			<variable name="path2link" type="string"/>
+			<variable name="link2path" type="string"/>
+			<reference variable="path">
+				<jsonbody><![CDATA[ 
+					{
+						"paths":[
+							{
+								"device":"111",
+								"input":"null",
+								"output":"3"
+							},
+							{
+								"device":"111",
+								"input":"2",
+								"output":"null"
+							},
+							{
+								"device":"111",
+								"input":"2",
+								"output":"null"
+							}
+						]
+					}
+				]]></jsonbody>
+			</reference>
+			<reference variable="link">
+				<jsonbody><![CDATA[ 
+					{
+						"paths":[
+							{
+								"dst":{
+									"dpid":"2222",
+									"port":"3"
+								},
+								"src":{
+									"dpid":"1111",
+									"port":"2"
+								}
+							}
+						]
+					}
+				]]></jsonbody>
+			</reference>
+			<set name="link2path" value="topology.convertToPath(context.link.toString())"/>
+			<log level="1"><![CDATA[link2path=<%=context.link2path.toString()%>]]> </log>
+			<set name="path2link" value="topology.convertToLink(context.link2path.toString())"/>
+			<log level="1"><![CDATA[path2link=<%=context.path2link.toString()%>]]> </log>
+			<if cond="context.path2link.toString()==context.link2path.toString()">
+				<then>
+					<log>ok!</log>
+				</then>
+				<else>
+					<log>failure!</log>
+				</else>
+			</if>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starosxml>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+        <function name="TestMPMeterRequest">
+                <function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER">
+                        <parameters>
+                                <parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+                                <parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+                                <parameter name="meterid" type="string" in="'5'"/>
+                        </parameters>
+                </function>
+                <wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
+                        <function>
+                                <log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+                                <log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+                        </function>
+                </wait>
+        </function>
+        <!--xxxx-->
+        <function name="TestMPTableRequest">
+                <log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE</log>
+                <function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
+                        <parameters>
+                                <parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+                                <parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+                        </parameters>
+                </function>
+                <wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
+                        <function>
+                                <log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE WAIT</log>
+                                <log><![CDATA[servicer_reply event name=<%=event.getName().toString()%>]]></log>
+                                <log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+                                <log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE WAIT_OUT</log>
+                        </function>
+                </wait>
+                <log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE OUT</log>
+        </function>
+        <!--Yang XiangRui-->
+        <function name="TestGCRequest">
+                <log>"send getconfig_request loading..."</log>
+                <function name="Send_OFPT13_GET_CONFIG_REQUEST">
+						<parameters>
+                                <parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+                                <parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+                        </parameters>
+                </function>
+                <log>"wait getconfig_reply loadint..."</log>
+                <wait event="openflow.OFPT13_GET_CONFIG_REPLY" timeout="1000">
+                        <function>
+                                <log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+                                <log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+                        </function>
+                </wait>
+        </function>
+		
+		
+        <!--Yang XiangRui-->
+        <function name="TestBRRequest">
+                <log>"send getconfig_request loading..."</log>
+                <function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+						<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+                     </parameters>
+                </function>
+                <log>"wait getconfig_reply loadint..."</log>
+                <wait event="openflow.OFPT13_BARRIER_REPLY" timeout="1000">
+                        <function>
+                                <log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+                                <log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+                        </function>
+                </wait>
+        </function>
+		
+        <!--Yang XiangRui-->
+        <function name="TestSC">
+                <log>"send set_config loading..."</log>
+                <function name="Send_OFPT13_SET_CONFIG">
+                        <parameters>
+                                <parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+                                <parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+                                <parameter name="flags" type="string" in="0"/>
+                                <parameter name="misssendlen" type="string" in="'1024'"/>
+                        </parameters>
+                </function>
+        </function>
+</starosxml>
+				
+				
+				
+				
+				
+				
+				

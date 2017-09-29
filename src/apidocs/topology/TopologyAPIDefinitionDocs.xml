@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		Author:
+				qiulei
+		Date:
+				2017-09-29
+		Copyright: 
+				Nanjing StarOS Inc. All rights reserved.
+	-->
+	<!--定义：Topologys-->
+	<function name="AddDefinitionTopologysData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+
+		<set name="definitionname" value="'Topologys'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+					"type": "object",
+					"title": "topologys",
+					"required": [
+						"topologys",
+						"resultCode",
+						"resultDesc"
+					],
+					"properties": {
+						"topologys": {
+							"type": "array",
+							"xml": {
+								"name": "topologys",
+								"wrapped": true
+							},
+							"items": {
+								"type": "object",
+								"title": "topology",
+								"required": [
+									"dst",
+									"src"
+								],
+								"properties": {
+									"dst": {
+										"type": "object",
+										"title": "dst",
+										"required": [
+											"dpid",
+											"port"
+										],
+										"properties": {
+											"dpid": {
+												"type": "string",
+												"example": "2222"
+											},
+											"port": {
+												"type": "string",
+												"example": "3"
+											}
+										}
+									},
+									"src": {
+										"type": "object",
+										"title": "src",
+										"required": [
+											"dpid",
+											"port"
+										],
+										"properties": {
+											"dpid": {
+												"type": "string",
+												"example": "1111"
+											},
+											"port": {
+												"type": "string",
+												"example": "2"
+											}
+										}
+									}
+								}
+							}
+						},
+						"resultCode": {
+							"type": "string",
+							"example": "1"
+						},
+						"resultDesc": {
+							"type": "string",
+							"example": "ok"
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<function name="RemoveDefinitionTopologysData">
+		<variable name="definitionname" type="string"/>
+		
+		<set name="definitionname" value="'Topologys'" />
+
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+
+
+
+
+
+	<!--定义：Result -->
+	<function name="AddDefinitionResultData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+
+		<set name="definitionname" value="'Result'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "result",
+		            "required": [
+						"dst",
+						"src"
+					],
+					"properties": {
+						"dst": {
+							"type": "object",
+							"title": "dst",
+							"required": [
+								"dpid",
+								"port"
+							],
+							"properties": {
+								"dpid": {
+									"type": "string",
+									"example": "2222"
+								},
+								"port": {
+									"type": "string",
+									"example": "3"
+								}
+							}
+						},
+						"src": {
+							"type": "object",
+							"title": "src",
+							"required": [
+								"dpid",
+								"port"
+							],
+							"properties": {
+								"dpid": {
+									"type": "string",
+									"example": "1111"
+								},
+								"port": {
+									"type": "string",
+									"example": "2"
+								}
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+	<function name="RemoveDefinitionResultData">
+		
+		<variable name="definitionname" type="string"/>
+
+		<set name="definitionname" value="'Result'" />
+
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+
+
+
+
+
+	<!--定义：Topology -->
+	<function name="AddDefinitionTopologyData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'Topology'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "topology",
+		            "required": [
+		                "topology"
+		            ],
+		            "properties": {
+		                "topology": {
+		                    "type": "object",
+		                    "title": "topology",
+		                    "required": [
+		                        "resourceId",
+						        "code",
+						        "description"
+		                    ],
+		                    "properties": {
+		                        "resourceId": {
+		                            "type": "string",
+		                            "example": "5"
+		                        },
+		                        "code": {
+		                            "type": "string",
+		                            "example": "0"
+		                        },
+		                        "description": {
+		                            "type": "string",
+		                            "example": "ok"
+		                        }
+		                    }
+		                }
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--删除：Topology-->
+	<function name="RemovePutRequestDocsAPITopology">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'Topology'" />
+		
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	
+	
+	
+	
+	
+	<!--定义：state-->
+	<function name="AdddefinitionStateData">
+		<variable name="definitionname" type="string"/>
+		<variable name="definitioncontent" type="string"/>
+		
+		<set name="definitionname" value="'State'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "state",
+		            "required": [
+		                "state"
+		            ],
+		            "properties": {
+		                "state": {
+		                    "type": "string",
+							 "example": "active"
+		                }
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<!--删除：state-->
+	<function name="RemoveDefinitionStateData">
+		<variable name="definitionname" type="string"/>
+		<set name="definitionname" value="'State'" />
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<function name="RegistDefinition">
+		<function name="AddDefinitionTopologysData"/>
+		
+		<function name="AddDefinitionTopologyData">
+		<function name="AddDefinitionResultData"/>
+		
+		<function name="AdddefinitionStateData"/>
+	</function>
+	
+	<function name="DestroyDefinition">
+		<function name="RemoveDefinitionTopologysData">
+			
+		<function name="RemoveDefinitionResultData"/>
+		
+		<function name="RemovePutRequestDocsAPITopology">
+			
+		<function name="RemoveDefinitionStateData"/>
+	</function>
+</starosxml>
