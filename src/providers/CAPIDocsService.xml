@@ -70,6 +70,8 @@
 					<parameter name="tag" type="string"/>
 				</parameters>
 				<insert name="thisclass.TagContainer" value="context.tag.toString()"/>
+				<log level="10"><![CDATA[CAPIDocsService 73 line<%=context.tag.toString()%>]]></log>
+				<log level="10"><![CDATA[thisclass.TagContainer.size = <%=thisclass.TagContainer.size()%>]]></log>
 			</function>
 			<function name="removeTag">
 				<parameters>
@@ -188,13 +190,13 @@
 					<parameter name="zero" type="string"/>
 					<parameter name="tag" type="string"/>
 				</parameters>
-				<variable name="data" type="string"/>
+				<variable name="data" type="string" value="context.zero.toString()"/>				
 				<variable name="tagstr" type="string"/>
 				<for var="tagstr" in="thisclass.TagContainer">
 					<if cond="context.tagstr!=null">
 						<then>																
 							<script><![CDATA[										
-								var info = JSON.parse(context.zero.toString());								
+								var info = JSON.parse(context.data.toString());								
 								var js_tags = info.tags;								
 								var local_tag = JSON.parse(context.tagstr.toString());
 								js_tags.push(local_tag);									
@@ -205,6 +207,7 @@
 						</then>
 					</if>
 				</for>
+				
 				<set name="context.tag" value="context.data.toString()"/>
 			</function>
 

@@ -21,15 +21,15 @@
 					"type": "object",
 					"title": "topologys",
 					"required": [
-						"topologys",
+						"paths",
 						"resultCode",
 						"resultDesc"
 					],
 					"properties": {
-						"topologys": {
+						"paths": {
 							"type": "array",
 							"xml": {
-								"name": "topologys",
+								"name": "paths",
 								"wrapped": true
 							},
 							"items": {
@@ -114,96 +114,6 @@
 	</function>
 
 
-
-
-
-
-	<!--定义：Result -->
-	<function name="AddDefinitionResultData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
-
-		<set name="definitionname" value="'Result'" />
-		
-		<reference variable="definitioncontent">
-			<jsonbody><![CDATA[ 
-				{
-		            "type": "object",
-		            "title": "result",
-		            "required": [
-						"dst",
-						"src"
-					],
-					"properties": {
-						"dst": {
-							"type": "object",
-							"title": "dst",
-							"required": [
-								"dpid",
-								"port"
-							],
-							"properties": {
-								"dpid": {
-									"type": "string",
-									"example": "2222"
-								},
-								"port": {
-									"type": "string",
-									"example": "3"
-								}
-							}
-						},
-						"src": {
-							"type": "object",
-							"title": "src",
-							"required": [
-								"dpid",
-								"port"
-							],
-							"properties": {
-								"dpid": {
-									"type": "string",
-									"example": "1111"
-								},
-								"port": {
-									"type": "string",
-									"example": "2"
-								}
-							}
-						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-
-		<function name="addDefinition" class="APIDocsService">
-			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
-			</parameters>
-		</function>
-		
-	</function>
-
-	<function name="RemoveDefinitionResultData">
-		
-		<variable name="definitionname" type="string"/>
-
-		<set name="definitionname" value="'Result'" />
-
-		<function name="removeDefinition" class="APIDocsService">
-			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-			</parameters>
-		</function>
-		
-	</function>
-
-
-
-
-
-
 	<!--定义：Topology -->
 	<function name="AddDefinitionTopologyData">
 		<variable name="definitionname" type="string"/>
@@ -217,33 +127,56 @@
 		            "type": "object",
 		            "title": "topology",
 		            "required": [
-		                "topology"
-		            ],
-		            "properties": {
-		                "topology": {
-		                    "type": "object",
-		                    "title": "topology",
-		                    "required": [
-		                        "resourceId",
-						        "code",
-						        "description"
-		                    ],
-		                    "properties": {
-		                        "resourceId": {
-		                            "type": "string",
-		                            "example": "5"
-		                        },
-		                        "code": {
-		                            "type": "string",
-		                            "example": "0"
-		                        },
-		                        "description": {
-		                            "type": "string",
-		                            "example": "ok"
-		                        }
-		                    }
-		                }
-		            }
+						"path"
+					],
+					"properties": {
+						"path": {
+							"type": "object",
+		            		"title": "topology",
+		            		"required": [
+								"dst",
+								"src"
+							],
+							"properties": {
+								"dst": {
+									"type": "object",
+									"title": "dst",
+									"required": [
+										"dpid",
+										"port"
+									],
+									"properties": {
+										"dpid": {
+											"type": "string",
+											"example": "2222"
+										},
+										"port": {
+											"type": "string",
+											"example": "3"
+										}
+									}
+								},
+								"src": {
+									"type": "object",
+									"title": "src",
+									"required": [
+										"dpid",
+										"port"
+									],
+									"properties": {
+										"dpid": {
+											"type": "string",
+											"example": "1111"
+										},
+										"port": {
+											"type": "string",
+											"example": "2"
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			]]></jsonbody>
 		</reference>
@@ -271,72 +204,82 @@
 		</function>
 		
 	</function>
-	
-	
-	
-	
-	
-	
-	<!--定义：state-->
-	<function name="AdddefinitionStateData">
+
+	<!--定义 TopologyResult start-->
+	<function name="AddDefinitionTopologyResultData">
 		<variable name="definitionname" type="string"/>
 		<variable name="definitioncontent" type="string"/>
-		
-		<set name="definitionname" value="'State'" />
+
+		<set name="definitionname" value="'TopologyResult'" />
 		
 		<reference variable="definitioncontent">
 			<jsonbody><![CDATA[ 
 				{
 		            "type": "object",
-		            "title": "state",
+		            "title": "result",
 		            "required": [
-		                "state"
+		                "result"
 		            ],
 		            "properties": {
-		                "state": {
-		                    "type": "string",
-							 "example": "active"
+		                "result": {
+		                    "type": "object",
+		                    "title": "result",
+		                    "required": [
+						        "code",
+						        "description"
+		                    ],
+		                    "properties": {
+		                        "code": {
+		                            "type": "string",
+		                            "example": "0"
+		                        },
+		                        "description": {
+		                            "type": "string",
+		                            "example": "ok"
+		                        }
+		                    }
 		                }
 		            }
 				}
 			]]></jsonbody>
 		</reference>
+
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
 				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
 				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
+		
 	</function>
 
-	<!--删除：state-->
-	<function name="RemoveDefinitionStateData">
+	<function name="RemoveDefinitionTopologyResultData">
+		
 		<variable name="definitionname" type="string"/>
-		<set name="definitionname" value="'State'" />
+
+		<set name="definitionname" value="'TopologyResult'" />
+
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
 				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
+		
 	</function>
-	
-	
+	<!--定义TopologyResult end-->
+
+
+
+
 	<function name="RegistDefinition">
 		<function name="AddDefinitionTopologysData"/>
-		
-		<function name="AddDefinitionTopologyData">
-		<function name="AddDefinitionResultData"/>
-		
-		<function name="AdddefinitionStateData"/>
+		<function name="AddDefinitionTopologyData"/>
+		<function name="AddDefinitionTopologyResultData"/>
 	</function>
 	
 	<function name="DestroyDefinition">
-		<function name="RemoveDefinitionTopologysData">
-			
-		<function name="RemoveDefinitionResultData"/>
-		
-		<function name="RemovePutRequestDocsAPITopology">
-			
-		<function name="RemoveDefinitionStateData"/>
+		<function name="RemoveDefinitionTopologysData"/>
+		<function name="RemovePutRequestDocsAPITopology"/>
+		<function name="RemoveDefinitionTopologyResultData"/>
 	</function>
 </starosxml>

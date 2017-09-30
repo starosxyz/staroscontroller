@@ -3,6 +3,8 @@
 
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyAPIDefinitionDocs.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServicePathDocsApi.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopopogyAPIHandler.xml"/>
 	<!--
 		Author:
 				qiulei
@@ -11,6 +13,7 @@
 		Copyright: 
 				Nanjing StarOS Inc. All rights reserved.
 	-->	
+	
 	<function name="AddDocsAPITopology">
 		<variable name="tag" type="string"/>
 		<reference variable="tag">
@@ -21,6 +24,7 @@
 				}
 			]]></jsonbody>
 		</reference>
+		<log level="10"><![CDATA[tag = <%=context.tag.toString()%>]]></log>
 		<function name="addTag" class="APIDocsService">
 			<parameters>
 				<parameter name="tag" type="string" in="context.tag.toString()"/>
@@ -30,6 +34,8 @@
 		<function name="RegistDefinition"/>
 		
 		<function name="addPath"/>
+		<!--to register api handler-->
+		<function name="RegisterHandler"/>
 	</function>
 	
 	<function name="RemoveDocsAPITopology">

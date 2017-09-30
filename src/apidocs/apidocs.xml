@@ -3,6 +3,10 @@
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServiceDocsApi.xml"/>
 	
-	<function name="AddDocsAPITopology"/>
-	<function name="RemoveDocsAPITopology"/>
+	<function name="RegisterAddDocsAPITopology">
+		<function name="AddDocsAPITopology"/>
+	</function>
+	<function name="DestoryRemoveDocsAPITopology">
+		<function name="RemoveDocsAPITopology"/>
+	</function>
 </starosxml>

@@ -10,9 +10,8 @@
 	-->	
 	<function name="addPath">		
 		<function name="allTopology"/>			
-		<function name="postTopology"/>			
-		<function name="otherTopologymethods"/>	
-		<function name="activeTopology"/>
+		<!--function name="postTopology"/-->
+		<function name="otherTopologymethods"/>
 	</function>
 
 	<function name="removePath">
@@ -97,7 +96,7 @@
 								"in": "path",
 								"type": "string",
 								"description": "Get one topology by fromdevice & todevice",
-								"required": true						
+								"required": "true"
 							}
 						],
 						"produces": [
@@ -115,46 +114,7 @@
 							}
 						}
 					},					
-					"put": {
-						"tags": [
-							"topologyservice"
-						],
-						"summary": "Update a Topology",
-						"description": "",
-						"parameters": [
-							{
-								"name": "fromdevice&todevice",
-								"in": "path",		
-								"type": "string",			
-								"description": "Updata one topology by resourceid",
-								"required": true
-							},
-							{
-								"name": "stream",
-								"in": "body",
-								"type": "string",
-								"schema": {
-									"$ref": "#/definitions/Topology"
-								},
-								"description": "Update one Topology",
-								"required": true
-							}
-						],
-						"consumes": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					},
+					
 					"delete": {
 						"tags": [
 							"topologyservice"
@@ -163,7 +123,13 @@
 						"description": "",
 						"parameters": [
 							{
-								"name": "fromdevice&todevice",
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Topology by fromdevice&todevice",
+								"required": "true"
+							},{
+								"name": "todevice",
 								"in": "path",
 								"type": "string",
 								"description": "Delete one Topology by fromdevice&todevice",
@@ -174,32 +140,16 @@
 							"200": {
 								"description": "successful operation",
 								"schema": {
-									"$ref": "#/definitions/Result"
+									"$ref": "#/definitions/TopologyResult"
 								}
 							},
 							"default": {
 								"description": "Unexpected error"
 							}
 						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-
-	<function name="postTopology">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
+					},
+					
+					
 					"post": {
 						"tags": [
 							"topologyservice"
@@ -208,6 +158,18 @@
 						"description": "",
 						"parameters": [
 							{
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Create one Topology by fromdevice",
+								"required": "true"
+							},{
+								"name": "todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Create one Topology by todevice",
+								"required": "true"
+							},{
 								"name": "stream",
 								"in": "body",
 								"type": "string",
@@ -228,7 +190,7 @@
 							"200": {
 								"description": "successful operation",
 								"schema": {
-									"$ref": "#/definitions/Result"
+									"$ref": "#/definitions/TopologyResult"
 								}
 							},
 							"default": {
@@ -239,7 +201,7 @@
 				}
 			]]></jsonbody>
 		</reference>
-		<set name="context.name" value="'/topologyservice/topology'"/>
+		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
 				<parameter name="pathname" type="string" in="context.name.toString()"/>
@@ -248,111 +210,22 @@
 		</function>
 	</function>
 
-	<function name="activeTopology">
+	<!--function name="postTopology">
 		<variable name="name" type="string"/>
 		<variable name="pathconntent" type="string"/>
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
-					"post": {
-						"tags": [
-							"topologyservice"
-						],
-						"summary": "Active all Topologys",
-						"description": "",
-						"parameters": [							
-						],
-						"consumes": [
-							"application/octet_stream"
-						],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					},
-					"delete": {
-						"tags": [
-							"topologyservice"
-						],
-						"summary": "Deactive all Topology",
-						"description": "",
-						"parameters": [							
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
+					
 				}
 			]]></jsonbody>
 		</reference>
-		<set name="context.name" value="'/topologyservice/topologys/active'"/>
+		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
 				<parameter name="pathname" type="string" in="context.name.toString()"/>
 				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
-	</function>
-	
-	<function name="deactiveTopology">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"post": {
-						"tags": [
-							"topologyservice"
-						],
-						"summary": "Deactive all Topologys",
-						"description": "",
-						"parameters": [							
-						],
-						"consumes": [
-							"application/octet_stream"
-						],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/topologyservice/topologys/deactive'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
+	</function-->
 </starosxml>

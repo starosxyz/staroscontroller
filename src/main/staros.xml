@@ -16,7 +16,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/group_type_map.xml"/>
 	
 	<!--qiulei 20170929-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/apidocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/apidocs.xml"/>
 	
 	
 	<variable name="openflowserverobj" type="object" global="true"/>
@@ -74,7 +74,7 @@
 				<function name="startDiscovery" class="TopoManager"/> 
 				
 				<!--qiulei 201700929 Monday-->
-				<function name="AddDocsAPITopology"/>
+				<function name="RegisterAddDocsAPITopology"/>
 			</function>
 		</onevent>
 		<!--Session Shutdown-->
@@ -83,7 +83,7 @@
 			<log>##########~bundleapp.shutdown#######</log>
 			
 			<!--qiulei 201700929 Monday-->
-			<function name="RemoveDocsAPITopology"/>
+			<function name="DestoryRemoveDocsAPITopology"/>
 		  </function>
 		</onevent>
 		
