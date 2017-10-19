@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starlang" scope="application">
+<starlang xmlns="http://www.staros.xyz/starlang" scope="application">
 	<variable name="newSession"/>
 	<variable name="nulltest" type="string"/>
 	<variable name="systemparam" type="params"/>
@@ -164,4 +164,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

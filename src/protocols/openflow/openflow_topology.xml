@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<events>
 		<onevent event="Topology.OnPathRemoveEvent">
 			<function>
 				<log>Topology.OnPathRemoveEvent</log>
-				<variable name="removedata" type="string"/>
+				<string name="removedata"/>
 				<script>
 					<![CDATA[
 					var fromdevice = event.getParam('fromdevice').toString();
@@ -32,22 +32,22 @@
 			</function>
 			<function name="SendToAllClient" class="WebSocketManager">
 				<parameters>
-					<parameter name="strjson" type="string" in="context.removedata.toString()"/>
+					<string name="strjson" in="context.removedata.toString()"/>
 				</parameters>
 			</function>
 			<function name="ProcessRemoveTopoEvent" class="TopoService">
 				<parameters>
-					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
-					<parameter name="todevice" type="string" in="event.getParam('todevice').toString()"/>
-					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
+					<string name="todevice" in="event.getParam('todevice').toString()"/>
+					<string name="path" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>
 
 			<function name="RemovePath" class="TopoManager">
 				<parameters>
-					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
-					<parameter name="todevide" type="string" in="event.getParam('todevice').toString()"/>
-					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
+					<string name="todevide" in="event.getParam('todevice').toString()"/>
+					<string name="path" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>
 
@@ -56,8 +56,8 @@
 		<onevent event="Topology.OnPathAddEvent">
 			<function>
 				<log>Topology.OnPathAddEvent</log>
-				<variable name="adddata" type="string"/>
-				<variable name="isTorF" type="string" value="false"/>
+				<string name="adddata"/>
+				<string name="isTorF" value="false"/>
 				<script>
 					<![CDATA[
 					var fromdevice = event.getParam('fromdevice').toString();
@@ -89,7 +89,7 @@
 					<then>
 						<function name="SendToAllClient" class="WebSocketManager">
 							<parameters>
-								<parameter name="strjson" type="string" in="context.adddata.toString()"/>
+								<string name="strjson" in="context.adddata.toString()"/>
 							</parameters>
 						</function>
 					</then>
@@ -97,21 +97,21 @@
 			</function>
 			<function name="ProcessAddTopoEvent" class="TopoService">
 				<parameters>
-					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
-					<parameter name="todevice" type="string" in="event.getParam('todevice').toString()"/>
-					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
+					<string name="todevice" in="event.getParam('todevice').toString()"/>
+					<string name="path" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>
 
 			
 			<function name="AddPath" class="TopoManager">
 				<parameters>
-					<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
-					<parameter name="todevide" type="string" in="event.getParam('todevice').toString()"/>
-					<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
+					<string name="todevide" in="event.getParam('todevice').toString()"/>
+					<string name="path" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>
 		</onevent>
 
 	</events>
-</starosxml>
+</starlang>

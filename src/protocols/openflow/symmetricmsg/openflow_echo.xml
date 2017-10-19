@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="OpenFlowEcho">
 		<parameters>
-			<parameter name="xid" type="long"/>
+			<long name="xid" />
 		</parameters>
 		<log>OpenFlowEcho</log>
-		<variable name="jsonvariable" type="string"/>
+		<string name="jsonvariable" />
 		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
@@ -16,9 +16,9 @@
 		</reference>
 		<function name="Send_OFPT13_ECHO_REQUEST">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.jsonvariable.toString()"/>
+				<string name="transportid"  in="event.getParam('transportid').toString()"/>
+				<string name="strjson"  in="context.jsonvariable.toString()"/>
 			</parameters>
 		</function>	
 	</function>
-</starosxml>
+</starlang>

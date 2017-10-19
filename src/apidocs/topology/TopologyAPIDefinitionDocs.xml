@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				qiulei
@@ -10,8 +10,8 @@
 	-->
 	<!--定义：Topologys-->
 	<function name="AddDefinitionTopologysData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 
 		<set name="definitionname" value="'Topologys'" />
 		
@@ -94,21 +94,21 @@
 		
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
 	</function>
 	
 	<function name="RemoveDefinitionTopologysData">
-		<variable name="definitionname" type="string"/>
+		<string name="definitionname"/>
 		
 		<set name="definitionname" value="'Topologys'" />
 
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 	</function>
@@ -116,8 +116,8 @@
 
 	<!--定义：Topology -->
 	<function name="AddDefinitionTopologyData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 		
 		<set name="definitionname" value="'Topology'" />
 		
@@ -183,8 +183,8 @@
 
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
@@ -192,14 +192,14 @@
 	
 	<!--删除：Topology-->
 	<function name="RemovePutRequestDocsAPITopology">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 		
 		<set name="definitionname" value="'Topology'" />
 		
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 		
@@ -207,8 +207,8 @@
 
 	<!--定义 TopologyResult start-->
 	<function name="AddDefinitionTopologyResultData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 
 		<set name="definitionname" value="'TopologyResult'" />
 		
@@ -246,8 +246,8 @@
 
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
@@ -255,13 +255,13 @@
 
 	<function name="RemoveDefinitionTopologyResultData">
 		
-		<variable name="definitionname" type="string"/>
+		<string name="definitionname"/>
 
 		<set name="definitionname" value="'TopologyResult'" />
 
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 		
@@ -282,4 +282,4 @@
 		<function name="RemovePutRequestDocsAPITopology"/>
 		<function name="RemoveDefinitionTopologyResultData"/>
 	</function>
-</starosxml>
+</starlang>

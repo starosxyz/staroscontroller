@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				hupeng
@@ -15,33 +15,33 @@
 		
 		<function name="RegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
-				<parameter name="handleevent" type="string" in="'processtopologysrequest'"/>
-				<parameter name="requestpathtest" type="string" in="'/topologyservice/topologys'"/>			
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processtopologysrequest'"/>
+				<string name="requestpathtest" in="'/topologyservice/topologys'"/>			
 			</parameters>
 		</function>
 
 		<function name="RegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>			
-				<parameter name="handleevent" type="string" in="'topogyprocessrequest'"/>
-				<parameter name="requestpathtest" type="string" in="'/topologyservice/topology'"/>			
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'topogyprocessrequest'"/>
+				<string name="requestpathtest" in="'/topologyservice/topology'"/>			
 			</parameters>
 		</function>
 
 	</function>
 	
 	
-		<function name="UnRegisterHandler">
+	<function name="UnRegisterHandler">
 		<function name="UnRegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<parameter name="requestpath" type="string" in="'/topologyservice/topologys'"/>			
+				<string name="requestpath" in="'/topologyservice/topologys'"/>			
 			</parameters>
 		</function>
 
 		<function name="UnRegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<parameter name="requestpath" type="string" in="'/topologyservice/topology'"/>			
+				<string name="requestpath" in="'/topologyservice/topology'"/>			
 			</parameters>
 		</function>
 	</function>
@@ -74,19 +74,20 @@
 	<function name="getAllTopogys">
 		<function name="SendResponse" class="RestfulService">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="json" type="string" in="topology.getAllTopology().toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="topology.getAllTopology().toString()"/>
 			</parameters>
 		</function>
+		<log leve="1"><![CDATA[alltopo= '<%=topology.getAllTopology().toString()%>']]></log>
 	</function>	
 	<function name="getTopogy">
-		<variable name="fromdevice" type="string"/>
-		<variable name="todevice" type="string"/>
-		<container name="pathlist" type="list" valuetype="string"/>
-		<variable name="path" type="string"/>
-		<variable name="onepath" type="string"/>
-		<variable name="pathhop1" type="string"/>
-		<variable name="ishave" type="boolean"/>
+		<string name="fromdevice"/>
+		<string name="todevice"/>
+		<list name="pathlist" valuetype="string"/>
+		<string name="path"/>
+		<string name="onepath"/>
+		<string name="pathhop1"/>
+	
 		
 			<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
@@ -103,9 +104,9 @@
 
 		<function name="FindPath" class="TopoManager">
 			<parameters>
-				<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
-				<parameter name="todevice" type="string" in="context.todevice.toString()"/>
-				<parameter name="pathlist" type="list" out="context.pathlist"/>
+				<string name="fromdevice" in="context.fromdevice.toString()"/>
+				<string name="todevice" in="context.todevice.toString()"/>
+				<list name="pathlist" out="context.pathlist"/>
 			</parameters>
 		</function>
 		<for var="onepath" in="context.pathlist">
@@ -113,31 +114,32 @@
 			<script>
 				<![CDATA[
 				var info = JSON.parse(context.onepath.toString());
-				if (info.paths.length==1)
+				if (info.path.length==1)
 				{
+					context.print("info.path.length==1");
 					context.pathhop1.setValue(context.onepath.toString());
-					context.ishave.setValue(true);
+				}else if(info.path.length==0){
+					context.print("path length is 0");
 				}else{
-					context.ishave.setValue(false);
+						context.print("path length not 0 or 1");
+						var length=info.path.length;
+						context.print("length:"+length);
 				}
 				]]>
 			</script>
 		</for>
-		
-		
-
-		<if cond="context.ishave.toBoolean()==true">
+		<log leve="10"><![CDATA[pathhop1= '<%=context.pathhop1.toString()%>']]></log>
+		<if cond="context.pathhop1.size() != 0">
 			<then>
-				<log> ishave is true</log>
 				<function name="SendResponse" class="RestfulService">
 					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="json" type="string" in="context.pathhop1.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.pathhop1.toString()"/>
 					</parameters>
 				</function>
 			</then>
 			<else>
-				<variable name="response" type="string"/>
+				<string name="response"/>
 				<reference variable="response">
 					<jsonbody><![CDATA[ 
 						{
@@ -147,22 +149,21 @@
 				</reference>
 				<function name="SendResponse" class="RestfulService">
 					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-						<parameter name="json" type="string" in="context.response.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.response.toString()"/>
 					</parameters>
 				</function>
 			</else>
-		</if>
-		
-		
+		</if>	
+
 
 	</function>
 	
 	<function name="addTopogy">
-		<variable name="successresponse" type="string"/>
-		<variable name="deviceobject" type="class"/>
-		<variable name="fromdevice" type="string"/>
-		<variable name="todevice" type="string"/>
+		<string name="successresponse"/>
+		<object name="deviceobject"/>
+		<string name="fromdevice"/>
+		<string name="todevice"/>
 		<log leve="1">Topopogy addTopogy</log>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
@@ -179,30 +180,31 @@
 		]]></script>
 		<function name="AddPath" class="TopoManager">
 			<parameters>
-				<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
-				<parameter name="todevide" type="string" in="context.todevice.toString()"/>
-				<parameter name="path" type="string" in="event.getParam('eventdata').toString()"/>
+				<string name="fromdevice" in="context.fromdevice.toString()"/>
+				<string name="todevide" in="context.todevice.toString()"/>
+				<string name="path" in="event.getParam('eventdata').toString()"/>
 			</parameters>
 		</function>
+		<log leve="1"><![CDATA[AddPath path= '<%=event.getParam('eventdata').toString()%>']]></log>	
 		
 		<function name="successresponse">
 			<parameters>
-					<parameter name="successresponse" type="string" out="context.successresponse"/>
+					<string name="successresponse" out="context.successresponse"/>
 			</parameters>
 		</function>
 		<log leve="1"><![CDATA[successresponse= '<%=context.successresponse.toString()%>']]></log>	
 		<function name="SendResponse" class="RestfulService">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="json" type="string" in="context.successresponse.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="deleteTopogy">
 		<log leve="1">Topopogy deleteTopogy</log>	
-		<variable name="fromdevice" type="string"/>
-		<variable name="todevice" type="string"/>
-		<variable name="successresponse" type="string"/>
+		<string name="fromdevice"/>
+		<string name="todevice"/>
+		<string name="successresponse"/>
 		<script><![CDATA[
 			var str = event.getParam('requestpath').toString();
 			var array = str.split("/");
@@ -213,19 +215,19 @@
 		]]></script>
 		<function name="RemoveAllPath" class="TopoManager">
 			<parameters>
-				<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
-				<parameter name="todevice" type="string" in="context.todevice.toString()"/>
+				<string name="fromdevice" in="context.fromdevice.toString()"/>
+				<string name="todevice" in="context.todevice.toString()"/>
 			</parameters>
 		</function>
 		<function name="successresponse">
 			<parameters>
-					<parameter name="successresponse" type="string" out="context.successresponse"/>
+					<string name="successresponse" out="context.successresponse"/>
 			</parameters>
 		</function>	
 		<function name="SendResponse" class="RestfulService">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="json" type="string" in="context.successresponse.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
 			</parameters>
 		</function>
 	</function>
@@ -233,9 +235,9 @@
 	
 	<function name="successresponse">
 		<parameters>
-				<parameter name="successresponse" type="string"/>
+			<string name="successresponse"/>
 		</parameters>
-		<variable name="response" type="string"/>
+		<string name="response"/>
 
 		<reference variable="response">
 			<jsonbody><![CDATA[ 
@@ -250,7 +252,4 @@
 		<set name="successresponse" value="context.response.toString()"/>
 		<log leve="1"><![CDATA[successresponse huhuhu= '<%=context.response.toString()%>']]></log>	
 	</function>
-	
-
-	
-</starosxml>
+</starlang>

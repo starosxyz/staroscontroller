@@ -1,45 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--wangkang 2017/09/13 -->
 	<class name="CTunnel">
 		<private>
-			<variable name="m_id" type="long"/>
-			<variable name="m_username" type="string"/>
-			<variable name="m_inputPort" type="string"/>
-			<variable name="m_outputPort" type="string"/>
+			<long name="m_id"/>
+			<string name="m_username"/>
+			<string name="m_inputPort"/>
+			<string name="m_outputPort"/>
 			
-			<variable name="m_serviceinvlan" type="long"/>			
-			<variable name="m_serviceoutvlan" type="long"/>
-			<variable name="m_type" type="string"/>
-			<variable name="m_state" type="string"/>
-			<variable name="m_inputvlanid" type="long"/>
-			<variable name="m_outputvlanid" type="long"/>
+			<long name="m_serviceinvlan"/>			
+			<long name="m_serviceoutvlan"/>
+			<string name="m_type"/>
+			<string name="m_state"/>
+			<long name="m_inputvlanid"/>
+			<long name="m_outputvlanid"/>
 			
-			<variable name="m_bandwidth" type="long"/>
-			<variable name="m_tunneldevicemgr" type="class"/>
-			<variable name="m_bisActive" type="boolean" value="false"/>
+			<long name="m_bandwidth"/>
+			<object name="m_tunneldevicemgr"/>
+			<boolean name="m_bisActive" value="false"/>
 			
-			<variable name="m_fromdevice" type="string"/>
-			<variable name="m_fromdeviceport" type="string"/>
-			<variable name="m_todevice" type="string"/>
-			<variable name="m_todeviceport" type="string"/>
+			<string name="m_fromdevice"/>
+			<string name="m_fromdeviceport"/>
+			<string name="m_todevice"/>
+			<string name="m_todeviceport"/>
 		</private>
 		<public>
 			<function name="CTunnel">
 				<parameters>
-					<parameter name="id" type="long"/>
-					<parameter name="username" type="string"/>
-					<parameter name="inputPort" type="string"/>
-					<parameter name="outputPort" type="string"/>
-					<parameter name="invlan" type="long"/>
+					<long name="id"/>
+					<string name="username"/>
+					<string name="inputPort"/>
+					<string name="outputPort"/>
+					<long name="invlan"/>
 					
-					<parameter name="outvlan" type="long"/>
-					<parameter name="type" type="string"/>
-					<parameter name="state" type="string"/>
-					<parameter name="inputvlanid" type="long"/>
-					<parameter name="outputvlanid" type="long"/>
+					<long name="outvlan"/>
+					<string name="type"/>
+					<string name="state"/>
+					<long name="inputvlanid"/>
+					<long name="outputvlanid"/>
 					
-					<parameter name="bandwidth" type="long"/>
+					<long name="bandwidth"/>
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toLong()"/>
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -69,21 +69,21 @@
 
 			<function name="GetTunnelId">
 				<parameters>
-					<parameter name="outid" type="long"/>
+					<long name="outid"/>
 				</parameters>
 				<set name="outid" value="thisclass.m_id.toLong()"/>
 			</function>
 			<!--qiulei 20170913 pm-->
 			<function name="GetTunnel_username">
 				<parameters>
-					<parameter name="t_username" type="string"/>
+					<string name="t_username"/>
 				</parameters>
 				<set name="t_username" value="thisclass.m_username.toString()"/>
 			</function>
 			
 			<function name="GetTunnel_inputPort">
 				<parameters>
-					<parameter name="t_inputPort" type="string"/>
+					<string name="t_inputPort"/>
 				</parameters>
 				<set name="t_inputPort" value="thisclass.m_inputPort.toString()"/>
 			</function>
@@ -91,56 +91,56 @@
 			
 			<function name="GetTunne_outputPort">
 				<parameters>
-					<parameter name="t_outputPort" type="string"/>
+					<string name="t_outputPort"/>
 				</parameters>
 				<set name="t_outputPort" value="thisclass.m_outputPort.toString()"/>
 			</function>
 			
 			<function name="GetTunne_invlan">
 				<parameters>
-					<parameter name="t_invlan" type="long"/>
+					<long name="t_invlan"/>
 				</parameters>
 				<set name="t_invlan" value="thisclass.m_invlan.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_outvlan">
 				<parameters>
-					<parameter name="t_outvlan" type="long"/>
+					<long name="t_outvlan"/>
 				</parameters>
 				<set name="t_outvlan" value="thisclass.m_outvlan.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_type">
 				<parameters>
-					<parameter name="t_type" type="string"/>
+					<string name="t_type"/>
 				</parameters>
 				<set name="t_type" value="thisclass.m_type.toString()"/>
 			</function>
 			
 			<function name="GetTunnel_state">
 				<parameters>
-					<parameter name="t_state" type="string"/>
+					<string name="t_state"/>
 				</parameters>
 				<set name="t_state" value="thisclass.m_state.toString()"/>
 			</function>
 			
 			<function name="GetTunnel_inputvlanid">
 				<parameters>
-					<parameter name="t_inputvlanid" type="long"/>
+					<long name="t_inputvlanid"/>
 				</parameters>
 				<set name="t_inputvlanid" value="thisclass.m_inputvlanid.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_outputvlanid">
 				<parameters>
-					<parameter name="t_outputvlanid" type="long"/>
+					<long name="t_outputvlanid"/>
 				</parameters>
 				<set name="t_outputvlanid" value="thisclass.m_outputvlanid.toLong()"/>
 			</function>
 			
 			<function name="GetTunnel_bandwidth">
 				<parameters>
-					<parameter name="t_bandwidth" type="long"/>
+					<long name="t_bandwidth"/>
 				</parameters>
 				<set name="t_bandwidth" value="thisclass.m_bandwidth.toLong()"/>
 			</function>
@@ -149,10 +149,10 @@
 
 			<function name="OneTunnelObjectToJsonString">
 				<parameters>
-					<parameter name="TunnelObjectToJson" type="string"/>
+					<string name="TunnelObjectToJson"/>
 				</parameters>
 				<log>insert CTunnel OneTunnelObjectToJsonString</log>
-				<variable name="values" type="string" />
+				<string name="values"/>
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
 						{	
@@ -179,17 +179,17 @@
 			<!--qiulei 20170913 update Tunnel-->
 			<function name="UpdateTunnel">
 				<parameters>
-					<parameter name="username" type="string"/>
-					<parameter name="inputPort" type="string"/>
-					<parameter name="outputPort" type="string"/>
-					<parameter name="invlan" type="long"/>
+					<string name="username"/>
+					<string name="inputPort"/>
+					<string name="outputPort"/>
+					<long name="invlan"/>
 					
-					<parameter name="outvlan" type="long"/>
-					<parameter name="type" type="string"/>
-					<parameter name="state" type="string"/>
-					<parameter name="inputvlanid" type="long"/>
-					<parameter name="outputvlanid" type="long"/>
-					<parameter name="bandwidth" type="long"/>
+					<long name="outvlan"/>
+					<string name="type"/>
+					<string name="state"/>
+					<long name="inputvlanid"/>
+					<long name="outputvlanid"/>
+					<long name="bandwidth"/>
 				</parameters>
 				
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -206,14 +206,14 @@
 			
 			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
-				<variable name="firstdevice" type="class"/>
-				<variable name="lastdevice" type="class"/>
-				<variable name="onedevice" type="class"/>
-				<container name="middevice" type="list" valuetype="class"/>
-				<iterator name="middeviceiterator" type="list" valuetype="class"/>
-				<iterator name="middevicefirst" type="list" valuetype="class"/>
-				<iterator name="middeviceend" type="list" valuetype="class"/>
-				<variable name="getpathresult" type="boolean"/>
+				<object name="firstdevice"/>
+				<object name="lastdevice"/>
+				<object name="onedevice"/>
+				<list name="middevice" valuetype="class"/>
+				<list-iterator name="middeviceiterator" valuetype="class"/>
+				<list-iterator name="middevicefirst" valuetype="class"/>
+				<list-iterator name="middeviceend" valuetype="class"/>
+				<boolean name="getpathresult"/>
 				<log>==============================</log>
 				<log>##### Active Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==true">
@@ -230,7 +230,7 @@
 				-->
 				<function name="GetShortPath">
 					<parameters>
-						<parameter name="result" type="boolean" out="context.getpathresult"/>
+						<boolean name="result" out="context.getpathresult"/>
 					</parameters>
 				</function>
 				<if cond="context.getpathresult.toBoolean()==false">
@@ -240,25 +240,25 @@
 					</then>
 				</if>
 				
-				<if cond="thisclass.m_tunneldevicemgr != null">
+				<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 					<then>
 						<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
 						<log>##### m_tunneldevicemgr is not null #####</log>
 						<function name="GetFirstDevice" class="m_tunneldevicemgr">
 							<parameters>
-								<parameter name="firstdevice" type="class" out="context.firstdevice"/>
+								<object name="firstdevice" out="context.firstdevice"/>
 							</parameters>
 						</function>
 						
 						<function name="GetLastDevice" class="m_tunneldevicemgr">
 							<parameters>
-								<parameter name="lastdevice" type="class" out="context.lastdevice"/>
+								<object name="lastdevice" out="context.lastdevice"/>
 							</parameters>
 						</function>
 						
 						<function name="GetMiddleDevice" class="m_tunneldevicemgr">
 							<parameters>
-								<parameter name="devicelist" type="list" out="context.middevice"/>
+								<list name="devicelist" out="context.middevice"/>
 							</parameters>							
 						</function>
 					</then>
@@ -268,11 +268,11 @@
 						<log>context.firstdevice==context.lastdevice</log>
 						<function name="installRuleAtSameDevice" class="firstdevice">
 							<parameters>
-								<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
-								<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
-								<parameter name="outport" type="string" in="thisclass.m_todeviceport.toString()"/>
-								<parameter name="outvlan" type="string" in="thisclass.m_outputvlanid.toString()"/>
-								<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 							</parameters>
 						</function>
 						<set name="m_bisActive" value="true"/>
@@ -281,20 +281,20 @@
 				</if>
 				<function name="installRuleStart" class="firstdevice">
 					<parameters>
-						<parameter name="inport" type="string" in="thisclass.m_fromdeviceport.toString()"/>
-						<parameter name="invlan" type="string" in="thisclass.m_inputvlanid.toString()"/>
-						<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
-						<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
-						<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+						<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 					</parameters>
 				</function>
 				<function name="installRuleEnd" class="lastdevice">
 					<parameters>
-						<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
-						<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
-						<parameter name="outport" type="string" in="thisclass.m_todeviceport.toString()"/>
-						<parameter name="outvlan" type="string" in="thisclass.m_outputvlanid.toString()"/>
-						<parameter name="bandwith" type="long" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 					</parameters>
 				</function>
 
@@ -305,8 +305,8 @@
 					<set name="onedevice" value="context.middeviceiterator.value()"/>
 					<function name="installRuleMid" class="onedevice">
 						<parameters>
-							<parameter name="serviceinvlan" type="string" in="thisclass.m_serviceinvlan.toString()"/>
-							<parameter name="serviceoutvlan" type="string" in="thisclass.m_serviceoutvlan.toString()"/>
+							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
 						</parameters>
 					</function>
 				</for>
@@ -322,7 +322,7 @@
 						</function>
 					</then>
 				</if>
-				<if cond="thisclass.m_tunneldevicemgr != null">
+				<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 					<then>
 						<function name="DeactiveTunnel" class="m_tunneldevicemgr"/>
 					</then>
@@ -332,16 +332,16 @@
 			
 			<function name="GetShortPath">
 				<parameters>
-					<parameter name="result" type="boolean"/>
+					<boolean name="result"/>
 				</parameters>
 				<log>##### Get Shortest Path #####</log>
-				<variable name="strlink" type="string"/>
-				<variable name="strlink2" type="string"/>
-								<if cond="thisclass.m_fromdevice.toString()==thisclass.m_todevice.toString()">
+				<string name="strlink"/>
+				<string name="strlink2"/>
+				<if cond="thisclass.m_fromdevice.toString()==thisclass.m_todevice.toString()">
 					<then>
 						<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
 							<parameters>
-								<parameter name="deviceid" type="string" in="thisclass.m_fromdevice.toString()"/>
+								<string name="deviceid" in="thisclass.m_fromdevice.toString()"/>
 							</parameters>
 						</function>
 						<set name="result" value="true"/>
@@ -349,23 +349,23 @@
 					<else>
 						<function name="getShortestPath" class="TopoService">
 							<parameters>
-								<parameter name="fromdevice" type="string" in="thisclass.m_fromdevice.toString()"/>
-								<parameter name="todevice" type="string" in="thisclass.m_todevice.toString()"/>
-								<parameter name="outjson" type="string" out="context.strlink"/>
+								<string name="fromdevice" in="thisclass.m_fromdevice.toString()"/>
+								<string name="todevice" in="thisclass.m_todevice.toString()"/>
+								<string name="outjson" out="context.strlink"/>
 							</parameters>
 						</function>
 						<function name="getShortestLink" class="TopoService">
 							<parameters>
-								<parameter name="fromdevice" type="string" in="thisclass.m_fromdevice.toString()"/>
-								<parameter name="todevice" type="string" in="thisclass.m_todevice.toString()"/>
-								<parameter name="outjson" type="string" out="context.strlink2"/>
+								<string name="fromdevice" in="thisclass.m_fromdevice.toString()"/>
+								<string name="todevice" in="thisclass.m_todevice.toString()"/>
+								<string name="outjson" out="context.strlink2"/>
 							</parameters>
 						</function>						
 						<if cond="context.strlink.toString()!=''">
 							<then>
 								<function name="GetTunnelDeviceFromJson" class="thisclass.m_tunneldevicemgr">
 									<parameters>
-										<parameter name="json" type="string" in="context.strlink.toString()"/>
+										<string name="json" in="context.strlink.toString()"/>
 									</parameters>
 								</function>
 								<log>result true</log>
@@ -383,14 +383,14 @@
 			<!-- wangkang 2017/09/21-->
 			<function name="FindTunnelDeviceFromlist">
 				<parameters>
-					<parameter name="json" type="string"/>
+					<string name="json"/>
 				</parameters>
-				<variable name="dstport" type="string"/>
-				<variable name="srcport" type="string"/>
-				<variable name="oneinputport" type="string"/>
-				<variable name="oneoutputport" type="string"/>
-				<variable name="onedeviceid" type="string"/>
-				<variable name="onetunneldevice" type="class"/>
+				<string name="dstport"/>
+				<string name="srcport"/>
+				<string name="oneinputport"/>
+				<string name="oneoutputport"/>
+				<string name="onedeviceid"/>
+				<object name="onetunneldevice"/>
 				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
 				<script><![CDATA[
 					if (context.json.toString().length>0)
@@ -407,12 +407,12 @@
 				<for var="onetunneldevice" in="thisclass.m_tunneldevicemgr.tunneldeviceContainer">
 					<function name="GetInputPort" class="context.onetunneldevice">
 						<parameters>
-							<parameter name="inputPort" type="string" out="context.oneinputport"/>
+							<string name="inputPort" out="context.oneinputport"/>
 						</parameters>
 					</function>
 					<function name="GetOutputPort" class="context.onetunneldevice">
 						<parameters>
-							<parameter name="outputPort" type="string" out="context.oneoutputport"/>
+							<string name="outputPort" out="context.oneoutputport"/>
 						</parameters>
 					</function>
 					<if cond="context.srcport.toString() == context.inputport.toString()">
@@ -422,7 +422,7 @@
 									<log>TunnelDevice is Find From List</log>
 									<function name="GetTunnelDeviceId" class="context.onetunneldevice">
 										<parameters>
-											<parameter name="outtunneldeviceid" type="string" out="context.onedeviceid"/>
+											<string name="outtunneldeviceid" out="context.onedeviceid"/>
 										</parameters>
 									</function>
 									<exit/>
@@ -433,7 +433,7 @@
 				</for>
 				<function name="removeTunnelDevice" class="thisclass.m_tunneldevicemgr">
 					<parameters>
-						<parameter name="deviceid" type="string" in="context.onedeviceid"/>
+						<string name="deviceid" in="context.onedeviceid"/>
 					</parameters>
 				</function>
 				<function name="GetShortPath"/>
@@ -442,19 +442,19 @@
 			<!--Topology change-->
 			<function name="mytopremove">
 				<parameters>
-					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevice" type="string"/>
-					<parameter name="path" type="string"/>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="path"/>
 				</parameters>
-				<variable name="isChange" type="boolean" value="false"/>
+				<boolean name="isChange" value="false"/>
 				<log>Tunnel Top channge</log>
 				<log><![CDATA[CTunnel mytopremove fromdevice = <%=context.fromdevice.toString()%>]]></log>
 				<function name="IsMyTopChange" class="m_tunneldevicemgr">
 					<parameters>
-						<parameter name="fromdevice" type="string" in="context.fromdevice.toString()"/>
-						<parameter name="todevice" type="string" in="context.todevice.toString()"/>
-						<parameter name="path" type="string" in="context.path.toString()"/>
-						<parameter name="ischanage" type="boolean" out="context.isChange"/>
+						<string name="fromdevice" in="context.fromdevice.toString()"/>
+						<string name="todevice" in="context.todevice.toString()"/>
+						<string name="path" in="context.path.toString()"/>
+						<boolean name="ischanage" out="context.isChange"/>
 					</parameters>
 				</function>
 				<if cond="context.isChange.toBoolean()==true">
@@ -467,4 +467,4 @@
 			
 		</public>
 	</class>
-</starosxml>
+</starlang>

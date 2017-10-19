@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CWebSocketManager">
 		<private>
-			<container name="clientContainer" type="hashmap" keytype="string" valuetype="string"/>
+			<hashmap name="clientContainer" keytype="string" valuetype="string"/>
 		</private>
 		<public>
 			<function name="addWebSocket">
 				<parameters>
-					<parameter name="transportid" type="string"/>			
+					<string name="transportid"/>			
 				</parameters>
 				<log><![CDATA[addWebSocket size=<%=context.clientContainer.size()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString()) != true">
@@ -25,7 +25,7 @@
 			</function>
 			<function name="RemoveWebSocket">
 				<parameters>
-					<parameter name="transportid" type="string"/>			
+					<string name="transportid"/>			
 				</parameters>
 				<log><![CDATA[RemoveWebSocket size=<%=context.clientContainer.size()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString())">
@@ -36,12 +36,12 @@
 			</function>
 			<function name="SendToAllClient">
 				<parameters>
-					<parameter name="strjson" type="string"/>			
+					<string name="strjson"/>			
 				</parameters>
 				<log><![CDATA[SendToAllClient strjson =<%=context.strjson.toString()%>]]></log>
-				<variable name="client" type="string"/>
+				<string name="client"/>
 				<log><![CDATA[clientContainer size =<%=context.clientContainer.size()%>]]></log>
-				<container name="oneclientContainer" type="pair" keytype="string" valuetype="string"/>
+				<pair name="oneclientContainer" keytype="string" valuetype="string"/>
 				<for var="oneclientContainer" in="context.clientContainer">
 					<function>
 						<set name="client" value="context.oneclientContainer.second()"/>
@@ -54,4 +54,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

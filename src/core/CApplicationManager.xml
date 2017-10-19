@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 		<!--
 			Author:
 					hupeng
@@ -10,26 +10,26 @@
 		-->
 	<class name="CApplication">
 		<private>
-			<variable name="pathname" type="string" />
-			<variable name="id" type="string" />
-			<variable name="bundleid" type="long" />
-			<variable name="state" type="string" />
-			<variable name="_iconid_state" type="string" />
-			<variable name="icon" type="string" />
-			<variable name="version" type="string" />
-			<variable name="category" type="string" />
-			<variable name="origin" type="string" />
-			<variable name="title" type="string" />
-			<variable name="desc" type="string" />
-			<variable name="url" type="string" />
-			<variable name="readme" type="string" />
-			<variable name="role" type="string" />
-			<container name="required_apps" type="list"  valuetype="string"/>
-			<container name="features" type="list" valuetype="string"/>
-			<container name="permissions" type="list" valuetype="string"/>
+			<string name="pathname"/>
+			<string name="id"/>
+			<long name="bundleid"/>
+			<string name="state"/>
+			<string name="_iconid_state"/>
+			<string name="icon"/>
+			<string name="version"/>
+			<string name="category"/>
+			<string name="origin"/>
+			<string name="title"/>
+			<string name="desc"/>
+			<string name="url" />
+			<string name="readme"/>
+			<string name="role" />
+			<list name="required_apps"  valuetype="string"/>
+			<list name="features" valuetype="string"/>
+			<list name="permissions" valuetype="string"/>
 			
-			<variable name="m_apppath" type="string" />
-			<variable name="pathends" type="string" />
+			<string name="m_apppath"/>
+			<string name="pathends" />
 			
 		</private>
 		<public>
@@ -37,11 +37,11 @@
 		
 			<function name="CApplication">
 				<parameters>
-					<parameter name="apppath" type="string" />
-					<parameter name="appid" type="string"/>
-					<parameter name="appstate" type="string"/>
-					<parameter name="appiconstate" type="string"/>
-					<parameter name="apppathname" type="string"/>	
+					<string name="apppath"/>
+					<string name="appid"/>
+					<string name="appstate"/>
+					<string name="appiconstate"/>
+					<string name="apppathname"/>	
 				</parameters>
 				<set name="thisclass.state" value="context.appstate.toString()"/>
 				<set name="thisclass.id" value="context.appid.toString()"/>
@@ -57,23 +57,23 @@
 			-->
 			<function name="Setallinfo" class="oneapp">
 				<parameters>
-					<parameter name="appversion" type="string"/>
-					<parameter name="appcategory" type="string" />
-					<parameter name="apporigin" type="string"/>
-					<parameter name="apptitle" type="string"/>
-					<parameter name="appdesc" type="string"/>		
-					<parameter name="appurl" type="string"/>
-					<parameter name="appbundleid" type="long"/>
+					<string name="appversion"/>
+					<string name="appcategory" />
+					<string name="apporigin" />
+					<string name="apptitle"/>
+					<string name="appdesc"/>		
+					<string name="appurl"/>
+					<long name="appbundleid"/>
 				</parameters> 
 				<function name="SetApplicationInfo">
 					<parameters>
-						<parameter name="appversion" type="string" in="context.appversion.toString()"/>
-						<parameter name="appcategory" type="string" in="context.appcategory.toString()"/>
-						<parameter name="apporigin" type="string" in="context.apporigin.toString()"/>
-						<parameter name="apptitle" type="string" in="context.apptitle.toString()"/>
-						<parameter name="appdesc" type="string" in="context.appdesc.toString()"/>		
-						<parameter name="appurl" type="string" in="context.appurl.toString()"/>
-						<parameter name="appbundleid" type="long" in="context.appbundleid.toLong()"/>
+						<string name="appversion" in="context.appversion.toString()"/>
+						<string name="appcategory" in="context.appcategory.toString()"/>
+						<string name="apporigin" in="context.apporigin.toString()"/>
+						<string name="apptitle" in="context.apptitle.toString()"/>
+						<string name="appdesc" in="context.appdesc.toString()"/>		
+						<string name="appurl" in="context.appurl.toString()"/>
+						<long name="appbundleid" in="context.appbundleid.toLong()"/>
 					</parameters>
 				</function>
 				<!-- 
@@ -99,7 +99,7 @@
 				-->
 			<function name="Getpath">
 				<parameters>
-					<parameter name="apppath" type="string"/>
+					<string name="apppath"/>
 				</parameters> 
 				<set name="apppath" value="thisclass.pathname"/>
 			</function>
@@ -111,7 +111,7 @@
 				-->
 			<function name="GetApplicationId">
 				<parameters>
-					<parameter name="outappid" type="string"/>
+					<string name="outappid"/>
 				</parameters>
 				<set name="outappid" value="thisclass.id.toString()"/>
 			</function>
@@ -120,13 +120,13 @@
 
 			<function name="SetApplicationInfo">
 				<parameters>
-					<parameter name="appversion" type="string"/>
-					<parameter name="appcategory" type="string"/>
-					<parameter name="apporigin" type="string"/>
-					<parameter name="apptitle" type="string"/>
-					<parameter name="appdesc" type="string"/>		
-					<parameter name="appurl" type="string"/>
-					<parameter name="appbundleid" type="long"/>
+					<string name="appversion" />
+					<string name="appcategory"/>
+					<string name="apporigin"/>
+					<string name="apptitle"/>
+					<string name="appdesc"/>		
+					<string name="appurl"/>
+					<long name="appbundleid"/>
 				</parameters>
 				<set name="thisclass.version" value="context.appversion.toString()"/>
 				<set name="thisclass.category" value="context.appcategory.toString()"/>
@@ -146,7 +146,7 @@
 			-->
 			
 			<function name="ActiveApplication">
-				<variable name="filecontent" type="string" value="'0'"/>
+				<string name="filecontent" value="'0'"/>
 				<if cond="thisclass.state.toString()=='ACTIVE'">
 					<then>
 						<exit/>
@@ -179,7 +179,7 @@
 						<exit/>
 					</then>
 					<else>
-						<variable name="filecontent" type="string" value="'0'"/>
+						<string name="filecontent" value="'0'"/>
 						<deactivebundle bundleid="thisclass.bundleid"/>
 						<set name="thisclass.state" value="'INSTALLED'"/>
 						<set name="thisclass._iconid_state" value="'appInactive'"/>
@@ -199,10 +199,10 @@
 			<function name="ToJsonString">
 				<parameters>
 					<!--appjson is return value-->
-					<parameter name="appjson" type="string"/>
+					<string name="appjson"/>
 				</parameters>
 				<log>ToJsonString</log>
-				<variable name="values" type="string" />
+				<string name="values"/>
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
 						{
@@ -228,7 +228,7 @@
 			</function>
 			<function name="GetBundleID">
 				<parameters>
-					<parameter name="id" type="long"/>
+					<long name="id"/>
 				</parameters>
 				<set name="id" value="thisclass.bundleid.toLong()"/>
 			</function>
@@ -236,8 +236,8 @@
 	</class>
 	<class name="CApplicationManager">
 		<private>
-			<variable name="currentappname" type="string"/>
-			<container name="appsContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<string name="currentappname"/>
+			<hashmap name="appsContainer" keytype="string" valuetype="object"/>
 		</private>
 		<public>
 			<function name="CApplicationManager">
@@ -245,13 +245,13 @@
 			</function>
 			<function name="GetCurrentappname">
 				<parameters>
-					<parameter name="outappname" type="string" />
+					<string name="outappname"/>
 				</parameters>
 				<set name="outappname" value="thisclass.currentappname"/>
 			</function>
 			<function name="SetCurrentappname">
 				<parameters>
-					<parameter name="inappname" type="string" />
+					<string name="inappname" />
 				</parameters>
 				<set name="thisclass.currentappname" value="context.inappname"/>
 			</function>
@@ -269,24 +269,24 @@
 			-->
 			<function name="LoadApplication">
 				<log>LoadApplication</log>
-				<container name="listdir" type="list" valuetype="string"/>
-				<variable name="appdir" type="string"/>
-				<variable name="bundleid" type="long"/>
-				<variable name="pathname" type="string"/>
-				<variable name="appparam" type="params"/>
-				<variable name="filecontent" type="string"/>
-				<variable name="activitefile" type="string"/>
-				<variable name="isfile" type="boolean"/>
-				<variable name="oneapp" type="class" />
+				<list name="listdir" valuetype="string"/>
+				<string name="appdir" />
+				<long name="bundleid" />
+				<string name="pathname" />
+				<params name="appparam"/>
+				<string name="filecontent"/>
+				<string name="activitefile"/>
+				<boolean name="isfile" />
+				<object name="oneapp"/>
 				
-				<variable name="apppath" type="string"/>
-				<variable name="appname" type="string"/>
-				<variable name="appstate" type="string" />
-				<variable name="appiconstate" type="string" />
-				<variable name="appfolder" type="string"/>
-				
-				<variable name="appobject" type="class" />
-				<variable name="i" type="string" />
+				<string name="apppath" />
+				<string name="appname" />
+				<string name="appstate" />
+				<string name="appiconstate"/>
+				<string name="appfolder"/>
+				<string name="appstring"/>
+				<object name="appobject"/>
+				<string name="i" />
 				<messageblock name="filecontentss"/>
 				<readdir dir="'/opt/staros.xyz/staroscontroller/starlang/apps/'" list="context.listdir"/>
 				<clear name="appsContainer"/>
@@ -311,18 +311,24 @@
 									<set name="appiconstate" value="'appInactive'"/>
 								</then>
 								<else>
+									<log>isfile is true</log>	
 									<file method="readfile" name="context.activitefile.toString()" data="context.filecontentss"/>
 									<script><![CDATA[
 										var file=context.filecontentss.toString();
+										context.print("huhuhuhuhuhuh!!!!!"+file);
 										var filesize=file.length;
 										context.print(filesize);
-									]]></script>	
+									]]></script>
+									<log><![CDATA[filecontentss!!! = <%=context.filecontentss.toString()%>]]></log>	
+									<log>readfile is success</log>		
 									<if cond="context.filecontentss.toString()!='0'">	
 										<then>
+												<log>filecontentss is not 0</log>	
 											<set name="appstate" value="'ACTIVE'"/>
 											<set name="appiconstate" value="'active'"/>	
 										</then>
 										<else>
+											<log>filecontentss is  0</log>	
 											<set name="appstate" value="'INSTALLED'"/>
 											<set name="appiconstate" value="'appInactive'"/>	
 										</else>
@@ -331,19 +337,28 @@
 							</if>	
 							<new name="appobject" class="CApplication">
 								<parameters>
-									<parameter name="apppath" type="string" in="context.pathname.toString()"/>
-									<parameter name="appid" type="string" in="context.appname.toString()"/>
-									<parameter name="appstate" type="string" in="context.appstate.toString()"/>
-									<parameter name="appiconstate" type="string" in="context.appiconstate.toString()"/>
-									<parameter name="apppathname" type="string" in="context.appfolder.toString()"/>	
+									<string name="apppath"  in="context.pathname.toString()"/>
+									<string name="appid"  in="context.appname.toString()"/>
+									<string name="appstate"  in="context.appstate.toString()"/>
+									<string name="appiconstate"  in="context.appiconstate.toString()"/>
+									<string name="apppathname"  in="context.appfolder.toString()"/>	
 								</parameters>
 							</new>
+							<log><![CDATA[pathname = <%=context.pathname.toString()%>]]></log>	
+							<log><![CDATA[pathname = <%=context.appname.toString()%>]]></log>	
 							<if cond="context.appsContainer.hasValue(context.appname.toString())==false">
 								<then>
+									<log><![CDATA[LoadApplication appname <%=context.appname.toString()%>]]></log>
 									<insert name="appsContainer" key="context.appname.toString()" value="context.appobject"/>
+									<function name="ToJsonString" class="context.appobject">
+										<parameters>
+											<string name="appjson"  out="context.appstring"/>
+										</parameters>
+									</function>
+									<log><![CDATA[LoadApplication appstring <%=context.appstring.toString()%>]]></log>
 								</then>
 							</if>
-							
+							<log>bundleid</log>	
 							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>				
 						</then>
 					</if>
@@ -352,20 +367,25 @@
 			<function name="GetAppJsonString">
 				<parameters>
 					<!--appjson is return value-->
-					<parameter name="appjson" type="string"/>
+					<string name="appjson"/>
 				</parameters>
-				<variable name="jsononeapp" type="class" />
-				<container name="allapplist" type="list" valuetype="string" />
-				<variable name="appstring" type="string"/>
-				<container name="oneapppair" type="pair" keytype="string" valuetype="class"/>
+				<object name="jsononeapp" />
+				<list name="allapplist"  valuetype="string" />
+				<string name="appstring"/>
+				<pair name="oneapppair"  keytype="string" valuetype="object"/>
 				<for var="oneapppair" in="context.appsContainer">
 					<function>
 						<set name="jsononeapp" value="context.oneapppair.second()"/>
-						<function name="ToJsonString" class="context.jsononeapp">
-							<parameters>
-								<parameter name="appjson" type="string" out="context.appstring"/>
-							</parameters>
-						</function>
+						<if cond="context.jsononeapp != null">
+							<then>
+								<function name="ToJsonString" class="context.jsononeapp">
+									<parameters>
+										<string name="appjson"  out="context.appstring"/>
+									</parameters>
+								</function>
+							</then>
+						</if>						
+						<log><![CDATA[GetAppJsonString appstring <%=context.appstring.toString()%>]]></log>
 						<insert name="allapplist" value="context.appstring.toString()"/>
 					</function>
 				</for>
@@ -398,21 +418,25 @@
 			<function name="GetAppdetalJsonString">
 				<parameters>
 					<!--appdetaljson is return value-->
-					<parameter name="appdetailjson" type="string"/>
-					<parameter name="app_id" type="string"/>
+					<string name="appdetailjson" />
+					<string name="app_id" />
 				</parameters>
-				<variable name="oneapp" type="class" />
-				<variable name="appstringjson" type="string" />
+				<object name="oneapp" />
+				<string name="appstringjson"/>
 				<if cond="thisclass.appsContainer.hasValue(context.app_id.toString())">
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.app_id.toString()" output="context.oneapp"/>
-							<function name="ToJsonString" class="oneapp">
-								<parameters>
-									<!--appjson is return value-->
-									<parameter name="appjson" type="string" out="context.appstringjson"/>
-								</parameters>
-							</function>
+							<if cond="context.oneapp != null">
+								<then>
+									<function name="ToJsonString" class="oneapp">
+										<parameters>
+											<!--appjson is return value-->
+											<string name="appjson"  out="context.appstringjson"/>
+										</parameters>
+									</function>
+								</then>
+							</if>							
 							<script><![CDATA[
 								var jsonroot = new Object();
 								var jsondetails = new Object();
@@ -437,30 +461,34 @@
 			-->
 			<function name="RegistApplication">
 				<parameters>
-					<parameter name="id" type="string"/>
-					<parameter name="version" type="string"/>
-					<parameter name="category" type="string"/>
-					<parameter name="origin" type="string"/>
-					<parameter name="title" type="string"/>
-					<parameter name="desc" type="string"/>		
-					<parameter name="url" type="string"/>
-					<parameter name="bundleid" type="long"/>
+					<string name="id" />
+					<string name="version"/>
+					<string name="category" />
+					<string name="origin"/>
+					<string name="title" />
+					<string name="desc"/>		
+					<string name="url" />
+					<long name="bundleid" />
 				</parameters>
-				<variable name="oneapp" type="class" />
+				<object name="oneapp"/>
 				<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-				<variable name="appidout" type="string"/>
-				<function name="Setallinfo" class="oneapp">
-					<parameters>
-						<parameter name="appversion" type="string" in="context.version.toString()"/>
-						<parameter name="appcategory" type="string" in="context.category.toString()"/>
-						<parameter name="apporigin" type="string" in="context.origin.toString()"/>
-						<parameter name="apptitle" type="string" in="context.title.toString()"/>
-						<parameter name="appdesc" type="string" in="context.desc.toString()"/>		
-						<parameter name="appurl" type="string" in="context.url.toString()"/>
-						<parameter name="appbundleid" type="long" in="context.bundleid.toLong()"/>
-					</parameters> 	
-				</function>
-		
+				<string name="appidout" />
+				<if cond="context.oneapp != null">
+					<then>
+						<function name="Setallinfo" class="oneapp">
+							<parameters>
+								<string name="appversion" in="context.version.toString()"/>
+								<string name="appcategory"  in="context.category.toString()"/>
+								<string name="apporigin" in="context.origin.toString()"/>
+								<string name="apptitle"  in="context.title.toString()"/>
+								<string name="appdesc"  in="context.desc.toString()"/>		
+								<string name="appurl"  in="context.url.toString()"/>
+								<long name="appbundleid"  in="context.bundleid.toLong()"/>
+							</parameters> 	
+						</function>
+					</then>
+				</if>
+				
 			</function>
 			<!--
 			
@@ -469,9 +497,9 @@
 			-->
 			<function name="AppDeactiveEvent">
 				<parameters>
-					<parameter name="id" type="string"/>
+					<string name="id"/>
 				</parameters>
-				<variable name="oneapp" type="class" />
+				<object name="oneapp" />
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
 					<then>
 						<function>
@@ -496,18 +524,22 @@
 			-->
 			<function name="AppActiveEvent">
 				<parameters>
-					<parameter name="id" type="string"/>
+					<string name="id" />
 				</parameters>
-				<variable name="oneapp" type="class" />
-				<variable name="apppath" type="string" />
-				<variable name="strkey" type="string" />
-				<variable name="strvalue" type="string" />
+				<object name="oneapp" />
+				<string name="apppath"/>
+				<string name="strkey"/>
+				<string name="strvalue" />
 
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-							<function name="ActiveApplication" class="oneapp"/>
+							<if cond="context.oneapp != null">
+								<then>
+									<function name="ActiveApplication" class="oneapp"/>
+								</then>
+							</if>
 						</function>
 					</then>
 				</if>
@@ -518,18 +550,20 @@
 			-->
 			<function name="UninstallApp">
 				<parameters>
-					<parameter name="id" type="string"/>
+					<string name="id"/>
 				</parameters>
-				<variable name="apppath" type="string" />
-				<variable name="oneapp" type="class" />
+				<string name="apppath" />
+				<object name="oneapp" />
 				<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-				
-				<function name="Getpath" class="oneapp">
-					<parameters>
-						<parameter name="apppath" type="string" out="context.apppath"/>
-					</parameters> 
-				</function>
-
+				<if cond="context.oneapp != null">
+					<then>
+						<function name="Getpath" class="oneapp">
+							<parameters>
+								<string name="apppath" out="context.apppath"/>
+							</parameters> 
+						</function>
+					</then>
+				</if>
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
 					<then>
 						<function>
@@ -542,23 +576,27 @@
 			
 			<function name="GetBundleID">
 				<parameters>
-					<parameter name="appid" type="string"/>
-					<parameter name="bundleid" type="long"/>
+					<string name="appid" />
+					<long name="bundleid" />
 				</parameters>
-				<variable name="oneapp" type="class" />
+				<object name="oneapp" />
 				<if cond="thisclass.appsContainer.hasValue(context.appid.toString())">
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.appid.toString()" output="context.oneapp"/>
-							<function name="GetBundleID" class="oneapp">
-								<parameters>
-									<parameter name="id" type="string" out="context.bundleid"/>
-								</parameters>
-							</function>
+							<if cond="context.oneapp != null">
+								<then>
+									<function name="GetBundleID" class="oneapp">
+										<parameters>
+											<string name="id" out="context.bundleid"/>
+										</parameters>
+									</function>
+								</then>
+							</if>	
 						</function>
 					</then>
 				</if>
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

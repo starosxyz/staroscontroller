@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	
 	<!-- wangkang 2017/09/01 
 		1.Get a Error Message and JSON parse,Find MessageType and Cookie
@@ -9,10 +9,10 @@
 		5.Set Message State from Flowentry
 	-->
 	<function name="ErrorHandleFlowMod">
-		<variable name="flowentryobj" type="class"/>
-		<variable name="deviceobj" type="class"/>
-		<variable name="flowmgrobj" type="class"/>
-		<variable name="flowcookie" type="string"/>
+		<object name="flowentryobj"/>
+		<object name="deviceobj"/>
+		<object name="flowmgrobj"/>
+		<string name="flowcookie"/>
 		<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if(info.body)
@@ -26,33 +26,33 @@
 		<log>##### MessageType is 14 #####</log>
 		<function name="GetDeviceByTransportId" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
 			</parameters>
 		</function>
-		<if cond="context.deviceobj != null">
+		<if cond="context.deviceobj.ptr != null">
 			<then>
 				<log>##### Deviceobj is not null #####</log>
 				<function name="GetFlowManager" class="context.deviceobj">
 					<parameters>
-						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
 					</parameters>
 				</function>
-				<if cond="context.flowmgrobj!=null">
+				<if cond="context.flowmgrobj.ptr!=null">
 					<then>
 						<log>##### Flowmgrobj is not null #####</log>
 						<function name="FindFlow" class="context.flowmgrobj">
 							<parameters>
-								<parameter name="incookie" type="string" in="context.flowcookie.toString()"/>
-								<parameter name="outflowentry" type="class" out="context.flowentryobj"/>
+								<string name="incookie" in="context.flowcookie.toString()"/>
+								<object name="outflowentry" out="context.flowentryobj"/>
 							</parameters>
 						</function>
-						<if cond="context.flowentryobj != null">											
+						<if cond="context.flowentryobj.ptr != null">											
 							<then>
 								<log>##### Flowentryobj is not null #####</log>
 								<function name="SetState" class="context.flowentryobj">												
 									<parameters>
-										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+										<string name="inmodstate" in="'Peeding'"/>
 									</parameters>	
 								</function>
 							</then>
@@ -71,10 +71,10 @@
 		5.Set Message State from Group
 	-->
 	<function name="ErrorHandleGroupMod">
-		<variable name="groupobj" type="class"/>
-		<variable name="deviceobj" type="class"/>
-		<variable name="groupmgrobj" type="class"/>
-		<variable name="groupid" type="string"/>
+		<object name="groupobj"/>
+		<object name="deviceobj"/>
+		<object name="groupmgrobj"/>
+		<string name="groupid"/>
 		<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if(info.body)
@@ -88,33 +88,33 @@
 		<log>##### MessageType is 15 #####</log>
 		<function name="GetDeviceByTransportId" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
 			</parameters>
 		</function>
-		<if cond="context.deviceobj != null">
+		<if cond="context.deviceobj.ptr != null">
 			<then>
 				<log>##### Deviceobj is not null #####</log>
 				<function name="GetGroupManager" class="context.deviceobj">
 					<parameters>
-						<parameter name="outgroupmgr" type="class" out="context.groupmgrobj"/>
+						<object name="outgroupmgr" out="context.groupmgrobj"/>
 					</parameters>
 				</function>
-				<if cond="context.groupmgrobj!=null">
+				<if cond="context.groupmgrobj.ptr!=null">
 					<then>
 						<log>##### groupmgrobj is not null #####</log>
 						<function name="FindGroup" class="context.groupmgrobj">
 							<parameters>
-								<parameter name="ingroupid" type="string" in="context.groupid.toString()"/>
-								<parameter name="outgroup" type="class" out="context.groupobj"/>
+								<string name="ingroupid" in="context.groupid.toString()"/>
+								<object name="outgroup" out="context.groupobj"/>
 							</parameters>
 						</function>
-						<if cond="context.groupobj != null">											
+						<if cond="context.groupobj.ptr != null">											
 							<then>
 								<log>##### groupobj is not null #####</log>
 								<function name="SetState" class="context.groupobj">												
 									<parameters>
-										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+										<string name="inmodstate" in="'Peeding'"/>
 									</parameters>	
 								</function>
 							</then>
@@ -133,11 +133,11 @@
 		5.Set Message State from Meter
 	-->
 	<function name="ErrorHandleMeterMod">
-		<variable name="meterobj" type="class"/>
-		<variable name="deviceobj" type="class"/>
-		<variable name="metermgrobj" type="class"/>
-		<variable name="meterid" type="long"/>
-		<variable name="tmpmeterid" type="string"/>
+		<object name="meterobj"/>
+		<object name="deviceobj"/>
+		<object name="metermgrobj"/>
+		<long name="meterid"/>
+		<string name="tmpmeterid"/>
 		<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if(info.body)
@@ -152,33 +152,33 @@
 		<log>##### MessageType is 29 #####</log>
 		<function name="GetDeviceByTransportId" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="onedeviceobj" type="class" out="context.deviceobj"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
 			</parameters>
 		</function>
-		<if cond="context.deviceobj != null">
+		<if cond="context.deviceobj.ptr != null">
 			<then>
 				<log>##### Deviceobj is not null #####</log>
 				<function name="GetMeterManager" class="context.deviceobj">
 					<parameters>
-						<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+						<object name="outmetermgr" out="context.metermgrobj"/>
 					</parameters>
 				</function>
-				<if cond="context.metermgrobj!=null">
+				<if cond="context.metermgrobj.ptr!=null">
 					<then>
 						<log>##### metermgrobj is not null #####</log>
 						<function name="FindMeter" class="context.metermgrobj">
 							<parameters>
-								<parameter name="inmeterid" type="long" in="context.meterid.toLong()"/>
-								<parameter name="outmeter" type="class" out="context.meterobj"/>
+								<long name="inmeterid" in="context.meterid.toLong()"/>
+								<object name="outmeter" out="context.meterobj"/>
 							</parameters>
 						</function>
-						<if cond="context.meterobj != null">											
+						<if cond="context.meterobj.ptr != null">											
 							<then>
 								<log>##### meterobj is not null #####</log>
 								<function name="SetState" class="context.meterobj">												
 									<parameters>
-										<parameter name="inmodstate" type="string" in="'Peeding'"/>
+										<string name="inmodstate" in="'Peeding'"/>
 									</parameters>	
 								</function>
 							</then>
@@ -190,4 +190,4 @@
 	</function>
 
 
-</starosxml>
+</starlang>

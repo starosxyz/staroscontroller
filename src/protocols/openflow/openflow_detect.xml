@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			qiulei
@@ -11,10 +11,10 @@
 	<!--qiulei  0807 18:00-->
 	<function name="OpenFlowKeepAliveDetect">
 		<parameters>
-			<parameter name="switchdevice" type="hashmap"/>
+			<hashmap name="switchdevice"/>
 		</parameters>
 		
-		<variable name="requestcount" type="long"/>
+		<long name="requestcount"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 				{ "xid":"<%=context.echorequestxid.toLong()%>" }
@@ -22,8 +22,8 @@
 		</reference>
 		<function name="Send_OFPT13_ECHO_REQUEST">
 			<parameters>
-				<parameter name="transportid" type="string" in="context.switchdevice.getValue('transportid')"/>
-				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+				<string name="transportid" in="context.switchdevice.getValue('transportid')"/>
+				<string name="strjson" in="context.strjson.toString()"/>
 			</parameters>
 		</function>
 		<set name="requestcount" value="context.switchdevice.getValue('requestcount')"/>
@@ -35,7 +35,7 @@
 				<!--20170808 qiulei am-->
 				<function name="removeDevice">
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.switchdevice.getValue('datapathid')"/>
+						<string name="datapathid" in="context.switchdevice.getValue('datapathid')"/>
 					</parameters>
 				</function>
 				
@@ -51,4 +51,4 @@
 	<function name="OpenFlowDetect">
 		<function name="Detect" class="DeviceManager"/>
 	</function>
-</starosxml>
+</starlang>

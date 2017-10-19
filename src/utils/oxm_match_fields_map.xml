@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
-	<variable name="matchfieldMap" type="params" global="true"/>
-	<variable name="matchfieldName" type="params" global="true"/>
+<starlang>
+	<params name="matchfieldMap" global="true"/>
+	<params name="matchfieldName" global="true"/>
 	<function name="InitOXMMatchFieldMap">
 		<set name="matchfieldMap" paramname="0" value="'inport'"/>
 		<set name="matchfieldMap" paramname="1" value="'inphyport'"/>
@@ -86,4 +86,4 @@
 		<set name="matchfieldName" paramname="38" value="'tunnelid'"/>
 		<set name="matchfieldName" paramname="39" value="'ipv6exthdr'"/>
 	</function>
-</starosxml>
+</starlang>

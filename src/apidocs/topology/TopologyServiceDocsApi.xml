@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyAPIDefinitionDocs.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServicePathDocsApi.xml"/>
@@ -15,7 +15,7 @@
 	-->	
 	
 	<function name="AddDocsAPITopology">
-		<variable name="tag" type="string"/>
+		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[
 				{
@@ -27,7 +27,7 @@
 		<log level="10"><![CDATA[tag = <%=context.tag.toString()%>]]></log>
 		<function name="addTag" class="APIDocsService">
 			<parameters>
-				<parameter name="tag" type="string" in="context.tag.toString()"/>
+				<string name="tag" in="context.tag.toString()"/>
 			</parameters>
 		</function>
 	
@@ -40,7 +40,7 @@
 	
 	<function name="RemoveDocsAPITopology">
 	
-		<variable name="tag" type="string"/>
+		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[ 
 				{
@@ -51,7 +51,7 @@
 		</reference>
 		<function name="removeTag" class="APIDocsService">
 			<parameters>
-				<parameter name="tag" type="string" in="context.tag.toString()"/>
+				<string name="tag" in="context.tag.toString()"/>
 			</parameters>
 		</function>
 	
@@ -59,4 +59,4 @@
 		
 		<function name="removePath"/>
 	</function>
-</starosxml>
+</starlang>

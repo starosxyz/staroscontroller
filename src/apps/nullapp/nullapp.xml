@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
 <!--
 	Author:
 			YY
@@ -8,26 +8,21 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<variable name="applicationmgr" reference="global.ApplicationManager"/>
-	<!--<onevent event="bundleapp.startup">	
-	<onevent event="~bundleapp.shutdown">
-	<onevent event="bundleapp.active">	
-	<onevent event="bundleapp.deactive">
-	-->
+	<object name="applicationmgr" reference="global.ApplicationManager"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
-					<parameter name="id" type="string" in="'nullapp'"/>
-					<parameter name="version" type="string" in="'1.0.0'"/>
-					<parameter name="category" type="string" in="'starosapp'"/>
-					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
-					<parameter name="title" type="string" in="'app for test'"/>
-					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
-					<parameter name="url" type="string" in="'192.168.228.128'"/>
-					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
-					<parameter name="pathname" type="string" in="event.getParam('pathname').toString()"/>
+					<string name="id" in="'nullapp'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'starosapp'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'app for test'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.228.128'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
+					<string name="pathname" in="event.getParam('pathname').toString()"/>
 				</parameters>
 			</function>			
 			
@@ -38,9 +33,9 @@
 		<onevent event="bundleapp.active">
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
-					<parameter name="app_name" type="string" in="'nullapp'"/>
-					<parameter name="event_name" type="string" in="'PacketInEvent'"/>
-					<parameter name="eth_type" type="string" in="'0x0806'"/>
+					<string name="app_name" in="'nullapp'"/>
+					<string name="event_name" in="'PacketInEvent'"/>
+					<string name="eth_type" in="'0x0806'"/>
 				</parameters>
 			</function>
 			<log>null app active</log>
@@ -48,7 +43,7 @@
 		<onevent event="~bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
-					<parameter name="app_name" type="string" in="'nullapp'"/>									
+					<string name="app_name" in="'nullapp'"/>									
 				</parameters>
 			</function>
 		</onevent>
@@ -73,4 +68,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

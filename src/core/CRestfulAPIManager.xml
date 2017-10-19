@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Restful API Service-->
 	<class name="CRestfulAPIEntry">
 		<private>
-			<variable name="m_bundleid" type="long" />
-			<variable name="m_eventname" type="string" />
-			<variable name="m_restfullurl" type="string" />
+			<long name="m_bundleid"  />
+			<string name="m_eventname"  />
+			<string name="m_restfullurl"  />
 		</private>
 		<public>
 			<function name="CRestfulAPIEntry">
 				<parameters>
-					<parameter name="bundleid" type="long"/>			
-					<parameter name="eventname" type="string"/>
-					<parameter name="restfullurl" type="string"/>			
+					<long name="bundleid" />			
+					<string name="eventname" />
+					<string name="restfullurl" />			
 				</parameters>
 				<set name="thisclass.m_bundleid" value="context.bundleid.toLong()"/>
 				<set name="thisclass.m_eventname" value="context.eventname.toString()"/>
@@ -23,9 +23,9 @@
 			<function name="GetAPIInfo">
 				<parameters>
 					<!--return eventname-->
-					<parameter name="eventname" type="string"/>
+					<string name="eventname" />
 					<!--return bundleid-->
-					<parameter name="bundleid" type="long"/>
+					<long name="bundleid"/>
 				</parameters>
 				<set name="eventname" value="thisclass.m_eventname"/>
 					<set name="bundleid" value="thisclass.m_bundleid"/>
@@ -35,7 +35,7 @@
 	</class>
 	<class name="CRestfulAPIManager">
 		<private>
-			<container name="restfulapiContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<hashmap name="restfulapiContainer"  keytype="string" valuetype="object"/>
 		</private>
 		<public>
 
@@ -44,8 +44,8 @@
 			</function>
 			<function name="AddAPIHandler">
 				<parameters>
-					<parameter name="requestpath2222" type="string"/>			
-					<parameter name="handler" type="class"/>			
+					<string name="requestpath2222"/>			
+					<object name="handler"/>			
 				</parameters>
 				<if cond="thisclass.restfulapiContainer.hasValue(context.requestpath2222.toString())==false">
 					<then>
@@ -57,19 +57,19 @@
 			
 			<function name="RemoveAPIHandler">
 					<parameters>
-						<parameter name="requestpath" type="string" />		
+						<string name="requestpath"  />		
 					</parameters>
 				<remove name="thisclass.restfulapiContainer" key="context.requestpath.toString()"/>
 			</function>
 			<!--hu-->
 			<function name="GetHandler">
 				<parameters>
-					<parameter name="requestpath" type="string"/>
-					<parameter name="handler" type="class"/>
+					<string name="requestpath" />
+					<object name="handler" />
 				</parameters>
-				<variable name="requestpaths2222" type="string"/>
-				<variable name="ispath" type="boolean"/>
-				<container name="onerestfulpair" type="pair" keytype="string" valuetype="class"/>
+				<string name="requestpaths2222" />
+				<boolean name="ispath" />
+				<pair name="onerestfulpair"  keytype="string" valuetype="object"/>
 				<for var="onerestfulpair" in="context.restfulapiContainer">
 					<set name="requestpaths2222" value="context.onerestfulpair.first()"/>
 					<script><![CDATA[
@@ -90,4 +90,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			YY
@@ -12,18 +12,18 @@
 	<function name="SendOpenFlowConfig">
 		<log>SendOpenFlowConfig</log>
 		
-		<variable name="xid" type="long"/>
-		<variable name="msl" type="string"/>
-		<variable name="fflags" type="string"/>
-		<variable name="isMax" type="boolean"/>
+		<long name="xid"/>
+		<string name="msl"/>
+		<string name="fflags"/>
+		<boolean name="isMax"/>
 		
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		
 		<!--if cond="context.isMax.toBoolean() == false">
 			<then>
 				<function>
 					<log>is max is false</log>
-					<variable name="jsonvalue" type="string"/>
+					<string name="jsonvalue"/>
 					<reference variable="jsonvalue">
 						<jsonbody><![CDATA[ 
 								{
@@ -34,15 +34,15 @@
 					</reference>
 					<function name="Send_OFPT13_SET_CONFIG">
 						<parameters>
-							<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-							<parameter name="strjson" type="string" in="context.jsonvalue.toString()"/>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="strjson" in="context.jsonvalue.toString()"/>
 						</parameters>
 					</function>
 				</function>
 			</then>
 		</if-->
 		
-		<variable name="jsonvalue" type="string"/>
+		<string name="jsonvalue"/>
 		<reference variable="jsonvalue">
 			<jsonbody><![CDATA[ 
 					{
@@ -54,15 +54,15 @@
 		</reference>
 		<function name="Send_OFPT13_SET_CONFIG">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.jsonvalue.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvalue.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="SendGetConfigRequest">
-		<variable name="xid" type="long"/>
-		<variable name="jsonvariable" type="string"/>
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<long name="xid"/>
+		<string name="jsonvariable"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
 					{
@@ -72,8 +72,8 @@
 		</reference>
 		<function name="Send_OFPT13_GET_CONFIG_REQUEST">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.jsonvariable.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvariable.toString()"/>
 			</parameters>
 		</function>	
 		<wait event="openflow.OFPT13_GET_CONFIG_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
@@ -97,9 +97,9 @@
 		</wait>
 	</function>		
 	<function name="SendBRRequest">
-		<variable name="xid" type="long"/>
-		<variable name="jsonvariable" type="string"/>
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<long name="xid"/>
+		<string name="jsonvariable"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
 					{
@@ -109,8 +109,8 @@
 		</reference>
 		<function name="Send_OFPT13_BARRIER_REQUEST">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.jsonvariable.toString()" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvariable.toString()" />
 			</parameters>
 		</function>
 		<wait event="openflow.OFPT13_BARRIER_REPLY" transportid="event.getParam('transportid').toString()"  xid="context.xid.toLong()" timeout="5000">
@@ -127,4 +127,4 @@
 		<function name="SendGetConfigRequest"/>
 	</function>
 	
-</starosxml>
+</starlang>

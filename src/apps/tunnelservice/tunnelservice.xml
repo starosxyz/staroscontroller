@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
 	
 	<!--qiulei 20170913-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnel.xml"/>
@@ -19,29 +19,29 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<variable name="applicationmgr" reference="global.ApplicationManager"/>
-	<variable name="devicemgr" reference="global.DeviceManager"/>
-	<variable name="flowservice" reference="global.FlowService"/>
-	<variable name="meterservice" reference="global.MeterService"/>
-	<variable name="restfulservice" reference="global.RestfulService"/>
-	<variable name="toposervice" reference="global.TopoService"/>
+	<object name="applicationmgr" reference="global.ApplicationManager"/>
+	<object name="devicemgr" reference="global.DeviceManager"/>
+	<object name="flowservice" reference="global.FlowService"/>
+	<object name="meterservice" reference="global.MeterService"/>
+	<object name="restfulservice" reference="global.RestfulService"/>
+	<object name="toposervice" reference="global.TopoService"/>
 	<!--qiulei 20170913-->
-	<variable name="tunnelManagerObject" type="class"/>
-	<variable name="tunnelDeviceManagerObject" type="class"/>
+	<object name="tunnelManagerObject"/>
+	<object name="tunnelDeviceManagerObject"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
-			<variable name="bundleid" type="long" value="context.getCurrentBundleId()"/>
+			<long name="bundleid" value="context.getCurrentBundleId()"/>
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
-					<parameter name="id" type="string" in="'tunnelservice'"/>
-					<parameter name="version" type="string" in="'1.0.0'"/>
-					<parameter name="category" type="string" in="'staros application'"/>
-					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
-					<parameter name="title" type="string" in="'Tunnel Service'"/>
-					<parameter name="desc" type="string" in="'Tunnel Service for Staros-controller'"/>		
-					<parameter name="url" type="string" in="'http://www.staros.xyz'"/>
-					<parameter name="bundleid" type="long" in="context.bundleid.toLong()"/>
+					<string name="id" in="'tunnelservice'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'staros application'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'Tunnel Service'"/>
+					<string name="desc" in="'Tunnel Service for Staros-controller'"/>		
+					<string name="url" in="'http://www.staros.xyz'"/>
+					<long name="bundleid" in="context.bundleid.toLong()"/>
 				</parameters>
 			</function>
 			<activebundle bundleid="context.bundleid.toLong()"/>
@@ -61,9 +61,9 @@
 
 			<function name="addTopoListener" class="toposervice">				
 				<parameters>
-					<parameter name="appid" type="string" in="'tunnelservice'"/>
-					<parameter name="add_eventname" type="string" in="'mytopadd'"/>
-					<parameter name="remove_eventname" type="string" in="'mytopremove'"/>
+					<string name="appid" in="'tunnelservice'"/>
+					<string name="add_eventname" in="'mytopadd'"/>
+					<string name="remove_eventname" in="'mytopremove'"/>
 				</parameters>
 			</function>
 
@@ -76,7 +76,7 @@
 			<function name="RemoveDocsAPITunnel"/>
 			<function name="removeTopoListener" class="toposervice">
 				<parameters>
-					<parameter name="appid" type="string" in="'tunnelservice'"/>
+					<string name="appid" in="'tunnelservice'"/>
 				</parameters>
 			</function>
 		</onevent>
@@ -97,9 +97,9 @@
 				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
 				<function name="mytopremove" class="tunnelManagerObject">
 					<parameters>
-						<parameter name="fromdevice" type="string" in="event.getParam('fromdevice').toString()"/>
-						<parameter name="todevice" type="string" in="event.getParam('todevice').toString()"/>
-						<parameter name="path" type="string" in="event.getParam('path').toString()"/>
+						<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
+						<string name="todevice" in="event.getParam('todevice').toString()"/>
+						<string name="path" in="event.getParam('path').toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -112,4 +112,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CDevice">
 		<private>
-			<variable name="m_mfrdesc" type="string"/>
-			<variable name="m_swdesc" type="string"/>
-			<variable name="m_serialnum" type="string"/>
-			<variable name="m_dpdesc" type="string"/>
-			<variable name="m_hwdesc" type="string"/>
-			<variable name="m_transportid" type="string"/>
-			<variable name="m_localipaddr" type="string"/>
-			<variable name="m_peeripaddr" type="string"/>
-			<variable name="m_masterid" type="string"/>
-			<variable name="m_type" type="string"/>
-			<variable name="m_online" type="string"/>
-			<variable name="m_protocol" type="string"/>
-			<variable name="m_auxiliaryid" type="string"/>
-			<variable name="m_buffers" type="string"/>
-			<variable name="m_capabilities" type="string"/>
-			<variable name="m_datapathid" type="string"/>
-			<variable name="m_tables" type="string"/>
-			<variable name="m_ports" type="class"/>
-			<variable name="m_tablemgr" type="class"/>
-			<variable name="m_metermgr" type="class"/>
-			<variable name="m_groupmgr" type="class"/>
-			<variable name="m_flowmgr" type="class"/>
+			<string name="m_mfrdesc" />
+			<string name="m_swdesc" />
+			<string name="m_serialnum" />
+			<string name="m_dpdesc" />
+			<string name="m_hwdesc" />
+			<string name="m_transportid" />
+			<string name="m_localipaddr" />
+			<string name="m_peeripaddr"/>
+			<string name="m_masterid" />
+			<string name="m_type" />
+			<string name="m_online" />
+			<string name="m_protocol"/>
+			<string name="m_auxiliaryid" />
+			<string name="m_buffers"/>
+			<string name="m_capabilities" />
+			<string name="m_datapathid" />
+			<string name="m_tables"/>
+			<object name="m_ports" />
+			<object name="m_tablemgr" />
+			<object name="m_metermgr" />
+			<object name="m_groupmgr" />
+			<object name="m_flowmgr" />
 			<!--group feature-->
-			<variable name="m_group_types" type="string"/>
-			<variable name="m_group_capabilities" type="string"/>
-			<variable name="m_group_max_groups" type="string"/>
-			<variable name="m_group_actions" type="string"/>
+			<string name="m_group_types" />
+			<string name="m_group_capabilities" />
+			<string name="m_group_max_groups" />
+			<string name="m_group_actions" />
 		</private>
 		<public>
 			<function name="CDevice">
 				<parameters>
-					<parameter name="mfrdesc" type="string"/>
-					<parameter name="swdesc" type="string"/>
-					<parameter name="serialnum" type="string"/>
-					<parameter name="dpdesc" type="string"/>
-					<parameter name="hwdesc" type="string"/>
-					<parameter name="transportid" type="string"/>
-					<parameter name="datapathid" type="string"/>
-					<parameter name="localipaddr" type="string"/>
-					<parameter name="peeripaddr" type="string"/>
-					<parameter name="masterid" type="string"/>	
-					<parameter name="type" type="string"/>
-					<parameter name="online" type="string"/>
-					<parameter name="protocol" type="string"/>
+					<string name="mfrdesc"/>
+					<string name="swdesc" />
+					<string name="serialnum" />
+					<string name="dpdesc"/>
+					<string name="hwdesc" />
+					<string name="transportid" />
+					<string name="datapathid" />
+					<string name="localipaddr" />
+					<string name="peeripaddr" />
+					<string name="masterid" />	
+					<string name="type" />
+					<string name="online" />
+					<string name="protocol"/>
 				</parameters>
 				<set name="thisclass.m_mfrdesc" value="context.mfrdesc.toString()"/>
 				<set name="thisclass.m_swdesc" value="context.swdesc.toString()"/>
@@ -62,28 +62,28 @@
 				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
 				<new name="m_ports" class="CPortManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>	
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>	
 					</parameters>
 				</new>
 				<new name="m_tablemgr" class="CTableManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
 				<new name="m_metermgr" class="CMeterManager">	
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>	
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>	
 					</parameters>
 				</new>
 				<!--new Group Manager object-->
 				<new name="m_groupmgr" class="CGroupManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
 				<new name="m_flowmgr" class="CFlowManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
 				<!--function name="MultiPartPortDescRequest"/-->
@@ -93,97 +93,97 @@
 			</function>
 			<function name="addPort">
 				<parameters>
-					<parameter name="advertised" type="string"/>			
-					<parameter name="portno" type="string"/>
-					<parameter name="config" type="string"/>			
-					<parameter name="curr" type="string"/>
+					<string name="advertised"/>			
+					<string name="portno" />
+					<string name="config"/>			
+					<string name="curr" />
 					
-					<parameter name="currspeed" type="string"/>	
-					<parameter name="hwaddr" type="string"/>
-					<parameter name="maxspeed" type="string"/>
-					<parameter name="name" type="string"/>	
-					<parameter name="peer" type="string"/>
-					<parameter name="state" type="string"/>	
-					<parameter name="supported" type="string"/>														
+					<string name="currspeed" />	
+					<string name="hwaddr" />
+					<string name="maxspeed" />
+					<string name="name" />	
+					<string name="peer" />
+					<string name="state" />	
+					<string name="supported" />														
 				</parameters>
 				<function name="addPort" class="m_ports">
 					<parameters>
-						<parameter name="advertised" type="string" in="context.advertised.toString()"/>			
-						<parameter name="portno" type="string" in="context.portno.toString()"/>
-						<parameter name="config" type="string" in="context.config.toString()"/>			
-						<parameter name="curr" type="string" in="context.curr.toString()"/>
-						<parameter name="currspeed" type="string" in="context.currspeed.toString()"/>	
-						<parameter name="hwaddr" type="string" in="context.hwaddr.toString()"/>
-						<parameter name="maxspeed" type="string" in="context.maxspeed.toString()"/>	
-						<parameter name="name" type="string" in="context.name.toString()"/>	
-						<parameter name="peer" type="string" in="context.peer.toString()"/>
-						<parameter name="state" type="string" in="context.state.toString()"/>	
-						<parameter name="supported" type="string" in="context.supported.toString()"/>
+						<string name="advertised"  in="context.advertised.toString()"/>			
+						<string name="portno"  in="context.portno.toString()"/>
+						<string name="config"  in="context.config.toString()"/>			
+						<string name="curr"  in="context.curr.toString()"/>
+						<string name="currspeed"  in="context.currspeed.toString()"/>	
+						<string name="hwaddr"  in="context.hwaddr.toString()"/>
+						<string name="maxspeed"  in="context.maxspeed.toString()"/>	
+						<string name="name"  in="context.name.toString()"/>	
+						<string name="peer"  in="context.peer.toString()"/>
+						<string name="state"  in="context.state.toString()"/>	
+						<string name="supported"  in="context.supported.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<function name="GetTableManager">
 				<parameters>
-					<parameter name="outtablemgr" type="class"/>
+					<object name="outtablemgr" />
 				</parameters>
 				<set name="outtablemgr" value="thisclass.m_tablemgr"/>
 			</function>
 			<function name="GetPortManager">
 				<parameters>
-					<parameter name="outportmgr" type="class"/>
+					<object name="outportmgr" />
 				</parameters>
 				<set name="outportmgr" value="thisclass.m_ports"/>
 			</function>
 			<function name="GetFlowManager">
 				<parameters>
-					<parameter name="outflowmgr" type="class"/>
+					<object name="outflowmgr"/>
 				</parameters>
 				<set name="outflowmgr" value="thisclass.m_flowmgr"/>
 			</function>
 			<function name="GetMeterManager">
 				<parameters>
-					<parameter name="outmetermgr" type="class"/>
+					<object name="outmetermgr"/>
 				</parameters>
 				<set name="outmetermgr" value="thisclass.m_metermgr"/>
 			</function>
 			<function name="GetGroupManager">
 				<parameters>
-					<parameter name="outgroupmgr" type="class"/>
+					<object name="outgroupmgr" />
 				</parameters>
 				<set name="outgroupmgr" value="thisclass.m_groupmgr"/>
 			</function>
 			<function name="GetDatapathId">
 				<parameters>
-					<parameter name="outdatapathid" type="string"/>
+					<string name="outdatapathid"/>
 				</parameters>
 				<set name="outdatapathid" value="thisclass.m_datapathid.toString()"/>
 			</function>
 			<function name="GetTransportId">
 				<parameters>
-					<parameter name="outtransport" type="string"/>
+					<string name="outtransport"/>
 				</parameters>
-				<variable name="onlinejson" type="string" value="'test'"/>
+				<string name="onlinejson"  value="'test'"/>
 				<set name="outtransport" value="thisclass.m_transportid.toString()"/>
 			</function>
 			
 			<function name="SetFlowManager">
 				<parameters>
-					<parameter name="inflowmgr" type="class"/>
+					<object name="inflowmgr"/>
 				</parameters>
 				<set name="inflowmgr" value="thisclass.m_flowmgr"/>
 			</function>
 
 			<function name="GetDeviceInfoJson">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson" />
 				</parameters>
-				<variable name="deviceinfojson" type="string"/>
+				<string name="deviceinfojson"/>
 				
 				<!--qiulei 20170818-->
-				<variable name="portCount" type="long"/>
+				<long name="portCount" />
 				<function name="GetPortNumberSize" class="thisclass.m_ports">
 					<parameters>
-						<parameter name="portnumber" type="long" out="context.portCount"/>
+						<long name="portnumber" out="context.portCount"/>
 					</parameters>
 				</function>
 				
@@ -209,9 +209,9 @@
 			</function>
 			<function name="GetDeviceInfoForDetailRequest">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson"/>
 				</parameters>
-				<variable name="deviceinfojson" type="string"/>
+				<string name="deviceinfojson" />
 				<script><![CDATA[
 						var onearray = new Object();
 						onearray.available=thisclass.m_online.toString();
@@ -237,9 +237,9 @@
 			</function>
 			<function name="GetDeviceDetailInfoForDetailRequest">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson" />
 				</parameters>
-				<variable name="deviceinfojson" type="string"/>
+				<string name="deviceinfojson"/>
 				<script><![CDATA[
 						var onearray = new Object();
 						onearray.id="of:"+thisclass.m_datapathid.toString();
@@ -262,9 +262,9 @@
 			</function>
 			<function name="ToOnlineJson">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson" />
 				</parameters>
-				<variable name="onlinejson" type="string"/>
+				<string name="onlinejson"/>
 				<script><![CDATA[
 						var json = new Object();
 						json['event'] = "updateDevice";
@@ -299,9 +299,9 @@
 			</function>
 			<function name="ToOfflineJson">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson" />
 				</parameters>
-				<variable name="offlinejson" type="string"/>
+				<string name="offlinejson" />
 				<script><![CDATA[
 						var json = new Object();
 						json['event'] = "updateDevice";
@@ -339,9 +339,9 @@
 			</function>
 			<function name="ToAddDeviceJson">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson" />
 				</parameters>
-				<variable name="adddevicejson" type="string"/>
+				<string name="adddevicejson" />
 				<reference variable="adddevicejson">
 					<jsonbody>
 						<![CDATA[
@@ -381,14 +381,14 @@
 			</function>
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
-					<parameter name="outjson" type="string"/>
+					<string name="outjson" />
 				</parameters>
-				<variable name="deviceportjson" type="string"/>
-				<variable name="detailjson" type="string"/>
+				<string name="deviceportjson"/>
+				<string name="detailjson" />
 				<log>CDevice ForDeviceDetailReqJson</log>
 				<function name="ForDeviceDetailReqJson" class="thisclass.m_ports">
 					<parameters>
-						<parameter name="outjson" type="string" out="deviceportjson"/>
+						<string name="outjson"  out="deviceportjson"/>
 					</parameters>
 				</function>
 				<script><![CDATA[
@@ -441,15 +441,15 @@
 			<function name="SendDetails">
 				<parameters>
 					
-					<parameter name="transportid" type="string"/>
+					<string name="transportid" />
 				</parameters>							
-				<variable name="portnum" type="long"/>
+				<long name="portnum" />
 				<function name="GetPortNumberSize" class="thisclass.m_ports">
 					<parameters>
-						<parameter name="portnumber" type="long" out="context.portnum"/>
+						<long name="portnumber"  out="context.portnum"/>
 					</parameters>
 				</function>
-				<variable name="detailarray" type="string"/>
+				<string name="detailarray" />
 				<function>
 					<script><![CDATA[
 						var oneArray = new Array();			
@@ -514,17 +514,17 @@
 		<!--hupeng 20170822-->
 			<function name="PacketOutToAllPort">
 				<parameters>	
-					<parameter name="inportid" type="string"/>	
-					<parameter name="pkoutjson" type="string"/>
-					<parameter name="msgblock" type="messageblock"/>
+					<string name="inportid" />	
+					<string name="pkoutjson" />
+					<messageblock name="msgblock" />
 				</parameters>
 				<log>insert CDevice's PacketOutToAllPort</log>
 				<function name="PacketOutToAllPort" class="thisclass.m_ports">
 					<parameters>	
-						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
-						<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-						<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
-						<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+						<string name="transportid"  in="thisclass.m_transportid"/>
+						<string name="inportid"  in="context.inportid.toString()"/>	
+						<string name="pkoutjson"  in="context.pkoutjson.toString()"/>
+						<messageblock name="msgblock"  in="context.msgblock"/>
 					</parameters>
 				</function>
 			</function>
@@ -534,19 +534,19 @@
 			<!--Calling this method requires you to pass in four parameters 调用此方法需要传入4个参数-->
 			<function name="PacketOutToPort">
 				<parameters>
-					<parameter name="outputport" type="string"/>
-					<parameter name="pkoutjson" type="string"/>
-					<parameter name="msgblock" type="messageblock"/>
-					<parameter name="inportid" type="string"/>
+					<string name="outputport" />
+					<string name="pkoutjson" />
+					<messageblock name="msgblock" />
+					<string name="inportid" />
 				</parameters>
 				<log>insert CDevice's PacketOutToPort</log>
 				<function name="PacketOutToPort" class="thisclass.m_ports">
 					<parameters>
-						<parameter name="outputport" type="string" in="context.outputport.toString()"/>
-						<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
-						<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
-						<parameter name="inportid" type="string" in="context.inportid.toString()"/>
+						<string name="outputport"  in="context.outputport.toString()"/>
+						<string name="pkoutjson"  in="context.pkoutjson.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid"/>
+						<messageblock name="msgblock"  in="context.msgblock"/>
+						<string name="inportid"  in="context.inportid.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -562,53 +562,53 @@
 			</function>
 			<function name="HandleGroupStateResponse">
 				<parameters>
-					<parameter name="groupjson" type="string"/>
+					<string name="groupjson" />
 				</parameters>
 				<function name="HandleGroupStateResponse" class="m_groupmgr">
 					<parameters>
-						<parameter name="groupjson" type="string" in="context.groupjson.toString()"/>
+						<string name="groupjson"  in="context.groupjson.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<function name="HandleOpenFlowMultiPartFlowResponse">
 				<parameters>
-					<parameter name="flowjson" type="string"/>
+					<string name="flowjson" />
 				</parameters>
 				<function name="HandleOpenFlowMultiPartFlowResponse" class="m_flowmgr">
 					<parameters>
-						<parameter name="flowjson" type="string" in="context.flowjson.toString()"/>
+						<string name="flowjson"  in="context.flowjson.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<function name="HandlePortStateResponse">
 				<parameters>
-					<parameter name="portstatejson" type="string"/>
+					<string name="portstatejson" />
 				</parameters>
 				<function name="HandlePortStateResponse" class="m_ports">
 					<parameters>
-						<parameter name="portstatejson" type="string" in="context.portstatejson.toString()"/>
+						<string name="portstatejson"  in="context.portstatejson.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<!--Get Port State Info , 2017/8/24 -->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring" />
 				</parameters>
 				<function name="GetPortsStateJsonData" class="thisclass.m_ports">
 					<parameters>	
-						<parameter name="jsonstring" type="string" out="context.jsonstring"/>
+						<string name="jsonstring"  out="context.jsonstring"/>
 					</parameters>
 				</function>
 			</function>
 			
 <function name="SetTableJson">
 				<parameters>
-					<parameter name="tablejson" type="string"/>
+					<string name="tablejson" />
 				</parameters>
 				<function name="SetTableJson" class="thisclass.m_tablemgr">
 					<parameters>
-						<parameter name="tablejson" type="string" in="context.tablejson.toString()"/>
+						<string name="tablejson"  in="context.tablejson.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -617,7 +617,7 @@
 			<function name="GetMetermgr">
 				<parameters>
 					<!--20170901,Modify the Tag error-->
-					<parameter name="metermgr" type="class"/>
+					<object name="metermgr"/>
 				</parameters>
 				<set name="metermgr" value="thisclass.m_metermgr"/>
 			</function>
@@ -633,12 +633,12 @@
 			-->
 			<function name="GetTableData">		
 				<parameters>				
-					<parameter name="json" type="string"/>
+					<string name="json" />
 				</parameters>
-				<variable name="jsondata" type="string"/>
+				<string name="jsondata" />
 				<function name="GetTableData" class="thisclass.m_tablemgr">
 					<parameters>
-						<parameter name="data" type="string" out="context.jsondata"/>
+						<string name="data"  out="context.jsondata"/>
 					</parameters>
 				</function>
 				<set name="json" value="context.jsondata.toString()"/>
@@ -646,4 +646,4 @@
 			
 		</public>
 	</class>
-</starosxml>
+</starlang>

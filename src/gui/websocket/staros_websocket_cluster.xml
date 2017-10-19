@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
 	<function name="HandleClusterDataRequest">
-		<variable name="httpparam" type="params"/>
-		<variable name="sendstrjson" type="string"/>
+		<params name="httpparam"/>
+		<string name="sendstrjson"/>
 		<function>
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 				<jsonbody>
@@ -31,4 +31,4 @@
 			</websocket>
 		</function>
 	</function>
-</starosxml>
+</starlang>

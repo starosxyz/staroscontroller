@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
 	<function name="HandleUpdatePrefReq">
 		<function>
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
@@ -32,11 +32,11 @@
 		<function name="ShowSummary"/>
 	</function>
 	<function name="SendAddInstance">
-		<variable name="sendstrjson" type="string"/>
+		<string name="sendstrjson"/>
 		<function>
 			<function name="AddInstanceRequest" class="gInstanceManager">
 				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>						
+					<string name="transportid" in="event.getParam('transportid').toString()"/>						
 				</parameters>
 			</function>
 		</function>
@@ -44,14 +44,14 @@
 	<function name="SendAddAllLink">
 		<function name="SendAddAllLinkToWebClient" class="TopoManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="SendAddAllDevice">
 		<function name="SendAddAllDeviceToWebClient" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
 			</parameters>
 		</function>
 	</function>
@@ -60,20 +60,20 @@
 	<log> topo SendAddAllHost  #################</log>
 		<function name="SendAddAllHostToWebClient" class="HostManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<!--qiulei 20170912 am -->
-	<variable name="deviceCounts" type="long"/>
+	<long name="deviceCounts"/>
 	<function name="GetDeviceCounts" class="DeviceManager">
 		<parameters>
-			<parameter name="deviceCounts" type="long" out="context.deviceCounts.toLong()"/>/>	
+			<long name="deviceCounts" out="context.deviceCounts.toLong()"/>/>	
 		</parameters>
 	</function>
 	
 	<function name="ShowSummary">
-		<variable name="sendstrjson" type="string"/>
+		<string name="sendstrjson"/>
 		<function>
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 				<jsonbody>
@@ -114,7 +114,7 @@
 		</function>
 	</function>
 	<function name="topoStartDone">
-		<variable name="sendstrjson" type="string"/>
+		<string name="sendstrjson"/>
 		<function>
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 				<jsonbody>
@@ -125,4 +125,4 @@
 			</websocket>
 		</function>
 	</function>
-</starosxml>
+</starlang>

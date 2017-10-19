@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
 	<!--qiulei 20170803  pm funcition:Handledevicedata-->
 	<function name="Handledevicedata">
 		<function name="SendDeviceInfoToWebClient" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<!--qiulei 20170803  pm funcition:HandleDeviceDetailsReq-->
 	<function name="HandleDeviceDetailsReq">
-		<variable name="datapathid" type="string"/>
+		<string name="datapathid"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());
 			var  dataid = info.payload.id;
@@ -19,9 +19,9 @@
 		]]></script>
 		<function name="DeviceDetailsReqJson" class="DeviceManager">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="datapathid" in="context.datapathid.toString()"/>
 			</parameters>
 		</function>
 	</function>
-</starosxml>
+</starlang>

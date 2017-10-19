@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
 
-	<variable name="actionsMap" type="params" global="true"/>
-	<variable name="actionsNameMap" type="params" global="true"/>
+	<params name="actionsMap" global="true"/>
+	<params name="actionsNameMap" global="true"/>
 	<function name="InitActionsMap">
 		<set name="actionsMap" paramname="0" value="'outport'"/>
 		<set name="actionsMap" paramname="11" value="'nwttl'"/>
@@ -41,4 +41,4 @@
 		<set name="actionsNameMap" paramname="27" value="'ethertype'"/>
 
 	</function>
-</starosxml>
+</starlang>

@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
         <function name="HandleGetDevices">
-		<variable name="httpparam" type="params"/>
-		<variable name="sendstrjson" type="string"/>
+		<params name="httpparam"/>
+		<string name="sendstrjson"/>
                 <log>HandleGetDevices</log>
                 <script><![CDATA[
-                                var json = new Object();
-                                var myArray=new Array();
+                    var json = new Object();
+                    var myArray=new Array();
 
-								var first=context.openflowserverobj.getDeviceFirst();
-								while(first!=null){
-									context.print(first);
-									context.print('================start===================');
-									var devices = first;									
-									if( devices == null)
-									{
-											context.print('device is null');
-									}
-									else
-									{
-											context.print('device is not null');
-									}
-									var onearray = new Object();
-									if ((devices.hasParam('auxiliaryid')==true) &&
-										(devices.hasParam('buffers')==true) &&
-										(devices.hasParam('capabilities')==true) &&
-										(devices.hasParam('datapathid')==true) &&
-										(devices.hasParam('tables')==true) &&
-										(devices.hasParam('xid')==true))
-									{
-										onearray.auxiliaryid = devices.getParam('auxiliaryid').toString();
-										onearray.buffers = devices.getParam('buffers').toString();
-										onearray.capabilities = devices.getParam('capabilities').toString();
-										onearray.datapathid = devices.getParam('datapathid').toString();
-										onearray.tables = devices.getParam('tables').toString();
-										onearray.xid = devices.getParam('xid').toString();
-										myArray.push(onearray);
-									}
-									else 
-									{
-										context.print('no param');
-									}
-									first=context.openflowserverobj.getDeviceNext();								
-								}
+					var first=context.openflowserverobj.ptr.getDeviceFirst();
+					while(first!=null){
+						context.print(first);
+						context.print('================start===================');
+						var devices = first;									
+						if( devices == null)
+						{
+								context.print('device is null');
+						}
+						else
+						{
+								context.print('device is not null');
+						}
+						var onearray = new Object();
+						if ((devices.hasParam('auxiliaryid')==true) &&
+							(devices.hasParam('buffers')==true) &&
+							(devices.hasParam('capabilities')==true) &&
+							(devices.hasParam('datapathid')==true) &&
+							(devices.hasParam('tables')==true) &&
+							(devices.hasParam('xid')==true))
+						{
+							onearray.auxiliaryid = devices.getParam('auxiliaryid').toString();
+							onearray.buffers = devices.getParam('buffers').toString();
+							onearray.capabilities = devices.getParam('capabilities').toString();
+							onearray.datapathid = devices.getParam('datapathid').toString();
+							onearray.tables = devices.getParam('tables').toString();
+							onearray.xid = devices.getParam('xid').toString();
+							myArray.push(onearray);
+						}
+						else 
+						{
+							context.print('no param');
+						}
+						first=context.openflowserverobj.ptr.getDeviceNext();								
+					}
 
-                                json['devices'] = myArray;
-								var strjson=JSON.stringify(json);
-								context.print(strjson);
-								context.sendstrjson.setValue(strjson);
+                    json['devices'] = myArray;
+					var strjson=JSON.stringify(json);
+					context.print(strjson);
+					context.sendstrjson.setValue(strjson);
                 ]]></script>
 				<set name="httpparam" paramname="Server" value="'StarOS'"/>
 				<set name="httpparam" paramname="Connection" value="'Close'"/>
@@ -57,4 +57,4 @@
 				</restful>
 				<restful name="restfulserver" action="Disconnect" transportid="event.getParam('transportid').toString()"/>
         </function>
-</starosxml>
+</starlang>

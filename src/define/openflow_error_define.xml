@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 		<!--
 			Author:
 					qiulei
@@ -42,5 +42,5 @@ enum ofp_error_type {
 	<define name="OFPET_METER_MOD_FAILED" value="12"/>
 	<define name="OFPET_TABLE_FEATURES_FAILED" value="13"/>
 	<define name="OFPET_EXPERIMENTER" value="0xffff"/>
-</starosxml>
+</starlang>
 

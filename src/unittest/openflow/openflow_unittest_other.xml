@@ -5,8 +5,8 @@
 		<log>SEND_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
 			</parameters>
 		</function>
 		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
@@ -24,8 +24,8 @@
 		<log>"send getconfig_request loading..."</log>
 		<function name="Send_OFPT13_GET_CONFIG_REQUEST">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1" />
 			</parameters>
 		</function>
 		<log>"wait getconfig_reply loadint..."</log>
@@ -41,13 +41,13 @@
 		<log>"send OFP13MP_FLOW request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
-				<parameter name="tableid" type="string" in="event.getParam('tableid').toString()"/>
-				<parameter name="outport" type="string" in="event.getParam('outport').toString()"/>
-				<parameter name="outgroup" type="string" in="event.getParam('outgroup').toString()"/>
-				<parameter name="cookie" type="string" in="event.getParam('cookie').toString()"/>
-				<parameter name="cookiemask" type="string" in="event.getParam('cookiemask').toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
+				<string name="tableid" in="event.getParam('tableid').toString()"/>
+				<string name="outport" in="event.getParam('outport').toString()"/>
+				<string name="outgroup" in="event.getParam('outgroup').toString()"/>
+				<string name="cookie" in="event.getParam('cookie').toString()"/>
+				<string name="cookiemask" in="event.getParam('cookiemask').toString()"/>
 			</parameters>
 		</function>
 		<log>"wait OFP13MP_FLOW reply loading..."</log>
@@ -65,8 +65,8 @@
 		<log>"send MULTIPART_REQUEST.OFP13MP_DESC loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1" />
 			</parameters>
 		</function>
 		<log>"wait MULTIPART_REPLY.OFP13MP_DESC loadint..."</log>
@@ -83,9 +83,9 @@
 		<log>"send portstats_request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_STATS">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
-				<parameter name="portno" type="string" in="'8866'" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1" />
+				<string name="portno" in="'8866'" />
 			</parameters>
 		</function>
 		<log>"wait portstats_reply loading..."</log>
@@ -100,9 +100,9 @@
 		<log>"send queue_request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_QUEUE">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
-				<parameter name="portno" type="string" in="'8866'" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1" />
+				<string name="portno" in="'8866'" />
 			</parameters>
 		</function>
 		<log>"wait queue_reply loading..."</log>
@@ -117,9 +117,9 @@
 		<log>"send group_request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1" />
-				<parameter name="groupid" type="string" in="'123456'" />
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1" />
+				<string name="groupid" in="'123456'" />
 			</parameters>
 		</function>
 		<log>"wait group_reply loading..."</log>

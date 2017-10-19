@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			qiulei
@@ -10,19 +10,19 @@
 -->
 	<function name="SendOpenFlowPacketOut">
 		<parameters>
-			<parameter name="outputport" type="string"/>
-			<parameter name="payloadjson" type="string"/>
-			<parameter name="transportid" type="string"/>
+			<string name="outputport"/>
+			<string name="payloadjson"/>
+			<string name="transportid"/>
 			<!--qiulei 2017.08.22 pm-->
-			<parameter name="msgblock" type="messageblock"/>
+			<messageblock name="msgblock"/>
 		</parameters>
 		<log>-- SendOpenFlowPacketOut 2017.08.22 Tuesday pm --</log>
-		<variable name="modstrjson" type="string"/>
+		<string name="modstrjson"/>
 		
 		<reference variable="modstrjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 						"bufferid":"0xffffffff",
 						"inport":"0xfffffffd",
 						"actionlist":[
@@ -40,11 +40,11 @@
 		<log><![CDATA[modstrjson =<%=context.modstrjson.toString()%>]]></log>
 		<function name="Send_OFPT13_PACKET_OUT">
 			<parameters>
-				<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-				<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="strjson" in="context.modstrjson.toString()"/>
 				<!--qiulei 2017.08.22-->
-				<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+				<messageblock name="msgblock" in="context.msgblock"/>
 			</parameters>
 		</function>
 	</function>
-</starosxml>
+</starlang>

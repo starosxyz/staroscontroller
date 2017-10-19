@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<variable name="ApplicationManager" type="class" global="true"/>
 	<class name="CApplication">
 		<private>
@@ -79,4 +79,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!-- qiulei 20170807 pm-->
 	<class name="CClusterManager">
 		<private>
-			<container name="InstanceContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+			<hashmap name="InstanceContainer"  keytype="string" valuetype="hashmap"/>
 		</private>
 	
 		<public>
@@ -14,8 +14,8 @@
 			-->
 			<function name="addInstance">
 				<parameters>
-					<parameter name="id" type="string"/>
-					<parameter name="instanceinfo" type="hashmap"/>			
+					<string name="id"/>
+					<hashmap name="instanceinfo"/>			
 				</parameters>
 				<insert name="InstanceContainer" key="context.id.toString()" value="context.instanceinfo"/>
 			</function>
@@ -27,10 +27,10 @@
 			-->
 			<function name="findInstance">
 				<parameters>
-					<parameter name="id" type="string"/>
-					<parameter name="instanceinfo" type="hashmap"/>
+					<string name="id"/>
+					<hashmap name="instanceinfo" />
 				</parameters>
-				<container name="OneInstanceContainer" type="hashmap" keytype="string" valuetype="string"/>
+				<hashmap name="OneInstanceContainer"  keytype="string" valuetype="string"/>
 				<if cond="context.InstanceContainer.hasValue(context.id)==true">
 					<then>
 						<function>
@@ -47,10 +47,10 @@
 			-->
 			<function name="removeInstance">
 				<parameters>
-					<parameter name="id" type="string"/>
+					<string name="id"/>
 				</parameters>
 				<remove name="InstanceContainer" key="context.id.toString()"/>
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

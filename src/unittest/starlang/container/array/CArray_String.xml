@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<container name="listc" type="array" valuetype="string" arraysize="2"/>
 	<container name="listout" type="array" valuetype="string" arraysize="2"/>
 	<function name="TestParamList">
@@ -62,4 +62,4 @@
 			<log><![CDATA[size = <%=context.listout.size()%>]]> </log>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

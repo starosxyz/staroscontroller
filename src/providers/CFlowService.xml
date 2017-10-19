@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				YY
@@ -12,42 +12,42 @@
 		<public>
 			<function name="InstallFlow">
 				<parameters>
-					<parameter name="outflowid" type="string"/>
-					<parameter name="strjson" type="string"/>
-					<parameter name="appId" type="string"/>
-					<parameter name="datapathid" type="string"/>
+					<string name="outflowid"/>
+					<string name="strjson"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
 				</parameters>
 				
-<variable name="flowmgrobj" type="class"/>
-				<variable name="deviceobj" type="class"/>
+				<object name="flowmgrobj"/>
+				<object name="deviceobj"/>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
-						<parameter name="outdevice" type="class" out="context.deviceobj"/>
-							<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-						</parameters>				
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>				
 				</function>
 				
-				<if cond="context.deviceobj==null">
+				<if cond="context.deviceobj.ptr==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>
 				</if>
-								<function name="GetFlowManager" class="context.deviceobj">
+				<function name="GetFlowManager" class="context.deviceobj">
 					<parameters>
-						<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
 					</parameters>			
 				</function>
 				
-				<if cond="context.flowmgrobj==null">
+				<if cond="context.flowmgrobj.ptr==null">
 					<then>
 						<log>deviceobj is null</log>
 					</then>
 				</if>								
 				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
 					<parameters>
-						<parameter name="outflowid" type="string" out="context.outflowid"/>
-						<parameter name="strjson" type="string" in="context.strjson.toString()"/>
-						<parameter name="appId" type="string" in="context.appId.toString()"/>
+						<string name="outflowid" out="context.outflowid"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+						<string name="appId" in="context.appId.toString()"/>
 					</parameters>
 				</function>
 				<log>CFlowService InstallFlow end</log>
@@ -55,10 +55,10 @@
 		
 		<function name="UnInstallFlow">
 			<parameters>
-				<parameter name="datapathid" type="string"/>			
-				<parameter name="flowid" type="string"/>
+				<string name="datapathid"/>			
+				<string name="flowid"/>
 			</parameters>
-			<variable name="deviceobj" type="class"/>
+			<object name="deviceobj"/>
 			<log>CFlowService UnInstallFlow</log>
 			
 <log>##### CFlowServer UnInstallFlow #####</log>
@@ -69,24 +69,24 @@
 			</if>
 			<function name="findDevice" class="DeviceManager">
 				<parameters>
-					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-					<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+					<string name="datapathid" in="context.datapathid.toString()"/>
+					<object name="deviceobject" out="context.deviceobj"/>
 				</parameters>				
 			</function>
 			
-			<variable name="flowmgrobj" type="class"/>
+			<object name="flowmgrobj"/>
 			<function name="GetFlowManager" class="context.deviceobj">
 				<parameters>
-					<parameter name="outflowmgr" type="class" out="context.flowmgrobj"/>
+					<object name="outflowmgr" out="context.flowmgrobj"/>
 				</parameters>			
 			</function>
 			
 			<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
 				<parameters>
-					<parameter name="flowid" type="string" in="context.flowid.toString()"/>
+					<string name="flowid" in="context.flowid.toString()"/>
 				</parameters>
 			</function>
 		</function>
 	</public>
 	</class>
-</starosxml>
+</starlang>

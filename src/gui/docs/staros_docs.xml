@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<!--WebGUI-->
 	<function name="HandlDocsRequest">
 		<parameters>
-			<parameter name="requestpath" type="string"/>
-			<parameter name="method" type="string"/>
-			<parameter name="eventdata" type="string"/>
-			<parameter name="transportid" type="string"/>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<string name="transportid"/>
 		</parameters>
-		<variable name="contenttype" type="string"/>
-		<variable name="filepath" type="string"/>
-		<variable name="httpparam" type="params"/>
+		<string name="contenttype"/>
+		<string name="filepath"/>
+		<params name="httpparam"/>
 		<script><![CDATA[
 			var x = context.requestpath.toString();
 			var filename="/opt/staros.xyz/staroscontroller/starlang/gui/docs/"+x;
@@ -56,4 +56,4 @@
 		</restful>
 		<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 	</function>
-</starosxml>
+</starlang>

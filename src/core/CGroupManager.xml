@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<variable name="testresourceid" type="string"/>
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<string name="testresourceid"/>
 	<class name="CGroupBucket">
 		<private>
-			<variable name="m_packets" type="string"/>
-			<variable name="m_bytes" type="string"/>
-			<variable name="m_bucketjson" type="string"/>
+			<string name="m_packets" />
+			<string name="m_bytes" />
+			<string name="m_bucketjson"/>
 		</private>
 		<public>
 			<function name="CGroupBucket">
 				<parameters>
-					<parameter name="bucketjson" type="string"/>
+					<string name="bucketjson"/>
 				</parameters>
 				<set name="thisclass.m_bytes" value="'0'"/>
 				<set name="thisclass.m_packets" value="'0'"/>
@@ -18,15 +18,15 @@
 			</function>
 			<function name="UpdateState">
 				<parameters>
-					<parameter name="packets" type="string"/>
-					<parameter name="bytes" type="string"/>
+					<string name="packets" />
+					<string name="bytes"/>
 				</parameters>
 				<set name="thisclass.m_packets" value="context.packets.toString()"/>
 				<set name="thisclass.m_bytes" value="context.bytes.toString()"/>
 			</function>
 			<function name="ToJsonString">
 				<parameters>
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring"/>
 				</parameters>
 				<script><![CDATA[
 					var onebucket = JSON.parse(thisclass.m_bucketjson.toString());
@@ -78,7 +78,7 @@
 			</function>
 			<function name="FetchStateFromJson">
 				<parameters>
-					<parameter name="groupjson" type="string"/>
+					<string name="groupjson"/>
 				</parameters>
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.groupjson.toString());
@@ -90,24 +90,24 @@
 	</class>
 	<class name="CGroup">
 		<private>
-			<variable name="m_id" type="string"/>
-			<variable name="m_appid" type="string"/>
-			<variable name="m_state" type="string"/>
-			<variable name="m_type" type="string"/>
-			<variable name="m_packets" type="string"/>
-			<variable name="m_bytes" type="string"/>
-			<variable name="m_strjson" type="string"/>
-			<variable name="m_duration_sec" type="string"/>
-			<variable name="m_duration_nsec" type="string"/>
-			<variable name="m_ref_count" type="string"/>
-			<container name="m_buckets" type="list" valuetype="class"/>
+			<string name="m_id" />
+			<string name="m_appid" />
+			<string name="m_state" />
+			<string name="m_type" />
+			<string name="m_packets" />
+			<string name="m_bytes" />
+			<string name="m_strjson" />
+			<string name="m_duration_sec" />
+			<string name="m_duration_nsec" />
+			<string name="m_ref_count" />
+			<list name="m_buckets"  valuetype="object"/>
 		</private>
 		<public>
 			<function name="CGroup">
 				<parameters>
-					<parameter name="id" type="string"/>
-					<parameter name="appid" type="string"/>
-					<parameter name="groupjson" type="string"/>
+					<string name="id" />
+					<string name="appid" />
+					<string name="groupjson" />
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toString()"/>
 				<set name="thisclass.m_appid" value="context.appid.toString()"/>
@@ -115,10 +115,10 @@
 				<set name="thisclass.m_state" value="'Added'"/>
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bytes" value="'0'"/>
-				<container name="strbucketlist" type="list" valuetype="string"/>
-				<variable name="bucketobj" type="class"/>
-				<variable name="strbucket" type="string"/>
-				<variable name="strbucketlists" type="string"/>
+				<list name="strbucketlist"  valuetype="string"/>
+				<object name="bucketobj" />
+				<string name="strbucket" />
+				<string name="strbucketlists"/>
 				<script><![CDATA[
 						var info = JSON.parse(thisclass.m_strjson.toString());
 						thisclass.m_type=info.grouptype;
@@ -137,7 +137,7 @@
 						<set name="strbucket" value="context.strbucketlists.toString()"/>
 						 <new name="bucketobj" class="CGroupBucket">
 							<parameters>
-									<parameter name="bucketjson" type="string" in="context.strbucket.toString()"/>
+									<string name="bucketjson"  in="context.strbucket.toString()"/>
 							</parameters>
 						</new>
 						<insert name="m_buckets" value="context.bucketobj"/>
@@ -146,17 +146,17 @@
 			</function>
 			<function name="GroupToJsonString">
 				<parameters>
-					<parameter name="groupjson" type="string"/>
+					<string name="groupjson"/>
 				</parameters>
-				<variable name="outjson" type="string"/>
-				<variable name="bucketsobj" type="class"/>
-				<container name="bucketjsonlist" type="list" valuetype="string"/>
-				<variable name="i" type="class"/>
+				<string name="outjson"/>
+				<object name="bucketsobj" />
+				<list name="bucketjsonlist"  valuetype="string"/>
+				<object name="i" />
 			
 				<for var="i" in="context.m_buckets">
 					<function>
 						<set name="bucketsobj" value="context.i"/>
-						<if cond="context.bucketsobj==null">
+						<if cond="context.bucketsobj.ptr==null">
 							<then>
 								<log>bucketsobj is null</log>
 								<exit/>
@@ -164,7 +164,7 @@
 						</if>
 						<function name="ToJsonString" class="bucketsobj">
 							<parameters>
-								<parameter name="jsonstring" type="string" out="context.outjson"/>
+								<string name="jsonstring"  out="context.outjson"/>
 							</parameters>
 						</function>
 						<insert name="bucketjsonlist" value="context.outjson.toString()"/>
@@ -194,12 +194,12 @@
 			<!--Get Stat info from MGroup Reply json-->
 			<function name="FetchStateFromJson">
 				<parameters>
-					<parameter name="groupjson" type="string"/>
+					<string name="groupjson"/>
 				</parameters>
-				<container name="bucketjsonlist" type="array" valuetype="string"/>
-				<variable name="bucketsobj" type="class"/>
-				<variable name="bucketstring" type="class"/>
-				<variable name="i" type="long" value="0"/>
+				<vector name="bucketjsonlist"  valuetype="string"/>
+				<object name="bucketsobj" />
+				<string name="bucketstring" />
+				<long name="i"  value="0"/>
 				<script><![CDATA[
 					var info = JSON.parse(thisclass.groupjson.toString());
 					thisclass.m_ref_count=info.refcount;
@@ -219,7 +219,7 @@
 				<for var="bucketsobj" in="context.m_buckets">
 					<function>
 						<set name="bucketstring" value="context.bucketjsonlist.getValue(context.i.toLong())"/>
-						<if cond="context.bucketsobj==null">
+						<if cond="context.bucketsobj.ptr==null">
 							<then>
 								<log>bucketsobj is null</log>
 								<exit/>
@@ -227,7 +227,7 @@
 						</if>
 						<function name="FetchStateFromJson" class="bucketsobj">
 							<parameters>
-								<parameter name="jsonstring" type="string" in="context.bucketstring.toString()"/>
+								<string name="jsonstring"  in="context.bucketstring.toString()"/>
 							</parameters>
 						</function>
 						<set name="i" value="context.i.toLong()+1"/>
@@ -238,7 +238,7 @@
 			<!-- wangkang 2017/09/06 -->
 			<function name="SetState">
 				<parameters>
-					<parameter name="inmodstate" type="string"/>
+					<string name="inmodstate" />
 				</parameters>
 				<set name="m_state" value="context.inmodstate.toString()"/>
 			</function>
@@ -247,16 +247,16 @@
 	</class>
 	<class name="CGroupManager">
 		<private>
-			<container name="groupContainer" type="hashmap" keytype="string" valuetype="class"/>
-			<variable name="m_transportid" type="string"/>
-			<variable name="m_testgroupid" type="string"/>
-			<variable name="m_errorid" type="string"/>
-			<variable name="m_groupid" type="long"/>
+			<hashmap name="groupContainer"  keytype="string" valuetype="object"/>
+			<string name="m_transportid" />
+			<string name="m_testgroupid" />
+			<string name="m_errorid" />
+			<long name="m_groupid" />
 		</private>
 		<public>
 			<function name="CGroupManager">
 				<parameters>
-					<parameter name="transportid" type="string"/>
+					<string name="transportid"/>
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 				<!--set name="thisclass.m_testgroupid" value="'2'"/-->
@@ -266,15 +266,15 @@
 			</function>
 			<function name="InstallGroupRequest">
 				<parameters>
-					<parameter name="in_strjson" type="string"/>
-					<parameter name="in_appid" type="string" />
-					<parameter name="in_groupid" type="string" />
+					<string name="in_strjson" />
+					<string name="in_appid"  />
+					<string name="in_groupid"  />
 				</parameters>
-				<variable name="tmpgroupid" type="long"/>
+				<long name="tmpgroupid" />
 				<set name="tmpgroupid" value="thisclass.m_groupid.toLong()"/>
 				<set name="in_groupid" value="context.tmpgroupid.toString()"/>
-				<variable name="groupobj" type="class"/>
-				<variable name="outjson" type="string"/>
+				<object name="groupobj" />
+				<string name="outjson" />
 				
 				<script><![CDATA[
 						var info = JSON.parse(context.in_strjson.toString());
@@ -286,15 +286,15 @@
 				<!--qiulei modify 20170807-->
 				<function name="Send_OFPT13_GROUP_MOD">
 					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-						<parameter name="strjson" type="string" in="context.outjson.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.outjson.toString()"/>
 					</parameters>
 				</function>
 				<new name="groupobj" class="CGroup">
 					<parameters>
-						<parameter name="id" type="string" in="context.in_groupid.toString()"/>
-						<parameter name="appid" type="string" in="context.in_appid.toString()"/>
-						<parameter name="groupjson" type="string" in="context.outjson.toString()"/>
+						<string name="id"  in="context.in_groupid.toString()"/>
+						<string name="appid"  in="context.in_appid.toString()"/>
+						<string name="groupjson"  in="context.outjson.toString()"/>
 					</parameters>
 				</new>
 				<insert name="groupContainer" key="context.in_groupid.toString()" value="context.groupobj"/>
@@ -302,11 +302,11 @@
 			</function>
 			<function name="UnInstallGroupRequest">
 				<parameters>
-					<parameter name="groupid" type="string"/>
+					<string name="groupid" />
 				</parameters>
-				<variable name="jsongroup" type="class"/>
-				<variable name="sendflowmodjson" type="string"/>
-				<variable name="groupstring" type="string"/>
+				<object name="jsongroup" />
+				<string name="sendflowmodjson" />
+				<string name="groupstring" />
 				<if cond="context.groupContainer.hasValue(context.groupid.toString()) ==true">
 					<then>
 						<function>
@@ -320,24 +320,28 @@
 						</function>
 					</else>
 				</if>
-				<function name="GetGroupString" class="context.jsongroup">
-					<parameters>
-						<parameter name="outgroupstring" type="string" out="context.groupstring"/>
-					</parameters>
-				</function>
-				<script><![CDATA[
-						var info = JSON.parse(context.groupstring.toString());
-						info.command='2';
-						var strjson=JSON.stringify(info);
-						context.sendflowmodjson.setValue(strjson);
-				]]></script>
-				<function name="Send_OFPT13_GROUP_MOD">
-					<parameters>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-						<parameter name="strjson" type="string" in="context.sendflowmodjson.toString()"/>
-					</parameters>
-				</function>
-				<remove name="groupContainer" key="context.groupid.toString()"/>
+				<if cond="context.jsongroup != null">
+					<then>
+						<function name="GetGroupString" class="context.jsongroup">
+							<parameters>
+								<string name="outgroupstring"  out="context.groupstring"/>
+							</parameters>
+						</function>
+						<script><![CDATA[
+								var info = JSON.parse(context.groupstring.toString());
+								info.command='2';
+								var strjson=JSON.stringify(info);
+								context.sendflowmodjson.setValue(strjson);
+						]]></script>
+						<function name="Send_OFPT13_GROUP_MOD">
+							<parameters>
+								<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+								<string name="strjson" in="context.sendflowmodjson.toString()"/>
+							</parameters>
+						</function>
+					</then>
+				</if>	
+				<remove name="groupContainer" key="context.groupid.toString()"/>	
 			</function>
 			<!--
 				OFPGT_ALL = 0, /* All (multicast/broadcast) group. */
@@ -346,12 +350,12 @@
 				OFPGT_FF = 3, /* Fast failover group. */
 			-->
 			<function name="testaddgroup">
-				<variable name="modstrjson" type="string"/>
-				<variable name="returnresourceid" type="string"/>
+				<string name="modstrjson" />
+				<string name="returnresourceid" />
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 							"command":"0",
 							"grouptype":"1",
 							"groupid":"0",
@@ -374,21 +378,21 @@
 				</reference>
 				<function name="InstallGroupRequest">
 					<parameters>
-						<parameter name="in_strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="in_groupid" type="string" out="thisclass.m_testgroupid"/>
-						<parameter name="in_appid" type="string" in="'core'"/>
+						<string name="in_strjson"  in="context.modstrjson.toString()"/>
+						<string name="in_groupid"  out="thisclass.m_testgroupid"/>
+						<string name="in_appid" in="'core'"/>
 					</parameters>
 				</function>
 			</function>
 			
 			<!-- wangkang 2017/09/06 -->
 			<function name="InstallErrorGroup">
-				<variable name="modstrjson" type="string"/>
-				<variable name="returnresourceid" type="string"/>
+				<string name="modstrjson" />
+				<string name="returnresourceid" />
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 							"command":"65",
 							"grouptype":"1",
 							"groupid":"0",
@@ -411,9 +415,9 @@
 				</reference>
 				<function name="InstallGroupRequest">
 					<parameters>
-						<parameter name="in_strjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="in_groupid" type="string" out="thisclass.m_errorid"/>
-						<parameter name="in_appid" type="string" in="'core'"/>
+						<string name="in_strjson"  in="context.modstrjson.toString()"/>
+						<string name="in_groupid"  out="thisclass.m_errorid"/>
+						<string name="in_appid"  in="'core'"/>
 					</parameters>
 				</function>
 			</function>
@@ -421,28 +425,32 @@
 			<function name="testremovegroup">			
 				<function name="UnInstallGroupRequest">
 					<parameters>
-						<parameter name="groupid" type="string" in="thisclass.m_testgroupid.toString()"/>
+						<string name="groupid"  in="thisclass.m_testgroupid.toString()"/>
 					</parameters>
 				</function>				
 			</function>
 			<!-- for Get Group Json Data-->
 			<function name="GetGroupJsonData">	
 				<parameters>
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring" />
 				</parameters>
-				<container name="groupjsonlist" type="list" valuetype="string"/>
-				<variable name="groupobj" type="class"/>
-				<variable name="GroupInfoJson" type="string"/>
-				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
+				<list name="groupjsonlist" valuetype="string"/>
+				<object name="groupobj" />
+				<string name="GroupInfoJson" />
+				<pair name="onegrouppair"  keytype="string" valuetype="object"/>
 					<for var="onegrouppair" in="context.groupContainer">
 					<function>
 						<set name="groupobj" value="context.onegrouppair.second()"/>
-						<function name="GroupToJsonString" class="groupobj">
-							<parameters>
-								<parameter name="groupjson" type="string" out="context.GroupInfoJson"/>
-							</parameters>
-						</function>
-						<insert name="groupjsonlist" value="context.GroupInfoJson.toString()"/>
+						<if cond="context.groupobj.ptr != null">
+							<then>
+								<function name="GroupToJsonString" class="groupobj">
+									<parameters>
+										<string name="groupjson" out="context.GroupInfoJson"/>
+									</parameters>
+								</function>
+								<insert name="groupjsonlist" value="context.GroupInfoJson.toString()"/>
+							</then>
+						</if>
 					</function>
 				</for>
 				
@@ -474,13 +482,13 @@
 			</function>	
 			<function name="HandleGroupStateResponse">
 				<parameters>
-					<parameter name="groupjson" type="string"/>
+					<string name="groupjson"/>
 				</parameters>
-				<variable name="groupid" type="string"/>
-				<variable name="groupobj" type="class"/>
-				<variable name="groupstate" type="string"/>
-				<container name="onegrouppair" type="pair" keytype="string" valuetype="class"/>
-				<container name="liststate" type="hashmap" keytype="string" valuetype="string"/>
+				<string name="groupid"/>
+				<object name="groupobj" />
+				<string name="groupstate" />
+				<pair name="onegrouppair"  keytype="string" valuetype="object"/>
+				<hashmap name="liststate" keytype="string" valuetype="string"/>
 																<script><![CDATA[							
 					var info = JSON.parse(context.groupjson.toString());
 									if (info.statslist != null)
@@ -502,7 +510,7 @@
 								<set name="groupstate" value="context.liststate.getValue(context.groupid.toString())"/>
 								<function name="FetchStateFromJson" class="groupobj">
 									<parameters>
-										<parameter name="groupjson" type="string" in="context.groupstate.toString"/>
+										<string name="groupjson"  in="context.groupstate.toString"/>
 									</parameters>
 								</function>
 							</then>
@@ -513,12 +521,12 @@
 			
 <!--Group State Request-->
 			<function name="GroupStateRequest">
-				<variable name="xid" type="string"/>
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<string name="xid" />
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartGroupRequest">
 					<parameters>
-						<parameter name="xid" type="long" in="context.xid.toLong()"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</function>
 			</function>	
@@ -526,8 +534,8 @@
 			<!-- wangkang 2017/09/06-->
 			<function name="FindGroup">
 				<parameters>
-					<parameter name="ingroupid" type="string"/>
-					<parameter name="outgroup" type="class"/>
+					<string name="ingroupid" />
+					<object name="outgroup" />
 				</parameters>
 				<function name="DumpGroup"/>
 				<if cond="context.groupContainer.hasValue(context.ingroupid.toString()) == true">
@@ -539,8 +547,8 @@
 				</if>
 			</function>
 			<function name="DumpGroup">
-				<variable name="groupkey" type="string"/>
-				<container name="onestatepair" type="pair" keytype="string" valuetype="class"/> 
+				<string name="groupkey" />
+				<pair name="onestatepair"  keytype="string" valuetype="object"/> 
 				<for var="onestatepair" in="context.groupContainer">
 					<set name="groupkey" value="context.onestatepair.first()"/>
 					<log><![CDATA[groupkey=<%=context.groupkey.toString()%>]]></log>
@@ -549,4 +557,4 @@
 		
 		</public>
 	</class>
-</starosxml>
+</starlang>

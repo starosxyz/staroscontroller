@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<logconfig dest="stdout"/>
 	<variable name="stringkey" type="string" value="'stringkey1'"/>
 	<variable name="stringvalue" type="string" value="'stringvalue1'"/>
@@ -57,4 +57,4 @@
 			<function name="starttest"/>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

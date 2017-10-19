@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="OpenFlowMultiPartMeterRequest">
 		<parameters>
-			<parameter name="xid" type="long"/>
+			<long name="xid" />
 		</parameters>
 		<log>OpenFlowMultiPartMeterRequest</log>
-		<variable name="strjson" type="string"/>
+		<string name="strjson"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
@@ -16,17 +16,17 @@
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+				<string name="transportid"  in="event.getParam('transportid').toString()"/>
+				<string name="strjson"  in="context.strjson.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="OpenFlowMultiPartMeterReply">
 		<parameters>
-			<parameter name="xid" type="long"/>
+			<long name="xid" />
 		</parameters>
 		<log>OpenFlowMultiPartMeterReply</log>
-		<variable name="strjson" type="string"/>
+		<string name="strjson"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 				{
@@ -58,19 +58,19 @@
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_METER">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+				<string name="transportid"  in="event.getParam('transportid').toString()"/>
+				<string name="strjson"  in="context.strjson.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="TestOpenFlowMultiPartMeterRequest">
-		<variable name="isstop" type="boolean" value="true"/>
-		<variable name="xid" type="long"/>
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<boolean name="isstop" value="true"/>
+		<long name="xid"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<function>
 			<function name="OpenFlowMultiPartMeterRequest">
 			<parameters>
-					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+					<long name="xid"  in="context.xid.toLong()"/>
 				</parameters>
 			</function>
 			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_METER,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
@@ -81,14 +81,14 @@
 		</function>
 	</function>
 	<function name="TestOpenFlowMultiPartMeterReply">
-		<variable name="xid" type="long"/>
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<long name="xid" />
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<function>
 			<function name="OpenFlowMultiPartMeterReply">
 				<parameters>
-					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+					<long name="xid"  in="context.xid.toLong()"/>
 				</parameters>
 			</function>
 		</function>
 	</function>
-</starosxml>
+</starlang>

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CHost">
 		<private>
-			<variable name="m_mac" type="string"/>		
-			<variable name="m_ip" type="string"/>	
-			<variable name="m_vlan" type="string"/>
-			<variable name="m_deviceid" type="string"/>	
-			<variable name="m_port" type="string"/>
+			<string name="m_mac" />		
+			<string name="m_ip" />	
+			<string name="m_vlan" />
+			<string name="m_deviceid" />	
+			<string name="m_port" />
 		</private>
 		<public>
 			<function name="CHost">
 				<parameters>
-					<parameter name="mac" type="string"/>		
-					<parameter name="ip" type="string"/>	
-					<parameter name="vlan" type="string"/>
-					<parameter name="deviceid" type="string"/>	
-					<parameter name="port" type="string"/>				
+					<string name="mac" />		
+					<string name="ip" />	
+					<string name="vlan" />
+					<string name="deviceid" />	
+					<string name="port" />				
 				</parameters>
 					<set name="thisclass.m_mac" value="context.mac.toString()"/>
 					<set name="thisclass.m_ip" value="context.ip.toString()"/>
@@ -33,7 +33,7 @@
 			</function>
 			<function name="ToString">
 				<parameters>
-					<parameter name="jsonstring" type="string" out="context.outjson"/>
+					<string name="jsonstring"  out="context.outjson"/>
 				</parameters>
 				<script><![CDATA[
 						var onearray = new Object();
@@ -49,9 +49,9 @@
 					</function>
 		<function name="ToAddHost2Json">
 				<parameters>
-					<parameter name="strjson" type="string"/>
+					<string name="strjson"/>
 				</parameters>
-				<variable name="addhostjson" type="string"/>
+				<string name="addhostjson" />
 				<reference variable="addhostjson">
 					<jsonbody>
 						<![CDATA[
@@ -96,7 +96,7 @@
 	</class>
 	<class name="CHostManager">
 		<private>
-			<container name="hostContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<hashmap name="hostContainer"  keytype="string" valuetype="object"/>
 		</private>
 		<public>
 			<function name="CHostManager">
@@ -104,20 +104,20 @@
 			</function>
 			<function name="addHost">
 				<parameters>
-					<parameter name="mac" type="string"/>		
-					<parameter name="ip" type="string"/>	
-					<parameter name="vlan" type="string"/>
-					<parameter name="deviceid" type="string"/>	
-					<parameter name="port" type="string"/>				
+					<string name="mac" />		
+					<string name="ip" />	
+					<string name="vlan"/>
+					<string name="deviceid" />	
+					<string name="port"/>				
 				</parameters>
-				<variable name="hostobj" type="class"/>	
+				<object name="hostobj"/>	
 				<new name="hostobj" class="CHost">
 					<parameters>
-						<parameter name="mac" type="string" in="context.mac.toString()"/>		
-						<parameter name="ip" type="string" in="context.ip.toString()"/>	
-						<parameter name="vlan" type="string" in="context.vlan.toString()"/>
-						<parameter name="deviceid" type="string" in="context.deviceid.toString()"/>	
-						<parameter name="port" type="string" in="context.port.toString()"/>				
+						<string name="mac"  in="context.mac.toString()"/>		
+						<string name="ip" in="context.ip.toString()"/>	
+						<string name="vlan"  in="context.vlan.toString()"/>
+						<string name="deviceid"  in="context.deviceid.toString()"/>	
+						<string name="port"  in="context.port.toString()"/>				
 				</parameters>
 				</new>
 				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
@@ -129,29 +129,41 @@
 			</function>
 
 			<function name="printhostmanager">
-				<variable name="onehostinfo" type="class"/>
-				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<object name="onehostinfo" />
+				<pair name="onehostpair"  keytype="string" valuetype="object"/>
 				<for var="onehostpair" in="context.hostContainer">
 					<function>
 						<set name="onehostinfo" value="context.onehostpair.second()"/>
+						<if cond="context.onehostinfo.ptr == null">
+							<then>
+								<log>onehostinfo is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="printhost" class="context.onehostinfo"/>
 					</function>
 				</for>
 			</function>
 			<function name="GetHostJsonData">
 				<parameters>
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring" />
 				</parameters>
-				<variable name="outjson" type="string"/>
-				<variable name="onehostinfo" type="class"/>
-				<container name="hostlist" type="list" valuetype="string"/>
-				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<string name="outjson"/>
+				<object name="onehostinfo" />
+				<list name="hostlist"  valuetype="string"/>
+				<pair name="onehostpair"  keytype="string" valuetype="object"/>
 				<for var="onehostpair" in="context.hostContainer">
 					<function>
 						<set name="onehostinfo" value="context.onehostpair.second()"/>
+						<if cond="context.onehostinfo.ptr == null">
+							<then>
+								<log>onehostinfo is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="ToString" class="onehostinfo">
 							<parameters>
-								<parameter name="jsonstring" type="string" out="context.outjson"/>
+								<string name="jsonstring"  out="context.outjson"/>
 							</parameters>
 						</function>
 						<insert name="hostlist" value="context.outjson.toString()"/>
@@ -184,20 +196,20 @@
 			</function>
 		<function name="GetHostLinkJsonData">
 				<parameters>
-					<parameter name="key" type="string"/>
-					<parameter name="insts" type="string"/>
-					<parameter name="summary" type="string"/>
-					<parameter name="detail" type="string"/>
-					<parameter name="hosts" type="string"/>
-					<parameter name="offdev" type="string"/>
-					<parameter name="dlbls" type="string"/>
-					<parameter name="porthl" type="string"/>
-					<parameter name="bg" type="string"/>
-					<parameter name="spr" type="string"/>
-					<parameter name="ovid" type="string"/>
-					<parameter name="toolbar" type="string"/>
-					<parameter name="type" type="string"/>
-					<parameter name="outjson" type="string"/>					
+					<string name="key" />
+					<string name="insts" />
+					<string name="summary" />
+					<string name="detail" />
+					<string name="hosts" />
+					<string name="offdev" />
+					<string name="dlbls" />
+					<string name="porthl" />
+					<string name="bg" />
+					<string name="spr" />
+					<string name="ovid" />
+					<string name="toolbar" />
+					<string name="type" />
+					<string name="outjson" />					
 				</parameters>				
 				<if cond="context.type.toString()==0">
 					<then>
@@ -278,18 +290,18 @@
 			</function>
 			<function name="SendAddAllHostToWebClient">
 				<parameters>
-					<parameter name="transportid" type="string"/>
+					<string name="transportid" />
 				</parameters>
-				<variable name="sendjsonstr" type="string"/>				
-				<variable name="hostobj" type="class"/>	
-				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>				
+				<string name="sendjsonstr" />				
+				<object name="hostobj" />	
+				<pair name="onehostpair"  keytype="string" valuetype="object"/>				
 				<for var="onehostpair" in="context.hostContainer">
 					<set name="hostobj" value="context.onehostpair.second()"/>
-					<if cond="context.hostobj!=null">
+					<if cond="context.hostobj.ptr!=null">
 						<then>
 							<function name="ToAddHost2Json" class="hostobj">
 								<parameters>
-									<parameter name="strjson" type="string" out="context.sendjsonstr"/>
+									<string name="strjson"  out="context.sendjsonstr"/>
 								</parameters>
 							</function>
 							<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
@@ -302,4 +314,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

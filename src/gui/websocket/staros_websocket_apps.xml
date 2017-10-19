@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandleAppDataRequest">
 	<!--hupeng 20170731-->
-		<variable name="outjson" type="string"/>
+		<string name="outjson"/>
 		<function name="GetAppJsonString" class="ApplicationManager">
 			<parameters>
 				<!--appjson is return value-->
-				<parameter name="appjson" type="string" out="context.outjson"/>
+				<string name="appjson" out="context.outjson"/>
 			</parameters>
 		</function>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
@@ -15,8 +15,8 @@
 	</function>
 	<function name="HandleappManagementRequest">
 	<!--hupeng 20170731-->
-		<variable name="name" type="string"/>
-		<variable name="action" type="string"/>
+		<string name="name"/>
+		<string name="action"/>
 		<function>
 			<script><![CDATA[
 					var info = JSON.parse(event.getParam('eventdata').toString());
@@ -28,7 +28,7 @@
 					<function name="AppDeactiveEvent" class="ApplicationManager">
 						<parameters>
 							<!--appjson is return value-->
-							<parameter name="id" type="string" in="context.name"/>
+							<string name="id" in="context.name"/>
 						</parameters>
 					</function>
 				</then>
@@ -36,7 +36,7 @@
 					<function name="AppActiveEvent" class="ApplicationManager">
 						<parameters>
 							<!--appjson is return value-->
-							<parameter name="id" type="string" in="context.name"/>
+							<string name="id" in="context.name"/>
 						</parameters>
 					</function>
 				</elseif>
@@ -44,7 +44,7 @@
 					<function name="UninstallApp" class="ApplicationManager">
 						<parameters>
 							<!--appjson is return value-->
-							<parameter name="id" type="string" in="context.name"/>
+							<string name="id" in="context.name"/>
 						</parameters>
 					</function>
 				</elseif>
@@ -54,9 +54,9 @@
 	</function>
 	<function name="HandleappDetailsRequest">
 	<!--hupeng 20170731-->
-		<variable name="outjson" type="string" value=""/>
-		<variable name="processname" type="string" value=""/>
-		<variable name="ishavapayload" type="boolean"/>
+		<string name="outjson" value=""/>
+		<string name="processname" value=""/>
+		<boolean name="ishavapayload"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());
 			var payloadstr=JSON.stringify(info.payload);
@@ -78,22 +78,22 @@
 				<function name="GetAppdetalJsonString" class="ApplicationManager">
 					<parameters>
 						<!--appjson is return value-->
-						<parameter name="appdetailjson" type="string" out="context.outjson"/>
-						<parameter name="app_id" type="string" in="context.processname"/>
+						<string name="appdetailjson" out="context.outjson"/>
+						<string name="app_id" in="context.processname"/>
 					</parameters>
 				</function>
 			</then>
 			<else>
 				<function name="GetCurrentappname" class="ApplicationManager">
 					<parameters>
-						<parameter name="outappname" type="string" out="processname"/>
+						<string name="outappname" out="processname"/>
 					</parameters>
 				</function>
 				<function name="GetAppdetalJsonString" class="ApplicationManager">
 					<parameters>
 						<!--appjson is return value-->
-						<parameter name="appdetailjson" type="string" out="context.outjson"/>
-						<parameter name="app_id" type="string" in="context.processname"/>
+						<string name="appdetailjson" out="context.outjson"/>
+						<string name="app_id" in="context.processname"/>
 					</parameters>
 				</function>
 			</else>
@@ -103,4 +103,4 @@
 		</websocket>	
 			
 	</function>
-</starosxml>
+</starlang>

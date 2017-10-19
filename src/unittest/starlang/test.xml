@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
 	<class name="sss">
 		<variable name="newSession"/>
 		<variable name="nulltest" type="string"/>
@@ -83,4 +83,4 @@
 			</function>
 		</functions>
 	</class>
-</starosxml>
+</starlang>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
 
-	<variable name="instrunctionMap" type="params" global="true"/>
+	<params name="instrunctionMap" global="true"/>
 	<function name="InitInstrunctionMap">
 		<set name="instrunctionMap" paramname="1" value="'tableid'"/>
 		<set name="instrunctionMap" paramname="2" value="'metadata'"/>
@@ -10,4 +10,4 @@
 		<set name="instrunctionMap" paramname="5" value="'actionlist'"/>
 		<set name="instrunctionMap" paramname="6" value="'meterid'"/>
 	</function>
-</starosxml>
+</starlang>

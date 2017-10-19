@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CSession">
 		<private>
-			<variable name="m_cseeionid" type="string" />
-			<variable name="m_username" type="string" />
-			<variable name="m_current" type="long" />
+			<string name="m_cseeionid"  />
+			<string name="m_username"  />
+			<long name="m_current"  />
 		</private>
 		<public>
 			<!-- hu 20170904 create Session and add data-->
 			<function name="CSession">
 				<parameters>
-					<parameter name="sessionid" type="string"/>
-					<parameter name="username" type="string"/>
+					<string name="sessionid"/>
+					<string name="username"/>
 				</parameters>
+				<log>new CSession</log>
+				<log><![CDATA[sessionid=<%=context.sessionid.toString()%>']]></log>
+				<log><![CDATA[username=<%=context.username.toString()%>']]></log>
 				<set name="thisclass.m_cseeionid" value="context.sessionid.toString()"/>
 				<set name="thisclass.m_username" value="context.username.toString()"/>
 				<script><![CDATA[
@@ -54,14 +57,14 @@
 			</function>
 			<function name="Gettime">
 				<parameters>
-					<parameter name="time" type="long"/>
+					<long name="time" />
 				</parameters>
 				<set name="time" value="thisclass.m_current.toLong()"/>
 			</function>
 			
 			<function name="GetUsername">
 				<parameters>
-					<parameter name="username" type="string"/>
+					<string name="username"/>
 				</parameters>
 				<set name="username" value="thisclass.m_username.toString()"/>
 			</function>
@@ -72,60 +75,75 @@
 	</class>
 	<class name="CSessionManager">
 		<private>
-			<container name="SessionContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<hashmap name="SessionContainer"  keytype="string" valuetype="object"/>
 		</private>
 		<public>
 			<function name="CreateSession">
-					<parameters>
-						<parameter name="sessionid" type="string"/>
-						<parameter name="username" type="string"/>
-					</parameters>
-					<variable name="session" type="class"/>				
-					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==false">
+				<parameters>
+					<string name="sessionid" />
+					<string name="username" />
+				</parameters>
+				<object name="session"/>	
+			    <log>CreateSession</log>
+				<if cond="context.session.getValue()==null">
+					<then>
+						<log>CreateSession1</log>
+					</then>
+				</if>
+				<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==false">
+					<then>
+						<new name="session" class="CSession">
+							<parameters>
+								<string name="sessionid"  in="context.sessionid.toString()"/>
+								<string name="username"  in="context.username.toString()"/>
+							</parameters>
+						</new>
+						<if cond="context.session.getValue()!=null">
 							<then>
-								<new name="session" class="CSession">
-									<parameters>
-										<parameter name="sessionid" type="string" in="context.sessionid.toString()"/>
-										<parameter name="username" type="string" in="context.username.toString()"/>
-									</parameters>
-								</new>
+								<log>new session ok</log>
 								<insert name="SessionContainer" key="context.sessionid.toString()" value="context.session"/>
 							</then>
 							<else>
-								<exit/>
+								<log>new session failure..................</log>
 							</else>
-					</if>
+						</if>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
 			</function>
 		
 			<function name="RemoveSession">
 					<parameters>
-						<parameter name="sessionid" type="string"/>
+						<string name="sessionid" />
 					</parameters>
 					<remove name="SessionContainer" key="context.sessionid.toString()"/>
 			</function>
 			
 			<function name="FindSession">				
-					<parameters>
-						<parameter name="sessionid" type="string"/>	
-						<parameter name="sessionobj" type="class"/>	
-					</parameters>
-					<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==true">
-						<then>
-							<lookup name="SessionContainer"  key="context.sessionid.toString()" output="context.sessionobj"/>
-						</then>
-						<else>
-							<exit/>
-						</else>
-					</if>
+				<parameters>
+					<string name="sessionid" />	
+					<object name="sessionobj"/>	
+				</parameters>
+				<log><![CDATA[sessionid=<%=context.sessionid.toString()%>']]></log>
+				<if cond="thisclass.SessionContainer.hasValue(context.sessionid.toString())==true">
+					<then>
+						<lookup name="SessionContainer"  key="context.sessionid.toString()" output="context.sessionobj"/>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
 			</function>	
 			<!-- hu 20170904 when timeout remove session-->
 			<function name="Timeout">
-				<variable name="current" type="long" />
-				<variable name="oncurrent" type="long" />
-				<variable name="sessionid" type="string" />
-				<container name="removelist" type="list" valuetype="string"/>
-				<variable name="sessionobj" type="class" />
-				<container name="oneSessionContainer" type="pair" keytype="string" valuetype="class"/>
+				<long name="current"  />
+				<long name="oncurrent" />
+				<string name="sessionid"  />
+				<list name="removelist" valuetype="string"/>
+				<object name="sessionobj"  />
+				<pair name="oneSessionContainer"  keytype="string" valuetype="object"/>
 					<script><![CDATA[
 							function getCurrentTimerInMs() {
 								var timestamp=new Date().getTime();
@@ -138,9 +156,15 @@
 					<for var="oneSessionContainer" in="context.SessionContainer">
 						<set name="sessionobj" value="context.oneSessionContainer.second()"/>
 						<set name="sessionid" value="context.oneSessionContainer.first()"/>
+						<if cond="context.sessionobj.ptr == null">
+							<then>
+								<log>sessionobj is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="Gettime" class="context.sessionobj">
 							<parameters>
-								<parameter name="time" type="long" out="context.oncurrent"/>	
+								<long name="time"  out="context.oncurrent"/>	
 							</parameters>
 						</function>
 						<log><![CDATA[current= '<%=context.current.toLong()%>']]></log>
@@ -163,4 +187,4 @@
 				
 		</public>
 	</class>
-</starosxml>
+</starlang>

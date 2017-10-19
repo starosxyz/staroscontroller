@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandleShowHighlights">
-		<variable name="trafficType" type="string"/>
+		<string name="trafficType"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var type = info.payload.trafficType;
@@ -10,9 +10,9 @@
 		
 		<function name="sendhighlights" class="DeviceManager">	
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="trafficType" type="string" in="context.trafficType.toString()"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="trafficType" in="context.trafficType.toString()"/>
 			</parameters>
 		</function>	
 	</function>
-</starosxml>
+</starlang>

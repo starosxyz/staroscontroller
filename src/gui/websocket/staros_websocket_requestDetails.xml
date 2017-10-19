@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			YY
@@ -9,9 +9,9 @@
 			Nanjing StarOS Inc. All rights reserved.
 -->
 	<function name="HandleDetailsReq">
-		<variable name="datapathid" type="string"/>
-		<container name="switchdevice" type="hashmap" keytype="string" valuetype="string"/>
-		<container name="switchport" type="hashmap" keytype="string" valuetype="hashmap"/>
+		<string name="datapathid"/>
+		<hashmap name="switchdevice" keytype="string" valuetype="string"/>
+		<hashmap name="switchport" keytype="string" valuetype="hashmap"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var dataid = info.payload.id;
@@ -21,9 +21,9 @@
 		</script>
 		<function name="SendDetails" class="DeviceManager">	
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>	
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="datapathid" in="context.datapathid.toString()"/>	
 			</parameters>
 		</function>
 	</function>
-</starosxml>
+</starlang>

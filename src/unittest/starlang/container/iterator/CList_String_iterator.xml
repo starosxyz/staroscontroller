@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<function name="test2">
 		<container name="listc" type="list" valuetype="string"/>
 		<iterator name="it" type="list" valuetype="string"/>
@@ -78,4 +78,4 @@
 			<raise name="'testevent'"/>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

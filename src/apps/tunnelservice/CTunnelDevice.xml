@@ -1,20 +1,20 @@
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--hupeng 2017/09/25 -->
 	<class name="CTunnelDevice">
 		<private>
-			<variable name="m_deviceid" type="string"/>
-			<variable name="m_inputPort" type="string"/>
-			<variable name="m_outputPort" type="string"/>
-			<variable name="m_flowid" type="string"/>
-			<variable name="m_flowid2" type="string"/>
-			<variable name="m_meterid" type="long"/>
+			<string name="m_deviceid"/>
+			<string name="m_inputPort"/>
+			<string name="m_outputPort"/>
+			<string name="m_flowid"/>
+			<string name="m_flowid2"/>
+			<long name="m_meterid"/>
 		</private>	
 		<public>
 			<function name="CTunnelDevice">
 				<parameters>
-					<parameter name="deviceid" type="string"/>
-					<parameter name="inputPort" type="string"/>
-					<parameter name="outputPort" type="string"/>
+					<string name="deviceid"/>
+					<string name="inputPort"/>
+					<string name="outputPort"/>
 				</parameters>
 				<log>##### CTunnelDevice is create #####</log>
 				<log><![CDATA[CTunnelDevice deviceid = <%=context.deviceid.toString()%>]]></log>
@@ -28,46 +28,45 @@
 			</function>
 			<function name="GetTunnelDeviceId">
 				<parameters>
-					<parameter name="outtunneldeviceid" type="string"/>
+					<string name="outtunneldeviceid"/>
 				</parameters>
 				<set name="outtunneldeviceid" value="thisclass.m_deviceid.toString()"/>
 			</function>
 			<function name="GetInputPort">
 				<parameters>
-					<parameter name="inputPort" type="string"/>
+					<string name="inputPort"/>
 				</parameters>
 				<set name="inputPort" value="thisclass.m_inputPort.toString()"/>
 			</function>
 			<function name="GetOutputPort">
 				<parameters>
-					<parameter name="outputPort" type="string"/>
+					<string name="outputPort"/>
 				</parameters>
 				<set name="outputPort" value="thisclass.m_outputPort.toString()"/>
 			</function>
 			<function name="installRuleAtSameDevice">
 				<parameters>
-					<parameter name="inport" type="string"/>
-					<parameter name="invlan" type="string"/>
-					<parameter name="outport" type="string"/>
-					<parameter name="outvlan" type="string"/>
-					<parameter name="bandwith" type="long"/>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
 				</parameters>
-				<variable name="jsonout2in" type="string"/>
-				<variable name="jsonin2out" type="string"/>
-				<variable name="onedevice" type="class"/>
-				<variable name="oneflowmgr" type="class"/>
+				<string name="jsonout2in"/>
+				<string name="jsonin2out"/>
+
 				<log>CTunnelDevice installRuleAtSameDevice</log>
 				
 				<function name="InstallMeter">	
 					<parameters>
-						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+						<string name="bandwith" in="context.bandwith.toString()"/>
 					</parameters>	
 				</function>
 				
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -118,7 +117,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -169,21 +168,21 @@
 				
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
-						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-			<if cond="context.m_flowid.size() == 0">
+				<if cond="context.m_flowid.size() == 0">
 					<then>
 						<log>context.m_flowid.size() == 0</log>
 						<assert/>
@@ -198,28 +197,26 @@
 			</function>
 			<function name="installRuleStart">
 				<parameters>
-					<parameter name="inport" type="string"/>
-					<parameter name="invlan" type="string"/>
-					<parameter name="serviceinvlan" type="string"/>
-					<parameter name="serviceoutvlan" type="string"/>
-					<parameter name="bandwith" type="long"/>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<long name="bandwith"/>
 				</parameters>
 				<log>Ctunnerdevice installRuleStart</log>
-				<variable name="jsonin2out" type="string"/>
-				<variable name="jsonout2in" type="string"/>
-				<variable name="oneflowmgr" type="class"/>
-				<variable name="onedevice" type="class"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
 
 				<function name="InstallMeter">	
 					<parameters>
-						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+						<string name="bandwith" in="context.bandwith.toString()"/>
 					</parameters>	
 				</function>
 								
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -283,7 +280,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -339,18 +336,18 @@
 				
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
-						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 				
@@ -359,18 +356,17 @@
 			</function>
 			<function name="installRuleMid">
 				<parameters>
-					<parameter name="serviceinvlan" type="string"/>
-					<parameter name="serviceoutvlan" type="string"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
 				</parameters>
-				<variable name="jsonin2out" type="string"/>
-				<variable name="jsonout2in" type="string"/>
-				<variable name="oneflowmgr" type="class"/>
-				<variable name="onedevice" type="class"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+
 				<log>CTunnelDevice installRuleMid</log>
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -417,7 +413,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -463,44 +459,43 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
-						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<function name="installRuleEnd">
 				<parameters>
-					<parameter name="serviceinvlan" type="string"/>
-					<parameter name="serviceoutvlan" type="string"/>
-					<parameter name="outport" type="string"/>
-					<parameter name="outvlan" type="string"/>
-					<parameter name="bandwith" type="long"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
 				</parameters>
-				<variable name="jsonin2out" type="string"/>
-				<variable name="jsonout2in" type="string"/>
-				<variable name="oneflowmgr" type="class"/>
-				<variable name="onedevice" type="class"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+
 				<log>CTunnelDevice installRuleEnd</log>
 				<function name="InstallMeter">	
 					<parameters>
-						<parameter name="bandwith" type="string" in="context.bandwith.toString()"/>
+						<string name="bandwith" in="context.bandwith.toString()"/>
 					</parameters>	
 				</function>
 				
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -555,7 +550,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -618,32 +613,32 @@
 				
 				<function name="InstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid"/>
-						<parameter name="strjson" type="string" in="context.jsonin2out.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 				<function name="InstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="outflowid" type="string" out="thisclass.m_flowid2"/>
-						<parameter name="strjson" type="string" in="context.jsonout2in.toString()"/>
-						<parameter name="appId" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 			</function>
 			<function name="InstallMeter">	
 				<parameters>
-					<parameter name="bandwith" type="string"/>
+					<string name="bandwith"/>
 				</parameters>		
-				<variable name="modstrjson" type="string"/>
+				<string name="modstrjson"/>
 				
 				<log>Ctunnerdevice InstallMeter</log>
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
 							"flag":"0x00000005",
 							"meterid":"1",
@@ -659,10 +654,10 @@
 				</reference>
 				<function name="InstallMeter" class="MeterService">
 					<parameters>
-						<parameter name="outmeterid" type="long" out="thisclass.m_meterid"/>
-						<parameter name="meterjson" type="string" in="context.modstrjson.toString()"/>
-						<parameter name="appid" type="string" in="'tunnelservice'"/>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>
+						<long name="outmeterid" out="thisclass.m_meterid"/>
+						<string name="meterjson" in="context.modstrjson.toString()"/>
+						<string name="appid" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -673,15 +668,15 @@
 				<log>CTunnelDevice DeactiveTunnel</log>
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
-						<parameter name="flowid" type="string" in="thisclass.m_flowid.toString()"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid.toString()"/>
 					</parameters>
 				</function>
 				<!--uninstall flow 2-->
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
-						<parameter name="flowid" type="string" in="thisclass.m_flowid2.toString()"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid2.toString()"/>
 					</parameters>
 				</function>
 				<!--uninstall meter-->
@@ -689,11 +684,11 @@
 				<log><![CDATA[thisclass.m_meterid.toLong() = <%=thisclass.m_meterid.toLong()%>]]></log>				
 				<function name="UnInstallMeter" class="MeterService">
 					<parameters>
-						<parameter name="datapathid" type="string" in="thisclass.m_deviceid.toString()"/>			
-						<parameter name="meterid" type="long" in="thisclass.m_meterid.toLong()"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<long name="meterid" in="thisclass.m_meterid.toLong()"/>
 					</parameters>
 				</function>
 			</function>
 		</public>
 	</class>	
-</starosxml>
+</starlang>

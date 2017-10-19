@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CTopoManager">
 		<!--
 		Author:
@@ -10,21 +10,21 @@
 		Nanjing StarOS Inc. All rights reserved.
 		-->
 		<private>
-			<container name="topoContainer" type="hashmap" keytype="string" valuetype="list"/>
+			<hashmap name="topoContainer" keytype="string" valuetype="list"/>
 		</private>
 		<public>
 			<!-- add topo from (openflow-topology.xml) file
 			-->
 			<function name="AddPath">
 				<parameters>
-					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevide" type="string"/>
-					<parameter name="path" type="string"/>
+					<string name="fromdevice"/>
+					<string name="todevide"/>
+					<string name="path"/>
 				</parameters>
 				<log>CtopoManager Addtopo</log>
-				<variable name="topokey" type="string"/>
+				<string name="topokey"/>
 				
-				<log level="10"><![CDATA[27行 path.size = <%=context.path.size()%>]]></log>
+				<log level="10"><![CDATA[27行 path.size = <%=context.path.size().toString()%>]]></log>
 				
 				<if cond="context.path.size()==0">
 					<then>
@@ -34,7 +34,7 @@
 				</if>
 				
 										
-				<container name="pathlist" type="list" valuetype="string"/>
+				<list name="pathlist" valuetype="string"/>
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
@@ -43,6 +43,7 @@
 					context.topokey.setValue(topokey);
 					]]>
 				</script>
+				<string name="i"/>
 				<if cond="thisclass.topoContainer.hasValue(context.topokey.toString())==true">
 					<then>
 						<lookup name="topoContainer" key="context.topokey.toString()" out="context.pathlist"/>
@@ -50,6 +51,10 @@
 					</then>
 					<else>
 						<insert name="pathlist" value="context.path.toString()"/>
+						<log level="100"><![CDATA[topokey = <%=context.topokey.toString()%>]]></log>
+						<for var="i" in="context.pathlist">
+							<log level="100"><![CDATA[context.patlist = <%=context.i.toString()%>]]></log>
+						</for>
 						<insert name="topoContainer" key="context.topokey.toString()" value="context.pathlist"/>
 					</else>
 				</if>
@@ -58,19 +63,19 @@
 			<!-- get all topoContainer size -->
 			<function name="GettopoSize">
 				<parameters>
-					<parameter name="toposize" type="long"/>
+					<long name="toposize"/>
 				</parameters>
 				<set name="toposize" value="thisclass.topoContainer.size()"/>
 			</function>
 			<!--find pathlist from fromdevice and todevice -->
 			<function name="FindPath">
 				<parameters>
-					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevice" type="string"/>
-					<parameter name="pathlist" type="list"/>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<list name="pathlist"/>
 				</parameters>
 				<log>CtopoManager Findtopo</log>
-				<variable name="topokey" type="string"/>
+				<string name="topokey"/>
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
@@ -90,11 +95,11 @@
 			</function>
 			<function name="RemoveAllPath">
 				<parameters>
-					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevice" type="string"/>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
 				</parameters>
 				<log leve="1">TopoManager RemoveAllPath</log>	
-				<variable name="topokey" type="string"/>
+				<string name="topokey"/>
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
@@ -116,15 +121,15 @@
 			-->
 			<function name="RemovePath">
 				<parameters>
-					<parameter name="fromdevice" type="string"/>
-					<parameter name="todevice" type="string"/>
-					<parameter name="path" type="string"/>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="path"/>
 				</parameters>
 				<log>CtopoManager Removetopo</log>
-				<variable name="topokey" type="string"/>
-				<container name="pathlist" type="list" valuetype="string"/>
-				<variable name="onepath" type="string"/>
-				<variable name="toremovepath1" type="string"/>
+				<string name="topokey"/>
+				<list name="pathlist" valuetype="string"/>
+				<string name="onepath"/>
+				<string name="toremovepath1"/>
 				<script>
 					<![CDATA[
 					var fromdevice=context.fromdevice.toString();
@@ -151,18 +156,18 @@
 			<!-- send link to webclient-->
 			<function name="SendAddAllLinkToWebClient">
 				<parameters>
-					<parameter name="transportid" type="string"/>
+					<string name="transportid"/>
 				</parameters>
-				<container name="pathslist" type="list" valuetype="string"/>
-				<variable name="onepath" type="string"/>
-				<variable name="pathhop1" type="string"/>
-				<variable name="fromdevice" type="string"/>
-				<variable name="todevice" type="string"/>
-				<variable name="srcport" type="string"/>
-				<variable name="dstport" type="string"/>
-				<variable name="topokey" type="string"/>
-				<variable name="binvalidlink" type="string" value="false"/>
-				<container name="onetopoPair" type="pair" keytype="string" valuetype="list"/>
+				<list name="pathslist" valuetype="string"/>
+				<string name="onepath"/>
+				<string name="pathhop1"/>
+				<string name="fromdevice"/>
+				<string name="todevice"/>
+				<string name="srcport"/>
+				<string name="dstport"/>
+				<string name="topokey"/>
+				<string name="binvalidlink" value="false"/>
+				<pair name="onetopoPair" keytype="string" valuetype="list"/>
 				<for var="onetopoPair" in="context.topoContainer">
 					<set name="pathslist" value="context.onetopoPair.second()"/>
 					<set name="topokey" value="context.onetopoPair.first()"/>
@@ -258,20 +263,20 @@
 			<!--send link to webclient -->
 			<function name="SendLinks">
 				<parameters>
-					<parameter name="transportid" type="string"/>
+					<string name="transportid"/>
 				</parameters>
-				<container name="topo" type="list" valuetype="string"/>
-				<variable name="onetopo" type="string"/>
-				<variable name="fromdevice" type="string"/>
-				<variable name="todevice" type="string"/>
-				<variable name="srcport" type="string"/>
-				<variable name="dstport" type="string"/>
-				<variable name="topokey" type="string"/>
-				<variable name="linkarray" type="string"/>
-				<variable name="pathhop1" type="string"/>
-				<variable name="binvalidlink" type="string" value="false"/>
-				<container name="linklist" type="list" valuetype="string"/>
-				<container name="onetopoPair" type="pair" keytype="string" valuetype="list"/>
+				<list name="topo" valuetype="string"/>
+				<string name="onetopo"/>
+				<string name="fromdevice"/>
+				<string name="todevice"/>
+				<string name="srcport"/>
+				<string name="dstport"/>
+				<string name="topokey"/>
+				<string name="linkarray"/>
+				<string name="pathhop1"/>
+				<boolean name="binvalidlink" value="false"/>
+				<list name="linklist" valuetype="string"/>
+				<pair name="onetopoPair" keytype="string" valuetype="list"/>
 				<for var="onetopoPair" in="context.topoContainer">
 					<set name="topo" value="context.onetopoPair.second()"/>
 					<set name="topokey" value="context.onetopoPair.first()"/>
@@ -397,4 +402,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

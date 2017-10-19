@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandleSettingsRequest">
-		<variable name="settingsjson" type="string"/>
-		<variable name="outjson" type="string"/>
+		<string name="settingsjson"/>
+		<string name="outjson"/>
 		<function name="GetAllSettingJson" class="gSettingsManager">	
 			<parameters>
-				<parameter name="outjson" type="string" out="context.settingsjson"/>
+				<string name="outjson" out="context.settingsjson"/>
 			</parameters>
 		</function>	
 		<script><![CDATA[
@@ -23,4 +23,4 @@
 			<jsonsrc src="outjson"/>
 		</websocket>
 	</function>
-</starosxml>
+</starlang>

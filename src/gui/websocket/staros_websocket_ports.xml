@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandlePortDataRequest">
-		<variable name="deviceid" type="string"/>
-		<variable name="outjson" type="string"/>
-		<variable name="deviceobj" type="class"/>
-		<variable name="portsobj" type="class"/>
+		<string name="deviceid"/>
+		<string name="outjson"/>
+		<object name="deviceobj"/>
+		<object name="portsobj"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var devId = info.payload.devId;
@@ -57,12 +57,12 @@
 		-->
 		<function name="getDevice" class="DeviceManager">	
 			<parameters>
-				<parameter name="outdevice" type="class" out="context.deviceobj"/>
-				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
+				<object name="outdevice" out="context.deviceobj"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
 			</parameters>
 		</function>
 		<!--hu 20170905-->
-		<if cond="context.deviceobj==null">
+		<if cond="context.deviceobj.ptr==null">
 			<then>
 				<log>deviceobj is null</log>
 				<exit/>
@@ -70,11 +70,11 @@
 		</if>
 		<function name="GetPortManager" class="context.deviceobj">
 			<parameters>
-				<parameter name="outportmgr" type="class" out="context.portsobj"/>
+				<object name="outportmgr" out="context.portsobj"/>
 			</parameters>
 		</function>
 		<!--hu 20170905-->
-		<if cond="context.portsobj==null">
+		<if cond="context.portsobj.ptr==null">
 			<then>
 				<log>portsobj is null</log>
 				<exit/>
@@ -82,11 +82,11 @@
 		</if>
 		<function name="GetPortsStateJsonData" class="context.portsobj">	
 			<parameters>
-				<parameter name="jsonstring" type="string" out="context.outjson"/>
+				<string name="jsonstring" out="context.outjson"/>
 			</parameters>
 		</function>	
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>
 	</function>
-</starosxml>
+</starlang>

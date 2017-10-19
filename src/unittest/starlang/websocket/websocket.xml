@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<define namespace="websocket" name="AcceptWebSocket"/>
 	<define namespace="websocket" name="SendText"/>
 	<variable name="newSession"/>
@@ -116,4 +116,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

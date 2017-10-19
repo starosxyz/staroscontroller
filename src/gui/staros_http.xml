@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_handler.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/docs/staros_docs.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/gui/staros_gui.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_v1.xml"/>
 	<!--WebGUI-->
-	<variable name="newSession"/>
-	<variable name="nulltest" type="string"/>
-	<variable name="systemparam" type="params"/>
-	<variable name="requestcount" type="long"/>
-	<variable name="isStop" type="boolean" value="true"/>
-	<variable name="WebsocketForTest" type="object"/>
+	<string name="nulltest"/>
+	<params name="systemparam"/>
+	<long name="requestcount"/>
+	<boolean name="isStop" value="true"/>
+	<object name="WebsocketForTest"/>
 	<function name="Restfulserver">
-		<variable name="restfulparams" type="params"/>
+		<params name="restfulparams"/>
 		<!--hu peng 2017/07/28-->
 		<set name="restfulparams" paramname="listenip" value="context.GlobalSetting.getParam('guiip').toString()"/>
 		<set name="restfulparams" paramname="listenport" value="context.GlobalSetting.getParam('guiport').toString()"/>
@@ -24,8 +23,8 @@
 	<function name="ConnectWebsocketForTest"/>
 	</function>
 	<function name="ConnectWebsocketForTest">
-		<variable name="urlvar" type="string"/>
-		<variable name="websockparams" type="string"/>
+		<string name="urlvar"/>
+		<string name="websockparams"/>
 		<log>ConnectWebsocketForTest</log>
 		<set name="urlvar" value="'http://localhost:9922/onos/ui/websock/core'"/>
 	
@@ -54,26 +53,26 @@
 			<log>WebsocketForTest.websocketdisconnect</log>
 		</onevent>
 		<onevent event="restfulrequest.event">
-			<variable name="usernameparam" type="string"/>
-			<variable name="passwordparam" type="string"/>
-			<variable name="authresult" type="string"/>
-			<variable name="authjson" type="string"/>
-			<variable name="httpparam" type="params"/>
-			<variable name="transportid" type="string"/>
+			<string name="usernameparam"/>
+			<string name="passwordparam"/>
+			<string name="authresult"/>
+			<string name="authjson"/>
+			<params name="httpparam"/>
+			<string name="transportid"/>
 			<messageblock name="authresultmsg"/>
-			<variable name="contenttype" type="string"/>
-			<variable name="requestpath" type="string"/>
-			<variable name="filepath" type="string"/>
-			<variable name="filename" type="string"/>
-			<variable name="xmldata" type="string"/>
-			<variable name="appname" type="string"/>
-			<variable name="usersession" type="string"/>
-			<variable name="sendjsessionid" type="string"/>
-			<variable name="ishavesession" type="boolean"/>
-			<variable name="isDocReqeust" type="boolean" value="false"/>
-			<variable name="isAPI" type="boolean" value="false"/>
-			<variable name="isUi" type="boolean" value="false"/>
-			<variable name="isBadRequest" type="boolean" value="false"/>
+			<string name="contenttype"/>
+			<string name="requestpath"/>
+			<string name="filepath"/>
+			<string name="filename"/>
+			<string name="xmldata"/>
+			<string name="appname"/>
+			<string name="usersession"/>
+			<string name="sendjsessionid"/>
+			<boolean name="ishavesession"/>
+			<boolean name="isDocReqeust" value="false"/>
+			<boolean name="isAPI" value="false"/>
+			<boolean name="isUi" value="false"/>
+			<boolean name="isBadRequest" value="false"/>
 			<function>
 				<!--qiulie-->
 				<set name="transportid" value="event.getParam('transportid').toString()"/>
@@ -111,22 +110,22 @@
 					<then>
 						<function name="HandlDocsRequest">
 							<parameters>
-								<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
-								<parameter name="method" type="string" in="event.getParam('method').toString()"/>
-								<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
-								<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+								<string name="requestpath" in="event.getParam('requestpath').toString()"/>
+								<string name="method" in="event.getParam('method').toString()"/>
+								<string name="eventdata" in="event.getParam('eventdata').toString()"/>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
 							</parameters>
 						</function>
 					</then>
 					<elseif cond="context.isAPI.toBoolean()==true">
 						<then>
 							<function name="HandlAPIRequest">
-									<parameters>
-										<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
-										<parameter name="method" type="string" in="event.getParam('method').toString()" />
-										<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
-										<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-									</parameters>
+								<parameters>
+									<string name="requestpath" in="event.getParam('requestpath').toString()"/>
+									<string name="method" in="event.getParam('method').toString()" />
+									<string name="eventdata" in="event.getParam('eventdata').toString()"/>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+								</parameters>
 							</function>
 						</then>
 					</elseif>
@@ -134,11 +133,11 @@
 						<then>
 							<function name="HandlGUIRequest">
 								<parameters>
-									<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
-									<parameter name="method" type="string" in="event.getParam('method').toString()"/>
-									<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
-									<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-									<parameter name="cookie" type="string" in="event.getParam('cookie').toString()"/>
+									<string name="requestpath" in="event.getParam('requestpath').toString()"/>
+									<string name="method" in="event.getParam('method').toString()"/>
+									<string name="eventdata" in="event.getParam('eventdata').toString()"/>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="cookie" in="event.getParam('cookie').toString()"/>
 								</parameters>
 							</function>
 						</then>
@@ -147,11 +146,11 @@
 						<log>bad request</log>
 						<function name="HandlGUIRequest">
 							<parameters>
-								<parameter name="requestpath" type="string" in="event.getParam('requestpath').toString()"/>
-								<parameter name="method" type="string" in="event.getParam('method').toString()"/>
-								<parameter name="eventdata" type="string" in="event.getParam('eventdata').toString()"/>
-								<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-								<parameter name="cookie" type="string" in="event.getParam('cookie').toString()"/>
+								<string name="requestpath" in="event.getParam('requestpath').toString()"/>
+								<string name="method" in="event.getParam('method').toString()"/>
+								<string name="eventdata" in="event.getParam('eventdata').toString()"/>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="cookie" in="event.getParam('cookie').toString()"/>
 							</parameters>
 						</function>
 					</else>
@@ -165,7 +164,7 @@
 				<!--insert name="websocketclients" value="event.getParam('transportid').toString()"/-->
 				<function name="addWebSocket" class="WebSocketManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+						<string name="transportid" in="event.getParam('transportid').toString()"/>			
 					</parameters>
 				</function>
 			</function>
@@ -177,13 +176,13 @@
 				<!--remove name="websocketclients" value="event.getParam('transportid').toString()"/-->
 				<function name="RemoveWebSocket" class="WebSocketManager">
 					<parameters>
-						<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>			
+						<string name="transportid" in="event.getParam('transportid').toString()"/>			
 					</parameters>
 				</function>
 			</function>
 		</onevent>
 		<onevent event="websocketdata">
-			<variable name="jsontype" type="string"/>
+			<string name="jsontype"/>
 			<function>
 				<script><![CDATA[
 					var info = JSON.parse(event.getParam("eventdata").toString());
@@ -191,7 +190,7 @@
 				]]></script>
 				<function name="HandleWebSocket">
 					<parameters>
-						<parameter name="websockettype" type="string" in="context.jsontype.toString()"/>
+						<string name="websockettype" in="context.jsontype.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -203,4 +202,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

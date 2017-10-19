@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_cluster.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_topo.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_bootstrap.xml"/>
@@ -26,10 +26,10 @@
 	<!--WebGUI-->
 	<function name="HandleWebSocket">
 		<parameters>
-			<parameter name="websockettype" type="string"/>
+			<string name="websockettype"/>
 		</parameters>
-		<variable name="functionname" type="string"/>
-		<variable name="isHaveHandler" type="boolean"/>
+		<string name="functionname"/>
+		<boolean name="isHaveHandler"/>
 		<log>HandleWebSocket</log>
 		<log><![CDATA[HandleWebSocket websockettype <%=context.websockettype.toString()%>]]></log>
 		<if cond="global.WebSocketHandlerMap.hasParam(context.websockettype) == true">
@@ -47,4 +47,4 @@
 			</else>
 		</if>
 	</function>
-</starosxml>
+</starlang>

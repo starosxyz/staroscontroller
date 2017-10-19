@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<variable name="newbundleid" type="long"/>
 	<variable name="globalstring" type="string" value="'11111'" global="true"/>
 	<variable name="testcalss" type="class"  global="true"/>
@@ -33,4 +33,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

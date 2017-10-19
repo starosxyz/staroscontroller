@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<container name="listout" type="hashmap" keytype="long" valuetype="string"/>
 	<logconfig dest="stdout"/>
 	<container name="TestHashoutParam" type="hashmap" keytype="long" valuetype="string"/>
@@ -105,4 +105,4 @@
 			<function name="starttest"/>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

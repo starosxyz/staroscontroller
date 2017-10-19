@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="HandlehostDataRequest">
-	<variable name="outjson" type="string"/>
+	<string name="outjson"/>
 		<log>HandlehostDataRequest</log>
 		<function name="GetHostJsonData" class="HostManager">	
 			<parameters>
-				<parameter name="jsonstring" type="string" out="context.outjson"/>
+				<string name="jsonstring" out="context.outjson"/>
 			</parameters>
 		</function>	
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
@@ -13,19 +13,19 @@
 			</websocket>		
 		</function>
 	<function name="HandleHostLinkRequest">
-		<variable name="json_key" type="string"/>
-		<variable name="json_insts" type="string" value=""/>
-		<variable name="json_summary" type="string" value=""/>
-		<variable name="json_detail" type="string" value=""/>
-		<variable name="json_hosts" type="string" value=""/>
-		<variable name="json_offdev" type="string" value=""/>
-		<variable name="json_dlbls" type="string" value=""/>
-		<variable name="json_porthl" type="string" value=""/>
-		<variable name="json_bg" type="string" value=""/>
-		<variable name="json_spr" type="string" value=""/>
-		<variable name="json_ovid" type="string" value=""/>
-		<variable name="json_toolbar" type="string" value=""/>
-		<variable name="json_type" type="string"/>
+		<string name="json_key"/>
+		<string name="json_insts" value=""/>
+		<string name="json_summary" value=""/>
+		<string name="json_detail" value=""/>
+		<string name="json_hosts" value=""/>
+		<string name="json_offdev" value=""/>
+		<string name="json_dlbls" value=""/>
+		<string name="json_porthl" value=""/>
+		<string name="json_bg" value=""/>
+		<string name="json_spr" value=""/>
+		<string name="json_ovid" value=""/>
+		<string name="json_toolbar" value=""/>
+		<string name="json_type"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
 			var key = info.payload.key;
@@ -67,27 +67,27 @@
 				context.json_type.setValue("2");
 			}
 		]]></script>
-		<variable name="json" type="string"/>
+		<string name="json"/>
 		<function name="GetHostLinkJsonData" class="HostManager">
 			<parameters>
-				<parameter name="key" type="string" in="context.json_key.toString()"/>
-				<parameter name="insts" type="string" in="context.json_insts.toString()"/>
-				<parameter name="summary" type="string" in="context.json_summary.toString()"/>
-				<parameter name="detail" type="string" in="context.json_detail.toString()"/>
-				<parameter name="hosts" type="string" in="context.json_hosts.toString()"/>
-				<parameter name="offdev" type="string" in="context.json_offdev.toString()"/>
-				<parameter name="dlbls" type="string" in="context.json_dlbls.toString()"/>
-				<parameter name="porthl" type="string" in="context.json_porthl.toString()"/>
-				<parameter name="bg" type="string" in="context.json_bg.toString()"/>
-				<parameter name="spr" type="string" in="context.json_spr.toString()"/>
-				<parameter name="ovid" type="string" in="context.json_ovid.toString()"/>
-				<parameter name="toolbar" type="string" in="context.json_toolbar.toString()"/>
-				<parameter name="type" type="string" in="context.json_type.toString()"/>				
-				<parameter name="outjson" type="string" out="context.json"/>
+				<string name="key" in="context.json_key.toString()"/>
+				<string name="insts" in="context.json_insts.toString()"/>
+				<string name="summary" in="context.json_summary.toString()"/>
+				<string name="detail" in="context.json_detail.toString()"/>
+				<string name="hosts" in="context.json_hosts.toString()"/>
+				<string name="offdev" in="context.json_offdev.toString()"/>
+				<string name="dlbls" in="context.json_dlbls.toString()"/>
+				<string name="porthl" in="context.json_porthl.toString()"/>
+				<string name="bg" in="context.json_bg.toString()"/>
+				<string name="spr" in="context.json_spr.toString()"/>
+				<string name="ovid" in="context.json_ovid.toString()"/>
+				<string name="toolbar" in="context.json_toolbar.toString()"/>
+				<string name="type" in="context.json_type.toString()"/>				
+				<string name="outjson" out="context.json"/>
 			</parameters>			
 		</function>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="json"/>
 		</websocket>
 	</function>
-</starosxml>
+</starlang>

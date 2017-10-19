@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
+<starlang>
         <function name="HandleGetTopology">
-		<variable name="httpparam" type="params"/>
-		<variable name="strtop" type="string"/>
-                <log>HandleGetDevices</log>
-                <script><![CDATA[
-                                var json = context.openflowserverobj.getTopology();
-								
-								context.print('=====================topo start=================');
-								context.print(json);
-								context.print('=====================topo end=================');
-								
-								context.strtop.setValue(json);
-                ]]></script>
-				<set name="httpparam" paramname="Server" value="'StarOS'"/>
-				<set name="httpparam" paramname="Connection" value="'Close'"/>
-				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
-				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
-					<jsonsrc src="strtop"/>
-				</restful>
-				<restful name="restfulserver" action="Disconnect" transportid="event.getParam('transportid').toString()"/>
+			<params name="httpparam"/>
+			<string name="strtop"/>
+            <log>HandleGetDevices</log>
+            <script><![CDATA[
+                    var json = context.openflowserverobj.ptr.getTopology();
+					
+					context.print('=====================topo start=================');
+					context.print(json);
+					context.print('=====================topo end=================');
+					
+					context.strtop.setValue(json);
+            ]]></script>
+			<set name="httpparam" paramname="Server" value="'StarOS'"/>
+			<set name="httpparam" paramname="Connection" value="'Close'"/>
+			<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+			<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+				<jsonsrc src="strtop"/>
+			</restful>
+			<restful name="restfulserver" action="Disconnect" transportid="event.getParam('transportid').toString()"/>
         </function>
-</starosxml>
+</starlang>

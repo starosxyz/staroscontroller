@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Group Resource -->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CFlowManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CApplicationManager.xml"/>
@@ -27,27 +27,27 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CAPIDocsService.xml"/>
 
-	<variable name="ApplicationManager" type="class" global="true"/>
+	<object name="ApplicationManager" global="true"/>
 	<!--qiulei 20170811-->
-	<variable name="ClusterManager" type="class" global="true"/>
-	<variable name="DeviceManager" type="class" global="true"/>
-	<variable name="HostManager" type="class" global="true"/>
-	<variable name="WebSocketManager" type="class" global="true"/>
-	<variable name="gInstanceManager" type="class" global="true"/>
-	<variable name="gSettingsManager" type="class" global="true"/>
+	<object name="ClusterManager" global="true"/>
+	<object name="DeviceManager" global="true"/>
+	<object name="HostManager" global="true"/>
+	<object name="WebSocketManager" global="true"/>
+	<object name="gInstanceManager" global="true"/>
+	<object name="gSettingsManager" global="true"/>
 	<!--qiulei 2017.08.24 Thursday-->
-	<variable name="RestfulAPIManager" type="class" global="true"/>
+	<object name="RestfulAPIManager" global="true"/>
 	<!--YY 2017-08-21-->
-	<variable name="PacketService" type="class" global="true"/>
-	<variable name="TopoService" type="class" global="true"/>
-	<variable name="FlowService" type="class" global="true"/>
-	<variable name="MeterService" type="class" global="true"/>
-	<variable name="SessionManager" type="class" global="true"/>
-	<variable name="TunnelManager" type="class" global="true"/>
-	<variable name="RestfulService" type="class" global="true"/>
-	<variable name="SwaggerFile" type="class" global="true"/>
-	<variable name="APIDocsService" type="class" global="true"/>
-	<variable name="TopoManager" type="class" global="true"/>
+	<object name="PacketService" global="true"/>
+	<object name="TopoService" global="true"/>
+	<object name="FlowService" global="true"/>
+	<object name="MeterService" global="true"/>
+	<object name="SessionManager" global="true"/>
+	<object name="TunnelManager" global="true"/>
+	<object name="RestfulService" global="true"/>
+	<object name="SwaggerFile" global="true"/>
+	<object name="APIDocsService" global="true"/>
+	<object name="TopoManager" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -77,4 +77,4 @@
 		<new name="TopoManager" class="CTopoManager"/>
 		<new name="ApplicationManager" class="CApplicationManager"/>
 	</function>
-</starosxml>
+</starlang>

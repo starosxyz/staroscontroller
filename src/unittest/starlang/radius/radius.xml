@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="class">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
 	<variable name="radiusclient" type="object"/>
 	<logconfig dest="stdout"/>
 	<function name="StarRadiusClient">
@@ -67,4 +67,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

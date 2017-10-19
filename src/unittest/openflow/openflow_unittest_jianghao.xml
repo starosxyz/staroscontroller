@@ -4,9 +4,9 @@
 		<log>"Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER"</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_METER">			
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
-				<parameter name="meterid" type="string" in="'5'"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
+				<string name="meterid" in="'5'"/>
 			</parameters>
 		</function>
 		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE" timeout="1000">
@@ -21,20 +21,20 @@
 		<log>"SEND_OFPT13_FLOW_MOD IN"</log>
 		<function name="Send_OFPT13_FLOW_MOD">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
-				<parameter name="cookie" type="string" in="'0'"/>
-				<parameter name="cookiemask" type="string" in="'0'"/>
-				<parameter name="tableid" type="string" in="'0'"/>
-				<parameter name="command" type="string" in="'0'"/>
-				<parameter name="idletimeout" type="string" in="'0'"/>
-				<parameter name="hardtimeout" type="string" in="'0'"/>
-				<parameter name="priority" type="string" in="'0'"/>
-				<parameter name="bufferid" type="string" in="'0'"/>
-				<parameter name="outport" type="string" in="'1'"/>
-				<parameter name="outgroup" type="string" in="'0'"/>
-				<parameter name="flags" type="string" in="'0'"/>
-				<parameter name="instructionlist" type="string" in="'0'"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
+				<string name="cookie" in="'0'"/>
+				<string name="cookiemask" in="'0'"/>
+				<string name="tableid" in="'0'"/>
+				<string name="command" in="'0'"/>
+				<string name="idletimeout" in="'0'"/>
+				<string name="hardtimeout" in="'0'"/>
+				<string name="priority" in="'0'"/>
+				<string name="bufferid" in="'0'"/>
+				<string name="outport" in="'1'"/>
+				<string name="outgroup" in="'0'"/>
+				<string name="flags" in="'0'"/>
+				<string name="instructionlist" in="'0'"/>
 			</parameters>
 		</function>
 		<log>"SEND_OFPT13_FLOW_MOD OUT"</log>

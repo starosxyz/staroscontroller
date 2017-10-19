@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Restful API Service-->
 	<class name="CRestfulService">
 		<public>
@@ -8,22 +8,22 @@
 			</function>
 			<function name="RegisterAPIHandler">
 				<parameters>
-					<parameter name="bundleid" type="long"/>			
-					<parameter name="handleevent" type="string"/>
-					<parameter name="requestpathtest" type="string"/>			
+					<long name="bundleid"/>			
+					<string name="handleevent"/>
+					<string name="requestpathtest"/>			
 				</parameters>
-				<variable name="apiobj" type="class" />
+				<object name="apiobj"/>
 				<new name="apiobj" class="CRestfulAPIEntry">
 					<parameters>
-						<parameter name="bundleid" type="long" in="context.bundleid.toLong()"/>			
-						<parameter name="eventname" type="string" in="context.handleevent.toString()"/>
-						<parameter name="restfullurl" type="string" in="context.requestpathtest.toString()"/>		
+						<long name="bundleid" in="context.bundleid.toLong()"/>			
+						<string name="eventname" in="context.handleevent.toString()"/>
+						<string name="restfullurl" in="context.requestpathtest.toString()"/>		
 					</parameters>
 				</new>
 				<function name="AddAPIHandler" class="RestfulAPIManager">
 					<parameters>
-						<parameter name="requestpath2222" type="string" in="context.requestpathtest.toString()"/>
-						<parameter name="handler" type="class" in="context.apiobj"/>
+						<string name="requestpath2222" in="context.requestpathtest.toString()"/>
+						<object name="handler" in="context.apiobj"/>
 					</parameters>
 				</function>
 				
@@ -31,11 +31,11 @@
 			</function>
 			<function name="UnRegisterAPIHandler">
 				<parameters>
-					<parameter name="requestpath" type="string"/>			
+					<string name="requestpath"/>			
 				</parameters>
 				<function name="RemoveAPIHandler" class="RestfulAPIManager">
 					<parameters>
-						<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
+						<string name="requestpath" in="context.requestpath.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -43,28 +43,28 @@
 			
 			<function name="HandleAPI">
 				<parameters>
-					<parameter name="requestpath" type="string"/>
-					<parameter name="method" type="string"/>
-					<parameter name="eventdata" type="string"/>
+					<string name="requestpath"/>
+					<string name="method"/>
+					<string name="eventdata"/>
 				</parameters>
-				<variable name="handlerobj" type="class"/>
-				<variable name="eventname" type="string"/>
-				<variable name="bundleid" type="long"/>
-				<variable name="eventparam" type="params"/>
-				<variable name="httpparam" type="params"/>
+				<object name="handlerobj"/>
+				<string name="eventname"/>
+				<long name="bundleid"/>
+				<params name="eventparam"/>
+				<params name="httpparam"/>
 				<!--qiulei 20170824 pm-->
 				<function name="GetHandler" class="RestfulAPIManager">
 					<parameters>
-						<parameter name="requestpath" type="string" in="context.requestpath.toString()"/>
-						<parameter name="handler" type="class" out="context.handlerobj"/>
+						<string name="requestpath" in="context.requestpath.toString()"/>
+						<object name="handler" out="context.handlerobj"/>
 					</parameters>
 				</function>
-				<if cond="context.handlerobj != null">
+				<if cond="context.handlerobj.ptr != null">
 					<then>
 						<function name="GetAPIInfo" class="handlerobj">
 							<parameters>
-								<parameter name="eventname" type="string" out="context.eventname"/>
-								<parameter name="bundleid" type="long" out="context.bundleid"/>
+								<string name="eventname" out="context.eventname"/>
+								<long name="bundleid" out="context.bundleid"/>
 							</parameters>
 						</function>
 						<set name="eventparam" paramname="eventdata" value="context.eventdata.toString()"/>
@@ -92,10 +92,10 @@
 			</function>
 			<function name="SendResponse">	
 				<parameters>
-					<parameter name="transportid" type="string"/>
-					<parameter name="json" type="string"/>
+					<string name="transportid"/>
+					<string name="json"/>
 				</parameters>
-				<variable name="httpparam" type="params"/>			
+				<params name="httpparam"/>			
 				<set name="httpparam" paramname="Server" value="'StarOS'"/>
 				<set name="httpparam" paramname="Connection" value="'Close'"/>
 				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
@@ -105,4 +105,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

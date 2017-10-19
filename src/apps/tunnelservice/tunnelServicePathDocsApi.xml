@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				YY
@@ -18,24 +18,24 @@
 	<function name="removePath">
 		<function name="removePath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="'/tunnelservice/tunnels'"/>			
+				<string name="pathname" in="'/tunnelservice/tunnels'"/>			
 			</parameters>
 		</function>
 		<function name="removePath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="'/tunnelservice/tunnel'"/>			
+				<string name="pathname" in="'/tunnelservice/tunnel'"/>			
 			</parameters>
 		</function>
 		<function name="removePath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="'/tunnelservice/tunnel/{resourceid}'"/>			
+				<string name="pathname" in="'/tunnelservice/tunnel/{resourceid}'"/>			
 			</parameters>
 		</function>
 	</function>
 
 	<function name="allTunnels">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
+		<string name="name"/>
+		<string name="pathconntent"/>
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
@@ -67,15 +67,15 @@
 		<set name="context.name" value="'/tunnelservice/tunnels'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
 	</function>
 
 	<function name="otherTunnelmethods">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>		
+		<string name="name"/>
+		<string name="pathconntent"/>		
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
@@ -182,15 +182,15 @@
 		<set name="context.name" value="'/tunnelservice/tunnel/{resourceid}'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
 	</function>
 
 	<function name="postTunnel">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
+		<string name="name"/>
+		<string name="pathconntent"/>
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
@@ -236,15 +236,15 @@
 		<set name="context.name" value="'/tunnelservice/tunnel'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
 	</function>
 
 	<function name="activeTunnel">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
+		<string name="name"/>
+		<string name="pathconntent"/>
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
@@ -300,14 +300,14 @@
 		<set name="context.name" value="'/tunnelservice/tunnels/active'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="deactiveTunnel">
-		<variable name="name" type="string"/>
-		<variable name="pathconntent" type="string"/>
+		<string name="name"/>
+		<string name="pathconntent"/>
 		<reference variable="pathconntent">
 			<jsonbody><![CDATA[ 
 				{
@@ -343,9 +343,9 @@
 		<set name="context.name" value="'/tunnelservice/tunnels/deactive'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
-				<parameter name="pathname" type="string" in="context.name.toString()"/>
-				<parameter name="pathconntent" type="string" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
 			</parameters>
 		</function>
 	</function>
-</starosxml>
+</starlang>

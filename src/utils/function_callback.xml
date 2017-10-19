@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="test">
 		<log> I am test function</log>
 	</function>
 	<function name="testcallback">
-		<variable name="callbackname" type="string"/>
+		<string name="callbackname"/>
 		<set name="callbackname" value="'test'"/>
 		<function callback="callbackname"/>
 	</function>
-</starosxml>
+</starlang>

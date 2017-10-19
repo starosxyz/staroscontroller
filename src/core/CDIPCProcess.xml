@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<events>
 		<onevent event="AddAppEvent">
-		<variable name="keys" type="string" />
-		<variable name="values" type="string" />
+		<string name="keys"/>
+		<string name="values"/>
 		<set name="keys" value="event.getParam('processname').toString()"/>
 		<reference variable="values">
 				<jsonbody><![CDATA[ 
@@ -35,8 +35,8 @@
 		</onevent>
 		<onevent event="AppDeactiveEvent">
 		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
-		<variable name="keys" type="string" />
-		<variable name="values" type="string" />
+		<string name="keys"/>
+		<string name="values"/>
 		<set name="keys" value="event.getParam('processname').toString()"/>
 		<reference variable="values">
 			<jsonbody><![CDATA[ 
@@ -67,8 +67,8 @@
 		<!--Session Shutdown-->
 		<onevent event="AppActiveEvent">
 		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
-		<variable name="keys" type="string" />
-		<variable name="values" type="string" />
+		<string name="keys"/>
+		<string name="values"/>
 		<set name="keys" value="event.getParam('processname').toString()"/>
 		<reference variable="values">
 			<jsonbody><![CDATA[ 
@@ -97,4 +97,4 @@
 		  </function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

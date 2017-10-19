@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="OpenFlowMultiPartPortDescRequest">
 		<parameters>
-			<parameter name="xid" type="long"/>
+			<long name="xid"/>
 		</parameters>
 		<log>OpenFlowMultiPartPortDescRequest</log>
-		<variable name="strjson" type="string"/>
+		<string name="strjson" />
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
@@ -15,19 +15,19 @@
 		</reference>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+				<string name="transportid"  in="event.getParam('transportid').toString()"/>
+				<string name="strjson"  in="context.strjson.toString()"/>
 			</parameters>
 		</function>
 	</function>
 	<function name="TestOpenFlowMultiPartPortDescRequest">
-		<variable name="isstop" type="boolean" value="true"/>
-		<variable name="xid" type="long"/>
-		<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+		<boolean name="isstop"  value="true"/>
+		<long name="xid" />
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<function>
 			<function name="OpenFlowMultiPartPortDescRequest">
 				<parameters>
-					<parameter name="xid" type="long" in="context.xid.toLong()"/>
+					<long name="xid"  in="context.xid.toLong()"/>
 				</parameters>
 			</function>
 			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()"  xid="context.xid.toLong()" timeout="5000">
@@ -39,4 +39,4 @@
 			<log>TestOpenFlowMultiPartPortDescRequest end</log>
 		</function>
 	</function>
-</starosxml>
+</starlang>

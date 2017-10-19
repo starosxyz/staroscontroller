@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			YY
@@ -10,36 +10,36 @@
 -->
 	<class name="CConnectPoint">
 		<private>
-			<variable name="m_datapathid" type="string"/>
-			<variable name="m_portno" type="string"/>
+			<string name="m_datapathid" />
+			<string name="m_portno" />
 		</private>
 		<public>
 			<function name="CConnectPoint">
 				<parameters>
-					<parameter name="datapathid" type="string"/>
-					<parameter name="portno" type="string"/>
+					<string name="datapathid" />
+					<string name="portno"/>
 				</parameters>
 				<set name="thisclass.m_datapathid" value="context.datapathid.toString()"/>				
 				<set name="thisclass.m_portno" value="context.portno.toString()"/>				
 			</function>
 			<function name="GetDatapathId">
 				<parameters>
-					<parameter name="datapathid" type="string"/>
+					<string name="datapathid" />
 				</parameters>
 				<set name="context.datapathid" value="thisclass.m_datapathid.toString()"/>				
 			</function>
 			<function name="GetPortNo">
 				<parameters>
-					<parameter name="portno" type="string"/>
+					<string name="portno" />
 				</parameters>
-				<set name="context.portno" value="thisclass.m_portno.toString()"/>				
+		=		<set name="context.portno" value="thisclass.m_portno.toString()"/>				
 			</function>
 			<function name="toString">
 				<parameters>
-					<parameter name="cp2str" type="string"/>
+					<string name="cp2str" />
 				</parameters>
 				<set name="context.cp2str" value="thisclass.m_datapathid.toString()+'/'+thisclass.m_portno.toString()"/>
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			YY
@@ -16,9 +16,9 @@
 		3) send data to web
 	-->
 	<function name="HandleTableDataRequest">
-		<variable name="deviceid" type="string"/>
-		<variable name="deviceobj" type="class"/>
-		<variable name="outjson" type="string"/>
+		<string name="deviceid"/>
+		<object name="deviceobj"/>
+		<string name="outjson"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam('eventdata').toString());
 			var devid = info.payload.devId;
@@ -27,12 +27,12 @@
 		]]></script>
 		<function name="findDevice" class="DeviceManager">
 			<parameters>
-				<parameter name="datapathid" type="string" in="context.deviceid.toString()"/>
-				<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+				<object name="deviceobject" out="context.deviceobj"/>
 			</parameters>
 		</function>
 		
-<if cond="context.deviceobj==null">
+<if cond="context.deviceobj.ptr==null">
 			<then>
 				<log>deviceobj is null</log>
 				<exit/>
@@ -40,11 +40,11 @@
 		</if>
 		<function name="GetTableData" class="context.deviceobj">
 					<parameters>				
-						<parameter name="json" type="string" out="context.outjson"/>
+						<string name="json" out="context.outjson"/>
 					</parameters>
 				</function>
 					<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>
 	</function>
-</starosxml>
+</starlang>

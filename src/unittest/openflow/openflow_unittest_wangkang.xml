@@ -5,13 +5,13 @@
 		<log>"send OFP13MP_FLOW request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
-				<parameter name="tableid" type="string" in="0"/>
-				<parameter name="outport" type="string" in="0"/>
-				<parameter name="outgroup" type="string" in="0"/>
-				<parameter name="cookie" type="string" in="0"/>
-				<parameter name="cookiemask" type="string" in="0"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
+				<string name="tableid" in="0"/>
+				<string name="outport" in="0"/>
+				<string name="outgroup" in="0"/>
+				<string name="cookie" in="0"/>
+				<string name="cookiemask" in="0"/>
 			</parameters>
 		</function>
 		<log>"wait OFP13MP_FLOW reply loading..."</log>
@@ -28,13 +28,13 @@
 		<log>"send OFP13MP_AGGREGATE request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
-				<parameter name="tableid" type="string" in="0"/>
-				<parameter name="outport" type="string" in="0"/>
-				<parameter name="outgroup" type="string" in="0"/>
-				<parameter name="mcookie" type="string" in="0"/>
-				<parameter name="cookiemask" type="string" in="0"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
+				<string name="tableid" in="0"/>
+				<string name="outport" in="0"/>
+				<string name="outgroup" in="0"/>
+				<string name="mcookie" in="0"/>
+				<string name="cookiemask" in="0"/>
 			</parameters>
 		</function>
 		<log>"wait OFP13MP_AGGREGATE reply loading..."</log>
@@ -51,8 +51,8 @@
 		<log>"send OFP13MP_TABLE request loading..."</log>
 		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_TABLE">
 			<parameters>
-				<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
-				<parameter name="xid" type="long" in="context.openflowxidbase.toLong()+1"/>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<long name="xid" in="context.openflowxidbase.toLong()+1"/>
 			</parameters>
 		</function>
 		<log>"wait OFP13MP_TABLE reply loading..."</log>

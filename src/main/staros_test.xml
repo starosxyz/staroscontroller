@@ -45,17 +45,12 @@
 						</applicationdata>
 				</remotecall>
 				<wait event="hellorequest" timeout="1000"/>
-				<!--Init Flow Manager -->
-
 				<function name="InitGlobalResource"/>
 				<function name="InitAPIMapFunction"/>
 				<!--hu peng 2017/07/28  change setting-->
 				<function name="InitSetting"/>
 				<function name="InitWebSocketHandlerMap"/>
 				<!--Start GUI and Restful API Service-->
-				<function name="Restfulserver"/>
-					<!--Start OpenFlow Controller protocol-->
-				<function name="startopenflow"/>
 				<function name="testcallback"/>
 				<!--function name="addhostest"/-->
 				<!--function name="startnullapp"/-->
@@ -66,15 +61,8 @@
 				<function name="InitActionsMap"/>
 				<function name="InitActionsNameMap"/>
 
-				<!--qiulei 20170828 Monday-->
-				<set name="eventname"  value="'TimeOutEvent'"/>
-				<!--raise name="context.eventname.toString()"/-->
-				<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
 
-				<function name="startDiscovery" class="TopoManager"/> 
-				
-				<!--qiulei 201700929 Monday-->
-				<function name="RegisterAddDocsAPITopology"/>
+
 			</function>
 		</onevent>
 		<!--Session Shutdown-->

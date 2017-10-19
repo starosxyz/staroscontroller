@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/staros" scope="application">
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
 <!--
 	Author:
 			YY
@@ -8,22 +8,22 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<variable name="applicationmgr" reference="global.ApplicationManager"/>
-	<variable name="devicemgr" reference="global.DeviceManager"/>
-	<variable name="flowservice" reference="global.FlowService"/>
-	<container name="resourceid_list" type="list" valuetype="string"/>
-	<container name="machashmap" type="hashmap" keytype="string" valuetype="string"/>
+	<object name="applicationmgr" reference="global.ApplicationManager"/>
+	<object name="devicemgr" reference="global.DeviceManager"/>
+	<object name="flowservice" reference="global.FlowService"/>
+	<list name="resourceid_list" valuetype="string"/>
+	<hashmap name="machashmap" keytype="string" valuetype="string"/>
 	<function name="installflow">
 		<parameters>
-			<parameter name="outport" type="string"/>
-			<parameter name="dstmac" type="string"/>
-			<parameter name="datapathid" type="string"/>
+			<string name="outport"/>
+			<string name="dstmac"/>
+			<string name="datapathid"/>
 		</parameters>
-		<variable name="modstrjson" type="string"/>
+		<string name="modstrjson"/>
 		<reference variable="modstrjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.openflowserverobj.getIncreaseXID()%>",
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
 						"cookie":"0",
 						"cookiemask":"0",
 						"tableid":"0",
@@ -67,7 +67,7 @@
 					}
 			]]></jsonbody>
 		</reference>
-		<variable name="resourceid" type="string"/>
+		<string name="resourceid"/>
 		<if cond="context.flowservice==null">
 			<then>
 				<log>flowservice is null</log>
@@ -75,24 +75,24 @@
 		</if>
 		<function name="InstallFlow" class="context.flowservice">
 			<parameters>
-				<parameter name="outflowid" type="string" out="context.resourceid"/>
-				<parameter name="strjson" type="string" in="context.modstrjson.toString()"/>
-				<parameter name="appId" type="string" in="'maclearning'"/>
-				<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+				<string name="outflowid" out="context.resourceid"/>
+				<string name="strjson" in="context.modstrjson.toString()"/>
+				<string name="appId" in="'maclearning'"/>
+				<string name="datapathid" in="context.datapathid.toString()"/>
 			</parameters>
 		</function>
 		<insert name="resourceid_list" value="context.resourceid.toString()"/>
 	</function>
 	<function name="uninstallflow">
 		<parameters>
-			<parameter name="datapathid" type="string"/>
+			<string name="datapathid"/>
 		</parameters>
-		<variable name="resourceid" type="string"/>
+		<string name="resourceid"/>
 		<for var="context.resourceid" in="context.resourceid_list">			
 			<function name="UnInstallFlow" class="context.flowservice">
 				<parameters>
-					<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>			
-					<parameter name="flowid" type="string" in="context.resourceid.toString()"/>
+					<string name="datapathid" in="context.datapathid.toString()"/>			
+					<string name="flowid" in="context.resourceid.toString()"/>
 				</parameters>
 			</function>
 		</for>
@@ -102,14 +102,14 @@
 			<!-- YY 2017-08-21 -->
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
-					<parameter name="id" type="string" in="'maclearning'"/>
-					<parameter name="version" type="string" in="'1.0.0'"/>
-					<parameter name="category" type="string" in="'starosapp'"/>
-					<parameter name="origin" type="string" in="'Nanjing StarOS Inc.'"/>
-					<parameter name="title" type="string" in="'app for maclearning'"/>
-					<parameter name="desc" type="string" in="'2.10.10.0'"/>		
-					<parameter name="url" type="string" in="'192.168.228.128'"/>
-					<parameter name="bundleid" type="long" in="context.getCurrentBundleId()"/>
+					<string name="id" in="'maclearning'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'starosapp'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'app for maclearning'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.228.128'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
 			</function>			
 			
@@ -117,9 +117,9 @@
 			
 			<function name="addTopoListener" class="TopoService">				
 				<parameters>
-					<parameter name="appid" type="string" in="'maclearning'"/>
-					<parameter name="add_eventname" type="string" in="'mytopadd'"/>
-					<parameter name="remove_eventname" type="string" in="'mytopremove'"/>
+					<string name="appid" in="'maclearning'"/>
+					<string name="add_eventname" in="'mytopadd'"/>
+					<string name="remove_eventname" in="'mytopremove'"/>
 				</parameters>
 			</function>	
 			
@@ -129,9 +129,9 @@
 		<onevent event="bundleapp.active">
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
-					<parameter name="app_name" type="string" in="'maclearning'"/>
-					<parameter name="event_name" type="string" in="'PacketInEvent'"/>					
-					<parameter name="eth_type" type="string" in="'0x0800'"/>					
+					<string name="app_name" in="'maclearning'"/>
+					<string name="event_name" in="'PacketInEvent'"/>					
+					<string name="eth_type" in="'0x0800'"/>					
 				</parameters>
 			</function>	
 		</onevent>
@@ -139,7 +139,7 @@
 		<onevent event="~bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
-					<parameter name="app_name" type="string" in="'maclearning'"/>									
+					<string name="app_name" in="'maclearning'"/>									
 				</parameters>
 			</function>
 		</onevent>
@@ -157,25 +157,25 @@
 			
 			<function name="removeTopoListener" class="TopoService">
 				<parameters>
-					<parameter name="appid" type="string" in="'maclearning'"/>
+					<string name="appid" in="'maclearning'"/>
 				</parameters>
 			</function>
 			
 			<!--function name="uninstallflow">
 				<parameters>
-					<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+					<string name="datapathid" in="event.getParam('datapathid').toString()"/>
 				</parameters>
 			</function-->
 		</onevent>
 		<onevent event="PacketInEvent">
 			<!-- YY 2017-08-21 -->
 			<messageblock name="packetmsgblock"/>
-			<variable name="inportid" type="string"/>
-			<variable name="pkoutjson" type="string"/>
-			<variable name="srcmac" type="string"/>
-			<variable name="dstmac" type="string"/>
-			<variable name="ethtype" type="string"/>
-			<variable name="result_mac" type="string"/>
+			<string name="inportid"/>
+			<string name="pkoutjson"/>
+			<string name="srcmac"/>
+			<string name="dstmac"/>
+			<string name="ethtype"/>
+			<string name="result_mac"/>
 			<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if (info.match != null) {
@@ -202,10 +202,10 @@
 						<then>
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
-									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
-									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-									<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
-									<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>	
+									<string name="datapathid" in="event.getParam('datapathid').toString()"/>
+									<string name="inportid" in="context.inportid.toString()"/>	
+									<string name="pkoutjson" in="context.pkoutjson.toString()"/>	
+									<messageblock name="msgblock" in="context.packetmsgblock"/>	
 								</parameters>
 							</function>
 						</then>					
@@ -214,21 +214,21 @@
 								<then>		
 									<function name="PacketOutToAllPort" class="context.devicemgr">
 										<parameters>
-											<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
-											<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-											<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
-											<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>	
+											<string name="datapathid" in="event.getParam('datapathid').toString()"/>
+											<string name="inportid" in="context.inportid.toString()"/>	
+											<string name="pkoutjson" in="context.pkoutjson.toString()"/>	
+											<messageblock name="msgblock" in="context.packetmsgblock"/>	
 										</parameters>
 									</function>
 								</then>
 								<else>																
 									<function name="PacketOutToPort" class="context.devicemgr">
 										<parameters>	
-											<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
-											<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>						
-											<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>
-											<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-											<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>							
+											<string name="outputport" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+											<string name="pkoutjson" in="context.pkoutjson.toString()"/>						
+											<messageblock name="msgblock" in="context.packetmsgblock"/>
+											<string name="inportid" in="context.inportid.toString()"/>	
+											<string name="datapathid" in="event.getParam('datapathid').toString()"/>	
 										</parameters>
 									</function>							
 								</else>
@@ -246,28 +246,28 @@
 						<then>																					
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
-									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
-									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-									<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>	
-									<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>	
+									<string name="datapathid" in="event.getParam('datapathid').toString()"/>
+									<string name="inportid" in="context.inportid.toString()"/>	
+									<string name="pkoutjson" in="context.pkoutjson.toString()"/>	
+									<messageblock name="msgblock" in="context.packetmsgblock"/>	
 								</parameters>
 							</function>
 						</then>
 						<else>					
 							<function name="PacketOutToPort" class="context.devicemgr">
 								<parameters>	
-									<parameter name="outputport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
-									<parameter name="pkoutjson" type="string" in="context.pkoutjson.toString()"/>						
-									<parameter name="msgblock" type="messageblock" in="context.packetmsgblock"/>
-									<parameter name="inportid" type="string" in="context.inportid.toString()"/>	
-									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>							
+									<string name="outputport" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+									<string name="pkoutjson" in="context.pkoutjson.toString()"/>						
+									<messageblock name="msgblock" in="context.packetmsgblock"/>
+									<string name="inportid" in="context.inportid.toString()"/>	
+									<string name="datapathid" in="event.getParam('datapathid').toString()"/>		
 								</parameters>
 							</function>
 							<function name="installflow">
 								<parameters>
-									<parameter name="outport" type="string" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
-									<parameter name="dstmac" type="string" in="context.dstmac.toString()"/>
-									<parameter name="datapathid" type="string" in="event.getParam('datapathid').toString()"/>
+									<string name="outport" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
+									<string name="dstmac" in="context.dstmac.toString()"/>
+									<string name="datapathid" in="event.getParam('datapathid').toString()"/>
 								</parameters>
 							</function>
 						</else>
@@ -288,4 +288,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

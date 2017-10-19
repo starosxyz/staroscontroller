@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<logconfig dest="stdout"/>
 	<class name="CTestClass">
 	</class>
@@ -64,4 +64,4 @@
 			<function name="starttest"/>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

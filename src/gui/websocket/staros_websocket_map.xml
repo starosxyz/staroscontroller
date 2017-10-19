@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml>
-	<variable name="WebSocketHandlerMap" type="params" global="true"/>
+<starlang>
+	<params name="WebSocketHandlerMap" global="true"/>
 	<function name="InitWebSocketHandlerMap">
 		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="requestSummary" value="'HandleRequestSummary'"/>
@@ -41,4 +41,4 @@
 		<!-- YY 20180912 -->
 		<set name="WebSocketHandlerMap" paramname="updatePrefReq" value="'HandleHostLinkRequest'"/>
 	</function>
-</starosxml>
+</starlang>

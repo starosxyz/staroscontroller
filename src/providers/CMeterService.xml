@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				YY
@@ -12,21 +12,21 @@
 		<public>
 			<function name="InstallMeter">
 				<parameters>
-					<parameter name="outmeterid" type="long"/>
-					<parameter name="meterjson" type="string"/>
-					<parameter name="appid" type="string"/>
-					<parameter name="datapathid" type="string"/>
+					<long name="outmeterid"/>
+					<string name="meterjson"/>
+					<string name="appid"/>
+					<string name="datapathid"/>
 				</parameters>
-				<variable name="metermgrobj" type="class"/>
-				<variable name="deviceobj" type="class"/>
+				<object name="metermgrobj"/>
+				<object name="deviceobj"/>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
-						<parameter name="outdevice" type="class" out="context.deviceobj"/>
-						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
 					</parameters>				
 				</function>
 				
-				<if cond="context.deviceobj==null">
+				<if cond="context.deviceobj.ptr==null">
 					<then>
 						<log>deviceobj is null</log>
 						<exit/>
@@ -35,11 +35,11 @@
 
 				<function name="GetMeterManager" class="context.deviceobj">
 					<parameters>
-						<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+						<object name="outmetermgr" out="context.metermgrobj"/>
 					</parameters>			
 				</function>
 
-				<if cond="context.metermgrobj==null">
+				<if cond="context.metermgrobj.ptr==null">
 					<then>
 						<log>metermgrobj is null</log>
 						<exit/>
@@ -47,9 +47,9 @@
 				</if>
 				<function name="InstallMeterRequest" class="context.metermgrobj">
 					<parameters>
-						<parameter name="strjson" type="string" in="context.meterjson.toString()"/>
-						<parameter name="meterid" type="long" out="context.outmeterid"/>
-						<parameter name="appid" type="string" in="context.appid.toString()"/>
+						<string name="strjson" in="context.meterjson.toString()"/>
+						<long name="meterid" out="context.outmeterid"/>
+						<string name="appid" in="context.appid.toString()"/>
 					</parameters>
 				</function>
 				<log>CMeterervice InstallFlow end</log>
@@ -57,34 +57,34 @@
 		
 			<function name="UnInstallMeter">
 				<parameters>
-					<parameter name="datapathid" type="string"/>			
-					<parameter name="meterid" type="long"/>
+					<string name="datapathid"/>			
+					<long name="meterid"/>
 				</parameters>				
 				<log>##### CMeterService UnInstallMeter #####</log>
 				<log><![CDATA[context.datapathid.toString() = <%=context.datapathid.toString()%>]]></log>
 				<log><![CDATA[context.meterid.toLong() = <%=context.meterid.toLong()%>]]></log>
-				<variable name="metermgrobj" type="class"/>
-				<variable name="deviceobj" type="class"/>
+				<object name="metermgrobj"/>
+				<object name="deviceobj"/>
 				<function name="findDevice" class="DeviceManager">
 					<parameters>
-						<parameter name="datapathid" type="string" in="context.datapathid.toString()"/>
-						<parameter name="deviceobject" type="class" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
 					</parameters>				
 				</function>
-				<if cond="context.deviceobj != null">
+				<if cond="context.deviceobj.ptr != null">
 					<then>
 						<log>context.deviceobj is not null</log>
 						<function name="GetMeterManager" class="context.deviceobj">
 							<parameters>
-								<parameter name="outmetermgr" type="class" out="context.metermgrobj"/>
+								<object name="outmetermgr" out="context.metermgrobj"/>
 							</parameters>			
 						</function>
-						<if cond="context.metermgrobj != null">
+						<if cond="context.metermgrobj.ptr != null">
 							<then>
 								<log>context.metermgrobj is not null</log>
 								<function name="UnInstallMeterRequest" class="context.metermgrobj">
 									<parameters>
-										<parameter name="meterid" type="long" in="context.meterid.toLong()"/>
+										<long name="meterid" in="context.meterid.toLong()"/>
 									</parameters>
 								</function>
 							</then>
@@ -94,4 +94,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Author:
 			YY
@@ -11,8 +11,8 @@
 	<function name="HandleLinkDataReq">
 		<function name="SendLinks" class="TopoManager">	
 				<parameters>
-					<parameter name="transportid" type="string" in="event.getParam('transportid').toString()"/>
+					<string name="transportid" in="event.getParam('transportid').toString()"/>
 				</parameters>
 		</function>
 	</function>
-</starosxml>
+</starlang>

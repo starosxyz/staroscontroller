@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--StarOS Entry-->
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<events>
 		<!--Session StarUp
 		<onevent event="sayhitomainsession">
@@ -14,7 +14,7 @@
 		<!-- qiulei 20170802 pm -->
 		<onevent event="registerSession">
 			<function>
-				<container name="OneSessionIdInfoContainer" type="hashmap" keytype="string" valuetype="string"/>
+				<hashmap name="OneSessionIdInfoContainer" keytype="string" valuetype="string"/>
 				<raise name="'registerSessionResponse'" bundleid="event.getParam('fromapp')"/>
 				<insert name="sessionIdContainer" key="event.getParam('fromapp')" value="OneSessionIdInfoContainer"/>
 			</function>
@@ -27,4 +27,4 @@
 			</function>
 		</onevent>
 	</events>
-</starosxml>
+</starlang>

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="WriteToFile">
 		<parameters>
-			<parameter name="filename" type="string"/>
-			<parameter name="xmldata" type="string"/>
+			<string name="filename"/>
+			<string name="xmldata"/>
 		</parameters>
 		<messageblock name="xmlmsgblock"/>
 		<set name="xmlmsgblock" value="context.xmldata.toMessageBlock()"/>
 		<file method="writefile" name="context.filename.toString()" data="context.xmlmsgblock"/>
 	</function>
-</starosxml>
+</starlang>

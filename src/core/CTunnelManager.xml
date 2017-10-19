@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 		<!--
 			Author:
 					hupeng
@@ -10,26 +10,26 @@
 		-->
 	<class name="CTunnel">
 		<private>
-			<variable name="m_id" type="string"/>		
-			<variable name="m_name" type="string"/>
-			<variable name="m_one" type="string"/>
-			<variable name="m_two" type="string"/>				
-			<variable name="m_type" type="string"/>
-			<variable name="m_groupid" type="string"/>	
-			<variable name="m_bandwidth" type="string"/>
-			<variable name="m_path" type="string"/>
+			<string name="m_id"/>		
+			<string name="m_name"/>
+			<string name="m_one"/>
+			<string name="m_two"/>				
+			<string name="m_type"/>
+			<string name="m_groupid"/>	
+			<string name="m_bandwidth"/>
+			<string name="m_path"/>
 		</private>
 		<public>
 			<function name="CTunnel">
 				<parameters>
-					<parameter name="id" type="string"/>		
-					<parameter name="name" type="string"/>	
-					<parameter name="one" type="string"/>
-					<parameter name="two" type="string"/>	
-					<parameter name="type" type="string"/>
-					<parameter name="groupid" type="string"/>
-					<parameter name="bandwidth" type="string"/>
-					<parameter name="path" type="string"/>
+					<string name="id"/>		
+					<string name="name"/>	
+					<string name="one"/>
+					<string name="two"/>	
+					<string name="type"/>
+					<string name="groupid"/>
+					<string name="bandwidth"/>
+					<string name="path"/>
 				</parameters>
 					<set name="thisclass.m_id" value="context.id.toString()"/>
 					<set name="thisclass.m_name" value="context.name.toString()"/>
@@ -53,7 +53,7 @@
 			</function>
 			<function name="ToString">
 				<parameters>
-					<parameter name="jsonstring" type="string" out="context.outjson"/>
+					<string name="jsonstring" out="context.outjson"/>
 				</parameters>
 				<script><![CDATA[
 						var onearray = new Object();
@@ -73,7 +73,7 @@
 	</class>
 	<class name="CTunnelManager">
 		<private>
-			<container name="tunnelContainer" type="hashmap" keytype="string" valuetype="class"/>
+			<hashmap name="tunnelContainer" keytype="string" valuetype="object"/>
 		</private>
 		<public>
 			<function name="CTunnelManager">
@@ -82,26 +82,26 @@
 			</function>
 			<function name="addTunnel">
 				<parameters>
-					<parameter name="id" type="string"/>		
-					<parameter name="name" type="string"/>	
-					<parameter name="one" type="string"/>
-					<parameter name="two" type="string"/>	
-					<parameter name="type" type="string"/>
-					<parameter name="groupid" type="string"/>
-					<parameter name="bandwidth" type="string"/>
-					<parameter name="path" type="string"/>				
+					<string name="id"/>		
+					<string name="name"/>	
+					<string name="one"/>
+					<string name="two"/>	
+					<string name="type"/>
+					<string name="groupid"/>
+					<string name="bandwidth"/>
+					<string name="path"/>				
 				</parameters>
-				<variable name="tunnelobj" type="class"/>	
+				<object name="tunnelobj"/>	
 				<new name="tunnelobj" class="CTunnel">
 					<parameters>
-					<parameter name="id" type="string" in="context.id.toString()"/>		
-					<parameter name="name" type="string" in="context.name.toString()"/>	
-					<parameter name="one" type="string" in="context.one.toString()"/>
-					<parameter name="two" type="string" in="context.two.toString()"/>	
-					<parameter name="type" type="string" in="context.type.toString()"/>
-					<parameter name="groupid" type="string" in="context.groupid.toString()"/>
-					<parameter name="bandwidth" type="string" in="context.bandwidth.toString()"/>
-					<parameter name="path" type="string" in="context.path.toString()"/>			
+						<string name="id" in="context.id.toString()"/>		
+						<string name="name" in="context.name.toString()"/>	
+						<string name="one" in="context.one.toString()"/>
+						<string name="two" in="context.two.toString()"/>	
+						<string name="type" in="context.type.toString()"/>
+						<string name="groupid" in="context.groupid.toString()"/>
+						<string name="bandwidth" in="context.bandwidth.toString()"/>
+						<string name="path" in="context.path.toString()"/>			
 				</parameters>
 				</new>
 				<insert name="tunnelContainer" key="context.id.toString()" value="context.tunnelobj"/>
@@ -110,33 +110,33 @@
 			<function name="addtunneltest">
 				<function name="addTunnel">
 					<parameters>
-					<parameter name="id" type="string" in="'1'"/>		
-					<parameter name="name" type="string" in="'tunnel1'"/>	
-					<parameter name="one" type="string" in="'one'"/>
-					<parameter name="two" type="string" in="'two'"/>	
-					<parameter name="type" type="string" in="'tunnel'"/>
-					<parameter name="groupid" type="string" in="'tunnel'"/>
-					<parameter name="bandwidth" type="string" in="'4'"/>
-					<parameter name="path" type="string" in="'/opt/staros'"/>							
+						<string name="id" in="'1'"/>		
+						<string name="name" in="'tunnel1'"/>	
+						<string name="one" in="'one'"/>
+						<string name="two" in="'two'"/>	
+						<string name="type" in="'tunnel'"/>
+						<string name="groupid" in="'tunnel'"/>
+						<string name="bandwidth" in="'4'"/>
+						<string name="path" in="'/opt/staros'"/>							
 					</parameters>
 				</function>
 				<function name="addTunnel">
 					<parameters>
-					<parameter name="id" type="string" in="'2'"/>		
-					<parameter name="name" type="string" in="'tunnel2'"/>	
-					<parameter name="one" type="string" in="'one'"/>
-					<parameter name="two" type="string" in="'two'"/>	
-					<parameter name="type" type="string" in="'tunnel'"/>
-					<parameter name="groupid" type="string" in="'tunnel'"/>
-					<parameter name="bandwidth" type="string" in="'4'"/>
-					<parameter name="path" type="string" in="'/opt/staros'"/>			
+						<string name="id" in="'2'"/>		
+						<string name="name" in="'tunnel2'"/>	
+						<string name="one" in="'one'"/>
+						<string name="two" in="'two'"/>	
+						<string name="type" in="'tunnel'"/>
+						<string name="groupid" in="'tunnel'"/>
+						<string name="bandwidth" in="'4'"/>
+						<string name="path" in="'/opt/staros'"/>			
 					</parameters>
 				</function>
 			</function>
 			
 			<function name="removetunnel">
 				<parameters>
-					<parameter name="id" type="string"/>					
+					<string name="id"/>					
 				</parameters>
 				<if cond="context.tunnelContainer.hasValue(context.id.toString())==true">
 					<then>
@@ -146,29 +146,41 @@
 			</function>
 
 			<function name="printtunnelmanager">
-				<variable name="onetunnelinfo" type="class"/>
-				<container name="onetunnelContainer" type="pair" keytype="string" valuetype="class"/>
+				<object name="onetunnelinfo"/>
+				<pair name="onetunnelContainer" keytype="string" valuetype="object"/>
 				<for var="onetunnelContainer" in="context.tunnelContainer">
 					<function>
 						<set name="onetunnelinfo" value="context.onetunnelContainer.second()"/>
+						<if cond="context.onetunnelinfo == null">
+							<then>
+								<log>onetunnelinfo is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="printtunnel" class="context.onetunnelinfo"/>
 					</function>
 				</for>
 			</function>
 			<function name="GetTunnelJsonData">
 				<parameters>
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring"/>
 				</parameters>
-				<variable name="outjson" type="string"/>
-				<variable name="onetunnelinfo" type="class"/>
-				<container name="tunnellist" type="list" valuetype="string"/>
-				<container name="onetunnelContainer" type="pair" keytype="string" valuetype="class"/>
+				<string name="outjson"/>
+				<object name="onetunnelinfo"/>
+				<list name="tunnellist" valuetype="string"/>
+				<pair name="onetunnelContainer" keytype="string" valuetype="object"/>
 				<for var="onetunnelContainer" in="context.tunnelContainer">
 					<function>
 						<set name="onetunnelinfo" value="context.onetunnelContainer.second()"/>
+						<if cond="context.onetunnelinfo == null">
+							<then>
+								<log>onetunnelinfo is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="ToString" class="context.onetunnelinfo">
 							<parameters>
-								<parameter name="jsonstring" type="string" out="context.outjson"/>
+								<string name="jsonstring" out="context.outjson"/>
 							</parameters>
 						</function>
 						<insert name="tunnellist" value="context.outjson.toString()"/>
@@ -199,4 +211,4 @@
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>

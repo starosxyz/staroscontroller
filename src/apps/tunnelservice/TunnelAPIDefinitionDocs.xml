@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
 		Author:
 				qiulei
@@ -10,8 +10,8 @@
 	-->
 	<!--定义：tunnels-->
 	<function name="AddDefinitionTunnelsData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 
 		<set name="definitionname" value="'Tunnels'" />
 		
@@ -101,21 +101,21 @@
 		
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
 	</function>
 	
 	<function name="RemoveDefinitionTunnelsData">
-		<variable name="definitionname" type="string"/>
+		<string name="definitionname"/>
 		
 		<set name="definitionname" value="'Tunnels'" />
 
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 	</function>
@@ -127,8 +127,8 @@
 
 	<!--定义：Result -->
 	<function name="AddDefinitionResultData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 
 		<set name="definitionname" value="'Result'" />
 		
@@ -171,8 +171,8 @@
 
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
@@ -180,13 +180,13 @@
 
 	<function name="RemoveDefinitionResultData">
 		
-		<variable name="definitionname" type="string"/>
+		<string name="definitionname"/>
 
 		<set name="definitionname" value="'Result'" />
 
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 		
@@ -199,8 +199,8 @@
 
 	<!--定义：tunnel -->
 	<function name="AddDefinitionTunnelData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 		
 		<set name="definitionname" value="'Tunnel'" />
 		
@@ -254,8 +254,8 @@
 
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 		
@@ -263,14 +263,14 @@
 	
 	<!--删除：tunnel-->
 	<function name="RemovePutRequestDocsAPITunnel">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 		
 		<set name="definitionname" value="'Tunnel'" />
 		
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 		
@@ -283,8 +283,8 @@
 	
 	<!--定义：state-->
 	<function name="AdddefinitionStateData">
-		<variable name="definitionname" type="string"/>
-		<variable name="definitioncontent" type="string"/>
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
 		
 		<set name="definitionname" value="'State'" />
 		
@@ -307,19 +307,19 @@
 		</reference>
 		<function name="addDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
-				<parameter name="definitioncontent" type="string" in="context.definitioncontent.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
 			</parameters>
 		</function>
 	</function>
 
 	<!--删除：state-->
 	<function name="RemoveDefinitionStateData">
-		<variable name="definitionname" type="string"/>
+		<string name="definitionname"/>
 		<set name="definitionname" value="'State'" />
 		<function name="removeDefinition" class="APIDocsService">
 			<parameters>
-				<parameter name="definitionname" type="string" in="context.definitionname.toString()"/>
+				<string name="definitionname" in="context.definitionname.toString()"/>
 			</parameters>
 		</function>
 	</function>
@@ -338,4 +338,4 @@
 		<function name="RemovePutRequestDocsAPITunnel"/>
 		<function name="RemoveDefinitionStateData"/>
 	</function>
-</starosxml>
+</starlang>

@@ -1,61 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starosxml xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CPort">
 		<private>
-			<variable name="m_type" type="string" />
-			<variable name="m_speed" type="string" />
-			<variable name="m_enabled" type="string" />
-			<variable name="m_name" type="string" />
-			<variable name="m_flags" type="string"/>
-			<variable name="m_advertised" type="string"/>
-			<variable name="m_config" type="string"/>
-			<variable name="m_curr" type="string"/>
-			<variable name="m_currspeed" type="string"/>
-			<variable name="m_hwaddr" type="string"/>
-			<variable name="m_maxspeed" type="string"/>
-			<variable name="m_peer" type="string"/>
-			<variable name="m_state" type="string"/>
-			<variable name="m_supported" type="string"/>
-			<variable name="m_portno" type="string"/>
-			<variable name="m_elinks_dest" type="string"/>
+			<string name="m_type" />
+			<string name="m_speed" />
+			<string name="m_enabled" />
+			<string name="m_name" />
+			<string name="m_flags" />
+			<string name="m_advertised" />
+			<string name="m_config" />
+			<string name="m_curr" />
+			<string name="m_currspeed" />
+			<string name="m_hwaddr" />
+			<string name="m_maxspeed" />
+			<string name="m_peer" />
+			<string name="m_state" />
+			<string name="m_supported" />
+			<string name="m_portno" />
+			<string name="m_elinks_dest" />
 			<!--PortState-->
-			<variable name="m_rxpackets" type="string"/>
-			<variable name="m_txpackets" type="string"/>
-			<variable name="m_rxbytes" type="string"/>
-			<variable name="m_txbytes" type="string"/>
+			<string name="m_rxpackets" />
+			<string name="m_txpackets" />
+			<string name="m_rxbytes" />
+			<string name="m_txbytes" />
 			
-			<variable name="m_rxdropped" type="string"/>
-			<variable name="m_txdropped" type="string"/>
-			<variable name="m_rxerrors" type="string"/>
-			<variable name="m_txerrors" type="string"/>
+			<string name="m_rxdropped" />
+			<string name="m_txdropped" />
+			<string name="m_rxerrors" />
+			<string name="m_txerrors"/>
 			
-			<variable name="m_rxframeerr" type="string"/>
-			<variable name="m_rxovererr" type="string"/>
-			<variable name="m_rxcrcerr" type="string"/>
-			<variable name="m_collisions" type="string"/>
+			<string name="m_rxframeerr" />
+			<string name="m_rxovererr" />
+			<string name="m_rxcrcerr" />
+			<string name="m_collisions" />
 						
-			<variable name="m_durationsec" type="string"/>
-			<variable name="m_durationnsec" type="string"/>
+			<string name="m_durationsec" />
+			<string name="m_durationnsec" />
 			
 			<!--qiulei 20170907   add variable name="m_transportid" type="string"-->
-			<variable name="m_transportid" type="string"/>
+			<string name="m_transportid"/>
 		</private>
 		<public>
 			<function name="CPort">
 				<parameters>
-					<parameter name="advertised" type="string"/>			
-					<parameter name="portno" type="string"/>
-					<parameter name="config" type="string"/>			
-					<parameter name="curr" type="string"/>
-					<parameter name="currspeed" type="string"/>	
-					<parameter name="hwaddr" type="string"/>
-					<parameter name="maxspeed" type="string"/>	
-					<parameter name="name" type="string"/>	
-					<parameter name="peer" type="string"/>
-					<parameter name="state" type="string"/>	
-					<parameter name="supported" type="string"/>
+					<string name="advertised"/>
+					<string name="portno"/>
+					<string name="config"/>
+					<string name="curr"/>
+					<string name="currspeed"/>
+					<string name="hwaddr"/>
+					<string name="maxspeed"/>
+					<string name="name"/>
+					<string name="peer"/>
+					<string name="state"/>
+					<string name="supported"/>
 					<!--qiulei 20170907-->
-					<parameter name="transportid" type="string"/>
+					<string name="transportid"/>
 					
 				</parameters>
 				<set name="thisclass.m_advertised" value="context.advertised.toString()"/>
@@ -87,9 +87,9 @@
 			</function>
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
-					<parameter name="outjson" type="string"/>
+					<string name="outjson" />
 				</parameters>
-				<variable name="outdetail" type="string" />
+				<string name="outdetail"  />
 				<script><![CDATA[
 					var onearray = new Object();
 					if (thisclass.m_portno.toString() == 4294967294){ 						
@@ -110,7 +110,7 @@
 			
 			<function name="IsReservedPort">
 				<parameters>
-					<parameter name="returnbool" type="boolean"/>
+					<boolean name="returnbool" />
 				</parameters>
 				<if cond="thisclass.m_portno.toString()=='4294967295' || thisclass.m_portno.toString()=='4294967294' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='4294967288‬'|| thisclass.m_portno.toString()=='4294967289'|| thisclass.m_portno.toString()=='4294967290'|| thisclass.m_portno.toString()=='4294967291'|| thisclass.m_portno.toString()=='4294967292'|| thisclass.m_portno.toString()=='4294967293'">
 					<then>
@@ -123,7 +123,7 @@
 			</function>
 			<function name="GetPortState">
 				<parameters>
-					<parameter name="outstate" type="string"/>
+					<string name="outstate"/>
 				</parameters>
 				<set name="outstate" value="thisclass.m_state.toString()"/>
 			</function>
@@ -131,14 +131,14 @@
 			<!--qiulei 20170907 start-->
 			<function name="IsEdgePort">
 				<parameters>
-					<parameter name="returnbool" type="boolean"/>
+					<boolean name="returnbool"/>
 				</parameters>
 				
-				<variable name="openflowdevice" type="object"/>
-				<set name="openflowdevice" value="context.openflowserverobj.getDevice(thisclass.m_transportid.toString())"/>
+				<object name="openflowdevice"/>
+				<set name="openflowdevice" value="context.openflowserverobj.ptr.getDevice(thisclass.m_transportid.toString())"/>
 				<if cond="context.openflowdevice!=null">
 					<then>
-						<variable name="number" type="long"/>
+						<long name="number"/>
 						<set name="number" value="context.openflowdevice.getNeigborSize(thisclass.m_portno.toString())"/>
 						<if cond="context.number.toLong()==0">
 							<then>
@@ -164,7 +164,7 @@
 			
 			<function name="IsValidatePort">
 				<parameters>
-					<parameter name="returnbool" type="boolean"/>
+					<boolean name="returnbool" />
 				</parameters>				
 				<if cond="thisclass.m_portno.toString()=='4294967295' || thisclass.m_portno.toString()=='4294967294' || thisclass.m_portno.toString()=='‭4294967040‬' || thisclass.m_portno.toString()=='4294967288‬'|| thisclass.m_portno.toString()=='4294967289'|| thisclass.m_portno.toString()=='4294967290'|| thisclass.m_portno.toString()=='4294967291'|| thisclass.m_portno.toString()=='4294967292'|| thisclass.m_portno.toString()=='4294967293'">
 					<then>
@@ -193,7 +193,7 @@
 
 			<function name="UpdatePortState">
 				<parameters>
-					<parameter name="portstate" type="string"/>
+					<string name="portstate" />
 				</parameters>
 	
 				<script><![CDATA[
@@ -220,7 +220,7 @@
 			</function>
 			<function name="GetPortsStateJsonData">
 				<parameters>	
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring" />
 				</parameters>
 				<script><![CDATA[
 						var json = new Object();
@@ -241,46 +241,46 @@
 	</class>
 	<class name="CPortManager">
 		<private>
-			<container name="portContainer" type="hashmap" keytype="string" valuetype="class"/>
-			<variable name="m_transportid" type="string"/>
+			<hashmap name="portContainer" keytype="string" valuetype="object"/>
+			<string name="m_transportid"/>
 		</private>
 		<public>
 			<function name="CPortManager">
 				<parameters>
-					<parameter name="transportid" type="string"/>
+					<string name="transportid" />
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			<function name="MultiPartPortDescRequest"/>
 			</function>
 			<function name="addPort">
 				<parameters>
-					<parameter name="advertised" type="string"/>			
-					<parameter name="portno" type="string"/>
-					<parameter name="config" type="string"/>			
-					<parameter name="curr" type="string"/>
-					<parameter name="currspeed" type="string"/>	
-					<parameter name="hwaddr" type="string"/>
-					<parameter name="maxspeed" type="string"/>	
-					<parameter name="name" type="string"/>	
-					<parameter name="peer" type="string"/>
-					<parameter name="state" type="string"/>	
-					<parameter name="supported" type="string"/>
+					<string name="advertised"/>
+					<string name="portno"/>
+					<string name="config"/>
+					<string name="curr"/>
+					<string name="currspeed"/>
+					<string name="hwaddr"/>
+					<string name="maxspeed"/>
+					<string name="name"/>
+					<string name="peer"/>
+					<string name="state"/>
+					<string name="supported"/>
 				</parameters>
-				<variable name="portobj" type="class" />
+				<object name="portobj"/>
 				<new name="portobj" class="CPort">
 					<parameters>
-						<parameter name="advertised" type="string" in="context.advertised.toString()"/>			
-						<parameter name="portno" type="string" in="context.portno.toString()"/>
-						<parameter name="config" type="string" in="context.config.toString()"/>			
-						<parameter name="curr" type="string" in="context.curr.toString()"/>
-						<parameter name="currspeed" type="string" in="context.currspeed.toString()"/>	
-						<parameter name="hwaddr" type="string" in="context.hwaddr.toString()"/>
-						<parameter name="maxspeed" type="string" in="context.maxspeed.toString()"/>	
-						<parameter name="name" type="string" in="context.name.toString()"/>	
-						<parameter name="peer" type="string" in="context.peer.toString()"/>
-						<parameter name="state" type="string" in="context.state.toString()"/>	
-						<parameter name="supported" type="string" in="context.supported.toString()"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
+						<string name="advertised" in="context.advertised.toString()"/>			
+						<string name="portno"  in="context.portno.toString()"/>
+						<string name="config"  in="context.config.toString()"/>			
+						<string name="curr"  in="context.curr.toString()"/>
+						<string name="currspeed"  in="context.currspeed.toString()"/>	
+						<string name="hwaddr"  in="context.hwaddr.toString()"/>
+						<string name="maxspeed"  in="context.maxspeed.toString()"/>	
+						<string name="name"  in="context.name.toString()"/>	
+						<string name="peer"  in="context.peer.toString()"/>
+						<string name="state"  in="context.state.toString()"/>	
+						<string name="supported"  in="context.supported.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 						
 					</parameters>
 				</new>
@@ -288,18 +288,24 @@
 			</function>
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
-					<parameter name="outjson" type="string"/>
+					<string name="outjson"/>
 				</parameters>
-				<variable name="portobj" type="class" />
-				<container name="jsonlist" type="list" valuetype="string"/>
-				<variable name="strjson" type="string" />
-				<container name="oneportpair" type="pair" keytype="string" valuetype="class"/>
+				<object name="portobj"/>
+				<list name="jsonlist" valuetype="string"/>
+				<string name="strjson"/>
+				<pair name="oneportpair" keytype="string" valuetype="object"/>
 				<for var="oneportpair" in="context.portContainer">
 					<function>
 						<set name="portobj" value="context.oneportpair.second()"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log>portobj is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="ForDeviceDetailReqJson" class="context.portobj">
 							<parameters>
-								<parameter name="outjson" type="string" out="context.strjson"/>
+								<string name="outjson"  out="context.strjson"/>
 							</parameters>
 							</function>
 						<insert name="jsonlist" value="context.strjson.toString()"/>
@@ -324,7 +330,7 @@
 			
 			<function name="ForPortDetailReqJson">
 				<parameters>
-					<parameter name="outjson" type="string"/>
+					<string name="outjson"/>
 				</parameters>
 				<script><![CDATA[
 					
@@ -333,33 +339,39 @@
 			
 			<function name="GetPortNumberSize">
 				<parameters>
-					<parameter name="portnumber" type="long"/>
+					<long name="portnumber" />
 				</parameters>										
 				<set name="portnumber" value="context.portContainer.size()"/>										
 			</function>
 
 			<function name="PacketOutToAllPort">
 				<parameters>	
-					<parameter name="transportid" type="string"/>
-					<parameter name="inportid" type="string"/>	
-					<parameter name="pkoutjson" type="string"/>	
-					<parameter name="msgblock" type="messageblock"/>
+					<string name="transportid"/>
+					<string name="inportid"/>
+					<string name="pkoutjson"/>
+					<messageblock name="msgblock"/>
 				</parameters>
-				<variable name="portobj" type="class"/>
-				<variable name="isvalidataport" type="boolean"/>
-				<variable name="isedgeport" type="boolean"/>
-				<container name="oneportpair" type="pair" keytype="string" valuetype="class"/>
+				<object name="portobj"/>
+				<boolean name="isvalidataport"/>
+				<boolean name="isedgeport"/>
+				<pair name="oneportpair" keytype="string" valuetype="object"/>
 				<for var="oneportpair" in="context.portContainer">
 					<set name="portobj" value="context.oneportpair.second()"/>
+					<if cond="context.portobj.ptr == null">
+						<then>
+							<log>portobj is null </log>
+							<exit/>
+						</then>
+					</if>
 					<function name="IsValidatePort" class="context.portobj">
 						<parameters>
-							<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
+							<boolean name="returnbool" out="context.isvalidataport"/>
 						</parameters>
 					</function>
 					<!--qiulei 20170907 add IsEdgePort Function-->
 					<function name="IsEdgePort" class="context.portobj">
 						<parameters>
-							<parameter name="returnbool" type="boolean" out="context.isedgeport"/>
+							<boolean name="returnbool" out="context.isedgeport"/>
 						</parameters>
 					</function>
 					
@@ -370,10 +382,10 @@
 									<then>
 										<function name="SendOpenFlowPacketOut">
 											<parameters>
-												<parameter name="outputport" type="string" in="context.oneportpair.first()"/>
-												<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
-												<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-												<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+												<string name="outputport"  in="context.oneportpair.first()"/>
+												<string name="payloadjson"  in="context.pkoutjson.toString()"/>
+												<string name="transportid"  in="context.transportid.toString()"/>
+												<messageblock name="msgblock" in="context.msgblock"/>
 											</parameters>
 										</function>
 									</then>						
@@ -387,30 +399,36 @@
 			<!--qiulei 20170823 pm-->
 			<function name="PacketOutToPort">
 				<parameters>
-					<parameter name="outputport" type="string"/>
-					<parameter name="pkoutjson" type="string"/>
-					<parameter name="transportid" type="string"/>
-					<parameter name="msgblock" type="messageblock"/>
-					<parameter name="inportid" type="string"/>
+					<string name="outputport"/>
+					<string name="pkoutjson"/>
+					<string name="transportid"/>
+					<messageblock name="msgblock"/>
+					<string name="inportid"/>
 				</parameters>
-				<variable name="portobj" type="class" />
-				<variable name="isvalidataport" type="boolean"/>				
+				<object name="portobj"/>
+				<boolean name="isvalidataport"/>
 				<if cond="context.portContainer.hasValue(context.outputport.toString())">
 					<then>
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log>portobj is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="IsValidatePort" class="context.portobj">
 							<parameters>
-								<parameter name="returnbool" type="boolean" out="context.isvalidataport"/>
+								<boolean name="returnbool" out="context.isvalidataport"/>
 							</parameters>
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">
 							<then>
 								<function name="SendOpenFlowPacketOut">
 									<parameters>
-										<parameter name="outputport" type="string" in="context.outputport.toString()"/>
-										<parameter name="payloadjson" type="string" in="context.pkoutjson.toString()"/>
-										<parameter name="transportid" type="string" in="context.transportid.toString()"/>
-										<parameter name="msgblock" type="messageblock" in="context.msgblock"/>
+										<string name="outputport" in="context.outputport.toString()"/>
+										<string name="payloadjson" in="context.pkoutjson.toString()"/>
+										<string name="transportid" in="context.transportid.toString()"/>
+										<messageblock name="msgblock" in="context.msgblock"/>
 									</parameters>
 								</function>
 							</then>
@@ -424,10 +442,10 @@
 			
 			<function name="UpdatePortState">
 				<parameters>
-					<parameter name="portstatestring" type="string"/>
+					<string name="portstatestring"/>
 				</parameters>
-				<variable name="portno" type="string"/>
-				<variable name="portobj" type="class"/>
+				<string name="portno"/>
+				<object name="portobj"/>
 				<script><![CDATA[
 						var info = JSON.parse(context.portstatestring.toString());
 						//var stringportno=JSON.stringify(info.portno);
@@ -437,9 +455,15 @@
 				<if cond="context.portContainer.hasValue(context.portno.toString())==true">
 					<then>
 						<set name="portobj" value="context.portContainer.getValue(context.portno.toString())"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log>portobj is null </log>
+								<exit/>
+							</then>
+						</if>
 						<function name="UpdatePortState" class="context.portobj">
 							<parameters>
-								<parameter name="portstate" type="string" in="context.portstatestring.toString()"/>
+								<string name="portstate"  in="context.portstatestring.toString()"/>
 							</parameters>
 						</function>
 					</then>
@@ -449,25 +473,31 @@
 				</if>
 			</function>
 			<function name="dumpinfo">
-				<variable name="ports" type="string"/>
-				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<string name="ports"/>
+				<pair name="onehostpair" keytype="string" valuetype="object"/>
 				<for var="onehostpair" in="context.portContainer">
 					<set name="ports" value="context.onehostpair.first()"/>
 				</for>
 			</function>
 			<function name="GetPortsStateJsonData">
 				<parameters>	
-					<parameter name="jsonstring" type="string"/>
+					<string name="jsonstring"/>
 				</parameters>
-				<variable name="ports" type="class"/>
-				<container name="infolist" type="list" valuetype="string"/>
-				<variable name="stringports" type="string"/>
-				<container name="onehostpair" type="pair" keytype="string" valuetype="class"/>
+				<object name="ports"/>
+				<list name="infolist" valuetype="string"/>
+				<string name="stringports"/>
+				<pair name="onehostpair" keytype="string" valuetype="object"/>
 				<for var="onehostpair" in="context.portContainer">
 					<set name="ports" value="context.onehostpair.second()"/>
+					<if cond="context.ports == null">
+						<then>
+							<log>ports is null </log>
+							<exit/>
+						</then>
+					</if>
 					<function name="GetPortsStateJsonData" class="ports">
 						<parameters>	
-							<parameter name="jsonstring" type="string" out="context.stringports"/>
+							<string name="jsonstring"  out="context.stringports"/>
 						</parameters>
 					</function>
 					<insert name="infolist" value="context.stringports.toString()"/>
@@ -495,13 +525,13 @@
 			</function>
 				
 			<function name="MultiPartPortDescRequest">
-				<variable name="strjson" type="string"/>
-				<variable name="xid" type="long"/>
-				<variable name="replyjson" type="string"/>
-				<container name="portinfo" type="hashmap" keytype="string" valuetype="string"/>
-				<container name="deviceportinfo" type="hashmap" keytype="string" valuetype="hashmap"/>
-				<container name="onedeviceportinfopair" type="pair" keytype="string" valuetype="hashmap"/>
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<string name="strjson"/>
+				<long name="xid" />
+				<string name="replyjson"/>
+				<hashmap name="portinfo" keytype="string" valuetype="string"/>
+				<hashmap name="deviceportinfo" keytype="string" valuetype="hashmap"/>
+				<pair name="onedeviceportinfopair" keytype="string" valuetype="hashmap"/>
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				<function>
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
@@ -512,8 +542,8 @@
 					</reference>
 					<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC">
 						<parameters>
-							<parameter name="transportid" type="string" in="thisclass.m_transportid.toString()"/>
-							<parameter name="strjson" type="string" in="context.strjson.toString()"/>
+							<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+							<string name="strjson"  in="context.strjson.toString()"/>
 						</parameters>
 					</function>
 					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
@@ -527,7 +557,7 @@
 									for(var i=0;i<info.portlist.length;i++)
 									{
 										//yijian add for null var
-										var ofport = context.createContainer("hashmap","string","string");
+										var ofport = context.createHashMap("string","string");
 										if (ofport != null)
 										{
 											ofport.addValue('advertised', info.portlist[i].advertised);
@@ -552,17 +582,17 @@
 									<set name="portinfo" value="context.onedeviceportinfopair.second()"/>
 									<function name="addPort">
 										<parameters>
-											<parameter name="advertised" type="string" in="context.portinfo.getValue('advertised').toString()"/>			
-											<parameter name="portno" type="string" in="context.portinfo.getValue('portno').toString()"/>
-											<parameter name="config" type="string" in="context.portinfo.getValue('config').toString()"/>			
-											<parameter name="curr" type="string" in="context.portinfo.getValue('curr').toString()"/>
-											<parameter name="currspeed" type="string" in="context.portinfo.getValue('currspeed').toString()"/>	
-											<parameter name="hwaddr" type="string" in="context.portinfo.getValue('hwaddr').toString()"/>
-											<parameter name="maxspeed" type="string" in="context.portinfo.getValue('maxspeed').toString()"/>	
-											<parameter name="name" type="string" in="context.portinfo.getValue('name').toString()"/>	
-											<parameter name="peer" type="string" in="context.portinfo.getValue('peer').toString()"/>
-											<parameter name="state" type="string" in="context.portinfo.getValue('state').toString()"/>	
-											<parameter name="supported" type="string" in="context.portinfo.getValue('supported').toString()"/>
+											<string name="advertised"  in="context.portinfo.getValue('advertised').toString()"/>			
+											<string name="portno"  in="context.portinfo.getValue('portno').toString()"/>
+											<string name="config"  in="context.portinfo.getValue('config').toString()"/>			
+											<string name="curr"  in="context.portinfo.getValue('curr').toString()"/>
+											<string name="currspeed"  in="context.portinfo.getValue('currspeed').toString()"/>	
+											<string name="hwaddr"  in="context.portinfo.getValue('hwaddr').toString()"/>
+											<string name="maxspeed"  in="context.portinfo.getValue('maxspeed').toString()"/>	
+											<string name="name"  in="context.portinfo.getValue('name').toString()"/>	
+											<string name="peer"  in="context.portinfo.getValue('peer').toString()"/>
+											<string name="state"  in="context.portinfo.getValue('state').toString()"/>	
+											<string name="supported"  in="context.portinfo.getValue('supported').toString()"/>
 										</parameters>
 									</function>
 								</function>
@@ -577,11 +607,11 @@
 			-->
 			<function name="HandlePortStateResponse">
 				<parameters>
-					<parameter name="portstatejson" type="string"/>
+					<string name="portstatejson" />
 				</parameters>
-				<container name="portstatelist" type="list"  valuetype="string"/>
-				<variable name="portstatestring" type="string"/>
-				<variable name="i" type="string"/>
+				<list name="portstatelist" valuetype="string"/>
+				<string name="portstatestring" />
+				<string name="i" />
 				<script><![CDATA[
 						var info = JSON.parse(context.portstatejson.toString());
 								if (info.portstatslist != null)
@@ -597,22 +627,22 @@
 				<for var="i" in="context.portstatelist">
 					<function name="UpdatePortState">
 						<parameters>
-							<parameter name="portstatestring" type="string" in="context.i.toString()"/>
+							<string name="portstatestring"  in="context.i.toString()"/>
 						</parameters>
 					</function>
 				</for>
 			</function>
 		<function name="SendPortStateRequest">
-				<variable name="xid" type="long"/>
-				<set name="xid" value="context.openflowserverobj.getIncreaseXID()"/>
+				<long name="xid" />
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartPortStatsRequest">
 					<parameters>
-						<parameter name="portno" type="string" in="'0xffffffff'"/>
-						<parameter name="transportid" type="string" in="thisclass.m_transportid"/>
-						<parameter name="xid" type="long" in="context.xid.toLong()"/>
+						<string name="portno"  in="'0xffffffff'"/>
+						<string name="transportid" in="thisclass.m_transportid"/>
+						<long name="xid"  in="context.xid.toLong()"/>
 					</parameters>
 				</function>
 			</function>
 		</public>
 	</class>
-</starosxml>
+</starlang>
