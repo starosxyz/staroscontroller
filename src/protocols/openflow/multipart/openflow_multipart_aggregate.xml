@@ -9,7 +9,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
+						"xid":"<%=context.xid.toString()%>",
 						"tableid":"1",
 						"outport":"1",
 						"outgroup":"1",
@@ -52,7 +52,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
+						"xid":"<%=context.xid.toString()%>",
 						"packetcount":"1",
 						"bytecount":"1",
 						"flowcount":"1"
@@ -70,7 +70,7 @@
 		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartAggregateRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartAggregateRequest xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartAggregateRequest">
 				<parameters>
@@ -88,7 +88,7 @@
 		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartAggregateReply xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartAggregateReply xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartAggregateReply">
 				<parameters>

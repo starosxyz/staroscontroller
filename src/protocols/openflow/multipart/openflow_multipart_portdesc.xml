@@ -9,7 +9,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>

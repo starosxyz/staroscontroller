@@ -32,7 +32,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
+						"xid":"<%=context.xid.toString()%>",
 						"portstatslist":[
 							{
 								"portno":"1",
@@ -83,7 +83,7 @@
 		<boolean name="isstop"  value="true"/>
 		<long name="xid" />
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartPortStatsRequest">
 			<parameters>
@@ -103,7 +103,7 @@
 		<boolean name="isstop"  value="true"/>
 		<long name="xid" />
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartPortStatsReply xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartPortStatsReply xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartPortStatsReply">
 				<parameters>

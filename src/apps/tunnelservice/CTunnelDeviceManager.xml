@@ -95,7 +95,7 @@
 						}
 					}
 				]]></script>
-				<log><![CDATA[tempContainer size=<%=context.tempContainer.size()%>]]></log>
+				<log><![CDATA[tempContainer size=<%=context.tempContainer.size().toString()%>]]></log>
 				<set name="context.tempContainerfirst" value="context.tempContainer.begin()"/>
 				<set name="context.tempContainerend" value="context.tempContainer.end()"/>
 				
@@ -112,7 +112,7 @@
 						</parameters>
 					</function>
 				</for>
-				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size()%>]]></log>
+				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size().toString()%>]]></log>
 			</function>
 		
 			

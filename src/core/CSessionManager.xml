@@ -152,7 +152,7 @@
 							
 							context.current.setValue(getCurrentTimerInMs());
 					]]></script>
-				<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size()%>']]></log>
+				<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size().toString()%>']]></log>
 					<for var="oneSessionContainer" in="context.SessionContainer">
 						<set name="sessionobj" value="context.oneSessionContainer.second()"/>
 						<set name="sessionid" value="context.oneSessionContainer.first()"/>
@@ -167,8 +167,8 @@
 								<long name="time"  out="context.oncurrent"/>	
 							</parameters>
 						</function>
-						<log><![CDATA[current= '<%=context.current.toLong()%>']]></log>
-						<log><![CDATA[oncurrent= '<%=context.oncurrent.toLong()%>']]></log>
+						<log><![CDATA[current= '<%=context.current.toString()%>']]></log>
+						<log><![CDATA[oncurrent= '<%=context.oncurrent.toString()%>']]></log>
 						<if cond="context.current.toLong()-context.oncurrent.toLong()>=300000">
 							<then>
 								<insert name="removelist" value="context.sessionid.toString()"/>
@@ -176,7 +176,7 @@
 							</then>
 						</if>
 					</for>
-					<log><![CDATA[removelist size!!!!!= '<%=context.removelist.size()%>']]></log>
+					<log><![CDATA[removelist size!!!!!= '<%=context.removelist.size().toString()%>']]></log>
 					<for var="sessionid" in="context.removelist">
 						<remove name="SessionContainer" key="context.sessionid.toString()"/>
 					</for>

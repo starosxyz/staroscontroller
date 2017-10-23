@@ -59,6 +59,7 @@
 					<string name="online"/>
 					<string name="protocol"/>	
 				</parameters>
+				<log>addDevice start</log>	
 				<object name="deviceobject"/>
 				<string name="outtransid"/>
 				<new name="deviceobject" class="CDevice">
@@ -97,8 +98,7 @@
 						<string name="outtransport" out="outtransid"/>
 					</parameters>
 				</function>
-				
-				
+				<log>star device end</log>
 			</function>
 				
 			<function name="findDevice">
@@ -752,7 +752,7 @@
 								</for>
 							</function>
 						</for>
-					<log><![CDATA[linklist size=<%=context.linklist.size()%>]]></log>
+					<log><![CDATA[linklist size=<%=context.linklist.size().toString()%>]]></log>
 					<script><![CDATA[				
 						var json = new Object();
 						var myArray=new Array();

@@ -107,7 +107,7 @@
 		
 		<onevent event="*">
 			<function>
-			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
 			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>

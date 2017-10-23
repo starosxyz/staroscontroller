@@ -9,7 +9,7 @@
 				<parameters>
 					<string name="transportid"/>			
 				</parameters>
-				<log><![CDATA[addWebSocket size=<%=context.clientContainer.size()%>]]></log>
+				<log><![CDATA[addWebSocket size=<%=context.clientContainer.size().toString()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString()) != true">
 					<then>
 						<function>
@@ -27,7 +27,7 @@
 				<parameters>
 					<string name="transportid"/>			
 				</parameters>
-				<log><![CDATA[RemoveWebSocket size=<%=context.clientContainer.size()%>]]></log>
+				<log><![CDATA[RemoveWebSocket size=<%=context.clientContainer.size().toString()%>]]></log>
 				<if cond="context.clientContainer.hasValue(context.transportid.toString())">
 					<then>						
 						<remove name="clientContainer" key="context.transportid.toString()"/>				
@@ -40,7 +40,7 @@
 				</parameters>
 				<log><![CDATA[SendToAllClient strjson =<%=context.strjson.toString()%>]]></log>
 				<string name="client"/>
-				<log><![CDATA[clientContainer size =<%=context.clientContainer.size()%>]]></log>
+				<log><![CDATA[clientContainer size =<%=context.clientContainer.size().toString()%>]]></log>
 				<pair name="oneclientContainer" keytype="string" valuetype="string"/>
 				<for var="oneclientContainer" in="context.clientContainer">
 					<function>

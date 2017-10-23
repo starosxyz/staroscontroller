@@ -10,7 +10,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -25,7 +25,7 @@
 		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartGroupFeaturesRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartGroupFeaturesRequest xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartGroupFeaturesRequest">
 				<parameters>

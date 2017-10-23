@@ -62,7 +62,7 @@
 				</parameters>				
 				<log>##### CMeterService UnInstallMeter #####</log>
 				<log><![CDATA[context.datapathid.toString() = <%=context.datapathid.toString()%>]]></log>
-				<log><![CDATA[context.meterid.toLong() = <%=context.meterid.toLong()%>]]></log>
+				<log><![CDATA[context.meterid.toLong() = <%=context.meterid.toString()%>]]></log>
 				<object name="metermgrobj"/>
 				<object name="deviceobj"/>
 				<function name="findDevice" class="DeviceManager">

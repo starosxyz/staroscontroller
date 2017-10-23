@@ -312,7 +312,7 @@
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>"
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
 							}
 					]]></jsonbody>
 				</reference>
@@ -396,7 +396,7 @@
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>"
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
 							}
 					]]></jsonbody>
 				</reference>
@@ -584,7 +584,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -638,7 +638,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -698,7 +698,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",

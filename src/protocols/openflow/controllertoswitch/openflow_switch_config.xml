@@ -6,11 +6,11 @@
 		</parameters>
 		<log dest="stdout">OpenFlowFeaturesRequest</log>
 		<string name="jsonvariable"/>
-		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toString()%>]]></log>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>

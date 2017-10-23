@@ -156,19 +156,19 @@
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
 						{	
-							"id":"<%=thisclass.m_id.toLong()%>",
+							"id":"<%=thisclass.m_id.toString()%>",
 							"username":"<%=thisclass.m_username.toString()%>",
 							"inputPort":"<%=thisclass.m_inputPort.toString()%>",
 							"outputPort":"<%=thisclass.m_outputPort.toString()%>",
-							"invlan":"<%=thisclass.m_serviceinvlan.toLong()%>",
+							"invlan":"<%=thisclass.m_serviceinvlan.toString()%>",
 							
-							"outvlan":"<%=thisclass.m_serviceoutvlan.toLong()%>",
+							"outvlan":"<%=thisclass.m_serviceoutvlan.toString()%>",
 							"type":"<%=thisclass.m_type.toString()%>",
 							"state":"<%=thisclass.m_state.toString()%>",
-							"inputvlanid":"<%=thisclass.m_inputvlanid.toLong()%>",
-							"outputvlanid":"<%=thisclass.m_outputvlanid.toLong()%>",
+							"inputvlanid":"<%=thisclass.m_inputvlanid.toString()%>",
+							"outputvlanid":"<%=thisclass.m_outputvlanid.toString()%>",
 							
-							"bandwidth":"<%=thisclass.m_bandwidth.toLong()%>"
+							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>"
 						}
 					]]></jsonbody>
 				</reference>
@@ -300,7 +300,7 @@
 
 				<set name="middevicefirst" value="context.middevice.begin()"/>
 				<set name="middeviceend" value="context.middevice.end()"/>				
-				<log><![CDATA[middevice size=<%=context.middevice.size()%>]]></log>			
+				<log><![CDATA[middevice size=<%=context.middevice.size().toString()%>]]></log>			
 				<for var="context.middeviceiterator" from="context.middevicefirst" to="context.middeviceend">
 					<set name="onedevice" value="context.middeviceiterator.value()"/>
 					<function name="installRuleMid" class="onedevice">

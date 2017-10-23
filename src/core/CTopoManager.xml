@@ -28,7 +28,7 @@
 				
 				<if cond="context.path.size()==0">
 					<then>
-						<log level="10"><![CDATA[ path.size = <%=context.path.size()%>]]></log>
+						<log level="10"><![CDATA[ path.size = <%=context.path.size().toString()%>]]></log>
 						<assert/>
 					</then>
 				</if>
@@ -166,7 +166,7 @@
 				<string name="srcport"/>
 				<string name="dstport"/>
 				<string name="topokey"/>
-				<string name="binvalidlink" value="false"/>
+				<string name="binvalidlink" value="'false'"/>
 				<pair name="onetopoPair" keytype="string" valuetype="list"/>
 				<for var="onetopoPair" in="context.topoContainer">
 					<set name="pathslist" value="context.onetopoPair.second()"/>
@@ -180,7 +180,7 @@
 						context.todevice.setValue(todevice);
 						]]>
 					</script>
-					<set name="binvalidlink" value="false"/>
+					<set name="binvalidlink" value="'false'"/>
 					<set name="pathhop1" value="''"/>
 					<for var="onepath" in="context.pathslist">
 						<log leve="1"><![CDATA[onepath= '<%=context.onepath.toString()%>']]></log>

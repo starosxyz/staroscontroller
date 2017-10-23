@@ -536,7 +536,7 @@
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
 								{
-									"xid":"<%=context.xid.toLong()%>"
+									"xid":"<%=context.xid.toString()%>"
 								}
 						]]></jsonbody>
 					</reference>
@@ -546,8 +546,10 @@
 							<string name="strjson"  in="context.strjson.toString()"/>
 						</parameters>
 					</function>
+					<log><![CDATA[for test out wait=<%=context.m_transportid.toString()%>]]></log>
 					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
 						<function>
+							<log><![CDATA[for test in wait=<%=context.m_transportid.toString()%>]]></log>
 							<set name="replyjson" value="event.getParam('eventdata').toString()"/>
 							<script><![CDATA[							
 								var info = JSON.parse(context.replyjson.toString());
@@ -576,10 +578,11 @@
 									}
 								}
 							]]></script>
-
+							<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size().toString()%>]]></log>
 							<for var="onedeviceportinfopair" in="context.deviceportinfo">
 								<function>
 									<set name="portinfo" value="context.onedeviceportinfopair.second()"/>
+									<log><![CDATA[portinfo size=<%=context.portinfo.size().toString()%>]]></log>
 									<function name="addPort">
 										<parameters>
 											<string name="advertised"  in="context.portinfo.getValue('advertised').toString()"/>			

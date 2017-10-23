@@ -22,7 +22,7 @@
 		<reference variable="modstrjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 						"bufferid":"0xffffffff",
 						"inport":"0xfffffffd",
 						"actionlist":[

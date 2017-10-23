@@ -588,7 +588,7 @@
 								<then>
 									<function name="GetBundleID" class="oneapp">
 										<parameters>
-											<string name="id" out="context.bundleid"/>
+											<long name="id" out="context.bundleid"/>
 										</parameters>
 									</function>
 								</then>

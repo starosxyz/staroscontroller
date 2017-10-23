@@ -17,7 +17,7 @@
 		<long name="requestcount"/>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
-				{ "xid":"<%=context.echorequestxid.toLong()%>" }
+				{ "xid":"<%=context.echorequestxid.toString()%>" }
 			]]></jsonbody>
 		</reference>
 		<function name="Send_OFPT13_ECHO_REQUEST">

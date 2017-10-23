@@ -286,11 +286,11 @@
 				<object name="meterobj" />
 				<string name="flowmodjson" />
 				<string name="sendflowmodjson"/>
-				<log><![CDATA[CMetermgr UnInstallMeterRequest meterid = <%=context.meterid.toLong()%>]]></log>				
+				<log><![CDATA[CMetermgr UnInstallMeterRequest meterid = <%=context.meterid.toString()%>]]></log>				
 				<if cond="context.merterContainer.hasValue(context.meterid.toLong())==true">
 					<then>
 						<function>
-							<log><![CDATA[context.merterContainer has <%=context.meterid.toLong()%>]]></log>
+							<log><![CDATA[context.merterContainer has <%=context.meterid.toString()%>]]></log>
 							<lookup name="merterContainer" key="context.meterid.toLong()" output="context.meterobj"/>
 						</function>
 					</then>
@@ -318,14 +318,14 @@
 						<string name="strjson"  in="context.sendflowmodjson.toString()"/>
 					</parameters>
 				</function>
-				<log><![CDATA[size = <%=thisclass.merterContainer.size()%>]]></log>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
 				<remove name="merterContainer" key="context.meterid.toLong()"/>
-				<log><![CDATA[size = <%=thisclass.merterContainer.size()%>]]></log>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
 				<pair name="i"  keytype="long" valuetype="class"/>
 				<long name="id" />
 				<for var="context.i" in="thisclass.merterContainer">
 					<set name="context.id" value="context.i.first()"/>
-					<log><![CDATA[context.id = <%=context.id.toLong()%>]]></log>
+					<log><![CDATA[context.id = <%=context.id.toString()%>]]></log>
 				</for>				
 				
 			</function>
@@ -335,7 +335,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
 							"flag":"1",
 							"meterid":"1",
@@ -369,7 +369,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 							"command":"77",
 							"flag":"1",
 							"meterid":"1",
@@ -480,7 +480,7 @@
 				<pair name="onemeterpair"  keytype="long" valuetype="class"/>
 				<for var="onemeterpair" in="context.merterContainer">
 					<set name="meterkey" value="context.onemeterpair.first()"/>
-					<log><![CDATA[meterkey=<%=context.meterkey.toLong()%>]]></log>
+					<log><![CDATA[meterkey=<%=context.meterkey.toString()%>]]></log>
 				</for>
 			</function>
 		</public>

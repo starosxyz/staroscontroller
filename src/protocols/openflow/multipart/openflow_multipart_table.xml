@@ -10,7 +10,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -30,7 +30,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
+						"xid":"<%=context.xid.toString()%>",
 						"tablestatslist":[
 							{								
 								"tableid":"1",
@@ -59,7 +59,7 @@
 		<boolean name="isstop"  value="true"/>
 		<long name="xid" />
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartTableRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartTableRequest xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartTableRequest">
 				<parameters>

@@ -126,18 +126,29 @@
 		  <boolean name="isstop" value="true"/>
 		  <object name="openflowdevice"/>
 		  <object name="port"/>
+		  <long name="xid"/>
 		  <function>
 			<log>Get a Hello Message</log>
 			<set name="openflowdevice" value="context.openflowserverobj.ptr.getDevice(event.getParam('transportid').toString())"/>
-			<set name="port" value="context.openflowdevice.ptr.getPort('1')"/>
-			<if cond="context.port==null">
+			<if cond="context.openflowdevice.ptr==null">
 				<then>
-					<log>!!!!!!!!!!!!!!!!!!!!!</log>
+					<log>can not get the Device</log>
+				</then>
+				<else>
+					<log>Get the Device</log>
+				</else>
+			</if>
+			<set name="port" value="context.openflowdevice.ptr.getPort('1')"/>
+			<if cond="context.port.ptr==null">
+				<then>
+					<log>!!!!!!!!!!!Just For Test!!!!!!!!!!</log>
 				</then>
 			</if>
+			<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+			<log><![CDATA[xid=<%=context.xid.toString()%>]]></log>
 			<function name="OpenFlowHello">
 				<parameters>
-					<long name="xid" in="context.openflowserverobj.ptr.getIncreaseXID()"/>
+					<long name="xid" in="context.xid"/>
 				</parameters>
 			</function>
 			<function name="OpenFlowFeatures"/>
@@ -310,7 +321,7 @@
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
 						{
-						"xid":"<%=context.echorequestxid.toLong()%>"
+						"xid":"<%=context.echorequestxid.toString()%>"
 						}
 						]]></jsonbody>
 					</reference>

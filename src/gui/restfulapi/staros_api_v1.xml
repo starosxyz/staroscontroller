@@ -47,7 +47,7 @@
 					<if cond="context.isfile.toBoolean()==true">
 						<then>
 							<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-							<log><![CDATA[filecontents = '']]></log>
+							
 							<set name="content" value="context.filecontents.toString()"/>
 						</then>
 					</if>

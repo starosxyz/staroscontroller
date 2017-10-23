@@ -87,7 +87,7 @@
 						<long name="toposize" out="context.toposize"/>
 					</parameters>
 				</function>
-				<log leve="1"><![CDATA[toposize= '<%=context.toposize.toLong()%>']]></log>
+				<log leve="1"><![CDATA[toposize= '<%=context.toposize.toString()%>']]></log>
 			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
 			</function>

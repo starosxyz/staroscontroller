@@ -21,7 +21,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>"
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
 					}
 			]]></jsonbody>
 		</reference>

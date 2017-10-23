@@ -66,7 +66,7 @@
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -108,7 +108,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.m_meterid.toLong()%>"
+										"meterid":"<%=context.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -117,7 +117,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -159,7 +159,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=context.m_meterid.toLong()%>"
+										"meterid":"<%=context.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -216,7 +216,7 @@
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -270,7 +270,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=thisclass.m_meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -280,7 +280,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -326,7 +326,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=thisclass.m_meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -366,7 +366,7 @@
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -413,7 +413,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -495,7 +495,7 @@
 				<reference variable="jsonin2out">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -541,7 +541,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=thisclass.m_meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -550,7 +550,7 @@
 				<reference variable="jsonout2in">
 					<jsonbody><![CDATA[ 
 							{
-								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 								"cookie":"0",
 								"cookiemask":"0",
 								"tableid":"0",
@@ -604,7 +604,7 @@
 									},
 									{
 										"type":"6",
-										"meterid":"<%=thisclass.m_meterid.toLong()%>"
+										"meterid":"<%=thisclass.m_meterid.toString()%>"
 									}
 								]
 							}
@@ -638,7 +638,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
 							"flag":"0x00000005",
 							"meterid":"1",
@@ -681,7 +681,7 @@
 				</function>
 				<!--uninstall meter-->
 				<log><![CDATA[thisclass.m_deviceid.toString() = <%=thisclass.m_deviceid.toString()%>]]></log>
-				<log><![CDATA[thisclass.m_meterid.toLong() = <%=thisclass.m_meterid.toLong()%>]]></log>				
+				<log><![CDATA[thisclass.m_meterid.toString() = <%=thisclass.m_meterid.toString()%>]]></log>				
 				<function name="UnInstallMeter" class="MeterService">
 					<parameters>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			

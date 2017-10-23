@@ -121,7 +121,7 @@
 				<string name="strbucketlists"/>
 				<script><![CDATA[
 						var info = JSON.parse(thisclass.m_strjson.toString());
-						thisclass.m_type=info.grouptype;
+						thisclass.m_type.setValue(info.grouptype);
 						if (info.bucketlist!=null)
 						{
 							for(var i=0;i<info.bucketlist.length;i++)
@@ -355,7 +355,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 							"command":"0",
 							"grouptype":"1",
 							"groupid":"0",
@@ -392,7 +392,7 @@
 				<reference variable="modstrjson">
 					<jsonbody><![CDATA[ 
 						{
-							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID()%>",
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
 							"command":"65",
 							"grouptype":"1",
 							"groupid":"0",
@@ -521,7 +521,7 @@
 			
 <!--Group State Request-->
 			<function name="GroupStateRequest">
-				<string name="xid" />
+				<long name="xid" />
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartGroupRequest">
 					<parameters>

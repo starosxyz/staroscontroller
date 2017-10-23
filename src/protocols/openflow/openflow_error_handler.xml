@@ -147,7 +147,7 @@
 		]]></script>
 		<set name="meterid" value="context.tmpmeterid.toLong()"/>
 		
-		<log><![CDATA[meterid=<%=context.meterid.toLong()%>]]></log>
+		<log><![CDATA[meterid=<%=context.meterid.toString()%>]]></log>
 		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
 		<log>##### MessageType is 29 #####</log>
 		<function name="GetDeviceByTransportId" class="DeviceManager">

@@ -9,7 +9,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -29,7 +29,7 @@
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>",
+						"xid":"<%=context.xid.toString()%>",
 						"mfrdesc":"1",
 						"swdesc":"1",
 						"serialnum":"1",
@@ -49,7 +49,7 @@
 		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartDescRequest">
 				<parameters>
@@ -67,7 +67,7 @@
 		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[TestOpenFlowMultiPartDescReply xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[TestOpenFlowMultiPartDescReply xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartDescReply">
 				<parameters>

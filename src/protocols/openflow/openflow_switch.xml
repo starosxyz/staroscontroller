@@ -35,12 +35,12 @@
 		<set name="peeripaddr" value="context.openflowdevice.ptr.getParam('peeripaddr').toString()"/>
 		<set name="masterid" value="context.openflowdevice.ptr.getParam('masterid').toString()"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toString()%>]]></log>
 		<string name="jsonvariable"/>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -75,7 +75,7 @@
 		<reference variable="desc">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -86,7 +86,8 @@
 			</parameters>
 		</function>
 		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
-			<function>				
+			<function>		
+				<log><![CDATA[OFP13MP_DESC Reply:=<%=event.getParam('eventdata').toString()%>]]></log>		
 				<script>
 					<![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
@@ -100,7 +101,7 @@
 				
 			</function>
 		</wait>
-		
+		<log>start to adddevice</log>	
 		<function name="addDevice" class="DeviceManager">
 			<parameters>
 				<string name="mfrdesc" in="context.mfrdesc.toString()"/>
@@ -118,7 +119,6 @@
 				<string name="protocol" in="'OF_13'"/>					
 			</parameters>
 		</function>
-		
 		<!--qiulei 20170807 -->
 		
 		<log>执行InstallDefaultFlow 2017.8.07</log>

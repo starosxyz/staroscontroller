@@ -6,11 +6,11 @@
 		</parameters>
 		<log>OpenFlowMultiPartMeterFeaturesRequest</log>
 		<string name="strjson" />
-		<log><![CDATA[OpenFlowMultiPartMeterFeaturesRequest xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[OpenFlowMultiPartMeterFeaturesRequest xid=<%=context.xid.toString()%>]]></log>
 		<reference variable="strjson">
 			<jsonbody><![CDATA[ 
 					{
-						"xid":"<%=context.xid.toLong()%>"
+						"xid":"<%=context.xid.toString()%>"
 					}
 			]]></jsonbody>
 		</reference>
@@ -25,7 +25,7 @@
 		<boolean name="isstop"  value="true"/>
 		<long name="xid" />
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
-		<log><![CDATA[MeterFeatures xid=<%=context.xid.toLong()%>]]></log>
+		<log><![CDATA[MeterFeatures xid=<%=context.xid.toString()%>]]></log>
 		<function>
 			<function name="OpenFlowMultiPartMeterFeaturesRequest">
 				<parameters>

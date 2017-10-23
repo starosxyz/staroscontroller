@@ -71,7 +71,7 @@
 				}
 			]]></script>
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>
-			<log><![CDATA[packetmsgblock size=<%=context.packetmsgblock.getChainedLength()%>]]></log>
+			<log><![CDATA[packetmsgblock size=<%=context.packetmsgblock.getChainedLength().toString()%>]]></log>
 			<function name="PacketOutToAllPort" class="context.devicemgr">
 				<parameters>	
 					<string name="datapathid" in="event.getParam('datapathid').toString()"/>
@@ -84,7 +84,7 @@
 		
 		<onevent event="*">
 			<function>
-			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
 			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>

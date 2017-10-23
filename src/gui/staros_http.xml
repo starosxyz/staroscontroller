@@ -83,7 +83,7 @@
 				<log><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
 				<log><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
 				<log><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
-				<log><![CDATA[requestcount= '<%=context.requestcount.toLong()%>']]></log>
+				<log><![CDATA[requestcount= '<%=context.requestcount.toString()%>']]></log>
 				<log><![CDATA[cookie= '<%=event.getParam("cookie").toString()%>']]></log>
 				<!--hu!!!-->
 				<script><![CDATA[
@@ -171,7 +171,7 @@
 		</onevent>
 		<onevent event="websocketdisconnect">
 			<function>
-				<log><![CDATA[ websocketdisconnect event <%=event.getName()%>]]> </log>
+				
 				<log><![CDATA[ websocketdisconnect transportid <%=event.getParam("transportid").toString()%>]]> </log>
 				<!--remove name="websocketclients" value="event.getParam('transportid').toString()"/-->
 				<function name="RemoveWebSocket" class="WebSocketManager">
@@ -197,7 +197,7 @@
 		</onevent>
 		<onevent event="*">
 			<function>
-			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
 			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>
