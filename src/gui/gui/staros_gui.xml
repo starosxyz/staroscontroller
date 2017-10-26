@@ -334,12 +334,13 @@
 						context.filepath.setValue(filename);
 						context.contenttype.setValue('text/html');
 					  ]]></script>
-					<log>Request Login</log>
+					<log level="20">Request Login</log>
 					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
 					<set name="httpparam" paramname="Connection" value="'Close'"/>
 					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
 					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
 						<html file="context.filepath"/>
+						<log level="20"><![CDATA[343= '<%=context.filepath.toString()%>']]></log>
 					</restful>
 					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 				</function>
@@ -391,6 +392,7 @@
 				</function>
 			</elseif>
 			<elseif cond="context.requestpath.toString() == '/onos/ui/index.html'">
+				<log level="20"> 394 index.html</log>
 				<function>
 					<script><![CDATA[
 						var x = context.requestpath.toString();
@@ -414,7 +416,7 @@
 						</parameters>
 					</function>
 					
-					<log><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
+					<log level="418"><![CDATA[ send filepath= <%=context.filepath.toString()%>]]></log>
 					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
 					<set name="httpparam" paramname="Connection" value="'Close'"/>
 					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>

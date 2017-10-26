@@ -68,7 +68,7 @@
 	<long name="deviceCounts"/>
 	<function name="GetDeviceCounts" class="DeviceManager">
 		<parameters>
-			<long name="deviceCounts" out="context.deviceCounts.toLong()"/>/>	
+			<long name="deviceCounts" out="context.deviceCounts.toLong()"/>
 		</parameters>
 	</function>
 	

@@ -22,17 +22,7 @@
 					<string name="path"/>
 				</parameters>
 				<log>CtopoManager Addtopo</log>
-				<string name="topokey"/>
-				
-				<log level="10"><![CDATA[27行 path.size = <%=context.path.size().toString()%>]]></log>
-				
-				<if cond="context.path.size()==0">
-					<then>
-						<log level="10"><![CDATA[ path.size = <%=context.path.size().toString()%>]]></log>
-						<assert/>
-					</then>
-				</if>
-				
+				<string name="topokey"/>			
 										
 				<list name="pathlist" valuetype="string"/>
 				<script>
@@ -48,17 +38,14 @@
 					<then>
 						<lookup name="topoContainer" key="context.topokey.toString()" out="context.pathlist"/>
 						<insert name="pathlist" value="context.path.toString()"/>
+						<remove name="thisclass.topoContainer" key="context.topokey.toString()"/>
+						<insert name="thisclass.topoContainer" key="context.topokey.toString()" value="context.pathlist"/>
 					</then>
 					<else>
-						<insert name="pathlist" value="context.path.toString()"/>
-						<log level="100"><![CDATA[topokey = <%=context.topokey.toString()%>]]></log>
-						<for var="i" in="context.pathlist">
-							<log level="100"><![CDATA[context.patlist = <%=context.i.toString()%>]]></log>
-						</for>
-						<insert name="topoContainer" key="context.topokey.toString()" value="context.pathlist"/>
+						<insert name="pathlist" value="context.path.toString()"/>						
+						<insert name="topoContainer" key="context.topokey.toString()" value="context.pathlist"/>		
 					</else>
 				</if>
-
 			</function>
 			<!-- get all topoContainer size -->
 			<function name="GettopoSize">
@@ -144,12 +131,17 @@
 						<for var="onepath" in="context.pathlist">
 							<if cond="context.path.toString()==context.onepath.toString()">
 								<then>
-									<set name="toremovepath1" value="context.onepath.toString()"/>
-									<exit/>
+									<set name="toremovepath1" value="context.onepath.toString()"/>							
 								</then>
 							</if>
 						</for>
-						<remove name="pathlist" value="context.toremovepath1.toString()"/>
+						<if cond="context.toremovepath1.toString()!=''">
+							<then>
+								<remove name="context.pathlist" value="context.toremovepath1.toString()"/>
+								<remove name="thisclass.topoContainer" key="context.topokey.toString()"/>
+								<insert name="thisclass.topoContainer" key="context.topokey.toString()" value="context.pathlist"/>
+							</then>
+						</if>
 					</then>
 				</if>
 			</function>
