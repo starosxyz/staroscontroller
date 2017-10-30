@@ -1,0 +1,27 @@
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!-- wangkang 2017/10/28 -->
+	<class name="CTunnelIdManager">
+		<private>
+			<long name="m_tunnelid"/>
+		</private>
+		<public>
+			<function name="CTunnelIdManager">
+				<set name="thisclass.m_tunnelid" value="100" />
+				<log>CTunnelIdManager is create</log>
+			</function>
+			<function name="AllocTunnelId">
+				<parameters>
+					<long name="vxlantunnelid"/>
+				</parameters>
+				<log>Alloc TunnelId</log>
+				<long name="onetunnelid"/>
+				<set name="context.onetunnelid" value="thisclass.m_tunnelid.toLong()+1"/>
+				<set name="context.vxlantunnelid" value="context.onetunnelid.toLong()"/>
+				<set name="thisclass.m_tunnelid" value="context.onetunnelid.toLong()"/>
+			</function>
+			<function name="ReleseTunnelId">
+				<log>Relese TunnelId</log>
+			</function>
+		</public>
+	</class>
+</starlang>	

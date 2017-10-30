@@ -10,6 +10,7 @@
 			<jsonbody><![CDATA[ 
 					{
 						"xid":"<%=context.xid.toLong()%>",
+						"flags":"0",
 						"meterid":"0xffffffff"
 					}
 			]]></jsonbody>

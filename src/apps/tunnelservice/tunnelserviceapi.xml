@@ -234,6 +234,12 @@
 		<string name="username"/>
 		<string name="inputPort"/>
 		<string name="outputPort"/>
+		
+		<!-- wangkang 2017/10/27 -->	
+		<string name="inputtunnelport"/>
+		<string name="outputtunnelport"/>
+		<long name="vxlantunnelid"/>
+			
 		<string name="type"/>
 		<string name="state"/>
 		<long name="inputvlanid"/>
@@ -272,6 +278,9 @@
 			var local_state = "active";
 			var local_inputvlanid = json.inputvlanid;
 			var local_outputvlanid = json.outputvlanid;
+			var local_inputtunnelport = json.inputtunnelport;
+			var local_outputtunnelport = json.outputtunnelport;
+			var local_vxlantunnelid = json.vxlantunnelid;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -280,36 +289,75 @@
 			context.state.setValue(local_state);
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
+			context.inputtunnelport.setValue(local_inputtunnelport);
+			context.outputtunnelport.setValue(local_outputtunnelport);
+			context.vxlantunnelid.setValue(local_vxlantunnelid);
 			context.bandwidth.setValue(local_bandwidth);
-			if (local_inputport == local_outputPort)
+			if(local_type == 'vlan')
 			{
-				context.IsAlikePort.setValue(true);
-			}
-			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
-			{
-				context.putindexof.setValue(1);
-				if (local_inputport.split(":")[1] != '')
+				if (local_inputport == local_outputPort)
 				{
-					if (local_inputport.split(":")[1].split("/")[0] != '')
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputport.split(":")[1] != '')
 					{
-						if (local_inputport.split("/")[1] != '')
+						if (local_inputport.split(":")[1].split("/")[0] != '')
 						{
-							context.innum.setValue(local_inputport.split("/")[1]);
-							context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+							if (local_inputport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputport.split("/")[1]);
+								context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+							}
 						}
 					}
-				}
-				if (local_outputPort.split(":")[1] != '')
-				{
-					if (local_outputPort.split(":")[1].split("/")[0] != '')
+					if (local_outputPort.split(":")[1] != '')
 					{
-						if (local_outputPort.split("/")[1] != '')
+						if (local_outputPort.split(":")[1].split("/")[0] != '')
 						{
-							context.outnum.setValue(local_outputPort.split("/")[1]);
-							context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
-						}						
+							if (local_outputPort.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputPort.split("/")[1]);
+								context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+							}						
+						}
+					}				
+				}
+			}
+			if(local_type == 'vxlan')
+			{
+				if (local_inputtunnelport == local_outputtunnelport)
+				{
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputtunnelport.indexOf("of:") != -1) && (local_outputtunnelport.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputtunnelport.split(":")[1] != '')
+					{
+						if (local_inputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_inputtunnelport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputtunnelport.split("/")[1]);
+								context.inputdevice.setValue(local_inputtunnelport.split(":")[1].split("/")[0]);
+							}
+						}
 					}
-				}				
+					if (local_outputtunnelport.split(":")[1] != '')
+					{
+						if (local_outputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_outputtunnelport.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputtunnelport.split("/")[1]);
+								context.outputdevice.setValue(local_outputtunnelport.split(":")[1].split("/")[0]);
+							}						
+						}
+					}	
+				}								
 			}
 		]]></script>
 		<if cond="context.IsAlikePort.toBoolean() == true">
@@ -425,7 +473,11 @@
 				<string name="type" in="context.type.toString()"/>
 				<string name="state" in="context.state.toString()"/>
 				<long name="inputvlanid" in="context.inputvlanid.toLong()"/>
-				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>	
+				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
+				<!-- wangkang 2017/10/27 -->	
+				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+				<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>	
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>			
@@ -454,6 +506,12 @@
 		<string name="state"/>
 		<long name="inputvlanid"/>
 		<long name="outputvlanid"/>
+		
+		<!-- wangkang 2017/10/27 -->	
+		<string name="inputtunnelport"/>
+		<string name="outputtunnelport"/>
+		<long name="vxlantunnelid"/>
+			
 		<long name="bandwidth"/>
 		<long name="resourceid"/>
 		<string name="outjson"/>
@@ -480,6 +538,9 @@
 			var local_state = "active";
 			var local_inputvlanid = json.inputvlanid;
 			var local_outputvlanid = json.outputvlanid;
+			var local_inputtunnelport = json.inputtunnelport;
+			var local_outputtunnelport = json.outputtunnelport;
+			var local_vxlantunnelid = json.vxlantunnelid;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -488,37 +549,77 @@
 			context.state.setValue(local_state);
 			context.inputvlanid.setValue(local_inputvlanid);
 			context.outputvlanid.setValue(local_outputvlanid);
+			context.inputtunnelport.setValue(local_inputtunnelport);
+			context.outputtunnelport.setValue(local_outputtunnelport);
+			context.vxlantunnelid.setValue(local_vxlantunnelid);
 			context.bandwidth.setValue(local_bandwidth);
-			if (local_inputport == local_outputPort)
+			if(local_type == 'vlan')
 			{
-				context.IsAlikePort.setValue(true);
-			}
-			if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
-			{
-				context.putindexof.setValue(1);
-				if (local_inputport.split(":")[1] != '')
+				if (local_inputport == local_outputPort)
 				{
-					if (local_inputport.split(":")[1].split("/")[0] != '')
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputport.split(":")[1] != '')
 					{
-						if (local_inputport.split("/")[1] != '')
+						if (local_inputport.split(":")[1].split("/")[0] != '')
 						{
-							context.innum.setValue(local_inputport.split("/")[1]);
-							context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+							if (local_inputport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputport.split("/")[1]);
+								context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+							}
 						}
 					}
-				}
-				if (local_outputPort.split(":")[1] != '')
-				{
-					if (local_outputPort.split(":")[1].split("/")[0] != '')
+					if (local_outputPort.split(":")[1] != '')
 					{
-						if (local_outputPort.split("/")[1] != '')
+						if (local_outputPort.split(":")[1].split("/")[0] != '')
 						{
-							context.outnum.setValue(local_outputPort.split("/")[1]);
-							context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
-						}						
+							if (local_outputPort.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputPort.split("/")[1]);
+								context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+							}						
+						}
+					}	
+				}
+			}
+			if(local_type == 'vxlan')
+			{
+				if (local_inputtunnelport == local_outputtunnelport)
+				{
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputtunnelport.indexOf("of:") != -1) && (local_outputtunnelport.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputtunnelport.split(":")[1] != '')
+					{
+						if (local_inputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_inputtunnelport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputtunnelport.split("/")[1]);
+								context.inputdevice.setValue(local_inputtunnelport.split(":")[1].split("/")[0]);
+							}
+						}
 					}
-				}				
-			}			
+					if (local_outputtunnelport.split(":")[1] != '')
+					{
+						if (local_outputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_outputtunnelport.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputtunnelport.split("/")[1]);
+								context.outputdevice.setValue(local_outputtunnelport.split(":")[1].split("/")[0]);
+							}						
+						}
+					}	
+				}								
+			}	
+					
 		]]></script>
 		<if cond="context.IsAlikePort.toBoolean() == true">
 			<then>
@@ -682,6 +783,10 @@
 				<string name="state" in="context.state.toString()"/>
 				<long name="inputvlanid" in="context.inputvlanid.toLong()"/>
 				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
+				<!-- wangkang 2017/10/27 -->	
+				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+				<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>

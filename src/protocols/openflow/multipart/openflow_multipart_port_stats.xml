@@ -12,6 +12,7 @@
 			<jsonbody><![CDATA[ 
 					{
 						"xid":"<%=context.xid.toString()%>",
+						"flags":"0",
 						"portno":"<%=context.portno.toString()%>"
 					}
 			]]></jsonbody>

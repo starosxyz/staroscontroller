@@ -214,6 +214,8 @@
 						"type",
 						"inputPort",
 						"outputPort",
+						"inputtunnelport",
+						"outputtunnelport",
 						"inputvlanid",
 						"outputvlanid",
 						"bandwidth"
@@ -232,6 +234,14 @@
 							"example": "sdfsdf/33"
 						},
 						"outputPort": {
+							"type": "string",
+							"example": "sdfsdf/33"
+						},
+						"inputtunnelport": {
+							"type": "string",
+							"example": "sdfsdf/33"
+						},
+						"outputtunnelport": {
 							"type": "string",
 							"example": "sdfsdf/33"
 						},

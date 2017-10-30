@@ -11,6 +11,7 @@
 			<jsonbody><![CDATA[ 
 					{
 						"xid":"<%=context.xid.toString()%>",
+						"flags":"0",
 						"tableid":"0xff",
 						"outport":"0xffffffff",
 						"outgroup":"0xffffffff",

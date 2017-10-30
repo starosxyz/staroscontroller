@@ -14,6 +14,7 @@
 			<long name="id"/>			
 			<long name="invlan"/>
 			<long name="outvlan"/>
+			<object name="m_tunnelidmgr"/>
 		</private>
 		
 		<public>
@@ -22,6 +23,7 @@
 				<set name="thisclass.invlan" value="0" />
 				<set name="thisclass.outvlan" value="2000" />
 				<log>CTunnelManager is create</log>
+				<new name="m_tunnelidmgr" class="CTunnelIdManager"/>
 			</function>
 			
 			<!--qiulei 20170913-->
@@ -35,6 +37,9 @@
 					<string name="state"/>
 					<long name="inputvlanid"/>
 					<long name="outputvlanid"/>
+					<string name="inputtunnelport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
 					<long name="bandwidth"/>				
 				</parameters>
 				
@@ -59,6 +64,11 @@
 
 				<set name="thisclass.id" value="thisclass.id.toLong()+1" />
 				<set name="context.id" value="thisclass.id.toLong()"/>
+				<function name="AllocTunnelId" class="thisclass.m_tunnelidmgr">
+					<parameters>
+						<long name="vxlantunnelid" out="context.vxlantunnelid"/>
+					</parameters>
+				</function>
 				
 				<object name="tunnelObject"/>
 				<new name="tunnelObject" class="CTunnel">
@@ -73,6 +83,9 @@
 						<string name="state" in="context.state.toString()"/>
 						<long name="inputvlanid" in="context.inputvlanid.toLong()"/>
 						<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
 						<long name="bandwidth" in="context.bandwidth.toLong()"/>
 					</parameters>
 				</new>

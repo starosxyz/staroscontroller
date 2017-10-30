@@ -11,6 +11,7 @@
 			<jsonbody><![CDATA[ 
 					{
 						"xid":"<%=context.xid.toString()%>",
+						"flags":"0",
 						"groupid":"0xfffffffc"
 					}
 			]]></jsonbody>

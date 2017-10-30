@@ -114,10 +114,6 @@
 				</for>
 				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size().toString()%>]]></log>
 			</function>
-		
-			
-			
-			
 					
 			<function name="Clearup">
 				<script><![CDATA[				

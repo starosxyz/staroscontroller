@@ -10,6 +10,7 @@
 	<!-- wangkang 2017/09/20 -->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelDevice.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelDeviceManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/tunnelservice/CTunnelIDManager.xml"/>
 	
 <!--
 	Author:

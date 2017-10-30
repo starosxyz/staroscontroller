@@ -15,6 +15,11 @@
 			<long name="m_inputvlanid"/>
 			<long name="m_outputvlanid"/>
 			
+			<!-- wangkang 2017/10/27 -->	
+			<string name="m_inputtunnelport"/>
+			<string name="m_outputtunnelport"/>
+			<long name="m_vxlantunnelid"/>
+			
 			<long name="m_bandwidth"/>
 			<object name="m_tunneldevicemgr"/>
 			<boolean name="m_bisActive" value="false"/>
@@ -39,6 +44,11 @@
 					<long name="inputvlanid"/>
 					<long name="outputvlanid"/>
 					
+					<!-- wangkang 2017/10/27 -->
+					<string name="inputtunnelport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+						
 					<long name="bandwidth"/>
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toLong()"/>
@@ -51,6 +61,9 @@
 				<set name="thisclass.m_state" value="context.state.toString()"/>
 				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
 				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
+				<set name="thisclass.m_inputtunnelport" value="context.inputtunnelport.toString()"/>
+				<set name="thisclass.m_outputtunnelport" value="context.outputtunnelport.toString()"/>
+				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>					
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
 				<script><![CDATA[
@@ -94,6 +107,28 @@
 					<string name="t_outputPort"/>
 				</parameters>
 				<set name="t_outputPort" value="thisclass.m_outputPort.toString()"/>
+			</function>
+			
+			<!-- wangkang 2017/10/27 -->
+			<function name="GetTunnel_inputtunnelPort">
+				<parameters>
+					<string name="t_inputtunnelPort"/>
+				</parameters>
+				<set name="t_inputtunnelPort" value="thisclass.m_inputtunnelPort.toString()"/>
+			</function>
+					
+			<function name="GetTunne_outputtunnelPort">
+				<parameters>
+					<string name="t_outputtunnelPort"/>
+				</parameters>
+				<set name="t_outputtunnelPort" value="thisclass.m_outputtunnelPort.toString()"/>
+			</function>
+			
+			<function name="GetVxlanTunnelId">
+				<parameters>
+					<long name="vxlantunnelid"/>
+				</parameters>
+				<set name="vxlantunnelid" value="thisclass.m_vxlantunnelid.toLong()"/>
 			</function>
 			
 			<function name="GetTunne_invlan">
@@ -168,6 +203,9 @@
 							"inputvlanid":"<%=thisclass.m_inputvlanid.toString()%>",
 							"outputvlanid":"<%=thisclass.m_outputvlanid.toString()%>",
 							
+							"inputtunnelPort":"<%=thisclass.m_inputtunnelPort.toString()%>",
+							"outputtunnelPort":"<%=thisclass.m_outputtunnelPort.toString()%>",
+							"vxlantunnelid":"<%=thisclass.m_vxlantunnelid.toString()%>",
 							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>"
 						}
 					]]></jsonbody>
@@ -189,6 +227,11 @@
 					<string name="state"/>
 					<long name="inputvlanid"/>
 					<long name="outputvlanid"/>
+					
+					<!-- wangkang 2017/10/27 -->
+					<string name="inputtunnelport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>	
 					<long name="bandwidth"/>
 				</parameters>
 				
@@ -201,19 +244,12 @@
 				<set name="thisclass.m_state" value="context.state.toString()"/>
 				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
 				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
+				<set name="thisclass.m_inputtunnelport" value="context.inputtunnelport.toString()"/>
+				<set name="thisclass.m_outputtunnelport" value="context.outputtunnelport.toString()"/>
+				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 			</function>
-			
-			<!-- wangkang 2017/09/15 -->
 			<function name="ActiveTunnel">
-				<object name="firstdevice"/>
-				<object name="lastdevice"/>
-				<object name="onedevice"/>
-				<list name="middevice" valuetype="class"/>
-				<list-iterator name="middeviceiterator" valuetype="class"/>
-				<list-iterator name="middevicefirst" valuetype="class"/>
-				<list-iterator name="middeviceend" valuetype="class"/>
-				<boolean name="getpathresult"/>
 				<log>==============================</log>
 				<log>##### Active Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==true">
@@ -224,6 +260,28 @@
 						</function>
 					</then>
 				</if>
+				<if cond="thisclass.m_type == 'vxlan'">
+					<then>
+						<function name="VxlanActiveTunnel"/>
+					</then>
+					<elseif cond="thisclass.m_type == 'vlan'">
+						<then>
+							<function name="VlanActiveTunnel"/>
+						</then>
+					</elseif>
+				</if>
+			</function>
+
+			<!-- wangkang 2017/09/15 -->
+			<function name="VlanActiveTunnel">
+				<object name="firstdevice"/>
+				<object name="lastdevice"/>
+				<object name="onedevice"/>
+				<list name="middevice" valuetype="class"/>
+				<list-iterator name="middeviceiterator" valuetype="class"/>
+				<list-iterator name="middevicefirst" valuetype="class"/>
+				<list-iterator name="middeviceend" valuetype="class"/>
+				<boolean name="getpathresult"/>
 				<!--
 				<function name="InstallMeter"/>
 				<function name="InstallFlow"/>
@@ -328,6 +386,64 @@
 					</then>
 				</if>
 				<set name="m_bisActive" value="false"/>
+			</function>
+			
+			<!--wangkang 2017/10/27 -->
+			<function name="VxlanActiveTunnel">
+				<object name="firstdevice"/>
+				<object name="lastdevice"/>
+				<log>### Vxlan Active Tunnel ###</log>
+				<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
+					<parameters>
+						<string name="deviceid" in="thisclass.m_fromdevice.toString()"/>
+					</parameters>
+				</function>
+				<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
+					<parameters>
+						<string name="deviceid" in="thisclass.m_todevice.toString()"/>
+					</parameters>
+				</function>
+				<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
+					<then>
+						<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
+						<log>##### m_tunneldevicemgr is not null #####</log>
+						<function name="GetFirstDevice" class="m_tunneldevicemgr">
+							<parameters>
+								<object name="firstdevice" out="context.firstdevice"/>
+							</parameters>
+						</function>
+						
+						<function name="GetLastDevice" class="m_tunneldevicemgr">
+							<parameters>
+								<object name="lastdevice" out="context.lastdevice"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+				<function name="InstallVxlanTunnelStart" class="firstdevice">
+					<parameters>
+						<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+						<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<string name="inputtunnelport" in="thisclass.m_inputtunnelport.toString()"/>
+						<string name="outputtunnelport" in="thisclass.m_outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelEnd" class="lastdevice">
+					<parameters>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+						<string name="inputtunnelport" in="thisclass.m_inputtunnelport.toString()"/>
+						<string name="outputtunnelport" in="thisclass.m_outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+					</parameters>
+				</function>
 			</function>
 			
 			<function name="GetShortPath">
