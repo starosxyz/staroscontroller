@@ -633,10 +633,7 @@
 				<parameters>
 					<string name="inport"/>
 					<string name="invlan"/>
-					<string name="serviceinvlan"/>
-					<string name="serviceoutvlan"/>
 					<string name="inputtunnelport"/>
-					<string name="outputtunnelport"/>
 					<long name="vxlantunnelid"/>
 					<long name="bandwith"/>
 				</parameters>
@@ -644,7 +641,12 @@
 				<string name="jsonout2in"/>
 				
 				<log>### CTunnelDevice InstallVxlanTunnelStart###</log>
-				
+				<log><![CDATA[TunnelStart_inport= <%=context.inport.toString()%>]]></log>
+				<log><![CDATA[TunnelStart_invlan= <%=context.invlan.toString()%>]]></log>
+				<log><![CDATA[TunnelStart_inputtunnelport= <%=context.inputtunnelport.toString()%>]]></log>
+				<log><![CDATA[TunnelStart_vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></log>
+				<log><![CDATA[TunnelStart_bandwith= <%=context.bandwith.toString()%>]]></log>
+				<log>#############################################</log>
 				<function name="InstallMeter">	
 					<parameters>
 						<string name="bandwith" in="context.bandwith.toString()"/>
@@ -688,26 +690,14 @@
 										"type":"4",
 										"actionlist":[
 											{
-												"type":"17",
-												"ethertype":"0x8100",
-												"maxlen":"0xffff"
-											},
-											{
-												"type":"25",
-												"oxmclass":"0x8000",
-												"oxmfield":"6",
-												"hasmask":"false",
-												"vlanid":"<%=context.serviceinvlan.toString()%>"
-											},
-											{
-												"type":"0",
-												"outport":"<%=context.outputtunnelport.toString()%>",
-												"maxlen":"0xffff"
-											},
-											{
 												"type":"25",
 												"oxmfield":"38",
 												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.inputtunnelport.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -740,15 +730,15 @@
 										"matchfieldlist":[
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"38",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=thisclass.m_outputPort.toString()%>"
+												"inport":"<%=thisclass.inputtunnelport.toString()%>"
 											}
 										]
 									},
@@ -757,18 +747,8 @@
 										"type":"4",
 										"actionlist":[
 											{
-												"type":"18",
-												"maxlen":"0xffff"
-											},
-											{
 												"type":"0",
-												"outport":"<%=context.inputtunnelport.toString()%>",
-												"maxlen":"0xffff"
-											},
-											{
-												"type":"25",
-												"oxmfield":"38",
-												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+												"outport":"<%=context.inport.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -813,12 +793,9 @@
 			
 			<function name="InstallVxlanTunnelEnd">
 				<parameters>
-					<string name="serviceinvlan"/>
-					<string name="serviceoutvlan"/>
 					<string name="outport"/>
 					<string name="outvlan"/>
 					<string name="outputtunnelport"/>
-					<string name="inputtunnelport"/>
 					<long name="vxlantunnelid"/>
 					<long name="bandwith"/>
 				</parameters>
@@ -826,6 +803,12 @@
 				<string name="jsonout2in"/>
 				
 				<log>### CTunnelDevice InstallVxlanTunnelEnd###</log>
+				<log><![CDATA[TunnelEnd_outport= <%=context.outport.toString()%>]]></log>
+				<log><![CDATA[TunnelEnd_outvlan= <%=context.outvlan.toString()%>]]></log>
+				<log><![CDATA[TunnelEnd_outputtunnelport= <%=context.outputtunnelport.toString()%>]]></log>
+				<log><![CDATA[TunnelEnd_vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></log>
+				<log><![CDATA[TunnelEnd_bandwith= <%=context.bandwith.toString()%>]]></log>
+				<log>#############################################</log>
 				
 				<function name="InstallMeter">	
 					<parameters>
@@ -855,13 +838,13 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"6",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceinvlan.toString()%>"
+												"vlanid":"<%=context.outvlan.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=thisclass.m_inputPort.toString()%>"
+												"inport":"<%=thisclass.outport.toString()%>"
 											}
 										]
 									},
@@ -870,18 +853,14 @@
 										"type":"4",
 										"actionlist":[
 											{
-												"type":"18",
+												"type":"25",
+												"oxmfield":"38",
+												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
 												"maxlen":"0xffff"
 											},
 											{
 												"type":"0",
 												"outport":"<%=context.outputtunnelport.toString()%>",
-												"maxlen":"0xffff"
-											},
-											{
-												"type":"25",
-												"oxmfield":"38",
-												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
 												"maxlen":"0xffff"
 											}
 										]
@@ -916,13 +895,13 @@
 												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
-												"inport":"<%=context.outport.toString()%>"
+												"inport":"<%=context.outputtunnelport.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"38",
 												"hasmask":"false",
-												"vlanid":"<%=context.outvlan.toString()%>"
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
 											}
 										]
 									},
@@ -931,26 +910,8 @@
 										"type":"4",
 										"actionlist":[
 											{
-												"type":"17",
-												"ethertype":"0x8100",
-												"maxlen":"0xffff"
-											},
-											{
-												"type":"25",
-												"oxmclass":"0x8000",
-												"oxmfield":"6",
-												"hasmask":"false",
-												"vlanid":"<%=context.serviceoutvlan.toString()%>"
-											},
-											{
 												"type":"0",
-												"outport":"<%=context.inputtunnelport.toString()%>",
-												"maxlen":"0xffff"
-											},
-											{
-												"type":"25",
-												"oxmfield":"38",
-												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+												"outport":"<%=context.outport.toString()%>",
 												"maxlen":"0xffff"
 											}
 										]

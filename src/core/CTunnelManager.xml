@@ -102,7 +102,7 @@
 						<string name="groupid" in="context.groupid.toString()"/>
 						<string name="bandwidth" in="context.bandwidth.toString()"/>
 						<string name="path" in="context.path.toString()"/>			
-				</parameters>
+					</parameters>
 				</new>
 				<insert name="tunnelContainer" key="context.id.toString()" value="context.tunnelobj"/>
 			</function>

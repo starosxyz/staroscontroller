@@ -2,7 +2,7 @@
 	<!-- wangkang 2017/09/22 -->
 	<class name="CTunnelDeviceManager">
 		<private>
-			<list name="tunneldeviceContainer" valuetype="class"/>
+			<list name="tunneldeviceContainer" valuetype="object"/>
 			<long name="id"/>
 			
 			<!--qiulei 20170927 pm-->
@@ -189,9 +189,9 @@
 			</function>
 			<function name="DeactiveTunnel">
 				<log>##### CTunnelDeviceManager function DeactiveTunnel #####</log>
-				<list-iterator name="tunnelContaineriterator" valuetype="class"/>
-				<list-iterator name="tunnelContainerfirst" valuetype="class"/>
-				<list-iterator name="tunnelContainerend" valuetype="class"/>				
+				<list-iterator name="tunnelContaineriterator" valuetype="object"/>
+				<list-iterator name="tunnelContainerfirst" valuetype="object"/>
+				<list-iterator name="tunnelContainerend" valuetype="object"/>				
 				<object name="ontunneldevice"/>
 				<set name="tunnelContainerfirst" value="context.tunneldeviceContainer.begin()"/>
 				<set name="tunnelContainerend" value="context.tunneldeviceContainer.end()"/>
@@ -227,9 +227,9 @@
 					<list name="devicelist"/>
 				</parameters>
 				<log> ##### Get Middle Device List #####</log>
-				<list-iterator name="beginit" valuetype="class"/>
-				<list-iterator name="endit" valuetype="class"/>
-				<list-iterator name="middevice" valuetype="class"/>
+				<list-iterator name="beginit" valuetype="object"/>
+				<list-iterator name="endit" valuetype="object"/>
+				<list-iterator name="middevice" valuetype="object"/>
 				<set name="beginit" value="context.tunneldeviceContainer.beginNext()"/>
 				<set name="endit" value="context.tunneldeviceContainer.endBefore()"/>
 				

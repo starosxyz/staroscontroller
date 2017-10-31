@@ -237,8 +237,7 @@
 		
 		<!-- wangkang 2017/10/27 -->	
 		<string name="inputtunnelport"/>
-		<string name="outputtunnelport"/>
-		<long name="vxlantunnelid"/>
+		<string name="outputtunnelport"/>		
 			
 		<string name="type"/>
 		<string name="state"/>
@@ -280,7 +279,7 @@
 			var local_outputvlanid = json.outputvlanid;
 			var local_inputtunnelport = json.inputtunnelport;
 			var local_outputtunnelport = json.outputtunnelport;
-			var local_vxlantunnelid = json.vxlantunnelid;
+			//var local_vxlantunnelid = json.vxlantunnelid;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -291,7 +290,7 @@
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.inputtunnelport.setValue(local_inputtunnelport);
 			context.outputtunnelport.setValue(local_outputtunnelport);
-			context.vxlantunnelid.setValue(local_vxlantunnelid);
+			//context.vxlantunnelid.setValue(local_vxlantunnelid);
 			context.bandwidth.setValue(local_bandwidth);
 			if(local_type == 'vlan')
 			{
@@ -476,8 +475,7 @@
 				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
 				<!-- wangkang 2017/10/27 -->	
 				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
-				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
-				<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>	
+				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>				
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>			
@@ -540,7 +538,7 @@
 			var local_outputvlanid = json.outputvlanid;
 			var local_inputtunnelport = json.inputtunnelport;
 			var local_outputtunnelport = json.outputtunnelport;
-			var local_vxlantunnelid = json.vxlantunnelid;
+			//var local_vxlantunnelid = json.vxlantunnelid;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -551,7 +549,7 @@
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.inputtunnelport.setValue(local_inputtunnelport);
 			context.outputtunnelport.setValue(local_outputtunnelport);
-			context.vxlantunnelid.setValue(local_vxlantunnelid);
+			//context.vxlantunnelid.setValue(local_vxlantunnelid);
 			context.bandwidth.setValue(local_bandwidth);
 			if(local_type == 'vlan')
 			{
@@ -716,9 +714,11 @@
 				<string name="datapathid" in="context.outputdevice.toString()"/>
 			</parameters>
 		</function>		
-		<if cond="context.indevice==null || context.outdevice==null">
+		<if cond="context.indevice.ptr==null || context.outdevice.ptr==null">
 			<then>
-				<log>indevicde is null or outdevice is null</log>
+				<log level="100">indevice is null or outdevice is null</log>
+				<log level="100"><![CDATA[indevice = <%=context.inputdevice.toString()%>]]></log>
+				<log level="100"><![CDATA[outdevice = <%=context.outputdevice.toString()%>]]></log>
 				<function name="ErrorDataResponse">
 					<parameters>
 						<long name="resourceid" in="-1"/>
@@ -786,7 +786,6 @@
 				<!-- wangkang 2017/10/27 -->	
 				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
 				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
-				<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>

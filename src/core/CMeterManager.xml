@@ -321,7 +321,7 @@
 				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
 				<remove name="merterContainer" key="context.meterid.toLong()"/>
 				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
-				<pair name="i"  keytype="long" valuetype="class"/>
+				<pair name="i"  keytype="long" valuetype="object"/>
 				<long name="id" />
 				<for var="context.i" in="thisclass.merterContainer">
 					<set name="context.id" value="context.i.first()"/>
@@ -412,7 +412,7 @@
 				<list name="meterjsonlist"  valuetype="string"/>
 				<object name="meterobj" />
 				<string name="meterInfoJson" />
-				<pair name="onemerterpair"  keytype="long" valuetype="class"/>
+				<pair name="onemerterpair"  keytype="long" valuetype="object"/>
 				<for var="onemerterpair" in="context.merterContainer">
 					<function>
 						<set name="meterobj" value="context.onemerterpair.second()"/>
@@ -477,7 +477,7 @@
 			</function>
 			<function name="DumpMeter">
 				<long name="meterkey" />
-				<pair name="onemeterpair"  keytype="long" valuetype="class"/>
+				<pair name="onemeterpair"  keytype="long" valuetype="object"/>
 				<for var="onemeterpair" in="context.merterContainer">
 					<set name="meterkey" value="context.onemeterpair.first()"/>
 					<log><![CDATA[meterkey=<%=context.meterkey.toString()%>]]></log>

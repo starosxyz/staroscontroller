@@ -536,7 +536,8 @@
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
 								{
-									"xid":"<%=context.xid.toString()%>"
+									"xid":"<%=context.xid.toString()%>",
+									"flags":"0"
 								}
 						]]></jsonbody>
 					</reference>

@@ -10,7 +10,7 @@
 		-->	
 	<class name="CTunnelManager">
 		<private>
-			<hashmap name="tunnelContainer" keytype="long" valuetype="class"/>
+			<hashmap name="tunnelContainer" keytype="long" valuetype="object"/>
 			<long name="id"/>			
 			<long name="invlan"/>
 			<long name="outvlan"/>
@@ -38,11 +38,10 @@
 					<long name="inputvlanid"/>
 					<long name="outputvlanid"/>
 					<string name="inputtunnelport"/>
-					<string name="outputtunnelport"/>
-					<long name="vxlantunnelid"/>
+					<string name="outputtunnelport"/>				
 					<long name="bandwidth"/>				
 				</parameters>
-				
+				<long name="vxlantunnelid"/>
 				<!--qiulei 20170919 pm-->
 				<set name="thisclass.invlan" value="thisclass.invlan.toLong()+1" />
 				<set name="thisclass.outvlan" value="thisclass.outvlan.toLong()+1" />
@@ -115,7 +114,7 @@
 				<object name="tunnelObject"/>
 				<string name="OneTunnelJsonString"/>
 				<list name="tunnelJsonString_List" valuetype="string"/>
-				<pair name="i" keytype="long" valuetype="class"/>
+				<pair name="i" keytype="long" valuetype="object"/>
 				<for var="i" in="context.tunnelContainer">
 					<function>
 						<set name="context.tunnelObject" value="context.i.second()"/>
@@ -183,9 +182,9 @@
 					<string name="path"/>
 				</parameters>
 				<log>CTunnelManager mytopremove</log>
-				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="class"/>
-				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="class"/>
-				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="class"/>
+				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="object"/>
 				<object name="onetunnel"/>
 				<set name="tunnelContainerfirst" value="context.tunnelContainer.begin()"/>
 				<set name="tunnelContainerend" value="context.tunnelContainer.end()"/>
@@ -255,9 +254,10 @@
 					<boolean name="result"/>
 				</parameters>
 				<boolean name="final_result" value="false"/>
-				<pair name="tunnelpair" keytype="long" valuetype="class"/>
+				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<string name="port"/>
+				<log level="200"><![CDATA[IsHasInPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -284,9 +284,10 @@
 					<boolean name="result"/>
 				</parameters>
 				<boolean name="final_result" value="false"/>
-				<pair name="tunnelpair" keytype="long" valuetype="class"/>
+				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<string name="port"/>
+				<log level="200"><![CDATA[IsHasOutPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -313,9 +314,10 @@
 					<boolean name="result"/>
 				</parameters>
 				<boolean name="final_result" value="false"/>
-				<pair name="tunnelpair" keytype="long" valuetype="class"/>
+				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<long name="vlan"/>
+				<log level="200"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -342,9 +344,10 @@
 					<boolean name="result"/>
 				</parameters>
 				<boolean name="final_result" value="false"/>
-				<pair name="tunnelpair" keytype="long" valuetype="class"/>
+				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<long name="vlan"/>
+				<log level="200"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">

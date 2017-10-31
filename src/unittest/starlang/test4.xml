@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<function name="testfun">
+		
+		<pair name="onePair" keytype="string" valuetype="string"/>
+	
+		<hashmap name="oneHashmap" keytype="string" valuetype="string"/>
+		
+		<insert name="oneHashmap" key="'1'" value="'1'"/>
+		<insert name="oneHashmap" key="'2'" value="'2'"/>
+		<insert name="oneHashmap" key="'3'" value="'3'"/>
+		<insert name="oneHashmap" key="'4'" value="'4'"/>
+		<insert name="oneHashmap" key="'5'" value="'5'"/>
+		
+		
+		<for var="onePair" in="context.oneHashmap">
+			<log><![CDATA[first= '<%=context.onePair.first().toString()%>']]></log>
+			<log><![CDATA[second= '<%=context.onePair.second().toString()%>']]></log>
+		</for>
+	</function>
+	<events>
+		<onevent name="bundleapp.startup">
+			<function name="testfun"/>
+		</onevent>
+	</events>
+</starlang>
