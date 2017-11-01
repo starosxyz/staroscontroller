@@ -165,13 +165,6 @@
 				<string name="onlinejson"  value="'test'"/>
 				<set name="outtransport" value="thisclass.m_transportid.toString()"/>
 			</function>
-			
-			<function name="SetFlowManager">
-				<parameters>
-					<object name="inflowmgr"/>
-				</parameters>
-				<set name="inflowmgr" value="thisclass.m_flowmgr"/>
-			</function>
 
 			<function name="GetDeviceInfoJson">
 				<parameters>

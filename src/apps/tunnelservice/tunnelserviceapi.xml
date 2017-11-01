@@ -202,7 +202,7 @@
 				<object name="TunnelObject" out="context.tunnel"/>
 			</parameters>
 		</function>
-		<if cond="context.tunnel==null">
+		<if cond="context.tunnel.ptr==null">
 			<then>
 				<function name="ErrorDataResponse">
 					<parameters>

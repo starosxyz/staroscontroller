@@ -203,8 +203,8 @@
 							"inputvlanid":"<%=thisclass.m_inputvlanid.toString()%>",
 							"outputvlanid":"<%=thisclass.m_outputvlanid.toString()%>",
 							
-							"inputtunnelPort":"<%=thisclass.m_inputtunnelPort.toString()%>",
-							"outputtunnelPort":"<%=thisclass.m_outputtunnelPort.toString()%>",
+							"inputtunnelPort":"<%=thisclass.m_inputtunnelport.toString()%>",
+							"outputtunnelPort":"<%=thisclass.m_outputtunnelport.toString()%>",
 							"vxlantunnelid":"<%=thisclass.m_vxlantunnelid.toLong().toString()%>",
 							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>"
 						}

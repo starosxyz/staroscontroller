@@ -134,7 +134,6 @@ function get_rpm() {
 function uninstall_rpm() {
 	echo uninstall platform will cause application not avaliable, are you sure want uninstall platform?
 	read -s -n1 -p "Press any key to continue ..."
-	echo "\n"
 	rpm -e staros --nodeps
 	rpm -e starcore --nodeps
 	rpm -e dipc --nodeps
