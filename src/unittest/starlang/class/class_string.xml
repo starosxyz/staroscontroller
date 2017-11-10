@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<class name="CTestClassBase">
+		<private>
+			<hashmap name="merterContainer" keytype="string" valuetype="string"/>
+			<uint32 name="testint32" value="132"/>
+		</private>
+		<public>
+			<function name="function1">
+				<log>function1</log>
+				<log><![CDATA[testint32 <%=thisclass.testint32.toString()%>]]> </log>
+			</function>
+			<function name="test2">
+				<parameters>
+					<uint32 name="testint"/>
+				</parameters>
+				<set name="testint32" value="context.testint"/>
+				<log><![CDATA[testint32 <%=context.testint32.toString()%>]]> </log>
+			</function>
+		</public>
+	</class>
+	<class name="CTestClass">
+		<private>
+			<hashmap name="merterContainer" keytype="string" valuetype="string"/>
+			<uint32 name="testint32" value="123"/>
+		</private>
+		<public>
+			<function name="function2">
+				<log>function2</log>
+				<log><![CDATA[testint32 <%=thisclass.testint32.toString()%>]]> </log>
+			</function>
+		</public>
+	</class>
+	<function name="test">
+		<parameters>
+			<boolean name="testboolean"/>
+			<double name="testdouble"/>
+			<hashmap name="testhashmap" keytype="long" valuetype="long"/>
+			<hashmap-iterator name="testhashmapiterator"  keytype="long" valuetype="long"/>
+			<int8 name="testint8"/>
+			<int16 name="testint16"/>
+			<int32 name="testint32"/>
+			<int64 name="testint64"/>
+			<list name="testlist"/>
+			<list-iterator name="testlistiterator"/>
+			<long name="testlong"/>
+			<messageblock name="testmessageblock"/>
+			<object name="testobject"/>
+			<pair name="testpair"/>
+			<params name="testparams"/>
+			<string name="teststring"/>
+			<uint8 name="testuint8"/>
+			<uint16 name="testuint16"/>
+			<uint32 name="testuint32"/>
+			<uint64 name="testuint64"/>
+			<vector name="testvector"/>
+			<vector-iterator name="testvectoriterator"/>
+		</parameters>
+		<string name="hashvalue"/>
+		<hashmap-iterator name="mapit"/>
+		<hashmap-iterator name="mapitstart"/>
+		<hashmap-iterator name="enditstart"/>
+		<log><![CDATA[testboolean <%=context.testboolean.toString()%>]]> </log>
+		<log><![CDATA[testdouble <%=context.testdouble.toString()%>]]> </log>
+		<log><![CDATA[testhashmap <%=context.testhashmap.size().toString()%>]]> </log>
+		<log><![CDATA[testint8 <%=context.testint8.toString()%>]]> </log>
+		<log><![CDATA[testint16 <%=context.testint16.toString()%>]]> </log>
+		<log><![CDATA[testint32 <%=context.testint32.toString()%>]]> </log>
+		<log><![CDATA[testint64 <%=context.testint64.toString()%>]]> </log>
+		<log><![CDATA[testlong <%=context.testlong.toString()%>]]> </log>
+		<log><![CDATA[teststring <%=context.teststring.toString()%>]]> </log>
+		<log><![CDATA[testuint8 <%=context.testuint8.toString()%>]]> </log>
+		<log><![CDATA[testuint16 <%=context.testuint16.toString()%>]]> </log>
+		<log><![CDATA[testuint32 <%=context.testuint32.toString()%>]]> </log>
+		<log><![CDATA[testuint64 <%=context.testuint64.toString()%>]]> </log>
+		<!--lookup name="testhashmap" key="'1111'" output="context.hashvalue"/-->
+		<log><![CDATA[hashvalue <%=context.hashvalue.toString()%>]]> </log>
+		<for var="mapit" from="context.testhashmap.begin()" to="context.testhashmap.end()">
+			<log><![CDATA[mapit first <%=context.mapit.first().toString()%>]]> </log>
+			<log><![CDATA[mapit second <%=context.mapit.second().toString()%>]]> </log>
+		</for>
+	</function>
+	<function name="testclasssss">
+		<log>testclasssss new object</log>
+		<object name="testclass"/>
+		<object name="testclass2"/>
+		<new name="testclass" class="CTestClassBase"/>
+		<new name="testclass2" class="CTestClass"/>
+		<function name="test2" class="testclass">
+			<parameters>
+				<uint32 name="testint" in="456"/>
+			</parameters>
+		</function>
+		<function name="function1" class="testclass"/>
+		<function name="function2" class="testclass2"/>
+		<function name="functions_1"/>
+		<delete name="testclass"/>
+		<delete name="testclass2"/>
+	</function>
+	<function name="functions_1">
+		<object name="testcontainer"/>
+		<string name="strname" value="'11111'"/>
+		<uint32 name="i"/>
+		<uint32 name="end" value="12"/>
+		<uint32 name="start" value="1"/>
+		<boolean name="boolean" value="false"/>
+		<long name="long" value="1234567"/>
+		<boolean name="testboolean" value="true"/>
+		<double name="testdouble" value="1.2"/>
+		<hashmap name="testhashmap" keytype="long" valuetype="long"/>
+		<hashmap-iterator name="testhashmapiterator" keytype="long" valuetype="long"/>
+		<int8 name="testint8" value="8"/>
+		<int16 name="testint16" value="16"/>
+		<int32 name="testint32" value="32"/>
+		<int64 name="testint64" value="64"/>
+		<list name="testlist"/>
+		<list-iterator name="testlistiterator"/>
+		<long name="testlong" value="64"/>
+		<messageblock name="testmessageblock"/>
+		<object name="testobject"/>
+		<pair name="testpair"/>
+		<params name="testparams"/>
+		<string name="teststring" value="'string'"/>
+		<uint8 name="testuint8" value="18"/>
+		<uint16 name="testuint16" value="116"/>
+		<uint32 name="testuint32" value="132"/>
+		<uint64 name="testuint64" value="164"/>
+		<vector name="testvector"/>
+		<vector-iterator name="testvectoriterator"/>
+		<function>
+			<log>session.startup</log>
+			<script><![CDATA[
+				context.print('ss print');
+			  ]]></script>
+		</function>
+		<set name="testuint64" value="111111"/>
+		<set name="testuint32" value="111111"/>
+		<set name="testuint16" value="1111"/>
+		<set name="testuint8" value="1111"/>
+		<set name="teststring" value="'111111111111'"/>
+		<!--for var="i" from="1" to="10">
+			<insert name="testhashmap" key="context.i" value="1"/>
+		</for-->
+		<!--for var="testhashmapiterator" from="context.testhashmap.begin()" to="context.testhashmap.end()">
+			<log><![CDATA[testhashmapiterator first <%=context.testhashmapiterator.first().toString()%>]]> </log>
+			<log><![CDATA[testhashmapiterator second <%=context.testhashmapiterator.second().toString()%>]]> </log>
+		</for-->
+		<log><![CDATA[strname size <%=context.strname.toString()%>]]> </log>
+		<log><![CDATA[strname size <%=context.end.toString()%>]]> </log>
+		<log><![CDATA[strname size <%=context.start.toString()%>]]> </log>
+		<log><![CDATA[boolean <%=context.boolean.toString()%>]]> </log>
+		<log><![CDATA[boolean <%=context.long.toString()%>]]> </log>
+		<log><![CDATA[i <%=context.i.toString()%>]]> </log>
+		<for var="i" from="context.start" to="context.end">
+			<log>ssss</log>
+		</for>
+		<function name="test">
+			<parameters>
+				<boolean name="testboolean" in="context.testboolean"/>
+				<double name="testdouble" in="context.testdouble"/>
+				<hashmap name="testhashmap" in="context.testhashmap"/>
+				<hashmap-iterator name="testhashmapiterator" in="context.testhashmapiterator"/>
+				<int8 name="testint8" in="context.testint8"/>
+				<int16 name="testint16" in="context.testint16"/>
+				<int32 name="testint32" in="context.testint32"/>
+				<int64 name="testint64" in="context.testint64"/>
+				<list name="testlist" in="context.testlist"/>
+				<list-iterator name="testlistiterator" in="context.testlistiterator"/>
+				<long name="testlong" in="context.testlong"/>
+				<messageblock name="testmessageblock" in="context.testmessageblock"/>
+				<object name="testobject" in="context.testobject"/>
+				<pair name="testpair" in="context.testpair"/>
+				<params name="testparams" in="context.testparams"/>
+				<string name="teststring" in="context.teststring"/>
+				<uint8 name="testuint8" in="context.testuint8"/>
+				<uint16 name="testuint16" in="context.testuint16"/>
+				<uint32 name="testuint32" in="context.testuint32"/>
+				<uint64 name="testuint64" in="context.testuint64"/>
+				<vector name="testvector" in="context.testvector"/>
+				<vector-iterator name="testvectoriterator" in="context.testvectoriterator"/>
+			</parameters>
+		</function>
+		<if cond="context.testcontainer.ptr==null">
+			<then>
+				<function>
+					<log>context.testcontainer.ptr==null</log>
+				</function>
+			</then>
+			<else>
+				<function>
+					<log>context.testcontainer.ptr!=null</log>
+				</function>
+			</else>
+		</if>
+		<if cond="context.testcontainer.getValue()==null">
+			<then>
+				<function>
+					<log>context.testcontainer.getValue==null</log>
+				</function>
+			</then>
+			<else>
+				<function>
+					<log>context.testcontainer.getValue!=null</log>
+				</function>
+			</else>
+		</if>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<log>session.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+				  ]]></script>
+			</function>
+			<while cond="true">
+				<function name="testclasssss"/>
+			</while>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

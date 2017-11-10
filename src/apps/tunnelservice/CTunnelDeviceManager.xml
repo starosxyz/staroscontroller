@@ -30,6 +30,8 @@
 					</parameters>
 				</new>
 				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
+				<log><![CDATA[CTunnelDeviceManager tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
+
 			</function>
 			
 			<function name="removeTunnelDevice">
@@ -92,6 +94,7 @@
 							hashcontainer.addValue('inport', info.paths[i].inport);
 							hashcontainer.addValue('outport', info.paths[i].outport);
 							context.tempContainer.addValue(hashcontainer);
+							context.destroyHashMap(hashcontainer);
 						}
 					}
 				]]></script>
@@ -116,6 +119,7 @@
 			</function>
 					
 			<function name="Clearup">
+				<log>##### CTunnelDeviceManager function Clearup #####</log>
 				<script><![CDATA[				
 					context.tunneldeviceContainer.clear();
 				]]></script>
@@ -128,8 +132,10 @@
 					<string name="path"/>
 					<boolean name="ischanage"/>
 				</parameters>
-				
-				<if cond="context.path.toString()==thisclass.tunnelPath.toString()">
+				<log>###### CTunnelDeviceManager mytopremove ######</log>
+				<log><![CDATA[CTunnelDeviceManager tunnelPath = <%=thisclass.tunnelPath.toString()%>]]></log>
+				<log><![CDATA[tunnelservice Path = <%=context.path.toString()%>]]></log>
+				<if cond="topology.convertToPath(context.path.toString())==thisclass.tunnelPath.toString()">
 					<then>
 						<set name="context.ischanage" value="true"/>
 					</then>
@@ -204,6 +210,7 @@
 						</then>
 					</if>
 				</for>
+				<function name="Clearup"/>
 			</function>
 			
 			<function name="GetFirstDevice">
@@ -236,7 +243,8 @@
 				<if cond="context.tunneldeviceContainer.size() > 2">
 					<then>
 						<for var="context.middevice" from="context.beginit" to="context.endit">
-							<insert name="devicelist" value="context.middevice.value()"/>	
+							<insert name="devicelist" value="context.middevice.value()"/>
+							<log><![CDATA[devicelist size=<%=context.devicelist.size().toString()%>]]></log>			
 						</for>
 					</then>
 					<else>

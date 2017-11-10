@@ -289,6 +289,7 @@
 						<boolean name="result" out="context.getpathresult"/>
 					</parameters>
 				</function>
+		
 				<if cond="context.getpathresult.toBoolean()==false">
 					<then>
 						<log>getpathresult is false</log>
@@ -319,9 +320,16 @@
 						</function>
 					</then>
 				</if>
-				<if cond="context.firstdevice.ptr==null || context.lastdevice.ptr==null || context.middevice.ptr==null">
+	
+				<if cond="context.firstdevice.ptr==null">
 					<then>
-						<log>firstdevice is null or lastdevice is null or middevice is null</log>
+						<log>firstdevice is null</log>
+						<exit/>
+					</then>
+				</if>
+				<if cond="context.lastdevice.ptr==null">
+					<then>
+						<log>lastdevice is null</log>
 						<exit/>
 					</then>
 				</if>
@@ -365,6 +373,12 @@
 				<log><![CDATA[middevice size=<%=context.middevice.size().toString()%>]]></log>			
 				<for var="context.middeviceiterator" from="context.middevicefirst" to="context.middeviceend">
 					<set name="onedevice" value="context.middeviceiterator.value()"/>
+					<if cond="context.onedevice.ptr == null">
+						<then>
+							<log>middevicelist onedevice is null</log>
+							<exit/>
+						</then>
+					</if>
 					<function name="installRuleMid" class="onedevice">
 						<parameters>
 							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
@@ -570,6 +584,7 @@
 					<string name="path"/>
 				</parameters>
 				<boolean name="isChange" value="false"/>
+				<log>###### CTunnel mytopremove ######</log>
 				<log>Tunnel Top channge</log>
 				<log><![CDATA[CTunnel mytopremove fromdevice = <%=context.fromdevice.toString()%>]]></log>
 				<function name="IsMyTopChange" class="m_tunneldevicemgr">

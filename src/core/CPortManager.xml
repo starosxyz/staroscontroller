@@ -575,6 +575,7 @@
 											ofport.addValue('state', info.portlist[i].state);
 											ofport.addValue('supported', info.portlist[i].supported);
 											context.deviceportinfo.addValue(info.portlist[i].portno, ofport);
+											context.destroyHashMap(ofport);
 										}
 									}
 								}

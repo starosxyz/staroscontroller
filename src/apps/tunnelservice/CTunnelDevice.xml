@@ -23,6 +23,7 @@
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
 			</function>
 			<function name="Printtunnel">
+				<log><![CDATA[Ctunnel m_deviceid=<%=context.m_deviceid.toString()%>]]></log>
 				<log><![CDATA[Ctunnel m_inputPort=<%=context.m_inputPort.toString()%>]]></log>
 				<log><![CDATA[Ctunnel m_outputPort=<%=context.m_outputPort.toString()%>]]></log>
 			</function>
@@ -333,7 +334,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-						
+
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
 						<string name="outflowid" out="thisclass.m_flowid"/>
@@ -610,7 +611,7 @@
 							}
 					]]></jsonbody>
 				</reference>
-				
+
 				<function name="InstallFlow" class="FlowService">
 					<parameters>
 						<string name="outflowid" out="thisclass.m_flowid"/>

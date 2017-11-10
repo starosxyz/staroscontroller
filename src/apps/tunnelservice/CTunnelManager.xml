@@ -90,7 +90,7 @@
 				</new>
 				
 				<insert name="tunnelContainer" key="thisclass.id.toLong()" value="context.tunnelObject"/>
-				
+				<log><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
 			</function>
 			<!--qiulei 20170913-->
 			<function name="removeTunnel">
@@ -181,26 +181,30 @@
 					<string name="todevice"/>
 					<string name="path"/>
 				</parameters>
-				<log>CTunnelManager mytopremove</log>
+				<log>###### CTunnelManager mytopremove ######</log>
+				<log><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
 				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="object"/>
 				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="object"/>
 				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="object"/>
 				<object name="onetunnel"/>
 				<set name="tunnelContainerfirst" value="context.tunnelContainer.begin()"/>
 				<set name="tunnelContainerend" value="context.tunnelContainer.end()"/>
+
 				<for var="context.tunnelContaineriterator" from="context.tunnelContainerfirst" to="context.tunnelContainerend">
 					<set name="onetunnel" value="context.tunnelContaineriterator.second()"/>
-					<if cond="context.onetunnel != null">
+					<if cond="context.onetunnel.ptr == null">
 						<then>
-							<function name="mytopremove" class="onetunnel">
-								<parameters>
-									<string name="fromdevice" in="context.fromdevice.toString()"/>
-									<string name="todevice" in="context.todevice.toString()"/>
-									<string name="path" in="context.path.toString()"/>
-								</parameters>
-							</function>
+							<log>CTunnelManager onetunnel is null</log>
+							<exit/>
 						</then>
 					</if>
+					<function name="mytopremove" class="onetunnel">
+						<parameters>
+							<string name="fromdevice" in="context.fromdevice.toString()"/>
+							<string name="todevice" in="context.todevice.toString()"/>
+							<string name="path" in="context.path.toString()"/>
+						</parameters>
+					</function>
 				</for>
 			</function>
 
@@ -257,7 +261,7 @@
 				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<string name="port"/>
-				<log level="200"><![CDATA[IsHasInPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<log><![CDATA[IsHasInPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -287,7 +291,7 @@
 				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<string name="port"/>
-				<log level="200"><![CDATA[IsHasOutPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<log><![CDATA[IsHasOutPort tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -317,7 +321,7 @@
 				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<long name="vlan"/>
-				<log level="200"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<log><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
@@ -347,7 +351,7 @@
 				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
 				<long name="vlan"/>
-				<log level="200"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<log><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">

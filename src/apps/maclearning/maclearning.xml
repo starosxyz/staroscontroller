@@ -8,9 +8,12 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<object name="applicationmgr" reference="global.ApplicationManager"/>
-	<object name="devicemgr" reference="global.DeviceManager"/>
-	<object name="flowservice" reference="global.FlowService"/>
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
 	<list name="resourceid_list" valuetype="string"/>
 	<hashmap name="machashmap" keytype="string" valuetype="string"/>
 	<function name="installflow">

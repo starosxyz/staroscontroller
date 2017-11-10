@@ -20,12 +20,12 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<object name="applicationmgr" reference="global.ApplicationManager"/>
-	<object name="devicemgr" reference="global.DeviceManager"/>
-	<object name="flowservice" reference="global.FlowService"/>
-	<object name="meterservice" reference="global.MeterService"/>
-	<object name="restfulservice" reference="global.RestfulService"/>
-	<object name="toposervice" reference="global.TopoService"/>
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
 	<!--qiulei 20170913-->
 	<object name="tunnelManagerObject"/>
 	<object name="tunnelDeviceManagerObject"/>
@@ -92,7 +92,7 @@
 		</onevent>
 		<onevent event="mytopremove">
 			<function>
-				<log>tunnelservice mytopremove</log>
+				<log>###### tunnelservice mytopremove ######</log>
 				<log><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
 				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
 				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>

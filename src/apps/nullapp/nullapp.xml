@@ -8,7 +8,7 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<object name="applicationmgr" reference="global.ApplicationManager"/>
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
