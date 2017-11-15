@@ -29,6 +29,8 @@
 			<string name="m_group_capabilities" />
 			<string name="m_group_max_groups" />
 			<string name="m_group_actions" />
+
+			<object name="sshdevice"/>
 		</private>
 		<public>
 			<function name="CDevice">
@@ -86,6 +88,7 @@
 						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
+				<new name="sshdevice" class="CSSHDevice"/>
 				<!--function name="MultiPartPortDescRequest"/-->
 			</function>
 			<function name="SendDefaultFlow">
@@ -595,7 +598,7 @@
 				</function>
 			</function>
 			
-<function name="SetTableJson">
+			<function name="SetTableJson">
 				<parameters>
 					<string name="tablejson" />
 				</parameters>
@@ -636,7 +639,14 @@
 				</function>
 				<set name="json" value="context.jsondata.toString()"/>
 			</function>			
-			
+			<function name="ClearFlow">		
+				<log level="10">CDevice ClearFlow</log>				
+				<function name="ClearFlow" class="thisclass.sshdevice">
+					<parameters>
+						<string name="ip" in="thisclass.m_peeripaddr.toString()"/>
+					</parameters>
+				</function>
+			</function>
 		</public>
 	</class>
 </starlang>

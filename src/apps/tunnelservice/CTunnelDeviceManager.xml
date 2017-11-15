@@ -20,7 +20,7 @@
 					<string name="inputPort"/>
 					<string name="outputPort"/>
 				</parameters>
-				<log><![CDATA[CTunnelDeviceManager addTunnelDevice deviceid = <%=context.deviceid.toString()%>]]></log>
+				<log level="100"><![CDATA[CTunnelDeviceManager addTunnelDevice deviceid = <%=context.deviceid.toString()%>]]></log>
 				<object name="tunneldeviceObject"/>
 				<new name="tunneldeviceObject" class="CTunnelDevice">
 					<parameters>
@@ -30,7 +30,7 @@
 					</parameters>
 				</new>
 				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
-				<log><![CDATA[CTunnelDeviceManager tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
+				<log level="100"><![CDATA[CTunnelDeviceManager tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
 
 			</function>
 			
@@ -73,6 +73,7 @@
 				<parameters>
 					<string name="json"/>
 				</parameters>
+				<log level="100">####### CTunnelDeviceManager GetTunnelDeviceFromJson ######</log>
 				<string name="dstport"/>
 				<string name="srcport"/>
 				<list name="tempContainer" valuetype="hashmap"/>
@@ -104,9 +105,9 @@
 				
 				<for var="context.mapContaineriterator" from="context.tempContainerfirst" to="context.tempContainerend">
 					<set name="mapContainer" value="context.mapContaineriterator.value()"/>
-					<log><![CDATA[GetTunnelDeviceFromJson container device huhu=<%=context.mapContainer.getValue('device').toString()%>]]></log>
-					<log><![CDATA[GetTunnelDeviceFromJson container inport huhu=<%=context.mapContainer.getValue('inport').toString()%>]]></log>
-					<log><![CDATA[GetTunnelDeviceFromJson container outport huhu=<%=context.mapContainer.getValue('outport').toString()%>]]></log>
+					<log level="100"><![CDATA[GetTunnelDeviceFromJson container device huhu=<%=context.mapContainer.getValue('device').toString()%>]]></log>
+					<log level="100"><![CDATA[GetTunnelDeviceFromJson container inport huhu=<%=context.mapContainer.getValue('inport').toString()%>]]></log>
+					<log level="100"><![CDATA[GetTunnelDeviceFromJson container outport huhu=<%=context.mapContainer.getValue('outport').toString()%>]]></log>
 					<function name="addTunnelDevice">
 						<parameters>
 							<string name="deviceid" in="context.mapContainer.getValue('device').toString()"/>

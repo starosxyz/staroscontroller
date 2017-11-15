@@ -163,6 +163,7 @@
 					<string name="todevice"/>
 					<string name="outjson"/>
 				</parameters>
+				<log level="100">Ctopyserver getShortestPath</log>
 				<string name="shortestlink"/>
 				<function name="getShortestLink">
 					<parameters>
@@ -209,6 +210,9 @@
 						firstr=context.toplist.getNext();
 					}
 				]]></script>
+				<log level="100"><![CDATA[CTopoService toplist.size = <%=context.toplist.size().toString()%>]]></log>
+				<log level="100"><![CDATA[CTopoService toplist first = <%=context.toplist.front().toString()%>]]></log>
+				<log level="100"><![CDATA[CTopoService toplist end = <%=context.toplist.back().toString()%>]]></log>
 				<set name="outjson" value="context.json.toString()"/>
 			</function>
 		</public>

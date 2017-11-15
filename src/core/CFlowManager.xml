@@ -497,12 +497,15 @@
 				<string name="flowpartstring" />											
 																<script><![CDATA[
 					var info = JSON.parse(context.flowjson.toString());
+					if (info.statslist != null)
+					{
 									for (var i = 0; i < info.statslist.length; i++)
 									{
 										var flowstats = info.statslist[i];
 										var flowstrjson=JSON.stringify(flowstats);
 										context.flowpartlist.addValue(flowstrjson);
 									}
+						}
 								]]></script>
 							<!--
 					YY
@@ -686,9 +689,9 @@
 			</function>
 			
 			<function name="InstallDefaultFlow">
-				<function name="InstallARPFlow"/>
+				<!--function name="InstallARPFlow"/-->
 				<function name="InstallDiscoveryFlow"/>
-				<function name="InstallErrorFlow"/>
+				<!--function name="InstallErrorFlow"/-->
 			</function>
 			
 			<!-- wangkang 2017/09/01 -->

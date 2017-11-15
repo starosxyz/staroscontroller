@@ -238,7 +238,10 @@
 		<!-- wangkang 2017/10/27 -->	
 		<string name="inputtunnelport"/>
 		<string name="outputtunnelport"/>		
-			
+		<!-- wangkang 2017/11/13 -->
+		<string name="inputvxlanport"/>
+		<string name="outputvxlanport"/>
+
 		<string name="type"/>
 		<string name="state"/>
 		<long name="inputvlanid"/>
@@ -279,7 +282,8 @@
 			var local_outputvlanid = json.outputvlanid;
 			var local_inputtunnelport = json.inputtunnelport;
 			var local_outputtunnelport = json.outputtunnelport;
-			//var local_vxlantunnelid = json.vxlantunnelid;
+			var local_inputvxlanport= json.inputvxlanport;
+			var local_outputvxlanport = json.outputvxlanport;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -290,7 +294,8 @@
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.inputtunnelport.setValue(local_inputtunnelport);
 			context.outputtunnelport.setValue(local_outputtunnelport);
-			//context.vxlantunnelid.setValue(local_vxlantunnelid);
+			context.inputvxlanport.setValue(local_inputvxlanport);
+			context.outputvxlanport.setValue(local_outputvxlanport);
 			context.bandwidth.setValue(local_bandwidth);
 			if(local_type == 'vlan')
 			{
@@ -430,7 +435,7 @@
 				<long name="portnumber" out="context.indeivceportnum"/>
 			</parameters>
 		</function>
-		<if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
+		<!--if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
 			<then>
 				<function name="ErrorDataResponse">
 					<parameters>
@@ -441,7 +446,7 @@
 				</function>
 				<exit/>
 			</then>
-		</if>
+		</if-->
 		<function name="GetPortManager" class="context.outdevice">
 			<parameters>
 				<object name="outportmgr" out="context.outdeviceportobj"/>
@@ -452,7 +457,7 @@
 				<long name="portnumber" out="context.outdeivceportnum"/>
 			</parameters>
 		</function>
-		<if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
+		<!--if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
 			<then>
 				<function name="ErrorDataResponse">
 					<parameters>
@@ -463,7 +468,7 @@
 				</function>
 				<exit/>
 			</then>
-		</if>
+		</if-->
 		<function name="UpdateTunnel" class="context.tunnel">
 			<parameters>											
 				<string name="username" in="context.username.toString()"/>
@@ -475,7 +480,10 @@
 				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
 				<!-- wangkang 2017/10/27 -->	
 				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
-				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>				
+				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+				<!-- wangkang 2017/11/13 -->	
+				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
+				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>			
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>			
@@ -509,7 +517,10 @@
 		<string name="inputtunnelport"/>
 		<string name="outputtunnelport"/>
 		<long name="vxlantunnelid"/>
-			
+		<!-- wangkang 2017/11/13 -->	
+		<string name="inputvxlanport"/>
+		<string name="outputvxlanport"/>
+
 		<long name="bandwidth"/>
 		<long name="resourceid"/>
 		<string name="outjson"/>
@@ -538,7 +549,8 @@
 			var local_outputvlanid = json.outputvlanid;
 			var local_inputtunnelport = json.inputtunnelport;
 			var local_outputtunnelport = json.outputtunnelport;
-			//var local_vxlantunnelid = json.vxlantunnelid;
+			var local_inputvxlanport= json.inputvxlanport;
+			var local_outputvxlanport = json.outputvxlanport;
 			var local_bandwidth = json.bandwidth;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
@@ -549,7 +561,8 @@
 			context.outputvlanid.setValue(local_outputvlanid);
 			context.inputtunnelport.setValue(local_inputtunnelport);
 			context.outputtunnelport.setValue(local_outputtunnelport);
-			//context.vxlantunnelid.setValue(local_vxlantunnelid);
+			context.inputvxlanport.setValue(local_inputvxlanport);
+			context.outputvxlanport.setValue(local_outputvxlanport);
 			context.bandwidth.setValue(local_bandwidth);
 			if(local_type == 'vlan')
 			{
@@ -739,7 +752,7 @@
 				<long name="portnumber" out="context.indeivceportnum"/>
 			</parameters>
 		</function>
-		<if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
+		<!--if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
 			<then>
 				<function name="ErrorDataResponse">
 					<parameters>
@@ -750,7 +763,7 @@
 				</function>
 				<exit/>
 			</then>
-		</if>
+		</if-->
 		<function name="GetPortManager" class="context.outdevice">
 			<parameters>
 				<object name="outportmgr" out="context.outdeviceportobj"/>
@@ -761,7 +774,7 @@
 				<long name="portnumber" out="context.outdeivceportnum"/>
 			</parameters>
 		</function>
-		<if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
+		<!--if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
 			<then>
 				<function name="ErrorDataResponse">
 					<parameters>
@@ -772,7 +785,7 @@
 				</function>
 				<exit/>
 			</then>
-		</if>		
+		</if-->		
 		<function name="addTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="id" out="context.resourceid"/>
@@ -786,6 +799,9 @@
 				<!-- wangkang 2017/10/27 -->	
 				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
 				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+				<!-- wangkang 2017/11/13 -->	
+				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
+				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
 			</parameters>
 		</function>

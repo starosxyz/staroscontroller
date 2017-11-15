@@ -3,6 +3,7 @@
 	<include src="CSSHClient.xml"/>
 	<logconfig dest="stdout"/>
 	<object name="sshclient"/>
+	<object name="sshclient_v150"/>
 	<function name="StartSSHClient">
 		<new name="sshclient" class="CSSHClient"/>
 	</function>

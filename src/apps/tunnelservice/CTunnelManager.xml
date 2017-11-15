@@ -38,7 +38,10 @@
 					<long name="inputvlanid"/>
 					<long name="outputvlanid"/>
 					<string name="inputtunnelport"/>
-					<string name="outputtunnelport"/>				
+					<string name="outputtunnelport"/>
+					<!-- wangkang 2017/11/13 -->	
+					<string name="inputvxlanport"/>
+					<string name="outputvxlanport"/>			
 					<long name="bandwidth"/>				
 				</parameters>
 				<long name="vxlantunnelid"/>
@@ -84,6 +87,8 @@
 						<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
 						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
 						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
+						<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
 						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
 						<long name="bandwidth" in="context.bandwidth.toLong()"/>
 					</parameters>

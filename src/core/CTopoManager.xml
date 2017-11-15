@@ -112,6 +112,10 @@
 					<string name="todevice"/>
 					<string name="path"/>
 				</parameters>
+				<log level="100">CtopoManager Removetopo</log>
+				<log level="100"><![CDATA[RemovePath fromdevice = <%=context.fromdevice.toString()%>]]></log>
+				<log level="100"><![CDATA[RemovePath todevice = <%=context.todevice.toString()%>]]></log>
+				<log level="100"><![CDATA[RemovePath path = <%=context.path.toString()%>]]></log>
 				<log>CtopoManager Removetopo</log>
 				<string name="topokey"/>
 				<list name="pathlist" valuetype="string"/>
@@ -160,6 +164,7 @@
 				<string name="topokey"/>
 				<string name="binvalidlink" value="'false'"/>
 				<pair name="onetopoPair" keytype="string" valuetype="list"/>
+				<log level="100"><![CDATA[thisclass.topoContainer.size = <%=thisclass.topoContainer.size().toString()%>]]></log>
 				<for var="onetopoPair" in="context.topoContainer">
 					<set name="pathslist" value="context.onetopoPair.second()"/>
 					<set name="topokey" value="context.onetopoPair.first()"/>
@@ -174,8 +179,9 @@
 					</script>
 					<set name="binvalidlink" value="'false'"/>
 					<set name="pathhop1" value="''"/>
+					<log level="100"><![CDATA[context.pathslist.size = <%=context.pathslist.size().toString()%>]]></log>
 					<for var="onepath" in="context.pathslist">
-						<log leve="1"><![CDATA[onepath= '<%=context.onepath.toString()%>']]></log>
+						<log level="100"><![CDATA[onepath= '<%=context.onepath.toString()%>']]></log>
 						<script>
 							<![CDATA[
 							var info = JSON.parse(context.onepath.toString());

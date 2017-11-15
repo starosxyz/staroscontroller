@@ -22,6 +22,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSSHDevice.xml"/>
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>

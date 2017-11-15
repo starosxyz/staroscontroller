@@ -62,6 +62,7 @@
 				<log>addDevice start</log>	
 				<object name="deviceobject"/>
 				<string name="outtransid"/>
+				<log level="10"><![CDATA[CDevice addDevice datapathid = <%=context.datapathid.toString()%>]]></log>
 				<new name="deviceobject" class="CDevice">
 					<parameters>
 						<string name="mfrdesc" in="context.mfrdesc.toString()"/>
@@ -79,9 +80,21 @@
 						<string name="protocol" in="context.protocol.toString()"/>	
 					</parameters>
 				</new>
+				<if cond="thisclass.deviceContainer.hasValue(context.deviceobject)">
+					<then>
+						<log level="10">this device already have</log>
+						<exit/>
+					</then>
+				</if>
 				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
 				<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
 				<string name="onlinejson"/>
+				<!-- clear flow start -->
+				<log level="100">ClearFlow start</log>
+				<function name="ClearFlow" class="deviceobject"/>				
+				<wait event="NorFoundEvent" timeout="3000"/>
+				<log level="100">ClearFlow end</log>
+				<!-- clear flow end -->
 				<function name="SendDefaultFlow" class="deviceobject"/>
 				<function name="ToOnlineJson" class="deviceobject">
 					<parameters>

@@ -42,6 +42,15 @@
 									"inputvlanid",
 									"outputPort",
 									"outputvlanid",
+									
+									
+									"inputtunnelport",
+									"outputtunnelport",
+									
+									"inputvxlanport",
+									"outputvxlanport",
+									
+									
 									"bandwidth",
 									"type",
 									"state"
@@ -71,6 +80,30 @@
 										"type": "string",
 										"example": "3"
 									},
+									
+									"inputtunnelport": {
+										"type": "string",
+										"example": "of:1234/33"
+									},
+									"outputtunnelport": {
+										"type": "string",
+										"example": "of:1234/33"
+									},
+									
+									
+									
+									
+									"inputvxlanport": {
+										"type": "string",
+										"example": "of:1234/33"
+									},
+									"outputvxlanport": {
+										"type": "string",
+										"example": "of:1234/33"
+									},
+									
+									
+									
 									"bandwidth": {
 										"type": "string",
 										"example": "222"
@@ -216,6 +249,12 @@
 						"outputPort",
 						"inputtunnelport",
 						"outputtunnelport",
+						
+						
+						"inputvxlanport",
+						"outputvxlanport",
+						
+						
 						"inputvlanid",
 						"outputvlanid",
 						"bandwidth"
@@ -231,20 +270,36 @@
 						},
 						"inputPort": {
 							"type": "string",
-							"example": "sdfsdf/33"
+							"example": "of:1234/33"
 						},
 						"outputPort": {
 							"type": "string",
-							"example": "sdfsdf/33"
+							"example": "of:1234/33"
 						},
 						"inputtunnelport": {
 							"type": "string",
-							"example": "sdfsdf/33"
+							"example": "of:1234/33"
 						},
 						"outputtunnelport": {
 							"type": "string",
-							"example": "sdfsdf/33"
+							"example": "of:1234/33"
 						},
+						
+						
+						
+						
+						"inputvxlanport": {
+							"type": "string",
+							"example": "of:1234/33"
+						},
+						"outputvxlanport": {
+							"type": "string",
+							"example": "of:1234/33"
+						},
+						
+						
+						
+						
 						"inputvlanid": {
 							"type": "string",
 							"example": "12"

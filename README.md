@@ -34,6 +34,7 @@ StarOS-Controller
 # make
 # mv staroscontroller /opt/staros.xyz/
 # dipc start
+# starosctl startapp /opt/staros.xyz/staroscontroller/starlang/main/staros.xml
 ```
 ### 运行应用程序
 ```

@@ -113,6 +113,7 @@
 					<string name="datapathid"/>
 					<messageblock name="msgblock"/>
 				</parameters>
+				<log level="100">###### CPackerserver ProcessPacket ######</log>
 				<string name="appname"/>		
 				<string name="eventname"/>		
 				<object name="packetobj"/>	
@@ -183,6 +184,7 @@
 					var js_ethtype = info.payload.ethtype;
 					context.local_ethtype.setValue(js_ethtype);
 				]]></script>
+				<log level="100">###### CPacketserver HOSTDATA #######</log>
 				<if cond="context.local_ethtype.toString()=='2054'">
 					<then>
 						<script><![CDATA[

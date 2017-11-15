@@ -110,6 +110,7 @@
 					<string name="deviceid" />	
 					<string name="port"/>				
 				</parameters>
+				<log level="100">###### CHostManager addHost #######</log>
 				<object name="hostobj"/>	
 				<new name="hostobj" class="CHost">
 					<parameters>
@@ -126,6 +127,7 @@
 					</then>
 				</if>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
+				<log level="100"><![CDATA[CHostManager hostContainer.size = <%=context.hostContainer.size().toString()%>]]></log>
 			</function>
 
 			<function name="printhostmanager">
