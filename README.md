@@ -1,4 +1,4 @@
-StarOS-Controller
+StarOS控制器
 ====================================
 
 ## StarOS开源控制器介绍
@@ -29,7 +29,7 @@ SDN编程语言是专门为软件定义网络开发的一种编程语言，具�
 * 支持container容器类型。 容器有list, hashmap, array等类型.
 
 ## 如何运行StarOS控制器
-### 安装StarOS网络操作系统
+### 一，安装StarOS网络操作系统
 ```
 # git clone https://github.com/starosxyz/staroscontroller
 # cd staroscontroller/tools/installstaros
@@ -40,7 +40,7 @@ SDN编程语言是专门为软件定义网络开发的一种编程语言，具�
 # make
 # mv staroscontroller /opt/staros.xyz/
 ```
-### 运行StarOS网络操作系统
+### 二，运行StarOS网络操作系统
 ```
 [root@localhost projects]# dipc start
 [11/24/2017 05:02:28.395]     
@@ -75,11 +75,11 @@ Start DIPCSERVICE success!, pid=16453
 
 DIPC release version 1.5.0 Build Nov 23 2017 21:13:58
 ```
-### 运行控制器应用程序
+### 三，运行控制器应用程序
 ```
 # starosctl startapp /opt/staros.xyz/staroscontroller/starlang/main/staros.xml
 ```
-### 停止控制器应用程序
+### 四，停止控制器应用程序
 ```
 [root@localhost projects]# starosctl listapp
 Total Size:1
@@ -89,12 +89,12 @@ appid:1000        apppath:/opt/staros.xyz/staroscontroller/starlang/main/staros.
 [root@localhost projects]#
 ```
 
-### 关闭StarOS网络操作系统
+### 五，关闭StarOS网络操作系统
 ```
 [root@localhost projects]# dipcctl stop
 ```
 
-## GUI,StarOS控制器目前采用ONOS的管理界面
+## StarOS控制器目前采用ONOS的管理界面
 
 * 控制器登UI地址:
 http://ip:9922/onos/ui/index.html
