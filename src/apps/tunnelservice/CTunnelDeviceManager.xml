@@ -1,3 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTunnelDeviceManager.xml
+	@brief 		Class of tunnel devices management
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/09/22
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!-- wangkang 2017/09/22 -->
 	<class name="CTunnelDeviceManager">
@@ -13,7 +24,15 @@
 				<set name="thisclass.id" value="0" />
 				<log>CTunnelDeviceManager is create</log>
 			</function>
-			
+			<!--
+				@brief		Add Tunnel Device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param deviceid 	Device id
+		   			@param inputPort 	Device inport
+		   			@param outputPort 	Device outport
+			-->
 			<function name="addTunnelDevice">
 				<parameters>
 					<string name="deviceid"/>
@@ -33,7 +52,13 @@
 				<log level="100"><![CDATA[CTunnelDeviceManager tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
 
 			</function>
-			
+			<!--
+				@brief		Remove Tunnel Device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param deviceid 	Device id
+			-->
 			<function name="removeTunnelDevice">
 				<parameters>
 					<string name="deviceid"/>
@@ -54,7 +79,13 @@
 				</for>
 				<remove name="tunneldeviceContainer" value="onetunneldevice"/>
 			</function>
-			
+			<!--
+				@brief		Create Tunnel Device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param deviceid 	Device id
+			-->
 			<function name="CreateTunnelDevice">
 				<parameters>
 					<string name="deviceid"/>
@@ -69,6 +100,13 @@
 				</new>
 				<insert name="tunneldeviceContainer" value="context.tunneldeviceObject"/>
 			</function>
+			<!--
+				@brief		Get Tunnel Device From Json
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param json 	JSON data of device attributes
+			-->
 			<function name="GetTunnelDeviceFromJson">
 				<parameters>
 					<string name="json"/>
@@ -118,14 +156,30 @@
 				</for>
 				<log><![CDATA[GetTunnelDeviceFromJson container size=<%=context.tunneldeviceContainer.size().toString()%>]]></log>
 			</function>
-					
+			<!--
+				@brief		Clear all tunnel device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+			-->		
 			<function name="Clearup">
 				<log>##### CTunnelDeviceManager function Clearup #####</log>
 				<script><![CDATA[				
 					context.tunneldeviceContainer.clear();
 				]]></script>
 			</function>
-			
+			<!--
+				@brief		Check that topology has changed to the path
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param fromdevice 	source device id
+		   			@param todevice 	destination device id
+		   			@param path 	JSON data of device attributes
+		   		Output:
+		   			@param ischanage Returns the state of Check that topology has changed
+									 ture: topology has changed
+									 false:topology is not changed
+			-->
 			<function name="IsMyTopChange">
 				<parameters>
 					<string name="fromdevice"/>
@@ -146,18 +200,30 @@
 					</else>			
 				</if>
 			</function>
-			
+			<!--
+				@brief		Check that topology has changed 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param fromdevice 	source device id
+		   			@param todevice 	destination device id
+		   		Output:
+		   			@param ischanage Returns the state of Check that topology has changed
+									 ture: topology has changed
+									 false:topology is not changed
+			-->
 			<function name="IsMyTopChange_old">
 				<parameters>
 					<string name="fromdevice"/>
 					<string name="todevice"/>
-					<string name="path"/>
 					<boolean name="ischanage"/>
 				</parameters>
+				<log level="100">###### CTunnelDeviceManager IsMyTopChange_old ######</log>
 				<object name="firstdevice"/>
 				<object name="lastdevice"/>
 				<string name="firstdeviceid"/>
 				<string name="lastdeviceid"/>
+				<log level="100"><![CDATA[context.tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
 				<set name="firstdevice" value="context.tunneldeviceContainer.front()"/>
 				<set name="lastdevice" value="context.tunneldeviceContainer.back()"/>
 				<if cond="context.firstdevice!=null">
@@ -194,6 +260,11 @@
 					</else>			
 				</if>
 			</function>
+			<!--
+				@brief		Close tunnel and clear tunnel device 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+			-->
 			<function name="DeactiveTunnel">
 				<log>##### CTunnelDeviceManager function DeactiveTunnel #####</log>
 				<list-iterator name="tunnelContaineriterator" valuetype="object"/>
@@ -213,7 +284,13 @@
 				</for>
 				<function name="Clearup"/>
 			</function>
-			
+			<!--
+				@brief		Get first device from tunnel device Container
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+		   		Output:
+		   			@param firstdevice   first device object
+			-->
 			<function name="GetFirstDevice">
 				<parameters>
 					<object name="firstdevice"/>
@@ -221,7 +298,13 @@
 				<log> ##### Get First Device #####</log>
 				<set name="firstdevice" value="context.tunneldeviceContainer.front()"/>				
 			</function>
-			
+			<!--
+				@brief		Get last device from tunnel device Container
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+		   		Output:
+		   			@param lastdevice   last device object
+			-->
 			<function name="GetLastDevice">
 				<parameters>
 					<object name="lastdevice"/>
@@ -229,7 +312,13 @@
 				<log> ##### Get Last Device #####</log>
 				<set name="lastdevice" value="context.tunneldeviceContainer.back()"/>
 			</function>
-			
+			<!--
+				@brief		Get middle device from tunnel device Container
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+		   		Output:
+		   			@param devicelist   middle device list
+			-->
 			<function name="GetMiddleDevice">
 				<parameters>
 					<list name="devicelist"/>
@@ -253,6 +342,11 @@
 					</else>
 				</if>
 			</function>
+			<!--
+				@brief		Print tunner device from tunnel device Container
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+			-->
 			<function name="PrintTunnerDevice">
 				<object name="onetunnel"/>
 				<object name="tunnel"/>
@@ -265,7 +359,42 @@
 					</if>
 				</for>
 			</function>
-			
+			<!--
+				@brief		Find device from tunnel device Container
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param deviceid 	device id
+		   		Output:
+		   			@param ischanage Returns the state of find device from tunnel device Container
+									 ture: find device
+									 false:can't find device
+			-->
+			<function name="FindDevice">
+				<parameters>
+					<string name="deviceid"/>
+					<boolean name="ischanage"/>
+				</parameters>
+				<log level="100">###### CTunnelDeviceManager FindDevice ######</log>
+				<object name="onetunneldevice"/>
+				<string name="onedeviceid"/>
+				<log level="100"><![CDATA[FindDevice tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
+				<for var="onetunneldevice" in="tunneldeviceContainer">
+					<log level="100">FindDevice for </log>
+					<function name="GetTunnelDeviceId" class="onetunneldevice">
+						<parameters>
+							<string name="outtunneldeviceid" out="context.onedeviceid"/>
+						</parameters>
+					</function>
+					<log level="100"><![CDATA[FindDevice onedeviceid= <%=context.onedeviceid.toString()%>]]></log>
+					<if cond="context.onedeviceid.toString() == context.deviceid.toString()">
+						<then>
+							<log level="100">The Device was found </log>
+							<set name="context.ischanage" value="true"/>
+						</then>
+					</if>
+				</for>
+			</function>
 		</public>
 	</class>
 </starlang>	

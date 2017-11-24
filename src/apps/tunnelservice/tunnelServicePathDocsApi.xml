@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		tunnelServicePathDocsApi.xml
+	@brief 		apiUI
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/20
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--
-		Author:
-				YY
-		Date:
-				2017-09-20
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
+		@brief		添加tunnelapiUI，并写入文件
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
 	-->	
 	<function name="addPath">		
 		<function name="allTunnels"/>			
@@ -32,7 +41,13 @@
 			</parameters>
 		</function>
 	</function>
-
+	<!--
+		@brief		获取所有tunnelsUIjson格式
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
+	-->	
 	<function name="allTunnels">
 		<string name="name"/>
 		<string name="pathconntent"/>
@@ -72,7 +87,13 @@
 			</parameters>
 		</function>
 	</function>
-
+	<!--
+		@brief		get、delete、put tunnelUIjson格式
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
+	-->	
 	<function name="otherTunnelmethods">
 		<string name="name"/>
 		<string name="pathconntent"/>		
@@ -187,7 +208,13 @@
 			</parameters>
 		</function>
 	</function>
-
+	<!--
+		@brief		post tunnelUIjson格式
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
+	-->	
 	<function name="postTunnel">
 		<string name="name"/>
 		<string name="pathconntent"/>
@@ -241,7 +268,13 @@
 			</parameters>
 		</function>
 	</function>
-
+	<!--
+		@brief		active tunnelUIjson格式
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
+	-->	
 	<function name="activeTunnel">
 		<string name="name"/>
 		<string name="pathconntent"/>
@@ -305,6 +338,13 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		deactive tunnelUIjson格式
+		@auth 		YY
+		@date		2017/09/20
+		Input:
+		Output:
+	-->	
 	<function name="deactiveTunnel">
 		<string name="name"/>
 		<string name="pathconntent"/>

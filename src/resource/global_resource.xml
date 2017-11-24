@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		global_resource.xml
+	@brief 		全局变量
+	@version 	1.1.0
+	@auth 		Yi Jian (yijian@staros.xyz)
+	@date		2017/11/24
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Group Resource -->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CFlowManager.xml"/>
@@ -27,6 +37,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CAPIDocsService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CDeviceService.xml"/>
 
 	<object name="ApplicationManager" global="true"/>
 	<!--qiulei 20170811-->
@@ -49,6 +60,8 @@
 	<object name="SwaggerFile" global="true"/>
 	<object name="APIDocsService" global="true"/>
 	<object name="TopoManager" global="true"/>
+	<!--object name="FlowManager" global="true"/-->
+	<object name="DeviceService" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -65,7 +78,7 @@
 		<new name="MeterService" class="CMeterService"/>
 		<new name="gSettingsManager" class="CSettingsManager"/>
 		
-		
+		<new name="DeviceService" class="CDeviceService"/>
 		<!--qiulei 2017.08.24 Thursday-->
 		<new name="RestfulAPIManager" class="CRestfulAPIManager"/>
 		<new name="SessionManager" class="CSessionManager"/>
@@ -76,6 +89,7 @@
 		
 		<new name="SwaggerFile" class="CswaggerFile"/>
 		<new name="TopoManager" class="CTopoManager"/>
+		<!--new name="FlowManager" class="CFlowManager"/-->
 		<new name="ApplicationManager" class="CApplicationManager"/>
 	</function>
 </starlang>

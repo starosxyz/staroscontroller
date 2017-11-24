@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang>
-
 	<params name="actionsMap" global="true"/>
 	<params name="actionsNameMap" global="true"/>
 	<function name="InitActionsMap">
@@ -20,7 +19,6 @@
 		<set name="actionsMap" paramname="25" value="'oxmfield'"/>
 		<set name="actionsMap" paramname="26" value="'ethertype'"/>
 		<set name="actionsMap" paramname="27" value="'ethertype'"/>
-
 	</function>
 	<function name="InitActionsNameMap">
 		<set name="actionsNameMap" paramname="0" value="'outport'"/>
@@ -39,6 +37,5 @@
 		<set name="actionsNameMap" paramname="25" value="'oxmfield'"/>
 		<set name="actionsNameMap" paramname="26" value="'ethertype'"/>
 		<set name="actionsNameMap" paramname="27" value="'ethertype'"/>
-
 	</function>
 </starlang>

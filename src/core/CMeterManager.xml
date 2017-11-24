@@ -209,7 +209,13 @@
 				]]></script>
 			</function>
 			
-			<!-- wangkang 2017/09/07 -->
+			<!--
+				@brief		Set meter messages state
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+				Input:
+					@param inmodstate   meter message state
+			-->
 			<function name="SetState">
 				<log>##### Set MeterMessage State #####</log>
 				<parameters>
@@ -362,7 +368,11 @@
 				</function>
 			</function>
 			
-			<!-- wangkang 2017/09/07 -->
+			<!--
+				@brief		The controller sends the error meter to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+			-->
 			<function name="AddErrorMeter">			
 				<string name="modstrjson" />
 				<string name="resourceid"  value=""/>
@@ -460,7 +470,15 @@
 				]]></script>
 			</function>	
 			
-			<!-- wangkang 2017/09/07-->
+			<!--
+				@brief		Find meter object from merterContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+				Input:
+					@param inmeterid   groupid
+				Output:
+					@param outmeter   group object
+			-->
 			<function name="FindMeter">
 				<parameters>
 					<long name="inmeterid" />
@@ -475,6 +493,11 @@
 					</then>
 				</if>
 			</function>
+			<!--
+				@brief		Print meterid from merterContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+			-->
 			<function name="DumpMeter">
 				<long name="meterkey" />
 				<pair name="onemeterpair"  keytype="long" valuetype="object"/>

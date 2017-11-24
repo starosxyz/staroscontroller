@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		forwarding.xml
+	@brief 		forwarding
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/11
+-->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
 <!--
 	Author:
@@ -27,7 +37,6 @@
 					<string name="desc" in="'2.10.10.0'"/>		
 					<string name="url" in="'192.168.228.128'"/>
 					<long name="bundleid" in="context.getCurrentBundleId()"/>
-					<string name="pathname" in="event.getParam('pathname').toString()"/>
 				</parameters>
 			</function>			
 			

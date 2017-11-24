@@ -47,20 +47,31 @@
 					<string name="method"/>
 					<string name="eventdata"/>
 				</parameters>
+				
+				<log level="11"><![CDATA[51 CRestfulService.xml requestpath =<%=context.requestpath.toString()%>]]></log>
+				<log level="11"><![CDATA[52 CRestfulService.xml method =<%=context.method.toString()%>]]></log>
+				<log level="11"><![CDATA[53 CRestfulService.xml eventdata =<%=context.eventdata.toString()%>]]> </log>
+				
+				
 				<object name="handlerobj"/>
 				<string name="eventname"/>
 				<long name="bundleid"/>
 				<params name="eventparam"/>
 				<params name="httpparam"/>
+				<vector name="paramvector" valuetype="string"/>
+				<hashmap name="queryparams" keytype="string" valuetype="string"/>
 				<!--qiulei 20170824 pm-->
 				<function name="GetHandler" class="RestfulAPIManager">
 					<parameters>
 						<string name="requestpath" in="context.requestpath.toString()"/>
 						<object name="handler" out="context.handlerobj"/>
+						<vector name="paramvector" out="context.paramvector"/>
+						<hashmap name="queryparam" out="context.queryparams"/>
 					</parameters>
 				</function>
 				<if cond="context.handlerobj.ptr != null">
 					<then>
+						<log level="11">70 -- context.handlerobj.ptr != null -- CRestfulService.xml</log>
 						<function name="GetAPIInfo" class="handlerobj">
 							<parameters>
 								<string name="eventname" out="context.eventname"/>
@@ -70,11 +81,15 @@
 						<set name="eventparam" paramname="eventdata" value="context.eventdata.toString()"/>
 						<set name="eventparam" paramname="method" value="context.method.toString()"/>
 						<set name="eventparam" paramname="requestpath" value="context.requestpath.toString()"/>
+						<set name="eventparam" paramname="params" value="context.paramvector"/>
+						<set name="eventparam" paramname="queryparams" value="context.queryparams"/>
 						<set name="eventparam" paramname="transportid" value="event.getParam('transportid').toString()"/>
 						<raise name="context.eventname.toString()" bundleid="context.bundleid.toLong()" param="context.eventparam"/>
 					</then>
 					<else>
 						<function>
+							<log level="11">78 没有对应的路径 CRestfulService.xml</log>
+							<string name="errorjson"/>
 							<reference variable="errorjson">
 									<jsonbody><![CDATA[ 
 										{"code":"404","message":"HTTP 404 Not Found"}
@@ -99,6 +114,12 @@
 				<set name="httpparam" paramname="Server" value="'StarOS'"/>
 				<set name="httpparam" paramname="Connection" value="'Close'"/>
 				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+				<if cond="context.transportid.toString()==''">
+					<then>
+						<log level="11"><![CDATA[SendResponse error, json=<%=context.json.toString()%>]]></log>
+						<assert/>
+					</then>
+				</if>
 				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
 					<jsonsrc src="json"/>
 				</restful>

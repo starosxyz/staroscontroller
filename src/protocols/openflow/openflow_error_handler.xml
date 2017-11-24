@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	
-	<!-- wangkang 2017/09/01 
-		1.Get a Error Message and JSON parse,Find MessageType and Cookie
-		2.Find the appropriate device according to TransportID
-		3.Get FlowManager from device
-		4.Find the appropriate Flowentry according to Cookie
-		5.Set Message State from Flowentry
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and Cookie
+					2.Find the appropriate device according to TransportID
+					3.Get FlowManager from device
+					4.Find the appropriate Flowentry according to Cookie
+					5.Set Message State from Flowentry
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/01
 	-->
 	<function name="ErrorHandleFlowMod">
 		<object name="flowentryobj"/>
@@ -50,7 +51,7 @@
 						<if cond="context.flowentryobj.ptr != null">											
 							<then>
 								<log>##### Flowentryobj is not null #####</log>
-								<function name="SetState" class="context.flowentryobj">												
+								<function name="SetState" class="context.flowentryobj">						
 									<parameters>
 										<string name="inmodstate" in="'Peeding'"/>
 									</parameters>	
@@ -63,12 +64,14 @@
 		</if>
 	</function>
 	
-	<!-- wangkang 2017/09/06
-		1.Get a Error Message and JSON parse,Find MessageType and GroupId
-		2.Find the appropriate device according to TransportID
-		3.Get GroupManager from device
-		4.Find the appropriate Group according to GroupId
-		5.Set Message State from Group
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and GroupId
+					2.Find the appropriate device according to TransportID
+					3.Get GroupManager from device
+					4.Find the appropriate Group according to GroupId
+					5.Set Message State from Group
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/06
 	-->
 	<function name="ErrorHandleGroupMod">
 		<object name="groupobj"/>
@@ -125,12 +128,14 @@
 		</if>
 	</function>
 	
-	<!-- wangkang 2017/09/07
-		1.Get a Error Message and JSON parse,Find MessageType and MeterId
-		2.Find the appropriate device according to TransportID
-		3.Get MeterManager from device
-		4.Find the appropriate Meter according to MeterId
-		5.Set Message State from Meter
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and MeterId
+					2.Find the appropriate device according to TransportID
+					3.Get MeterManager from device
+					4.Find the appropriate Meter according to MeterId
+					5.Set Message State from Meter
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/07
 	-->
 	<function name="ErrorHandleMeterMod">
 		<object name="meterobj"/>

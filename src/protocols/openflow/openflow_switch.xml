@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-07-28
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_switch.xml
+	@brief 		当有设备连上来时，创建并添加设备
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/07/28
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<function name="SendOpenFlowFeatures">
 		<log>SendOpenFlowFeatures</log>
 		
@@ -19,7 +21,6 @@
 		<string name="transportid"/>
 		<string name="localipaddr"/>
 		<string name="peeripaddr"/>
-		<string name="masterid"/>
 		<string name="type"/>
 		<string name="online"/>
 		<string name="protocol"/>
@@ -33,7 +34,6 @@
 		<set name="openflowdevice" value="context.openflowserverobj.getValue().getDevice(event.getParam('transportid').toString())"/>
 		<set name="localipaddr" value="context.openflowdevice.ptr.getParam('localipaddr').toString()"/>
 		<set name="peeripaddr" value="context.openflowdevice.ptr.getParam('peeripaddr').toString()"/>
-		<set name="masterid" value="context.openflowdevice.ptr.getParam('masterid').toString()"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toString()%>]]></log>
 		<string name="jsonvariable"/>
@@ -114,7 +114,6 @@
 				<string name="datapathid" in="context.datapathid.toString()"/>
 				<string name="localipaddr" in="context.localipaddr.toString()"/>
 				<string name="peeripaddr" in="context.peeripaddr.toString()"/>
-				<string name="masterid" in="context.masterid.toString()"/>	
 				<string name="type" in="'switch'"/>
 				<string name="online" in="'true'"/>
 				<string name="protocol" in="'OF_13'"/>					

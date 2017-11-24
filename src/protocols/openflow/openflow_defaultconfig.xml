@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-07-27
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_defaultconfig.xml
+	@brief 		Send_OFPT13_SET_CONFIG
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/07/27
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	
 	<function name="SendOpenFlowConfig">
 		<log>SendOpenFlowConfig</log>

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/01
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<!--
-		Author:
-				YY
-		Date:
-				2017-09-01
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
-	-->
 	<class name="CMeterService">
 		<public>
+			<!--
+				@brief		加载Meter表
+				@auth 		YY
+				@date		2017/09/01
+				Input:	
+					@param meterjson 	Meter表json	
+					@param appid 	Meter表appid			
+					@param datapathid 	Meter表设备id
+				Output:
+					@param outmeterid 	出口Meter表id				
+			-->
 			<function name="InstallMeter">
 				<parameters>
 					<long name="outmeterid"/>
@@ -54,7 +67,15 @@
 				</function>
 				<log>CMeterervice InstallFlow end</log>
 			</function>
-		
+			<!--
+				@brief		卸载Meter表
+				@auth 		YY
+				@date		2017/09/01
+				Input:			
+					@param datapathid 	Meter表设备id
+					@param meterid 	Meter表id
+				Output:				
+			-->
 			<function name="UnInstallMeter">
 				<parameters>
 					<string name="datapathid"/>			

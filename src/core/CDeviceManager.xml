@@ -9,6 +9,57 @@
 			<function name="CDeviceManager">
 				<log>CDeviceManager is create</log>
 			</function>
+			<!--qiulei 20171117pm-->
+			<function name="AllDevicesToJsonStr">
+				<parameters>
+					<string name="AllDevicesJsonString"/>
+				</parameters>
+				
+				<string name="jsonstr"/>
+				<object name="switchdevice"/>
+				<list name="deviceinfolist" valuetype="string"/>
+				
+				<pair name="oneDevicePair" keytype="string" valuetype="object"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
+					<function>
+						<set name="switchdevice" value="context.oneDevicePair.second()"/>
+						<if cond="context.switchdevice != null">
+							<then>
+								<function name="GetDeviceInfoForDetailRequest" class="context.switchdevice">
+									<parameters>
+										<string name="strjson" out="jsonstr"/>
+									</parameters>
+								</function>
+								<insert name="deviceinfolist" value="context.jsonstr.toString()"/>
+							</then>
+						</if>	
+						
+					</function>
+				</for>
+				
+				<script><![CDATA[
+					var jsonroot = new Object();
+					var myArray=new Array();  
+					
+					var firstString=context.deviceinfolist.getFirst();
+					while(firstString!=null){
+						var onearray = JSON.parse(firstString);
+						myArray.push(onearray);
+						firstString=context.deviceinfolist.getNext();
+					}
+					
+					jsonroot['devices']=myArray;
+					jsonroot['resultCode']="0";
+					jsonroot["resultDesc"]="ok";
+					
+					var strjson=JSON.stringify(jsonroot);
+					context.AllDevicesJsonString.setValue(strjson);
+				]]></script>
+			</function>
+			
+			
+			
+			
 			<function name="getDevice">
 				<parameters>
 					<object name="outdevice"/>
@@ -54,48 +105,52 @@
 					<string name="datapathid"/>
 					<string name="localipaddr"/>
 					<string name="peeripaddr"/>
-					<string name="masterid"/>
 					<string name="type"/>
 					<string name="online"/>
 					<string name="protocol"/>	
 				</parameters>
-				<log>addDevice start</log>	
+				<log level="100">addDevice start</log>	
 				<object name="deviceobject"/>
 				<string name="outtransid"/>
-				<log level="10"><![CDATA[CDevice addDevice datapathid = <%=context.datapathid.toString()%>]]></log>
-				<new name="deviceobject" class="CDevice">
-					<parameters>
-						<string name="mfrdesc" in="context.mfrdesc.toString()"/>
-						<string name="swdesc" in="context.swdesc.toString()"/>
-						<string name="serialnum" in="context.serialnum.toString()"/>
-						<string name="dpdesc" in="context.dpdesc.toString()"/>
-						<string name="hwdesc" in="context.hwdesc.toString()"/>
-						<string name="transportid" in="context.transportid.toString()"/>
-						<string name="datapathid" in="context.datapathid.toString()"/>
-						<string name="localipaddr" in="context.localipaddr.toString()"/>
-						<string name="peeripaddr" in="context.peeripaddr.toString()"/>
-						<string name="masterid" in="context.masterid.toString()"/>		
-						<string name="type" in="context.type.toString()"/>
-						<string name="online" in="context.online.toString()"/>
-						<string name="protocol" in="context.protocol.toString()"/>	
-					</parameters>
-				</new>
-				<if cond="thisclass.deviceContainer.hasValue(context.deviceobject)">
+				<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
+				
+				<log level="100"><![CDATA[CDevice addDevice datapathid = <%=context.datapathid.toString()%>]]></log>
+				<if cond="thisclass.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
-						<log level="10">this device already have</log>
-						<exit/>
+						<log level="100">this device already have</log>
+						<lookup name="thisclass.deviceContainer" key="context.datapathid.toString()" output="context.deviceobject"/>
 					</then>
+					<else>
+						<new name="deviceobject" class="CDevice">
+							<parameters>
+								<string name="mfrdesc" in="context.mfrdesc.toString()"/>
+								<string name="swdesc" in="context.swdesc.toString()"/>
+								<string name="serialnum" in="context.serialnum.toString()"/>
+								<string name="dpdesc" in="context.dpdesc.toString()"/>
+								<string name="hwdesc" in="context.hwdesc.toString()"/>
+								<string name="transportid" in="context.transportid.toString()"/>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+								<string name="localipaddr" in="context.localipaddr.toString()"/>
+								<string name="peeripaddr" in="context.peeripaddr.toString()"/>	
+								<string name="type" in="context.type.toString()"/>
+								<string name="online" in="context.online.toString()"/>
+								<string name="protocol" in="context.protocol.toString()"/>	
+							</parameters>
+						</new>
+						<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
+						<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
+						<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
+					</else>
 				</if>
-				<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
-				<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
 				<string name="onlinejson"/>
-				<!-- clear flow start -->
+				<!-- clear flow start 
 				<log level="100">ClearFlow start</log>
 				<function name="ClearFlow" class="deviceobject"/>				
 				<wait event="NorFoundEvent" timeout="3000"/>
 				<log level="100">ClearFlow end</log>
-				<!-- clear flow end -->
+				 clear flow end -->
 				<function name="SendDefaultFlow" class="deviceobject"/>
+
 				<function name="ToOnlineJson" class="deviceobject">
 					<parameters>
 						<string name="strjson" out="onlinejson"/>
@@ -112,6 +167,11 @@
 					</parameters>
 				</function>
 				<log>star device end</log>
+				<function name="ProcessAddDeviceEvent" class="DeviceService">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>
+				</function>
 			</function>
 				
 			<function name="findDevice">
@@ -141,6 +201,12 @@
 				<object name="deviceobject"/>
 				<string name="offlinejson"/>
 				<string name="devicetransportid"/>
+				<log level="100"> CDeviceManager removeDevice </log>
+				<function name="ProcessRemoveDeviceEvent" class="DeviceService">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>
+				</function>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())==true">
 					<then>
 						<function>
@@ -170,6 +236,7 @@
 						</function>
 					</then>
 				</if>
+				
 			</function>
 			<function name="GetDatapathIdByTransportid">
 				<parameters>
@@ -213,7 +280,7 @@
 				<string name="devicedatapathid"/>
 				<string name="oneremove"/>
 				<list name="removelist" valuetype="string"/>
-				
+				<log level="100">CDeviceManager removeDeviceByTransportId</log>
 				<pair name="oneapppair" keytype="string" valuetype="object"/>
 				<for var="oneapppair" in="context.deviceContainer">
 					<function>
@@ -235,6 +302,7 @@
 										<string name="outdatapathid" out="context.devicedatapathid"/>
 									</parameters>
 								</function>
+								<log level="100"><![CDATA[removeDevice datapathid= <%=context.devicedatapathid.toString()%>]]></log>
 								<insert name="removelist" value="context.devicedatapathid.toString()"/>
 							</then>
 						</if>
@@ -291,8 +359,6 @@
 				<string name="json"/>
 				<string name="strlink" value=""/>
 				<string name="binvalidlink" value="false"/>
-				
-				
 				<string name="srcdevicedpid2"/>
 				<pair name="oneDevicePair2" keytype="string" valuetype="object"/>
 				<pair name="oneDevicePair1" keytype="string" valuetype="object"/>
@@ -971,7 +1037,15 @@
 				</if>
 			</function>
 			
-			<!-- wangkang 2017/09/01 -->
+			<!--
+				@brief		Get device by transport id
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+				Input:
+		   			@param transportid   transport id
+		   		Output:
+		   			@param onedeviceobj  device object   
+			-->
 			<function name="GetDeviceByTransportId">
 				<parameters>
 					<string name="transportid" />
@@ -982,6 +1056,13 @@
 				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
 				<set name="onedeviceobj" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 			</function>
+			<!--
+				@brief		Print transport id from t2dContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+		   		Output:
+		   			@param t2dkey  transport id   
+			-->
 			<function name="DumpT2d">
 				<string name="t2dkey"/>								
 				<pair name="oneDevicePair_dump" keytype="string" valuetype="string"/>
@@ -997,6 +1078,539 @@
 				</parameters>
 				<set name="deviceCounts" value="context.deviceContainer.size()"/>	
 			</function>
+
+			<!--
+				@brief		通过appid得到流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				   @param filename 	staros_api_flows.xml
+				   @param xmldata   appid
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	flowjsonstr
+			-->
+			<function name="Getflowbyappid">
+				<parameters>
+					<string name="appid"/>
+					<list name="flowjsonstr"/>
+				</parameters>
+				<pair name="onedevice" keytype="string" valuetype="object"/>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<list name="flowjsonstrs" valuetype="string"/>
+					<for var="onedevice" in="context.deviceContainer">
+						<function>
+							<set name="device" value="context.onedevice.second()"/>
+							<if cond="context.device != null">
+								<then>
+										<function name="GetFlowManager" class="device">
+											<parameters>
+												<object name="outflowmgr" out="context.flowobj"/>
+											</parameters>
+										</function>
+										<function name="GetFlowByappid" class="flowobj">
+											<parameters>
+												<string name="appid" in="context.appid.toString()"/>
+												<list name="flowjsonstr" out="context.flowjsonstrs"/>
+											</parameters>
+										</function>
+										
+								</then>
+							</if>
+						</function>
+					</for>
+					<log level="100"><![CDATA[ CDevice 1100 flowjsonstrs size!!!!!= '<%=context.flowjsonstrs.size().toString()%>']]></log>
+					<set name="flowjsonstr" value="context.flowjsonstrs"/>
+			</function>
+			
+			<!--
+				@brief		通过appid删除流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				   @param filename 	staros_api_flows.xml
+				   @param xmldata   appid
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	result
+			-->
+			<function name="Deleteflowbyappid">
+				<parameters>
+					<string name="appid"/>
+					<string name="result"/>
+				</parameters>
+				<pair name="onedevice" keytype="string" valuetype="object"/>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<string name="results"/>
+				
+					<for var="onedevice" in="context.deviceContainer">
+						<function>
+							<set name="device" value="context.onedevice.second()"/>
+							<if cond="context.device != null">
+								<then>
+									<function name="GetFlowManager" class="device">
+										<parameters>
+											<object name="outflowmgr" out="context.flowobj"/>
+										</parameters>
+									</function>
+									<if cond="context.flowobj.ptr!=null">
+										<then>
+											
+											<function name="UnInstallFlowTableByappidRequest" class="flowobj">
+												<parameters>
+													<string name="appid" in="context.appid.toString()"/>
+												</parameters>
+											</function>
+											<set name="results" value="'true'"/>
+										</then>
+										<else>
+											<set name="results" value="'false'"/>
+											<exit/>
+										</else>
+									</if>
+								</then>
+							</if>
+						</function>
+					</for>
+					<set name="result" value="context.results.toString()"/>
+			</function>
+
+			<!--
+				@brief		得到所有流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	flows
+			-->
+			<function name="Getallflows">
+				<parameters>
+					<list name="flows"/>
+				</parameters>
+				<pair name="onedevice" keytype="string" valuetype="object"/>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<string name="results"/>
+				<list name="flowss" valuetype="string"/>
+				<list name="allflow" valuetype="list"/>
+					<for var="onedevice" in="context.deviceContainer">
+						<function>
+							<set name="device" value="context.onedevice.second()"/>
+							<if cond="context.device.ptr!= null">
+								<then>
+									<function name="GetFlowManager" class="device">
+										<parameters>
+											<object name="outflowmgr" out="context.flowobj"/>
+										</parameters>
+									</function>
+									<function name="getAllflow" class="flowobj">
+										<parameters>
+											<list name="flowjsons" out="context.flowss"/>
+										</parameters>
+									</function>
+									<insert name="context.allflow" value="context.flowss"/>
+								</then>
+							</if>
+						</function>
+					</for>
+					<log level="100"><![CDATA[ 1172 allflow size=<%=context.allflow.size()%>']]></log>
+					<set name="flows" value="context.allflow"/>
+			</function>
+
+			<!--
+				@brief		通过deviceiid得到流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	deviceid
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	flowjsonstr
+			-->
+			<function name="GetflowBydeviceid">
+				<parameters>
+					<string  name="deviceid"/>
+					<list name="flowjsonstr"/>
+				</parameters>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<list name="flowjsonstrs" valuetype="string"/>
+				<if cond="context.deviceid.toString()!=''">
+					<then>
+						<log level="100"><![CDATA[cdevice 1192 thisdeviceid=<%=context.deviceid.toString()%>']]></log>
+						<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+						<function name="GetFlowManager" class="device">
+							<parameters>
+								<object name="outflowmgr" out="context.flowobj"/>
+							</parameters>
+						</function>
+						<function name="getflowBydeviceid" class="flowobj">
+								<parameters>
+									<string name="deviceid" in="context.deviceid.toString()"/>
+									<list name="flowjsonstr" out="context.flowjsonstrs"/>
+								</parameters>
+						</function>
+						<set name="flowjsonstr" value="context.flowjsonstrs"/>
+					</then>
+				</if>
+			</function>
+			
+			<!--
+				@brief		通过deviceiid和flowid得到流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	deviceid,flowid
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	flowjsonstr
+			-->
+			<function name="GetflowBydeviceidflowid">
+				<parameters>
+					<string  name="deviceid"/>
+					<string name="flowid"/>
+					<string name="flowjsonstr"/>
+				</parameters>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<string name="flowjsonstrs"/>
+					<if cond="context.deviceid.toString()!=''">
+					<then>
+						<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+						<function name="GetFlowManager" class="device">
+							<parameters>
+								<object name="outflowmgr" out="context.flowobj"/>
+							</parameters>
+						</function>
+								<function name="getflowBydeviceidflowid" class="flowobj">
+									<parameters>
+										<string name="flowid" in="context.flowid.toString()"/>
+										<string name="deviceid" in="context.deviceid.toString()"/>
+										<string name="flowjsonstr" out="context.flowjsonstrs"/>
+									</parameters>
+						</function>
+						<set name="flowjsonstr" value="context.flowjsonstrs.toString()"/>
+					</then>
+				</if>
+			</function>
+				
+			<!--
+				@brief		通过deviceid添加流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	deviceid，flowjsonstr
+				Output: 
+			-->
+			<function name="AddflowBydeviceid">
+				<parameters>
+					<string name="deviceid" />
+					<string name="appid" />
+					<string name="jsonstr"/>
+				</parameters>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<string name="flowjsonstrs"/>
+				<string name="flowid"/>
+				<string name="json"/>
+				
+				<if cond="context.deviceContainer.hasValue(context.deviceid.toString())==true">
+					<then>
+						<log level="100"> device it not null</log>
+						<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+						<function name="GetFlowManager" class="device">
+							<parameters>
+								<object name="outflowmgr" out="context.flowobj"/>
+							</parameters>
+						</function>
+							<script><![CDATA[			
+								var json = JSON.parse(context.jsonstr.toString());
+								var str="of:";
+								json.flows[0].deviceid=str+context.deviceid.toString();
+								var json=JSON.stringify(json.flows[0]);
+								context.print("1261"+json);
+								context.json.setValue(json);
+								context.print(json);
+								context.print(appid);
+						]]></script>	
+						<if cond="context.flowobj.ptr!=null">
+							<then>
+								<log level="100">flowobj is not null</log>
+								
+								<function name="InstallFlowTableRequest" class="flowobj">
+									<parameters>
+										<string name="outflowid" out="context.flowid"/>
+										<string name="strjson" in="context.json.toString()"/>
+										<string name="appId" in="context.appid.toString()"/>
+									</parameters>
+								</function>
+								<log level="100"><![CDATA[1263 flowid= <%=context.flowid.toString()%>]]></log>
+							</then>
+						</if>
+
+					</then>
+					<else>
+						<log level="100"> device is  null</log>
+					</else>
+				</if>
+			</function>
+			
+			<!--
+				@brief		通过appid添加所有流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	appid，flowlist，flowdeviceidlist
+				Output: 
+			-->
+			<function name="Addflows">
+				<parameters>
+					<string name="appid"/>
+					<list name="flowlist" />
+					<list name="flowdeviceidlist"/>
+				</parameters>
+				<object name="flowobj"/>
+				<list name="flowss" valuetype="string"/>
+				<object name="device" />
+				<log level="100"><![CDATA[1300 CDevice flowdeviceidlist!!!!!= '<%=context.flowdeviceidlist.size().toString()%>']]></log>
+				<log level="100"><![CDATA[1301 CDevice flowlist!!!!!= '<%=context.flowlist.size().toString()%>']]></log>
+				<string name="oneflowjsons"/>
+				<string name="flowdeviceid"/>
+				<string name="flowid"/>
+				<string name="thisdeviceid"/>
+				<string name="oneflowjson"/>
+					<for var="flowdeviceid" in="context.flowdeviceidlist">
+						<function>
+							<script><![CDATA[
+								var flowdeviceid=context.flowdeviceid.toString();
+								var thisdeviceid=flowdeviceid.split(":")[1];
+								context.thisdeviceid.setValue(thisdeviceid);
+							]]></script>
+							<log level="100"><![CDATA[1307 CDevice flowdeviceid!!!!!= '<%=context.flowdeviceid.toString()%>']]></log>
+							<lookup name="deviceContainer" key="context.thisdeviceid.toString()" output="context.device"/>
+							<if cond="context.device.ptr!= null">
+								<then>
+									<function name="GetFlowManager" class="device">
+										<parameters>
+											<object name="outflowmgr" out="context.flowobj"/>
+										</parameters>
+									</function>
+									<for var="oneflowjson" in="context.flowlist">
+											<function name="InstallFlowTableRequest" class="flowobj">
+												<parameters>
+													<string name="outflowid" out="context.flowid"/>
+													<string name="strjson" in="context.oneflowjson.toString()" />
+													<string name="appId" in="context.appid.toString()" />
+												</parameters>
+											</function>
+									</for>		
+								</then>
+							</if>
+						</function>
+					</for>
+			</function>
+			
+			<!--
+				@brief		删除所有流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	jsonstr
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	results
+			-->
+			<function name="Deleteflows">
+				<parameters>
+					<string name="jsonstr" />
+					<list name="results" />
+				</parameters>
+				<log level="100">cdevicemgr Deleteflows</log>
+				<log><![CDATA[1136 jsonstr!!!!!= '<%=context.jsonstr.toString()%>']]></log>
+				<list name="deviceidlist" valuetype="string"/>
+				<list name="flowidlist" valuetype="string"/>
+				<string name="deviceid" />
+				<script><![CDATA[
+						var json = JSON.parse(context.jsonstr.toString());
+						context.print("1345!! flowslength:"+json.flows.length);
+						for(var i=0;i<json.flows.length;i++){
+							var deviceid =json.flows[i].deviceid;
+							var thisdeviceid=deviceid.split(":")[1];
+							context.print("Cdevicemgr 1346"+thisdeviceid);
+							context.deviceidlist.addValue(thisdeviceid);
+							context.flowidlist.addValue(json.flows[i].flowid);
+							}
+				]]></script>
+				<object name="device"/>
+				<object name="flowobj"/>
+				<string name="flowid"/>
+				<list name="result" valuetype="string"/>
+				<for var="deviceid" in="context.deviceidlist">
+					<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+					<if cond="context.device.ptr!= null">
+						<then>
+							<log level="100">device is not null</log>
+							<function name="GetFlowManager" class="device">
+								<parameters>
+									<object name="outflowmgr" out="context.flowobj"/>
+								</parameters>
+							</function>
+							<if cond="context.flowobj.ptr!=null">
+								<then>
+									<for var="flowid" in="flowidlist">
+											<log level="100"><![CDATA[1373 flowid!!!!!= '<%=context.flowid.toString()%>']]></log>
+										<function name="UnInstallFlowTableRequest" class="flowobj">
+											<parameters>
+												<string name="flowid" in="context.flowid.toString()" />
+											</parameters>
+										</function>
+										<insert name="context.result" value="'true'"/>
+									</for>
+								</then>
+								<else>
+									<insert name="context.result" value="'false'"/>
+								</else>
+							</if>
+						</then>
+					</if>
+				</for>
+				<log level="100"><![CDATA[1390 result!!!!!= '<%=context.result.size().toString()%>']]></log>
+				<set name="results" value="context.result"/>
+				<log level="100"><![CDATA[1392 resultssize!!!!!= '<%=context.results.size().toString()%>']]></log>
+			</function>
+
+			<!--
+				@brief		通过deviceid和flowid删除流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_api_flows.xml
+				  	@param xmldata   	deviceid,flowid
+				Output: 
+					@param filename 	CFlowManager.xml
+				  	@param xmldata   	result
+			-->
+			<function name="DeleteBydeviceidflowid">
+				<parameters>
+					<string name="deviceid" />
+					<string name="flowid"  />
+					<string name="result" />
+				</parameters>
+				<object name="flowobj"/>
+				<object name="device"/>
+				<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+					<if cond="context.device.ptr!=null">
+						<then>
+							<function name="GetFlowManager" class="device">
+								<parameters>
+									<object name="outflowmgr" out="context.flowobj"/>
+								</parameters>
+							</function>
+							<if cond="context.flowobj.ptr!=null">
+								<then>
+									<function name="UnInstallFlowTableRequest" class="flowobj">
+										<parameters>
+											<string name="flowid" in="context.flowid.toString()" />
+										</parameters>
+									</function>
+									<set name="result" value="'true'"/>
+								</then>
+								<else>
+									<set name="result" value="'false'"/>
+								</else>
+							</if>
+							
+						</then>
+					</if>	
+			</function>
+			
+			<!--
+				@brief		send keep alive packet to switch
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/22
+			-->
+			<function name="OpenFlowKeepAliveDetect">
+				<pair name="onepair" keytype="string" valuetype="object"/>
+				<object name="onedeviceobj"/>
+				<string name="onedatapathid"/>
+				<long name="onerequestcount"/>
+				<log>============================================================</log>
+				<log>============================================================</log>
+				<log> ###### CDeviceManager OpenFlowKeepAliveDetect ######</log>
+				<for var="onepair" in="thisclass.deviceContainer">
+					<set name="context.onedeviceobj" value="context.onepair.second()"/>
+					<if cond="context.onedeviceobj != null">
+						<then>
+							<function name="GetRequestCount" class="onedeviceobj">
+								<parameters>
+									<long name="outrequestcount" out="context.onerequestcount"/>
+								</parameters>
+							</function>
+							<log><![CDATA[CDeviceManager onerequestcount= <%=context.onerequestcount.toLong()%>]]></log>
+							<if cond="context.onerequestcount.toLong() > 10">
+								<then>
+									<log> CDeviceManager device is down </log>
+									<function name="GetDatapathId" class="onedeviceobj">
+										<parameters>
+											<string name="outdatapathid" out="context.onedatapathid"/>
+										</parameters>
+									</function>
+									<exit/>
+								</then>
+							</if>
+							<function name="OpenFlowKeepAliveDetect" class="onedeviceobj"/>
+						</then>
+					</if>
+				</for>
+				<log><![CDATA[CDeviceManager onedatapathid= <%=context.onedatapathid.toString()%>]]></log>
+				<if cond="context.onedatapathid != ''">
+					<then>
+						<function name="removeDevice">
+							<parameters>
+								<string name="datapathid" in="context.onedatapathid.toString()"/>
+							</parameters>
+						</function>
+					</then>
+				</if>	
+			</function>
+
+			<!--
+				@brief		reset keepalive when receive keep alive packet from switch
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/22
+			-->
+			<function name="HandleKeepAliveResponse">
+				<parameters>
+					<string name="transportid"/>
+				</parameters>	
+				<object name="onedeviceobj"/>
+				<log>============================================================</log>
+				<log>###### CDeviceManager HandleKeepAliveResponse ######</log>
+
+				<function name="GetDeviceByTransportId">
+					<parameters>
+						<string name="transportid" in="context.transportid.toString()"/>
+						<object name="onedeviceobj" out="context.onedeviceobj"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.onedeviceobj.ptr == null">
+					<then>
+						<log> HandleKeepAliveResponse onedeviceobj is null </log>
+					</then>
+					<else>
+						<function name="ResetKeepAlive" class ="onedeviceobj"/>
+					</else>
+				</if>	
+		    </function>
 		</public>
 	</class>
 </starlang>

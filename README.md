@@ -1,7 +1,9 @@
 StarOS-Controller
 ====================================
 
-### 基于StarLang的开源控制器, Restful API兼容onos， 采用ONOS界面。使用SDN编程语言重新编写.
+## StarOS开源控制器介绍
+
+StarOS控制器是为快速网络应用而打造的一款高性能，可扩展的高性能开源控制器. 采用面向对象的SDN编程语言编写。
 
 ### 控制器特点
 
@@ -14,7 +16,8 @@ StarOS-Controller
 * 支持NETCONF Call Home ([RFC 8071](https://tools.ietf.org/html/rfc8071)).
 * 支持YANG 1.0 ([RFC 6020](https://tools.ietf.org/html/rfc6020))和YANG 1.1 ([RFC 7950](https://tools.ietf.org/html/rfc7950))建模语言.
 
-### StarLang SDN编程语言
+### SDN编程语言介绍
+SDN编程语言是专门为软件定义网络开发的一种编程语言，具有面向对象编程能力。
 * 支持面向对象的编程方式，类，数据封装，继承.
 * 支持运算位运算<<,>>,+,-,*,%,/,~,^,&.
 * 支持关键字for,while,if,function,openflow,netconf, restful等流程控制语法.
@@ -23,7 +26,7 @@ StarOS-Controller
 * 支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.
 * 支持container容器类型。 容器有list, hashmap, array等类型.
 
-### 开始
+### 如何开始？
 ```
 # git clone https://github.com/starosxyz/staroscontroller
 # cd staroscontroller/tools/installstaros
@@ -34,7 +37,6 @@ StarOS-Controller
 # make
 # mv staroscontroller /opt/staros.xyz/
 # dipc start
-# starosctl startapp /opt/staros.xyz/staroscontroller/starlang/main/staros.xml
 ```
 ### 运行应用程序
 ```

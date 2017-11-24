@@ -58,11 +58,9 @@
 			<object name="openflowdevice"/>
 			<string name="localipaddr"/>
 			<string name="peeripaddr"/>
-			<string name="masterid"/>
 				<function>
 					<set name="localipaddr" value="event.getParam('localipaddr').toString()"/>
 					<set name="peeripaddr" value="event.getParam('peeripaddr').toString()"/>
-					<set name="masterid" value="event.getParam('masterid').toString()"/>
 					<log><![CDATA[localipaddr=<%=context.localipaddr.toString()%>]]></log>
 					<log><![CDATA[peeripaddr=<%=context.peeripaddr.toString()%>]]></log>
 					<set name="openflowparams" paramname="transportid" value="event.getParam('transportid').toString()"/>
@@ -82,7 +80,6 @@
 					<script><![CDATA[context.openflowdevice.ptr.setParam('transportid',event.getParam('transportid').toString());]]></script>
 					<script><![CDATA[context.openflowdevice.ptr.setParam('localipaddr',context.localipaddr.toString());]]></script>
 					<script><![CDATA[context.openflowdevice.ptr.setParam('peeripaddr',event.getParam('peeripaddr').toString());]]></script>
-					<script><![CDATA[context.openflowdevice.ptr.setParam('masterid',context.localipaddr.toString());]]></script>
 					<!--YY 2017-08-03-->
 					<!--function name="switchOnline">
 						<parameters>
@@ -98,24 +95,15 @@
 				</function>
 		</onevent>
 		<onevent event="openflow.Disconnected">
-			<object name="openflowdevice"/>
-			<long name="disconnectSession" value="-1"/>
-			<string name="localipaddr"/>
-			<string name="peeripaddr"/>
 			<function>
-				<set name="localipaddr" value="event.getParam('localipaddr').toString()"/>
-				<set name="peeripaddr" value="event.getParam('peeripaddr').toString()"/>
-				<set name="openflowdevice" value="context.openflowserverobj.ptr.getDevice(event.getParam('transportid').toString())"/>
-				<log><![CDATA[localipaddr=<%=context.localipaddr.toString()%>]]></log>
-				<log><![CDATA[peeripaddr=<%=context.peeripaddr.toString()%>]]></log>
-				<log>openflow.Disconnected</log>
+				<log level="100">openflow.Disconnected</log>
 				<!--YY 2017-08-03-->
 				<function name="removeDeviceByTransportId" class="DeviceManager">
 					<parameters>
 						<string name="transportid" in="event.getParam('transportid').toString()"/>			
 					</parameters>
 				</function>
-			<script><![CDATA[context.openflowserverobj.ptr.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
+				<script><![CDATA[context.openflowserverobj.ptr.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
 			</function>
 		</onevent>
 		<!-- 0 -->
@@ -252,7 +240,10 @@
 				<log>####################################</log>
 				<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
 				<log>####################################</log>
-				<script><![CDATA[
+				<string name="eventdata" value="event.getParam('eventdata').toString()"/>
+				<if cond="context.eventdata.toString()!=''">
+					<then>
+							<script><![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
 							if(info.body != null)
 							{
@@ -262,77 +253,69 @@
 							{
 								context.messagetype.setValue('');
 							}
-				]]></script>
-				<log><![CDATA[messagetype=<%=context.messagetype.toString()%>]]></log>
-				<if cond="context.messagetype.toString() == '14'">
-					<then>
-						<function name="ErrorHandleFlowMod"/>
+						]]></script>
+						<log><![CDATA[messagetype=<%=context.messagetype.toString()%>]]></log>
+						<if cond="context.messagetype.toString() == '14'">
+							<then>
+								<function name="ErrorHandleFlowMod"/>
+							</then>
+						</if>
+						<if cond="context.messagetype.toString() == '15'">
+							<then>
+								<function name="ErrorHandleGroupMod"/>
+							</then>
+						</if>
+						<if cond="context.messagetype.toString() == '29'">
+							<then>
+								<function name="ErrorHandleMeterMod"/>
+							</then>
+						</if>
 					</then>
+					<else>
+						<exit/>
+					</else>
+					
 				</if>
-				<if cond="context.messagetype.toString() == '15'">
-					<then>
-						<function name="ErrorHandleGroupMod"/>
-					</then>
-				</if>
-				<if cond="context.messagetype.toString() == '29'">
-					<then>
-						<function name="ErrorHandleMeterMod"/>
-					</then>
-				</if>
+
 			</function>
 		</onevent>
 		<!-- 2 -->
-		<!--qiulei 20170808 15:27-->
+		<!-- wangkang 2017/11/22 -->
 		<onevent event="openflow.OFPT13_ECHO_REPLY">
-			<hashmap name="deviceinfo" keytype="string" valuetype="string"/>
-			<for var="context.deviceinfo" in="context.deviceContainer">
-				<function>					
-					<if cond="context.deviceinfo.getValue('transportid').toString() == event.getParam('transportid').toString()">
-						<then>
-							<function>
-								<remove name="deviceinfo" key="'requestcount'"/>
-								<insert name="deviceinfo" key="'requestcount'" value="'0'"/>
-							</function>
-						</then>
-					</if>
-				</function>
-			</for>
+			<log> ######### openflow.OFPT13_ECHO_REPLY #########</log>
+			<function name="HandleKeepAliveResponse" class="DeviceManager">
+				<parameters>
+					<string name="transportid" in="event.getParam('transportid').toString()"/>
+				</parameters>
+			</function>
 		</onevent>
 		
 		<onevent event="openflow.OFPT13_ECHO_REQUEST">
-			<string name="switchSessionid"/>
-			<long name="echorequestxid"/>
+			<long name="xid"/>
 			<string name="strjson"/>
-			<object name="openflowdevice"/>
-			<object name="port"/>
+			<log> ######### openflow.OFPT13_ECHO_REQUEST #########</log>
 			
 			<function>
 				<log>Get a EchoRequest Message</log>
-				<set name="openflowdevice" value="context.openflowserverobj.ptr.getDevice(event.getParam('transportid').toString())"/>
-				<log><![CDATA[getShortestLink=<%=context.openflowserverobj.ptr.getShortestLink('1','3')%>]]></log>
-				<function>
-					<log>Get a EchoRequest Message</log>
-					<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-					<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
-						<script><![CDATA[
-							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.echorequestxid.setValue(info.xid);
-						]]></script>
-					<reference variable="strjson">
-						<jsonbody><![CDATA[ 
-						{
-						"xid":"<%=context.echorequestxid.toString()%>"
-						}
-						]]></jsonbody>
-					</reference>
-					<function name="Send_OFPT13_ECHO_REPLY">
-						<parameters>
-							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="strjson" in="context.strjson.toString()"/>
-						</parameters>
-					</function>
-					
-				</function>
+				<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+				<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						context.xid.setValue(info.xid);
+					]]></script>
+				<reference variable="strjson">
+					<jsonbody><![CDATA[ 
+					{
+					"xid":"<%=context.xid.toString()%>"
+					}
+					]]></jsonbody>
+				</reference>
+				<function name="Send_OFPT13_ECHO_REPLY">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+					</parameters>
+				</function>		
 			</function>
 		</onevent>
 		<!-- 4 -->

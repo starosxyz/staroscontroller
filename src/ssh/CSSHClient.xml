@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSSHClient.xml
+	@brief 		SSH客户端
+	@version 	1.1.0
+	@auth 		Yi Jian (yijian@staros.xyz)
+	@date		2017/11/24
+-->
 <starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<class name="CSSHClient">
 		<private>

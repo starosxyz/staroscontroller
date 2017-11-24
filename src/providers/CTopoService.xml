@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-08-28
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
--->	
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/28
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
 	<class name="CTopology">
 		<private>
 			<string name="appid"/>
@@ -25,12 +27,28 @@
 				<set name="thisclass.add_eventname" value="context.add_eventname.toString()"/>
 				<set name="thisclass.remove_eventname" value="context.remove_eventname.toString()"/>
 			</function>
+			<!--
+				@brief		获取添加事件名字
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param event_name 	事件名字				
+			-->
 			<function name="GetAddEventName">
 				<parameters>
 					<string name="event_name"/>
 				</parameters>
 				<set name="event_name" value="thisclass.add_eventname.toString()"/>
 			</function>
+			<!--
+				@brief		获取删除事件名字
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param event_name 	事件名字				
+			-->
 			<function name="GetRemoveEventName">
 				<parameters>
 					<string name="event_name"/>
@@ -44,7 +62,16 @@
 			<hashmap name="TopoContainer" keytype="string" valuetype="object"/>
 		</private>
 		<public>
-		
+			<!--
+				@brief		添加一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+					@param add_eventname 	添加事件名字
+					@param remove_eventname 	删除事件名字
+				Output:									
+			-->
 			<function name="addTopoListener">				
 				<parameters>
 					<string name="appid"/>
@@ -65,12 +92,29 @@
 					</then>
 				</if>
 			</function>
+			<!--
+				@brief		删除一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+				Output:									
+			-->
 			<function name="removeTopoListener">
 				<parameters>
 					<string name="appid"/>
 				</parameters>
 				<remove name="TopoContainer" key="context.appid.toString()"/>
 			</function>
+			<!--
+				@brief		查询一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+				Output:	
+					@param topoobj 	topo对象								
+			-->
 			<function name="FindTopoListener">
 				<parameters>
 					<string name="appid"/>
@@ -78,7 +122,16 @@
 				</parameters>
 				<set name="topoobj" value="thisclass.TopoContainer.getValue(context.appid.toString())"/>
 			</function>
-			
+			<!--
+				@brief		发送添加topo事件
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备
+					@param path 	路径
+				Output:									
+			-->
 			<function name="ProcessAddTopoEvent">
 				<parameters>
 					<string name="fromdevice"/>
@@ -117,7 +170,16 @@
 					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam"/>
 				</for>
 			</function>
-			
+			<!--
+				@brief		发送删除topo事件
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备
+					@param path 	路径
+				Output:									
+			-->
 			<function name="ProcessRemoveTopoEvent">
 				<parameters>
 					<string name="fromdevice"/>
@@ -156,7 +218,16 @@
 					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam"/>
 				</for>
 			</function>
-					
+			<!--
+				@brief		获取最短路径
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备					
+				Output:							
+					@param outjson 	路径		
+			-->
 			<function name="getShortestPath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -173,7 +244,17 @@
 					</parameters>
 				</function>
 				<set name="outjson" value="topology.convertToPath(context.shortestlink.toString())"/>
-			</function>			
+			</function>	
+			<!--
+				@brief		获取最短Link
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备					
+				Output:							
+					@param outjson 	路径		
+			-->		
 			<function name="getShortestLink">
 				<parameters>
 					<string name="fromdevice"/>
@@ -210,9 +291,6 @@
 						firstr=context.toplist.getNext();
 					}
 				]]></script>
-				<log level="100"><![CDATA[CTopoService toplist.size = <%=context.toplist.size().toString()%>]]></log>
-				<log level="100"><![CDATA[CTopoService toplist first = <%=context.toplist.front().toString()%>]]></log>
-				<log level="100"><![CDATA[CTopoService toplist end = <%=context.toplist.back().toString()%>]]></log>
 				<set name="outjson" value="context.json.toString()"/>
 			</function>
 		</public>

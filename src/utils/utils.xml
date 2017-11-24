@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		文件操作
+		@auth 		Yi Jian (yijian@staros.xyz)
+		@date		2017/11/24
+		Input:
+		   @param filename 	文件路径
+		   @param xmldata   写入文件的数据
+		Output:
+	-->
 	<function name="WriteToFile">
 		<parameters>
 			<string name="filename"/>

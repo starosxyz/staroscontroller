@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-08-21
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/21
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CPacket">
 		<private>
 			<string name="m_appid"/>
@@ -27,7 +29,14 @@
 				<set name="thisclass.m_ethtype" value="context.ethtype.toString()"/>
 				<set name="thisclass.m_packets" value="0"/>
 			</function>
-			
+			<!--
+				@brief		获取packet信息
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param json 	packetjson信息				
+			-->
 			<function name="GetData">
 				<parameters>
 					<string name="json"/>
@@ -39,14 +48,28 @@
 				]]></script>
 				<set name="json" value="context.outjson.toString()"/>
 			</function>
-			
+			<!--
+				@brief		获取packet's eventname信息
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param eventname 	packet's eventname信息				
+			-->
 			<function name="GetEventName">
 				<parameters>
 					<string name="eventname"/>
 				</parameters>
 				<set name="eventname" value="thisclass.m_eventname.toString()"/>
 			</function>
-			
+			<!--
+				@brief		设置packet's packet数量
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param packets 	packet数量
+				Output:							
+			-->
 			<function name="SetPackets">
 				<parameters>
 					<long name="packets"/>
@@ -58,7 +81,14 @@
 				]]></script>
 				<set name="thisclass.m_packets" value="context.result.toLong()"/>
 			</function>
-			
+			<!--
+				@brief		获取packet's packet数量
+				@auth 		YY
+				@date		2017/08/21
+				Input:						
+				Output:			
+					@param packets 	packet数量				
+			-->
 			<function name="GetPackets">
 				<parameters>
 					<long name="packets"/>
@@ -73,6 +103,16 @@
 		</private>
 	
 		<public>
+			<!--
+				@brief		添加一个packet
+				@auth 		YY
+				@date		2017/08/21
+				Input:			
+					@param app_name 	app名字	
+					@param event_name 	事件名字	
+					@param eth_type 	以太类型	
+				Output:								
+			-->
 			<function name="addProcessor">				
 				<parameters>
 					<string name="app_name"/>
@@ -93,20 +133,47 @@
 						
 					</then>
 				</if>
-			</function>						
+			</function>		
+			<!--
+				@brief		删除一个packet
+				@auth 		YY
+				@date		2017/08/21
+				Input:			
+					@param app_name 	app名字				
+				Output:								
+			-->				
 			<function name="removeProcessor">
 				<parameters>
 					<string name="app_name"/>
 				</parameters>
 				<remove name="InstanceContainer" key="context.app_name.toString()"/>
 			</function>
+			<!--
+				@brief		查询一个packet
+				@auth 		YY
+				@date		2017/08/21
+				Input:			
+					@param app_name 	app名字						
+				Output:
+					@param packetobj 	一个packet									
+			-->
 			<function name="FindProcessorFunction">				
 				<parameters>
 					<string name="app_name"/>
 					<object name="packetobj"/>
 				</parameters>
 				<set name="packetobj" value="thisclass.InstanceContainer.getValue(context.app_name.toString())"/>
-			</function>			
+			</function>	
+			<!--
+				@brief		发packet
+				@auth 		YY
+				@date		2017/08/21
+				Input:			
+					@param strjson 	json内容
+					@param datapathid 	设备id	
+					@param msgblock 	消息					
+				Output:														
+			-->	
 			<function name="ProcessPacket">
 				<parameters>
 					<string name="strjson"/>
@@ -168,7 +235,15 @@
 					</parameters>
 				</function>
 			</function>
-			
+			<!--
+				@brief		解析数据并创建相应的host
+				@auth 		YY
+				@date		2017/08/21
+				Input:			
+					@param data 	json内容
+					@param datapathid 	设备id						
+				Output:														
+			-->	
 			<function name="HostData">
 				<parameters>
 					<string name="data"/>
@@ -213,7 +288,14 @@
 				</if>
 				
 			</function>
-			
+			<!--
+				@brief		获取一个packet信息
+				@auth 		YY
+				@date		2017/08/21
+				Input:								
+				Output:	
+					@param json 	json内容													
+			-->	
 			<function name="GetPacketJsonData">
 				<parameters>
 					<string name="json"/>

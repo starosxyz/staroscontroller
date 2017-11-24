@@ -1,4 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTunnel.xml
+	@brief 		The tunnel property is saved in the tunnel class
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/09/13
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--wangkang 2017/09/13 -->
 	<class name="CTunnel">
@@ -80,11 +90,9 @@
 				<script><![CDATA[
 					var inputport = thisclass.m_inputPort.toString();
 					var oneinputid = (inputport.split("/")[0]).split(":")[1];	
-					var inputport = inputport.split("/")[1];
-					var inputtunnelport = thisclass.m_inputtunnelport.toString();	
-					var inputtunnelport = inputtunnelport.split("/")[1];
-					var outputtunnelport = thisclass.m_outputtunnelport.toString();	
-					var outputtunnelport = outputtunnelport.split("/")[1];	
+					var inputport = inputport.split("/")[1];					
+					var inputtunnelport = thisclass.m_inputtunnelport.toString().split("/")[1];
+					var outputtunnelport = thisclass.m_outputtunnelport.toString().split("/")[1];	
 					var inputvxlanport = thisclass.m_inputvxlanport.toString();	
 					var inputvxlanport = inputvxlanport.split("/")[1];
 					var outputvxlanport = thisclass.m_outputvxlanport.toString();	
@@ -277,6 +285,11 @@
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 			</function>
+			<!--
+				@brief		Start Tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/24
+			-->
 			<function name="ActiveTunnel">
 				<log>==============================</log>
 				<log level="100">##### Active Tunnel #####</log>
@@ -300,7 +313,11 @@
 				</if>
 			</function>
 
-			<!-- wangkang 2017/09/15 -->
+			<!--
+				@brief		Start Vlan Tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/15
+			-->
 			<function name="VlanActiveTunnel">
 				<object name="firstdevice"/>
 				<object name="lastdevice"/>
@@ -418,6 +435,12 @@
 				</for>
 				<set name="m_bisActive" value="true"/>
 			</function>
+
+			<!--
+				@brief		Close Tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/24
+			-->
 			<function name="DeactiveTunnel">
 				<log level="100">##### Deactive Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==false">
@@ -436,7 +459,11 @@
 				<set name="m_bisActive" value="false"/>
 			</function>
 			
-			<!--wangkang 2017/10/27 -->
+			<!--
+				@brief		Start Vxlan Tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/10/27
+			-->
 			<function name="VxlanActiveTunnel">
 				<object name="firstdevice"/>
 				<object name="lastdevice"/>
@@ -483,7 +510,7 @@
 								<function name="InstallVxlanTunnelStart" class="firstdevice">
 									<parameters>
 										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-										<string name="inputtunnelport" in="thisclass.m_inputtunnelport.toString()"/>
+										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 									</parameters>
@@ -495,7 +522,7 @@
 								<function name="InstallVxlanTunnelEnd" class="lastdevice">
 									<parameters>
 										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-										<string name="outputtunnelport" in="thisclass.m_outputtunnelport.toString()"/>
+										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 									</parameters>
@@ -531,6 +558,7 @@
 									<function name="InstallVxlanZhuanXianStart" class="firstdevice">
 										<parameters>
 											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
 										</parameters>
 									</function>
 								</then>
@@ -538,9 +566,11 @@
 							<if cond="context.lastdevice.ptr != null">
 								<then>
 									<log level="100">lastdevice is not null</log>
+									
 									<function name="InstallVxlanZhuanXianEnd" class="lastdevice">
 										<parameters>
 											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
 										</parameters>
 									</function>
 								</then>
@@ -551,6 +581,15 @@
 				</if>
 			</function>
 			
+			<!--
+				@brief		Getting the shortest path
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/10/27
+				Output:
+					@param result 	Returns the state of getting the shortest path
+									ture:path is existent
+									false:path is nonexistent
+			-->
 			<function name="GetShortPath">
 				<parameters>
 					<boolean name="result"/>
@@ -595,66 +634,16 @@
 				</if>
 			</function>
 			
-			<!-- wangkang 2017/09/21-->
-			<function name="FindTunnelDeviceFromlist">
-				<parameters>
-					<string name="json"/>
-				</parameters>
-				<string name="dstport"/>
-				<string name="srcport"/>
-				<string name="oneinputport"/>
-				<string name="oneoutputport"/>
-				<string name="onedeviceid"/>
-				<object name="onetunneldevice"/>
-				<log><![CDATA[json=<%=context.json.toString()%>]]></log>
-				<script><![CDATA[
-					if (context.json.toString().length>0)
-					{
-						var info = JSON.parse(context.json.toString());
-						if (info.paths.length==1)
-						{
-							context.dstport.setValue(info.paths[0].dst.port);
-							context.srcport.setValue(info.paths[0].src.port);
-						}
-					}
-				]]></script>
-				
-				<for var="onetunneldevice" in="thisclass.m_tunneldevicemgr.tunneldeviceContainer">
-					<function name="GetInputPort" class="context.onetunneldevice">
-						<parameters>
-							<string name="inputPort" out="context.oneinputport"/>
-						</parameters>
-					</function>
-					<function name="GetOutputPort" class="context.onetunneldevice">
-						<parameters>
-							<string name="outputPort" out="context.oneoutputport"/>
-						</parameters>
-					</function>
-					<if cond="context.srcport.toString() == context.inputport.toString()">
-						<then>
-							<if cond="context.dstport.toString() == context.outputport.toString()">
-								<then>
-									<log>TunnelDevice is Find From List</log>
-									<function name="GetTunnelDeviceId" class="context.onetunneldevice">
-										<parameters>
-											<string name="outtunneldeviceid" out="context.onedeviceid"/>
-										</parameters>
-									</function>
-									<exit/>
-								</then>
-							</if>
-						</then>
-					</if>
-				</for>
-				<function name="removeTunnelDevice" class="thisclass.m_tunneldevicemgr">
-					<parameters>
-						<string name="deviceid" in="context.onedeviceid"/>
-					</parameters>
-				</function>
-				<function name="GetShortPath"/>
-			</function>
-			
-			<!--Topology change-->
+			<!--
+				@brief		Check that topology has changed to the path,
+								If the topology changes, restart the tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param fromdevice 	source device id
+		   			@param todevice 	destination device id
+		   			@param path 	JSON data of device attributes
+			-->
 			<function name="mytopremove">
 				<parameters>
 					<string name="fromdevice"/>
@@ -673,6 +662,67 @@
 						<boolean name="ischanage" out="context.isChange"/>
 					</parameters>
 				</function>
+				<if cond="context.isChange.toBoolean()==true">
+					<then>
+						<function name="DeactiveTunnel"/>
+						<function name="ActiveTunnel"/>
+					</then>					
+				</if>
+			</function>
+			
+			<!--
+				@brief		If the topology changes, restart the tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+				Input:
+		   			@param fromdevice 	Source Device id
+		   			@param todevice 	destination Device id
+			-->
+			<function name="mytopchange">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+				</parameters>
+				<boolean name="isChange" value="false"/>
+				<log level="100">###### CTunnel mytopchange ######</log>
+				<log>Tunnel Top channge</log>
+				<log level="100"><![CDATA[CTunnel mytopchange fromdevice = <%=context.fromdevice.toString()%>]]></log>
+				<log level="100"><![CDATA[CTunnel mytopchange todevicetodevice = <%=context.todevice.toString()%>]]></log>
+				<function name="IsMyTopChange_old" class="m_tunneldevicemgr">
+					<parameters>
+						<string name="fromdevice" in="context.fromdevice.toString()"/>
+						<string name="todevice" in="context.todevice.toString()"/>
+						<boolean name="ischanage" out="context.isChange"/>
+					</parameters>
+				</function>
+				<if cond="context.isChange.toBoolean()==true">
+					<then>
+						<function name="DeactiveTunnel"/>
+						<function name="ActiveTunnel"/>
+					</then>					
+				</if>
+			</function>
+
+			<!--
+				@brief		If the device is connected to the controller, restart the tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/20
+				Input:
+		   			@param deviceid   The device ID connected to the controller
+			-->
+			<function name="DeviceUp">
+				<parameters>
+					<string name="deviceid"/>
+				</parameters>
+				<log level="100">###### CTunnel DeviceUp ######</log>
+				<boolean name="isChange" value="false"/>
+				<function name="FindDevice" class="thisclass.m_tunneldevicemgr">
+					<parameters>
+						<string name="deviceid" in="context.deviceid"/>
+						<boolean name="ischanage" out="context.isChange"/>
+					</parameters>
+				</function>
+				<log level="100"><![CDATA[CTunnel DeviceUp isChange= <%=context.isChange.toString()%>]]></log>
 				<if cond="context.isChange.toBoolean()==true">
 					<then>
 						<function name="DeactiveTunnel"/>

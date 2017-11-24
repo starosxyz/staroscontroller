@@ -1,3 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTunnelIDManager.xml
+	@brief 		Class of tunnel id management
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/10/28
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!-- wangkang 2017/10/28 -->
 	<class name="CTunnelIdManager">
@@ -9,6 +20,13 @@
 				<set name="thisclass.m_tunnelid" value="100" />
 				<log>CTunnelIdManager is create</log>
 			</function>
+			<!--
+				@brief		Alloc Tunnel Id
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/10/28
+		   		Output:
+		   			@param vxlantunnelid   tunnel id
+			-->
 			<function name="AllocTunnelId">
 				<parameters>
 					<long name="vxlantunnelid"/>
@@ -19,6 +37,11 @@
 				<set name="context.vxlantunnelid" value="context.onetunnelid.toLong()"/>
 				<set name="thisclass.m_tunnelid" value="context.onetunnelid.toLong()"/>
 			</function>
+			<!--
+				@brief		Relese Tunnel Id
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/10/28
+			-->
 			<function name="ReleseTunnelId">
 				<log>Relese TunnelId</log>
 			</function>

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/01
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<!--
-		Author:
-				YY
-		Date:
-				2017-09-01
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
-	-->
 	<class name="CFlowService">
 		<public>
+			<!--
+				@brief		加载流表
+				@auth 		YY
+				@date		2017/09/01
+				Input:	
+					@param strjson 	流表json	
+					@param appId 	流表appId			
+					@param datapathid 	流表设备id
+				Output:
+					@param outflowid 	出口流表id
+			-->
 			<function name="InstallFlow">
 				<parameters>
 					<string name="outflowid"/>
@@ -20,6 +33,93 @@
 				
 				<object name="flowmgrobj"/>
 				<object name="deviceobj"/>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+					</then>
+				</if>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+				
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>								
+				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<string name="outflowid" out="context.outflowid"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+						<string name="appId" in="context.appId.toString()"/>
+					</parameters>
+				</function>
+				<log>CFlowService InstallFlow end</log>
+			</function>
+			<!--
+				@brief		文件操作
+				@auth 		Yi Jian (yijian@staros.xyz)
+				@date		2017/11/24
+				Input:
+				   @param filename 	文件路径
+				   @param xmldata   写入文件的数据
+				Output:
+			-->
+			<function name="InstallDropFlow">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
+					<string name="inputport"/>
+				</parameters>
+				<string name="strdropflow"/>
+				<object name="flowmgrobj"/>
+				<object name="deviceobj"/>
+				<reference variable="strdropflow">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
 				<function name="getDevice" class="DeviceManager">
 					<parameters>
 						<object name="outdevice" out="context.deviceobj"/>
@@ -46,25 +146,34 @@
 				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
 					<parameters>
 						<string name="outflowid" out="context.outflowid"/>
-						<string name="strjson" in="context.strjson.toString()"/>
+						<string name="strjson" in="context.strdropflow.toString()"/>
 						<string name="appId" in="context.appId.toString()"/>
 					</parameters>
 				</function>
 				<log>CFlowService InstallFlow end</log>
 			</function>
-		
+		<!--
+			@brief		卸载流表
+			@auth 		YY
+			@date		2017/09/01
+			Input:		
+				@param flowid 	流表id			
+				@param datapathid 	流表设备id
+			Output:
+		-->
 		<function name="UnInstallFlow">
 			<parameters>
 				<string name="datapathid"/>			
 				<string name="flowid"/>
 			</parameters>
 			<object name="deviceobj"/>
+			<object name="flowmgrobj"/>
 			<log>CFlowService UnInstallFlow</log>
-			
-<log>##### CFlowServer UnInstallFlow #####</log>
-			<if cond="context.flowid.size() == 0">
+			<log level="100"><![CDATA[CFlowService UnInstallFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+			<log>##### CFlowServer UnInstallFlow #####</log>
+			<if cond="context.flowid == ''">
 				<then>
-					
+					<log>flowid is null</log>
 				</then>
 			</if>
 			<function name="findDevice" class="DeviceManager">
@@ -74,12 +183,23 @@
 				</parameters>				
 			</function>
 			
-			<object name="flowmgrobj"/>
+			<if cond="context.deviceobj.ptr==null">
+				<then>
+					<log>deviceobj is null</log>
+				</then>
+			</if>
+
 			<function name="GetFlowManager" class="context.deviceobj">
 				<parameters>
 					<object name="outflowmgr" out="context.flowmgrobj"/>
 				</parameters>			
 			</function>
+
+			<if cond="context.flowmgrobj.ptr==null">
+				<then>
+					<log>flowmgrobj is null</log>
+				</then>
+			</if>
 			
 			<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
 				<parameters>

@@ -195,28 +195,35 @@
 				<parameters>
 					<string name="portstate" />
 				</parameters>
-	
-				<script><![CDATA[
-						var info = JSON.parse(context.portstate.toString());
-						
-						thisclass.m_rxpackets.setValue(info.rxpackets);
-						thisclass.m_txpackets.setValue(info.txpackets);
-						thisclass.m_rxbytes.setValue(info.rxbytes);
-						thisclass.m_txbytes.setValue(info.txbytes);
-						thisclass.m_rxdropped.setValue(info.rxdropped);
-						thisclass.m_txdropped.setValue(info.txdropped);
-						thisclass.m_rxerrors.setValue(info.rxerrors);
-						thisclass.m_txerrors.setValue(info.txerrors);
-						
-						thisclass.m_rxframeerr.setValue(info.rxframeerr);
-						thisclass.m_rxovererr.setValue(info.rxovererr);
-						thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
-						thisclass.m_collisions.setValue(info.collisions);
-						thisclass.m_durationsec.setValue(info.durationsec);
-						thisclass.m_durationnsec.setValue(info.durationnsec);
+				<if cond="context.portstate.toString()!=''">
+					<then>
+						<script><![CDATA[
+							var info = JSON.parse(context.portstate.toString());
+							
+							thisclass.m_rxpackets.setValue(info.rxpackets);
+							thisclass.m_txpackets.setValue(info.txpackets);
+							thisclass.m_rxbytes.setValue(info.rxbytes);
+							thisclass.m_txbytes.setValue(info.txbytes);
+							thisclass.m_rxdropped.setValue(info.rxdropped);
+							thisclass.m_txdropped.setValue(info.txdropped);
+							thisclass.m_rxerrors.setValue(info.rxerrors);
+							thisclass.m_txerrors.setValue(info.txerrors);
+							
+							thisclass.m_rxframeerr.setValue(info.rxframeerr);
+							thisclass.m_rxovererr.setValue(info.rxovererr);
+							thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
+							thisclass.m_collisions.setValue(info.collisions);
+							thisclass.m_durationsec.setValue(info.durationsec);
+							thisclass.m_durationnsec.setValue(info.durationnsec);
 					
-					]]></script>
-
+						]]></script>
+					</then>
+					<else>
+						<exit/>
+					</else>
+					
+				</if>
+	
 			</function>
 			<function name="GetPortsStateJsonData">
 				<parameters>	
@@ -444,34 +451,43 @@
 				<parameters>
 					<string name="portstatestring"/>
 				</parameters>
-				<string name="portno"/>
-				<object name="portobj"/>
-				<script><![CDATA[
-						var info = JSON.parse(context.portstatestring.toString());
-						//var stringportno=JSON.stringify(info.portno);
-						context.portno.setValue(info.portno);
-					]]></script>
-				<function name="dumpinfo"/>
-				<if cond="context.portContainer.hasValue(context.portno.toString())==true">
+				<if cond="context.portstatestring.toString()!=''">
 					<then>
-						<set name="portobj" value="context.portContainer.getValue(context.portno.toString())"/>
-						<if cond="context.portobj.ptr == null">
+						<string name="portno"/>
+						<object name="portobj"/>
+						<script><![CDATA[
+								var info = JSON.parse(context.portstatestring.toString());
+								//var stringportno=JSON.stringify(info.portno);
+								context.portno.setValue(info.portno);
+							]]></script>
+						<function name="dumpinfo"/>
+						<if cond="context.portContainer.hasValue(context.portno.toString())==true">
 							<then>
-								<log>portobj is null </log>
-								<exit/>
+								<set name="portobj" value="context.portContainer.getValue(context.portno.toString())"/>
+								<if cond="context.portobj.ptr == null">
+									<then>
+										<log>portobj is null </log>
+										<exit/>
+									</then>
+								</if>
+								<function name="UpdatePortState" class="context.portobj">
+									<parameters>
+										<string name="portstate"  in="context.portstatestring.toString()"/>
+									</parameters>
+								</function>
 							</then>
+							<else>
+								<log> don't have the port</log>
+							</else>
 						</if>
-						<function name="UpdatePortState" class="context.portobj">
-							<parameters>
-								<string name="portstate"  in="context.portstatestring.toString()"/>
-							</parameters>
-						</function>
 					</then>
 					<else>
-						<log> don't have the port</log>
+						<exit/>
 					</else>
 				</if>
-			</function>
+				
+				</function>
+				
 			<function name="dumpinfo">
 				<string name="ports"/>
 				<pair name="onehostpair" keytype="string" valuetype="object"/>
@@ -614,28 +630,38 @@
 				<parameters>
 					<string name="portstatejson" />
 				</parameters>
-				<list name="portstatelist" valuetype="string"/>
-				<string name="portstatestring" />
-				<string name="i" />
-				<script><![CDATA[
-						var info = JSON.parse(context.portstatejson.toString());
-								if (info.portstatslist != null)
-								{
-									for(var i=0;i<info.portstatslist.length;i++)
-									{
-										var portstats = info.portstatslist[i];
-										var portstrjson=JSON.stringify(portstats);
-										context.portstatelist.addValue(portstrjson);
-									}
-								}
-							]]></script>
-				<for var="i" in="context.portstatelist">
-					<function name="UpdatePortState">
-						<parameters>
-							<string name="portstatestring"  in="context.i.toString()"/>
-						</parameters>
-					</function>
-				</for>
+				<if cond="context.portstatejson.toString()!=''">
+					<then>
+						<list name="portstatelist" valuetype="string"/>
+					
+						<string name="portstatestring" />
+						<string name="i" />
+						<script><![CDATA[
+								var info = JSON.parse(context.portstatejson.toString());
+										if (info.portstatslist != null)
+										{
+											for(var i=0;i<info.portstatslist.length;i++)
+											{
+												var portstats = info.portstatslist[i];
+												var portstrjson=JSON.stringify(portstats);
+												context.portstatelist.addValue(portstrjson);
+											}
+										}
+									]]></script>
+						<for var="i" in="context.portstatelist">
+							
+							<function name="UpdatePortState">
+								<parameters>
+									<string name="portstatestring"  in="context.i.toString()"/>
+								</parameters>
+							</function>
+						</for>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			
 			</function>
 		<function name="SendPortStateRequest">
 				<long name="xid" />

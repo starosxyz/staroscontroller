@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSSHDevice.xml
+	@brief 		delete device's flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/14
+-->
 <starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<class name="CSSHDevice">
 		<private>
 			<object name="sshobj"/>
 		</private>
 		<public>
+			<!--
+				@brief		删除V150设备流表
+				@auth 		YY
+				@date		2017/11/14
+				Input:
+					@param ip 	设备的peeripaddr
+				Output:
+			-->	
 			<function name="ClearFlow_v150">
 				<parameters>
 					<string name="ip"/>
@@ -38,6 +56,14 @@
 							</ssh>
 					</function>
 			</onevent>
+			<!--
+				@brief		删除V580设备流表
+				@auth 		YY
+				@date		2017/11/14
+				Input:
+					@param ip 	设备的peeripaddr
+				Output:
+			-->	
 			<function name="ClearFlow">
 				<parameters>
 					<string name="ip"/>

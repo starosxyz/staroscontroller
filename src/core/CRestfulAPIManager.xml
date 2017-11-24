@@ -28,8 +28,8 @@
 					<long name="bundleid"/>
 				</parameters>
 				<set name="eventname" value="thisclass.m_eventname"/>
-					<set name="bundleid" value="thisclass.m_bundleid"/>
-				</function>
+				<set name="bundleid" value="thisclass.m_bundleid"/>
+			</function>
 			
 		</public>
 	</class>
@@ -62,31 +62,15 @@
 				<remove name="thisclass.restfulapiContainer" key="context.requestpath.toString()"/>
 			</function>
 			<!--hu-->
+			<!--by yijian, add query param,2017/11/23-->
 			<function name="GetHandler">
 				<parameters>
-					<string name="requestpath" />
-					<object name="handler" />
-				</parameters>
-				<string name="requestpaths2222" />
-				<boolean name="ispath" />
-				<pair name="onerestfulpair"  keytype="string" valuetype="object"/>
-				<for var="onerestfulpair" in="context.restfulapiContainer">
-					<set name="requestpaths2222" value="context.onerestfulpair.first()"/>
-					<script><![CDATA[
-						var requestpaths=context.requestpath.toString();
-
-							if(requestpaths.indexOf(context.requestpaths2222.toString())>=0){
-								context.ispath.setValue(true);
-							}else{
-								context.ispath.setValue(false);
-						}			
-					]]></script>	
-					<if cond="context.ispath.toBoolean()==true">
-						<then>						
-							<set name="handler" value="thisclass.restfulapiContainer.getValue(context.requestpaths2222.toString())"/>
-						</then>
-					</if>
-				</for>
+					<string name="requestpath"/>
+					<object name="handler"/>
+					<vector name="paramvector"/>
+					<hashmap name="queryparam"/>
+				</parameters>				
+				<set name="handler" value="thisclass.restfulapiContainer.matchFind(context.requestpath.toString(), context.paramvector, context.queryparam)"/>
 			</function>
 		</public>
 	</class>

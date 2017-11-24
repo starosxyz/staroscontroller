@@ -235,7 +235,13 @@
 				</for>
 			</function>
 			
-			<!-- wangkang 2017/09/06 -->
+			<!--
+				@brief		Set group messages state
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/06
+				Input:
+					@param inmodstate  group message state
+			-->
 			<function name="SetState">
 				<parameters>
 					<string name="inmodstate" />
@@ -385,7 +391,11 @@
 				</function>
 			</function>
 			
-			<!-- wangkang 2017/09/06 -->
+			<!--
+				@brief		The controller sends the error group to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/06
+			-->
 			<function name="InstallErrorGroup">
 				<string name="modstrjson" />
 				<string name="returnresourceid" />
@@ -531,7 +541,15 @@
 				</function>
 			</function>	
 			
-			<!-- wangkang 2017/09/06-->
+			<!--
+				@brief		Find group object from groupContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/06
+				Input:
+					@param ingroupid   groupid
+				Output:
+					@param outgroup   group object
+			-->
 			<function name="FindGroup">
 				<parameters>
 					<string name="ingroupid" />
@@ -546,6 +564,11 @@
 					</then>
 				</if>
 			</function>
+			<!--
+				@brief		Print groupid from groupContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/06
+			-->
 			<function name="DumpGroup">
 				<string name="groupkey" />
 				<pair name="onestatepair"  keytype="string" valuetype="object"/> 

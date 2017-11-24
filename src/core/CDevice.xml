@@ -10,7 +10,6 @@
 			<string name="m_transportid" />
 			<string name="m_localipaddr" />
 			<string name="m_peeripaddr"/>
-			<string name="m_masterid" />
 			<string name="m_type" />
 			<string name="m_online" />
 			<string name="m_protocol"/>
@@ -29,6 +28,10 @@
 			<string name="m_group_capabilities" />
 			<string name="m_group_max_groups" />
 			<string name="m_group_actions" />
+			<string name="m_dropflowid"/>
+			
+			<!-- wangkang 2017/11/22-->
+			<long name="m_requestcount"/>
 
 			<object name="sshdevice"/>
 		</private>
@@ -43,8 +46,7 @@
 					<string name="transportid" />
 					<string name="datapathid" />
 					<string name="localipaddr" />
-					<string name="peeripaddr" />
-					<string name="masterid" />	
+					<string name="peeripaddr" />	
 					<string name="type" />
 					<string name="online" />
 					<string name="protocol"/>
@@ -58,7 +60,6 @@
 				<set name="thisclass.m_datapathid" value="context.datapathid.toString()"/>
 				<set name="thisclass.m_localipaddr" value="context.localipaddr.toString()"/>
 				<set name="thisclass.m_peeripaddr" value="context.peeripaddr.toString()"/>
-				<set name="thisclass.m_masterid" value="context.masterid.toString()"/>
 				<set name="thisclass.m_type" value="context.type.toString()"/>
 				<set name="thisclass.m_online" value="context.online.toString()"/>
 				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
@@ -78,19 +79,72 @@
 					</parameters>
 				</new>
 				<!--new Group Manager object-->
+				<log>qiulei 82 CDevices.xml</log>
 				<new name="m_groupmgr" class="CGroupManager">
 					<parameters>
 						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
+				<log><![CDATA[qiulei 83 CDevices.xml thisclass.m_transportid=<%=thisclass.m_transportid.toString()%>]]></log>
+				<log>qiulei 88 CDevices.xml</log>
 				<new name="m_flowmgr" class="CFlowManager">
 					<parameters>
 						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
 					</parameters>
 				</new>
+				<log>qiulei 95 CDevices.xml 95行</log>
 				<new name="sshdevice" class="CSSHDevice"/>
+				<!-- wangkang 2017/11/22-->
+				<set name="thisclass.m_requestcount" value="0"/>
 				<!--function name="MultiPartPortDescRequest"/-->
 			</function>
+		
+			<!--qiulei 20171120 pm 添加DeviceDetailInfoToJsonStr方法  单个device的详细信息,包含了端口的详细信息-->
+			<function name="DeviceDetailInfoToJsonStr">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				
+				<string name="deviceportjson"/>
+				<string name="detailjson" />
+				
+				
+				<function name="ForDeviceDetailReqJson" class="thisclass.m_ports">
+					<parameters>
+						<string name="outjson"  out="deviceportjson"/>
+					</parameters>
+				</function>
+				
+				<script><![CDATA[
+					var portsArray = JSON.parse(context.deviceportjson.toString());                              
+					
+					var annotations=new Object();
+						annotations['managementAddress'] = thisclass.m_localipaddr.toString();
+						annotations['protocol'] = thisclass.m_protocol.toString();
+						annotations['channelId'] = thisclass.m_peeripaddr.toString();
+						
+					var device=new Object();
+						device['id']='of:'+thisclass.m_datapathid.toString();
+						device['type']=thisclass.m_type.toString();
+						device['available']="true";
+						device['role']="MASTER";
+						device['mfr']=thisclass.m_mfrdesc.toString();
+						device['hw']=thisclass.m_hwdesc.toString();
+						device['sw']=thisclass.m_swdesc.toString();
+						device['serial']=thisclass.m_serialnum.toString();
+						device['driver']="ovs";
+						device['chassisId']="";
+						
+						device['annotations']=annotations;
+						
+						device['ports']=portsArray;
+
+					var strjson=JSON.stringify(device);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			
 			<function name="SendDefaultFlow">
 				<function name="InstallDefaultFlow" class="m_flowmgr"/>
 			</function>
@@ -189,7 +243,6 @@
 							onearray._iconid_available='active';
 							onearray.name="of:"+thisclass.m_datapathid.toString();
 							onearray.id="of:"+thisclass.m_datapathid.toString();
-							onearray.masterid=thisclass.m_masterid.toString();
 							//-------------qiulei 20170818------------
 							onearray.num_ports=context.portCount.toLong();
 							onearray.mfr=thisclass.m_mfrdesc.toString();
@@ -210,21 +263,22 @@
 				<string name="deviceinfojson" />
 				<script><![CDATA[
 						var onearray = new Object();
-						onearray.available=thisclass.m_online.toString();
-						onearray.id="of:"+thisclass.m_datapathid.toString();
-						onearray.type=thisclass.m_type.toString();
-						onearray.role="MASTER";
-						onearray.mfr=thisclass.m_mfrdesc.toString();
-						onearray.hw=thisclass.m_hwdesc.toString();
-						onearray.sw=thisclass.m_swdesc.toString();
-						onearray.protocol=thisclass.m_protocol.toString();
-						onearray.driver="ovs";
-						onearray.serial=thisclass.m_serialnum.toString();	
+							onearray.available=thisclass.m_online.toString();
+							onearray.id="of:"+thisclass.m_datapathid.toString();
+							onearray.type=thisclass.m_type.toString();
+							onearray.role="MASTER";
+							onearray.mfr=thisclass.m_mfrdesc.toString();
+							onearray.hw=thisclass.m_hwdesc.toString();
+							onearray.sw=thisclass.m_swdesc.toString();
+							onearray.protocol=thisclass.m_protocol.toString();
+							onearray.driver="ovs";
+							onearray.serial=thisclass.m_serialnum.toString();	
 
 						var twoarray = new Object();
-						twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
-						twoarray['protocol'] = thisclass.m_protocol.toString();
-						twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+							twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+							twoarray['protocol'] = thisclass.m_protocol.toString();
+							twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+							
 						onearray.annotations=twoarray;
 						var strjson = JSON.stringify(onearray);
 						context.deviceinfojson.setValue(strjson);
@@ -248,7 +302,6 @@
 						onearray.sw=thisclass.m_swdesc.toString();
 						onearray.protocol=thisclass.m_protocol.toString();
 						onearray.chassisid=2;
-						onearray.masterid=thisclass.m_masterid.toString();
 						onearray.serial=thisclass.m_serialnum.toString();	
 						
 						var strjson = JSON.stringify(onearray);
@@ -268,7 +321,6 @@
 						payload['id'] = "of:" + thisclass.m_datapathid.toString();
 						payload['type'] = thisclass.m_type.toString();
 						payload['online'] = thisclass.m_online.toString();
-						payload['master'] = thisclass.m_masterid.toString();
 						var onearray = new Array();
 						onearray.push("");
 						onearray.push("of:" + thisclass.m_datapathid.toString());
@@ -305,7 +357,6 @@
 						payload['id'] = "of:" + thisclass.m_datapathid.toString();
 						payload['type'] = thisclass.m_type.toString();
 						payload['online'] = "false";
-						payload['master'] = thisclass.m_masterid.toString();
 						var onearray = new Array();
 						onearray.push("");
 						onearray.push("of:" + thisclass.m_datapathid.toString());
@@ -348,7 +399,6 @@
 									"id":"of:<%=thisclass.m_datapathid.toString()%>",
 									"type":"switch",
 									"online":true,
-									"master":"<%=thisclass.m_masterid.toString()%>",
 									"labels":
 										[
 										"","of:<%=thisclass.m_datapathid.toString()%>",
@@ -399,7 +449,6 @@
 						details['sw']=thisclass.m_swdesc.toString();
 						details['serial']=thisclass.m_serialnum.toString();
 						details['chassisid']="";
-						details['masterid']=thisclass.m_masterid.toString();
 						details['protocol']=thisclass.m_protocol.toString();
 						details['ports']=portsArray;
 					
@@ -646,6 +695,57 @@
 						<string name="ip" in="thisclass.m_peeripaddr.toString()"/>
 					</parameters>
 				</function>
+			</function>
+
+			<!--
+					@brief		reset keepalive
+					@auth 		Wang Kang (kingsalone@sina.com)
+					@date		2017/11/22
+			-->
+			<function name="ResetKeepAlive">
+				<log>###### CDevice ResetKeepAlive ######</log>
+				<set name="thisclass.m_requestcount" value="0"/>
+				<log><![CDATA[CDevice ResetKeepAlive m_requestcount= <%=thisclass.m_requestcount.toLong()%>]]></log>
+			</function>
+			
+			<!--
+					@brief		Get Request Count
+					@auth 		Wang Kang (kingsalone@sina.com)
+					@date		2017/11/22
+					Output:
+						@param outrequestcount   request count 
+			-->
+			<function name="GetRequestCount">
+				<parameters>
+					<long name="outrequestcount"/>
+				</parameters>
+				<log>###### CDevice GetRequestCount ######</log>
+				<set name="context.outrequestcount" value="thisclass.m_requestcount.toLong()"/>
+			</function>
+
+			<!--
+				@brief		send keep alive packet to switch
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/22
+			-->
+			<function name="OpenFlowKeepAliveDetect">
+				<string name="strjson"/>
+				<long name="onerequestcount"/>
+				<log>###### CDevice OpenFlowKeepAliveDetect ######</log>
+				
+				<reference variable="strjson">
+					<jsonbody><![CDATA[ 
+						{ "xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>" }
+					]]></jsonbody>
+				</reference>
+				<function name="Send_OFPT13_ECHO_REQUEST">
+					<parameters>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+					</parameters>
+				</function>
+					
+				<set name="thisclass.m_requestcount" value="thisclass.m_requestcount.toLong()+1"/>
 			</function>
 		</public>
 	</class>

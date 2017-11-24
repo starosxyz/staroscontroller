@@ -119,6 +119,7 @@
 					</then>
 					<elseif cond="context.isAPI.toBoolean()==true">
 						<then>
+							<log level="11">122行 ----staros_http.xml</log>
 							<function name="HandlAPIRequest">
 								<parameters>
 									<string name="requestpath" in="event.getParam('requestpath').toString()"/>

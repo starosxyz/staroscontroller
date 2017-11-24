@@ -1,3 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTunnelDevice.xml
+	@brief 		Class of tunnel devices management
+	@version 	1.1.0
+	@auth 		hupeng
+	@date		2017/09/25
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--hupeng 2017/09/25 -->
 	<class name="CTunnelDevice">
@@ -7,6 +18,7 @@
 			<string name="m_outputPort"/>
 			<string name="m_flowid"/>
 			<string name="m_flowid2"/>
+			<string name="m_dropid"/>
 			<long name="m_meterid"/>
 		</private>	
 		<public>
@@ -184,15 +196,15 @@
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.m_flowid.size() == 0">
+				<if cond="context.m_flowid == ''">
 					<then>
-						<log>context.m_flowid.size() == 0</log>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>
-				<if cond="context.m_flowid2.size() == 0">
+				<if cond="context.m_flowid2 == ''">
 					<then>
-						<log>context.m_flowid2.size() == 0</log>
+						<log>context.m_flowid2 == null</log>
 						<assert/>
 					</then>
 				</if>
@@ -629,7 +641,16 @@
 					</parameters>
 				</function>
 			</function>
-			
+			<!--
+				@brief		The controller sends the Vxlan Tunnel flows to the source device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+				Input:
+		   			@param inport 	Source Device inport
+		   			@param inputtunnelport 	Source Device tunnel inport
+		   			@param vxlantunnelid 	vxlan tunnelid
+		   			@param bandwith 	Source Device bandwith
+			-->
 			<function name="InstallVxlanTunnelStart">
 				<parameters>
 					<string name="inport"/>
@@ -714,15 +735,15 @@
 										"matchfieldlist":[
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"38",
-												"hasmask":"false",
-												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"0",
 												"hasmask":"false",
 												"inport":"<%=context.inputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
 											}
 										]
 									},
@@ -757,20 +778,30 @@
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.m_flowid.size() == 0">
+
+				<if cond="context.m_flowid == ''">
 					<then>
-						<log>context.m_flowid.size() == 0</log>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>
-				<if cond="context.m_flowid2.size() == 0">
+				<if cond="context.m_flowid2 == ''">
 					<then>
-						<log>context.m_flowid2.size() == 0</log>
+						<log>context.m_flowid2 == null</log>
 						<assert/>
 					</then>
-				</if>	
+				</if>
 			</function>
-			
+			<!--
+				@brief		The controller sends the Vxlan Tunnel flows to the destination device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+				Input:
+		   			@param outport 	destination Device outport
+		   			@param outputtunnelport 	destination Device tunnel outport
+		   			@param vxlantunnelid 	vxlantunnelid
+		   			@param bandwith 	destination Device bandwith
+			-->
 			<function name="InstallVxlanTunnelEnd">
 				<parameters>
 					<string name="outport"/>
@@ -904,26 +935,32 @@
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-					<if cond="context.m_flowid.size() == 0">
+				<if cond="context.m_flowid == ''">
 					<then>
-						<log>context.m_flowid.size() == 0</log>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>
-				<if cond="context.m_flowid2.size() == 0">
+				<if cond="context.m_flowid2 == ''">
 					<then>
-						<log>context.m_flowid2.size() == 0</log>
+						<log>context.m_flowid2 == null</log>
 						<assert/>
 					</then>
 				</if>	
 			</function>
 
-
-
-			<!-- wangkang 2017/11/13 -->
+			<!--
+				@brief		The controller sends the Vxlan ZhuanXian flows to the source device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/13
+				Input:
+		   			@param inport 	Source Device inport
+		   			@param inputport 	Source Device vxlan inport
+			-->
 			<function name="InstallVxlanZhuanXianStart">
 				<parameters>
 					<string name="inport"/>
+					<string name="inputport"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1030,23 +1067,45 @@
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-				<if cond="context.m_flowid.size() == 0">
+				<function name="InstallDropFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="thisclass.m_dropid"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<if cond="context.m_flowid == ''">
 					<then>
-						<log>context.m_flowid.size() == 0</log>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>
-				<if cond="context.m_flowid2.size() == 0">
+				<if cond="context.m_flowid2 == ''">
 					<then>
-						<log>context.m_flowid2.size() == 0</log>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_dropid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>	
 			</function>
-
+			<!--
+				@brief		The controller sends the Vxlan ZhuanXian flows to the destination device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/13
+				Input:
+		   			@param outport 	destination Device outport
+		   			@param outputport 	destination Device vxlan outport
+			-->
 			<function name="InstallVxlanZhuanXianEnd">
 				<parameters>
 					<string name="outport"/>
+					<string name="outputport"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1153,20 +1212,40 @@
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
-					<if cond="context.m_flowid.size() == 0">
+				<function name="InstallDropFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="thisclass.m_dropid"/>
+						<string name="inputport" in="context.outputport.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<if cond="context.m_flowid == ''">
 					<then>
-						<log>context.m_flowid.size() == 0</log>
+						<log>context.m_flowid == null</log>
 						<assert/>
 					</then>
 				</if>
-				<if cond="context.m_flowid2.size() == 0">
+				<if cond="context.m_flowid2 == ''">
 					<then>
-						<log>context.m_flowid2.size() == 0</log>
+						<log>context.m_flowid2 == null</log>
 						<assert/>
 					</then>
-				</if>	
+				</if>
+				<if cond="context.m_dropid == ''">
+					<then>
+						<log>context.m_flowid == 0</log>
+						<assert/>
+					</then>
+				</if>
 			</function>
-			
+			<!--
+				@brief		The controller sends the meters to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/13
+				Input:
+		   			@param bandwith 	Device bandwith
+			-->
 			<function name="InstallMeter">	
 				<parameters>
 					<string name="bandwith"/>
@@ -1200,11 +1279,17 @@
 					</parameters>
 				</function>
 			</function>
+			<!--
+				@brief		Close tunnel and delete flows,meters,drops
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/13
+			-->
 			<function name="DeactiveTunnel">
 				<!--DeactiveTunnel-->
 				<!--删除流表-->
 				<!--删除meter-->
 				<log level="100">CTunnelDevice DeactiveTunnel</log>
+				<!--uninstall flow 1-->
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
@@ -1216,6 +1301,14 @@
 					<parameters>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
 						<string name="flowid" in="thisclass.m_flowid2.toString()"/>
+					</parameters>
+				</function>
+				<!-- wangkang 2017/11/16 
+					uninstall dropflow -->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_dropid.toString()"/>
 					</parameters>
 				</function>
 				<!--uninstall meter-->

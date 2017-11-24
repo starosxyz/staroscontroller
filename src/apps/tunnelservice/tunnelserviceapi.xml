@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		tunnelserviceapi.xml
+	@brief 		tunnelapp's api
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/14
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<!--
-		Author:
-				YY
-		Date:
-				2017-09-14
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
-	-->	
 	<function name="RegisterHandler">
 		<log>insert tunnelserviceapi RegisterHandler</log>
 		
@@ -18,14 +20,7 @@
 				<string name="handleevent" in="'processactiverequest'"/>
 				<string name="requestpathtest" in="'/onos/v1/tunnelservice/tunnels/active'"/>			
 			</parameters>
-		</function>
-		<function name="RegisterAPIHandler" class="restfulservice">
-			<parameters>
-				<long name="bundleid" in="context.getCurrentBundleId()"/>			
-				<string name="handleevent" in="'processdeactiverequest'"/>
-				<string name="requestpathtest" in="'/onos/v1/tunnelservice/tunnels/deactive'"/>			
-			</parameters>
-		</function>
+		</function>		
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<long name="bundleid" in="context.getCurrentBundleId()"/>			
@@ -36,7 +31,14 @@
 		<function name="RegisterAPIHandler" class="restfulservice">
 			<parameters>
 				<long name="bundleid" in="context.getCurrentBundleId()"/>			
-				<string name="handleevent" in="'processrequest'"/>
+				<string name="handleevent" in="'processtunnelrequest'"/>
+				<string name="requestpathtest" in="'/onos/v1/tunnelservice/tunnel/{resourceid}'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processaddtunnelrequest'"/>
 				<string name="requestpathtest" in="'/onos/v1/tunnelservice/tunnel'"/>			
 			</parameters>
 		</function>
@@ -50,7 +52,7 @@
 		</function>
 		<function name="UnRegisterAPIHandler" class="restfulservice">
 			<parameters>
-				<string name="requestpath" in="'/onos/v1/tunnelservice/tunnels/deactive'"/>			
+				<string name="requestpath" in="'/onos/v1/tunnelservice/tunnels/tunnel/{resourceid}'"/>			
 			</parameters>
 		</function>
 		<function name="UnRegisterAPIHandler" class="restfulservice">
@@ -64,112 +66,149 @@
 			</parameters>
 		</function>
 	</function>
-	
+	<!--
+		@brief		根据操作类型区分方法
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->
 	<events>
 		<onevent event="processactiverequest">
 			<log>tunnelserviceapi processactiverequest</log>
-			<long name="size"/>
-			<function name="getTunnelNum" class="context.tunnelManagerObject">
-				<parameters>
-					<long name="size" out="context.size"/>
-				</parameters>
-			</function>
-			<if cond="context.size.toLong()==0">
+			<if cond="event.getParam('method').toString() == 'POST'">
 				<then>
-					<function name="ErrorDataResponse">
+					<long name="size"/>
+					<function name="getTunnelNum" class="context.tunnelManagerObject">
 						<parameters>
-							<long name="resourceid" in="-1"/>
-							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="description" in="'This tunnelcontanier size is null!'"/>
+							<long name="size" out="context.size"/>
 						</parameters>
 					</function>
-					<exit/>
-				</then>
-			</if>
-			<function name="ActiveTunnel" class="context.tunnelManagerObject"/>
-			<string name="outjson"/>
-			<script><![CDATA[
-				var json = new Object();
-				var one = new Object();
-				one.resourceId = 0;
-				one.code = 0;
-				one.description = "ok";						
-				json.result = one;
-				var strjson=JSON.stringify(json);												
-				context.outjson.setValue(strjson);
-			]]></script>
-			<function name="SendResponse" class="RestfulService">
-				<parameters>
-					<string name="transportid" in="event.getParam('transportid').toString()"/>
-					<string name="json" in="context.outjson.toString()"/>
-				</parameters>
-			</function>
-		</onevent>
-		<onevent event="processdeactiverequest">
-			<log>tunnelserviceapi processdeactiverequest</log>
-			<long name="size"/>
-			<function name="getTunnelNum" class="context.tunnelManagerObject">
-				<parameters>
-					<long name="size" out="context.size"/>
-				</parameters>
-			</function>
-			<if cond="context.size.toLong()==0">
-				<then>
-					<function name="ErrorDataResponse">
+					<if cond="context.size.toLong()==0">
+						<then>
+							<function name="ErrorDataResponse">
+								<parameters>
+									<long name="resourceid" in="-1"/>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'This tunnelcontanier size is null!'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<function name="ActiveTunnel" class="context.tunnelManagerObject"/>
+					<string name="outjson"/>
+					<script><![CDATA[
+						var json = new Object();
+						var one = new Object();
+						one.resourceId = 0;
+						one.code = 0;
+						one.description = "ok";						
+						json.result = one;
+						var strjson=JSON.stringify(json);												
+						context.outjson.setValue(strjson);
+					]]></script>
+					<function name="SendResponse" class="RestfulService">
 						<parameters>
-							<long name="resourceid" in="-1"/>
 							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="description" in="'This tunnelcontanier size is null!'"/>
+							<string name="json" in="context.outjson.toString()"/>
 						</parameters>
 					</function>
-					<exit/>
 				</then>
+				<else>
+					<long name="size"/>
+					<function name="getTunnelNum" class="context.tunnelManagerObject">
+						<parameters>
+							<long name="size" out="context.size"/>
+						</parameters>
+					</function>
+					<if cond="context.size.toLong()==0">
+						<then>
+							<function name="ErrorDataResponse">
+								<parameters>
+									<long name="resourceid" in="-1"/>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'This tunnelcontanier size is null!'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<function name="DeactiveTunnel" class="context.tunnelManagerObject"/>
+					<string name="outjson"/>
+					<script><![CDATA[
+						var json = new Object();
+						var one = new Object();
+						one.resourceId = 0;
+						one.code = 0;
+						one.description = "ok";						
+						json.result = one;
+						var strjson=JSON.stringify(json);												
+						context.outjson.setValue(strjson);
+					]]></script>
+					<function name="SendResponse" class="RestfulService">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="json" in="context.outjson.toString()"/>
+						</parameters>
+					</function>
+				</else>
 			</if>
-			<function name="DeactiveTunnel" class="context.tunnelManagerObject"/>
-			<string name="outjson"/>
-			<script><![CDATA[
-				var json = new Object();
-				var one = new Object();
-				one.resourceId = 0;
-				one.code = 0;
-				one.description = "ok";						
-				json.result = one;
-				var strjson=JSON.stringify(json);												
-				context.outjson.setValue(strjson);
-			]]></script>
-			<function name="SendResponse" class="RestfulService">
-				<parameters>
-					<string name="transportid" in="event.getParam('transportid').toString()"/>
-					<string name="json" in="context.outjson.toString()"/>
-				</parameters>
-			</function>
+		</onevent>	
+		<!--
+			@brief		添加tunnel
+			@auth 		YY
+			@date		2017/09/14
+			Input:
+			Output:
+		-->	
+		<onevent event="processaddtunnelrequest">
+			<log>tunnelserviceapi processtunnelsrequest</log>					
+			<function name="addTunnel"/>				
 		</onevent>
+		<!--
+			@brief		获取所有tunnels
+			@auth 		YY
+			@date		2017/09/14
+			Input:
+			Output:
+		-->	
 		<onevent event="processtunnelsrequest">
 			<log>tunnelserviceapi processtunnelsrequest</log>					
 			<function name="getAllTunnels"/>				
 		</onevent>
-		<onevent event="processrequest">
+		<!--
+			@brief		根据操作类型区分方法
+			@auth 		YY
+			@date		2017/09/14
+			Input:
+			Output:
+		-->
+		<onevent event="processtunnelrequest">
 			<log>tunnelserviceapi processrequest</log>			
 			<if cond="event.getParam('method').toString()=='GET'">
 				<then>
 					<log>insert method get</log>
-					<function name="getTunnel"/>
+					<function name="getTunnel"/>						
 				</then>
 				<elseif cond="event.getParam('method').toString()=='PUT'">
 					<log>insert method put</log>										
-					<function name="updateTunnel"/>
-				</elseif>
-				<elseif cond="event.getParam('method').toString()=='POST'">
-					<log>insert method post</log>	
-					<function name="addTunnel"/>
-				</elseif>
+					<function name="updateTunnel"/>						
+				</elseif>				
 				<else>
 					<log>insert method delete</log>
-					<function name="deleteTunnel"/>
+					<function name="deleteTunnel"/>						
 				</else>									
 			</if>				
 		</onevent>
 	</events>
+	<!--
+		@brief		获取所有tunnels
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
 	<function name="getAllTunnels">		
 		<log>insert getAllTunnels</log>
 		<string name="outjson"/>
@@ -185,17 +224,21 @@
 			</parameters>
 		</function>
 	</function>
-	<function name="getTunnel">
+	<!--
+		@brief		获取一个tunnel
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
+	<function name="getTunnel">		
 		<log>insert method == get</log>
-		<long name="resourceid"/>
+		<vector name="pathvector" valuetype="string"/>
+		<set name="pathvector" value="event.getParam('params')"/>
+		<log level="11"><![CDATA[getTunnel vector.size = <%=context.pathvector.size().toString()%>]]></log>
+		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
 		<object name="tunnel"/>
-		<string name="outjson"/>
-		<script><![CDATA[
-			var str = event.getParam('requestpath').toString();
-			var array = str.split("/");
-			var local_id = array[array.length-1];
-			context.resourceid.setValue(local_id);
-		]]></script>		
+		<string name="outjson"/>			
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
@@ -226,9 +269,16 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		更新一个tunnel
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
 	<function name="updateTunnel">		
 		<log>insert method == put</log>
-		<long name="resourceid"/>
+		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
 		<object name="tunnel"/>
 		<string name="outjson"/>
 		<string name="username"/>
@@ -258,13 +308,7 @@
 		<long name="innum"/>
 		<object name="outdeviceportobj"/>
 		<long name="outdeivceportnum"/>
-		<long name="outnum"/>
-		<script><![CDATA[
-			var str = event.getParam('requestpath').toString();
-			var array = str.split("/");
-			var local_id = array[array.length-1];
-			context.resourceid.setValue(local_id);
-		]]></script>		
+		<long name="outnum"/>			
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
@@ -412,7 +456,7 @@
 				<string name="datapathid" in="context.outputdevice.toString()"/>
 			</parameters>
 		</function>
-		<if cond="context.indevice==null || context.outdevice==null">
+		<if cond="context.indevice.ptr==null || context.outdevice.ptr==null">
 			<then>
 				<log>indevicde is null or outdevice is null</log>
 				<function name="ErrorDataResponse">
@@ -504,6 +548,13 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		添加一个tunnel
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
 	<function name="addTunnel">
 		<string name="username"/>
 		<string name="inputPort"/>
@@ -836,23 +887,24 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		删除一个tunnel
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
 	<function name="deleteTunnel">
-		<long name="resourceid"/>
+		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
 		<string name="outjson"/>
-		<object name="tunnel"/>
-		<script><![CDATA[
-			var str = event.getParam('requestpath').toString();
-			var array = str.split("/");			
-			var local_id = array[array.length-1];
-			context.resourceid.setValue(local_id);			
-		]]></script>
+		<object name="tunnel"/>		
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
 				<object name="TunnelObject" out="context.tunnel"/>
 			</parameters>			
 		</function>
-		<if cond="context.tunnel==null">
+		<if cond="context.tunnel.ptr==null">
 			<then>
 				<log>tunnel is null</log>
 				<function name="ErrorDataResponse">
@@ -890,7 +942,16 @@
 			</parameters>
 		</function>
 	</function>
-	
+	<!--
+		@brief		返回错误信息
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+			@param resourceid 	资源id
+			@param transportid   发送报文id
+			@param description   错误信息
+		Output:
+	-->	
 	<function name="ErrorDataResponse">
 		<parameters>
 			<long name="resourceid"/>

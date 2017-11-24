@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-09-11
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CConnectPoint.xml
+	@brief 		连接点
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/11
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CConnectPoint">
 		<private>
 			<string name="m_datapathid" />
@@ -32,7 +34,7 @@
 				<parameters>
 					<string name="portno" />
 				</parameters>
-		=		<set name="context.portno" value="thisclass.m_portno.toString()"/>				
+				<set name="context.portno" value="thisclass.m_portno.toString()"/>				
 			</function>
 			<function name="toString">
 				<parameters>

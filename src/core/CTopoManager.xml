@@ -13,8 +13,7 @@
 			<hashmap name="topoContainer" keytype="string" valuetype="list"/>
 		</private>
 		<public>
-			<!-- add topo from (openflow-topology.xml) file
-			-->
+	
 			<function name="AddPath">
 				<parameters>
 					<string name="fromdevice"/>

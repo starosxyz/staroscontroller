@@ -8,43 +8,7 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
-	<!--qiulei  0807 18:00-->
-	<function name="OpenFlowKeepAliveDetect">
-		<parameters>
-			<hashmap name="switchdevice"/>
-		</parameters>
-		
-		<long name="requestcount"/>
-		<reference variable="strjson">
-			<jsonbody><![CDATA[ 
-				{ "xid":"<%=context.echorequestxid.toString()%>" }
-			]]></jsonbody>
-		</reference>
-		<function name="Send_OFPT13_ECHO_REQUEST">
-			<parameters>
-				<string name="transportid" in="context.switchdevice.getValue('transportid')"/>
-				<string name="strjson" in="context.strjson.toString()"/>
-			</parameters>
-		</function>
-		<set name="requestcount" value="context.switchdevice.getValue('requestcount')"/>
-		<set name="requestcount" value="requestcount+1"/>
-		<insert name="switchdevice" key="'requestcount'" value="requestcount"/>
-		
-		<if cond="context.requestcount.toLong()>10">
-			<then>
-				<!--20170808 qiulei am-->
-				<function name="removeDevice">
-					<parameters>
-						<string name="datapathid" in="context.switchdevice.getValue('datapathid')"/>
-					</parameters>
-				</function>
-				
-				<openflow name="openflowserverobj" method="DISCONNECTED" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
-			</then>
-		</if>
-	</function>
-	
-	
+
 	<!--将要循环发送的函数放在SendMultipartMessage中,执行定时器,
 		定时器就会执行SendMultipartMessage函数,
 		进而调用要发送的OpenFlowMultiPartPortDescRequest函数-->

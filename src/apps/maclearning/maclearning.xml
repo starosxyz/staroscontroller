@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/staros" scope="application">
 <!--
-	Author:
-			YY
-	Date:
-			2017-08-11
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		maclearning.xml
+	@brief 		maclearning
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/11
 -->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
 	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
 	<object name="flowservice" value="global.FlowService" reference="true"/>

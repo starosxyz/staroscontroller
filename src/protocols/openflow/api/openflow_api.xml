@@ -690,11 +690,28 @@
 			<string name="strjson" />
 		</parameters>
 		<params name="openflowparams"/>
-        <log>Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW</log>
-		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW" params="context.openflowparams">
-			<jsonsrc src="strjson"/>
-		</openflow>
+		<log>Send_OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW</log>
+		<if cond="context.transportid.toString()!=''">
+			<then>
+				<if cond="context.strjson.toString()!=''">
+					<then>
+						<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+						<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_FLOW" params="context.openflowparams">
+							<jsonsrc src="strjson"/>
+						</openflow>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+
+			</then>
+			<else>
+				<exit/>
+			</else>
+		</if>
+		
+
 	</function>
 	<!--Request 13-2 send OFP13MP_AGGREGATE message, qiulei, 2017/6/19 -->
 	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_AGGREGATE">
@@ -759,12 +776,27 @@
 			<string name="transportid" />
 			<string name="strjson" />
 		</parameters>
-		<params name="openflowparams" />
-        <log>Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP</log>
-		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
-		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP" params="context.openflowparams">
-			<jsonsrc src="strjson"/>
-		</openflow>
+		<if cond="context.transportid.toString!=''">
+			<then>
+				<if cond="context.strjson.toString()!=''">
+					<then>
+						<params name="openflowparams" />
+				        <log>Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP</log>
+						<set name="openflowparams" paramname="transportid" value="context.transportid"/>
+						<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP" params="context.openflowparams">
+							<jsonsrc src="strjson"/>
+						</openflow>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<exit/>
+			</else>
+		</if>
+		
 	</function>
 	<!--Request 13-7 send OFP13MP_GROUP_DESC message, qiulei, 2017/6/19 -->
 	<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC">

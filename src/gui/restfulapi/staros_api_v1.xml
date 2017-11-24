@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_device.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/device/staros_api_device.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/flows/staros_api_flows.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_topology.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/topology/staros_api_topology.xml"/>
 	<!--WebGUI-->
 	<!--{"code":404,"message":"HTTP 404 Not Found"}-->
 	<function name="HandlAPIRequest">
@@ -12,6 +13,7 @@
 			<string name="eventdata"/>
 			<string name="transportid"/>
 		</parameters>
+		<log level="11">15行 ----INSERT HandlAPIRequest staros_api_v1.xml</log>
 		<string name="functionname"/>
 		<params name="httpparam"/>
 		<boolean name="isHaveHandler"/>
@@ -42,225 +44,233 @@
 		<if cond="context.isAPIAuth.toBoolean()==false">
 			<then>
 				<if cond="context.requestpath.toString()=='/onos/v1/docs/apisv1/swagger.json'">
-			<then>
-				<set name="isfile" value="context.isFile(context.jsonfilepath.toString())"/>
-					<if cond="context.isfile.toBoolean()==true">
-						<then>
-							<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-							
-							<set name="content" value="context.filecontents.toString()"/>
-						</then>
-					</if>
-				<function name="dataHandle" class="APIDocsService">
-					<parameters>
-						<string name="swaggerjsonstring" in="context.content.toString()"/>
-						<string name="swaggerjsonout" out="context.swaggerjsonout"/>
-					</parameters>
-				</function>	
-				
-				<set name="httpparam" paramname="Server" value="'StarOS'"/>
-				<set name="httpparam" paramname="Connection" value="'Close'"/>
-				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
-				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
-					<jsonsrc src="swaggerjsonout"/>
-				</restful>
-				<exit/>
-			</then>
-		</if>
+					<then>
+						<set name="isfile" value="context.isFile(context.jsonfilepath.toString())"/>
+							<if cond="context.isfile.toBoolean()==true">
+								<then>
+									<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
+									
+									<set name="content" value="context.filecontents.toString()"/>
+								</then>
+							</if>
+						<function name="dataHandle" class="APIDocsService">
+							<parameters>
+								<string name="swaggerjsonstring" in="context.content.toString()"/>
+								<string name="swaggerjsonout" out="context.swaggerjsonout"/>
+							</parameters>
+						</function>	
+						
+						<set name="httpparam" paramname="Server" value="'StarOS'"/>
+						<set name="httpparam" paramname="Connection" value="'Close'"/>
+						<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+						<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+							<jsonsrc src="swaggerjsonout"/>
+						</restful>
+						<exit/>
+					</then>
+				</if>
 		
-		<if cond="context.requestpath.toString()=='/onos/v1/editor'">
-			<then>
-				<function>
-					<set name="httpparam" paramname="Location" value="'/onos/v1/editor/index.html'"/>
-					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-				</function>
-				<exit/>
-			</then>
-		</if>
+				<if cond="context.requestpath.toString()=='/onos/v1/editor'">
+					<then>
+						<function>
+							<set name="httpparam" paramname="Location" value="'/onos/v1/editor/index.html'"/>
+							<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</function>
+						<exit/>
+					</then>
+				</if>
 		
-		<script><![CDATA[
-			var x = context.requestpath.toString();
-			
-			if (x.indexOf("/onos/v1/editor")>=0)
-			{	
-				context.iseditor.setValue(true);
-			}else{
-				context.iseditor.setValue(false);
-			}
-				
-		]]></script>
-		<if cond="context.iseditor.toBoolean()==true">
-			<then>
-				<log>iseditor is true!!!</log>
 				<script><![CDATA[
 					var x = context.requestpath.toString();
-			
-					var filename2="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi"+x;
-					context.filepath.setValue(filename2);
-					if(x.indexOf(".html") > 0 )   
-					{   
-						context.contenttype.setValue('text/html');  
-					} 
-					else if (x.indexOf(".png")>0)
-					{
-						context.contenttype.setValue('image/png');
-					}
-					else if (x.indexOf(".js")>0)
-					{
-						context.contenttype.setValue('text/javascript');
-					}
-					else if (x.indexOf(".css")>0)
-					{
-						context.contenttype.setValue('text/css');
-					}
-					else if (x.indexOf(".gif")>0)
-					{
-						context.contenttype.setValue('image/gif');
-					}
-					else if (x.indexOf(".woff")>0)
-					{
-						context.contenttype.setValue('application/x-font-woff');
-					}
-					else if (x.indexOf(".ttf")>0)
-					{
-						context.contenttype.setValue('application/x-font-woff');
-					}
-					else 
-					{
-						context.contenttype.setValue('text/html'); 
-					}
-				
-				
-					 ]]></script>
-					<log><![CDATA[filepath!!!= '<%=context.filepath.toString()%>']]></log>
-					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
-					<set name="httpparam" paramname="Connection" value="'Close'"/>
-					<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
-					<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
-						<html file="context.filepath"/>
-					</restful>
-					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-				</then>
-			</if>
-		
-		<if cond="context.requestpath.toString()=='/onos/v1/docs'">
-			<then>
-				<function>
-					<set name="httpparam" paramname="Location" value="'/onos/v1/docs/index.html'"/>
-					<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
-					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-				</function>
-				<exit/>
-			</then>
-		</if>
-		<script><![CDATA[
-			var x = context.requestpath.toString();
-			
-			if (x.indexOf("/onos/v1/docs")>=0)
-			{	
-				context.isAPI.setValue(true);
-			}else{
-				context.isAPI.setValue(false);
-			}
 					
-		]]></script>
+					if (x.indexOf("/onos/v1/editor")>=0)
+					{	
+						context.iseditor.setValue(true);
+					}else{
+						context.iseditor.setValue(false);
+					}
+						
+				]]></script>
+				<if cond="context.iseditor.toBoolean()==true">
+					<then>
+						<log>iseditor is true!!!</log>
+						<script><![CDATA[
+							var x = context.requestpath.toString();
+					
+							var filename2="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi"+x;
+							context.filepath.setValue(filename2);
+							if(x.indexOf(".html") > 0 )   
+							{   
+								context.contenttype.setValue('text/html');  
+							} 
+							else if (x.indexOf(".png")>0)
+							{
+								context.contenttype.setValue('image/png');
+							}
+							else if (x.indexOf(".js")>0)
+							{
+								context.contenttype.setValue('text/javascript');
+							}
+							else if (x.indexOf(".css")>0)
+							{
+								context.contenttype.setValue('text/css');
+							}
+							else if (x.indexOf(".gif")>0)
+							{
+								context.contenttype.setValue('image/gif');
+							}
+							else if (x.indexOf(".woff")>0)
+							{
+								context.contenttype.setValue('application/x-font-woff');
+							}
+							else if (x.indexOf(".ttf")>0)
+							{
+								context.contenttype.setValue('application/x-font-woff');
+							}
+							else 
+							{
+								context.contenttype.setValue('text/html'); 
+							}
+						
+						
+						]]></script>
+						<log><![CDATA[filepath!!!= '<%=context.filepath.toString()%>']]></log>
+						<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+						<set name="httpparam" paramname="Connection" value="'Close'"/>
+						<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+						<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+							<html file="context.filepath"/>
+						</restful>
+						<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+					</then>
+				</if>
+		
+				<if cond="context.requestpath.toString()=='/onos/v1/docs'">
+					<then>
+						<function>
+							<set name="httpparam" paramname="Location" value="'/onos/v1/docs/index.html'"/>
+							<restful name="restfulserver" action="RESPONSE" status="301" text="Moved Temporarily" transportid="context.transportid.toString()" httpparams="httpparam"/>
+							<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+						</function>
+						<exit/>
+					</then>
+				</if>
+				
+				<script><![CDATA[
+					var x = context.requestpath.toString();					
+					if (x.indexOf("/onos/v1/docs")>=0)
+					{	
+						context.isAPI.setValue(true);
+					}else{
+						context.isAPI.setValue(false);
+					}
+							
+				]]></script>
 				  
 
-		<if cond="context.isAPI.toBoolean()==true">
-			<then>
-			
-			<log>isAPI is true!!!</log>
-				<script><![CDATA[
-					var x = context.requestpath.toString();
-				
-						var filename2="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi"+x;
-						context.filepath.setValue(filename2);
-						if(x.indexOf(".html") > 0 )   
-						{   
-							context.contenttype.setValue('text/html');  
-						} 
-						else if (x.indexOf(".png")>0)
-						{
-							context.contenttype.setValue('image/png');
-						}
-						else if (x.indexOf(".js")>0)
-						{
-							context.contenttype.setValue('text/javascript');
-						}
-						else if (x.indexOf(".css")>0)
-						{
-							context.contenttype.setValue('text/css');
-						}
-						else if (x.indexOf(".gif")>0)
-						{
-							context.contenttype.setValue('image/gif');
-						}
-						else if (x.indexOf(".woff")>0)
-						{
-							context.contenttype.setValue('application/x-font-woff');
-						}
-						else if (x.indexOf(".ttf")>0)
-						{
-							context.contenttype.setValue('application/x-font-woff');
-						}
-						else 
-						{
-							context.contenttype.setValue('text/html'); 
-						}
-					
-					
-				 ]]></script>
-				<log><![CDATA[filepath!!!= '<%=context.filepath.toString()%>']]></log>
-				<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
-				<set name="httpparam" paramname="Connection" value="'Close'"/>
-				<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
-				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
-					<html file="context.filepath"/>
-				</restful>
-				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-			</then>
-			<else>
-				<log>isAPI is false!!!</log>
-				<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
+				<if cond="context.isAPI.toBoolean()==true">
 					<then>
-						<log>APIV1MapFunction true !!!!!!</log>
-							<set name="functionname" value="global.APIV1MapFunction.getParam(context.requestpath.toString())"/>
-							<function callback="functionname">
-								<parameters>
-									<string name="requestpath" in="context.requestpath.toString()"/>
-									<string name="method" in="context.method.toString()"/>
-									<string name="eventdata" in="context.eventdata.toString()"/>
-								</parameters>
-							</function>
+					
+						<log>isAPI is true!!!</log>
+						<script><![CDATA[
+							var x = context.requestpath.toString();
+						
+								var filename2="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi"+x;
+								context.filepath.setValue(filename2);
+								if(x.indexOf(".html") > 0 )   
+								{   
+									context.contenttype.setValue('text/html');  
+								} 
+								else if (x.indexOf(".png")>0)
+								{
+									context.contenttype.setValue('image/png');
+								}
+								else if (x.indexOf(".js")>0)
+								{
+									context.contenttype.setValue('text/javascript');
+								}
+								else if (x.indexOf(".css")>0)
+								{
+									context.contenttype.setValue('text/css');
+								}
+								else if (x.indexOf(".gif")>0)
+								{
+									context.contenttype.setValue('image/gif');
+								}
+								else if (x.indexOf(".woff")>0)
+								{
+									context.contenttype.setValue('application/x-font-woff');
+								}
+								else if (x.indexOf(".ttf")>0)
+								{
+									context.contenttype.setValue('application/x-font-woff');
+								}
+								else 
+								{
+									context.contenttype.setValue('text/html'); 
+								}
+							
+							
+						]]></script>
+						<log><![CDATA[filepath!!!= '<%=context.filepath.toString()%>']]></log>
+						<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+						<set name="httpparam" paramname="Connection" value="'Close'"/>
+						<set name="httpparam" paramname="Content-Type" value="context.contenttype.toString()"/>
+						<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+							<html file="context.filepath"/>
+						</restful>
+						<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 					</then>
 					<else>
-						<function>
-							<function name="HandleAPI" class="RestfulService">
-								<parameters>
-									<string name="requestpath" in="context.requestpath.toString()"/>
-									<string name="method" in="context.method.toString()"/>
-									<string name="eventdata" in="context.eventdata.toString()"/>
-								</parameters>
-							</function>
-							<log><![CDATA[Don't have the HandleAPI for requestpath= <%=context.requestpath.toString()%>]]></log>
-						</function>
+						<log level="11">225行 ----staros_api_v1.xml</log>
+						<vector name="pathvector" valuetype="string"/>
+						<hashmap name="queryparams" keytype="string" valuetype="string"/>
+						<set name="functionname" value="global.APIV1MapFunction.matchFind(context.requestpath.toString(),context.pathvector, context.queryparams)"/>
+						<if cond="context.functionname.toString() != ''">
+							<then>
+								<log level="11">230行 ----staros_api_v1.xml</log>
+								<log level="100"><![CDATA[231 functionname= <%=context.functionname.toString()%>]]></log>
+								<log level="100"><![CDATA[233 requestpath= <%=context.requestpath.toString()%>]]></log>
+								<log level="100"><![CDATA[234 method= <%=context.method.toString()%>]]></log>
+								<function callback="functionname">
+									<parameters>
+										<string name="requestpath" in="context.requestpath.toString()"/>
+										<string name="method" in="context.method.toString()"/>
+										<string name="eventdata" in="context.eventdata.toString()"/>
+										<vector name="pathvector" in="context.pathvector"/>
+										<hashmap name="queryparams" in="context.queryparams"/>
+									</parameters>
+								</function>
+							</then>
+							<else>
+								<function>
+									<log level="11">239行 ----staros_api_v1.xml 开始调用HandleAPI</log>
+									<function name="HandleAPI" class="RestfulService">
+										<parameters>
+											<string name="requestpath" in="context.requestpath.toString()"/>
+											<string name="method" in="context.method.toString()"/>
+											<string name="eventdata" in="context.eventdata.toString()"/>
+										</parameters>
+									</function>
+									<log><![CDATA[Don't have the HandleAPI for requestpath= <%=context.requestpath.toString()%>]]></log>
+								</function>
+							</else>
+						</if>
 					</else>
 				</if>
-			</else>
-			</if>
-		</then>	
+			</then>	
 		
 		<else>
 			<if cond="event.getParam('Authorization')==''">
-			<then>
-				<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
-				<set name="httpparam" paramname="Connection" value="'Close'"/>
-				<set name="httpparam" paramname="WWW-Authenticate" value="'Basic realm=\'StarOSDocs\''"/>
-				<restful name="restfulserver" action="RESPONSE" status="401" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
-				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
-				<exit/>
-			</then>
+				<then>
+					<set name="httpparam" paramname="Server" value="'StarOS.xyz'"/>
+					<set name="httpparam" paramname="Connection" value="'Close'"/>
+					<set name="httpparam" paramname="WWW-Authenticate" value="'Basic realm=\'StarOSDocs\''"/>
+					<restful name="restfulserver" action="RESPONSE" status="401" text="ok" transportid="context.transportid.toString()" httpparams="httpparam"/>
+					<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
+					<exit/>
+				</then>
 			<else>
 					<script><![CDATA[
 						
@@ -282,13 +292,13 @@
 					<log><![CDATA[username= '<%=context.usernameparam.toString()%>']]></log>
 					<log><![CDATA[password= '<%=context.passwordparam.toString()%>']]></log>
 					<reference variable="injson">
-								<jsonbody><![CDATA[ 
-									{
-										"username":"<%=context.usernameparam.toString()%>",
-										"password":"<%=context.passwordparam.toString()%>"
-									}
-									]]></jsonbody>
-							</reference>
+						<jsonbody><![CDATA[ 
+							{
+								"username":"<%=context.usernameparam.toString()%>",
+								"password":"<%=context.passwordparam.toString()%>"
+							}
+						]]></jsonbody>
+					</reference>
 						
 							<localcall method="AuthRequest" inparam="context.injson" outparam="context.outjson"/>
 							<log><![CDATA[AuthRequest injson= '<%=context.injson.toString()%>']]></log>
@@ -498,21 +508,25 @@
 				<restful name="restfulserver" action="Disconnect" transportid="context.transportid.toString()"/>
 			</then>
 			<else>
-				<log>isAPI is false!!!</log>
-				<if cond="global.APIV1MapFunction.hasParam(context.requestpath) == true">
+				<log level="11">502 --staros_api_vi.xml</log>
+				<vector name="pathvector"/>
+				<set name="functionname" value="global.APIV1MapFunction.matchFind(context.requestpath.toString(),context.pathvector)"/>
+				
+				<if cond="context.functionname.toString() != ''">
 					<then>
-						<log>APIV1MapFunction true !!!!!!</log>
-							<set name="functionname" value="global.APIV1MapFunction.getParam(context.requestpath.toString())"/>
-							<function callback="functionname">
-								<parameters>
-									<string name="requestpath" in="context.requestpath.toString()"/>
-									<string name="method" in="context.method.toString()"/>
-									<string name="eventdata" in="context.eventdata.toString()"/>
-								</parameters>
-							</function>
+						<log level="11">508 --staros_api_vi.xml</log>
+						<function callback="functionname">
+							<parameters>
+								<string name="requestpath" in="context.requestpath.toString()"/>
+								<string name="method" in="context.method.toString()"/>
+								<string name="eventdata" in="context.eventdata.toString()"/>
+								<vector name="pathvector" in="context.pathvector"/>
+							</parameters>
+						</function>
 					</then>
 					<else>
-						<function>
+						<log level="11">519 --staros_api_vi.xml</log>
+						<function>							
 							<function name="HandleAPI" class="RestfulService">
 								<parameters>
 									<string name="requestpath" in="context.requestpath.toString()"/>

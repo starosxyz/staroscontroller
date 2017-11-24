@@ -2,8 +2,26 @@
 <starlang>
 	<params name="APIV1MapFunction" global="true"/>
 	<function name="InitAPIMapFunction">
-		<log>Init API Map Function</log>
-		<set name="APIV1MapFunction" paramname="/onos/v1/devices" value="'HandleGetDevices'"/>
+		<log level="11">Init API Map Function</log>
+		<set name="APIV1MapFunction" paramname="/onos/v1/devices/{id}" value="'HandleDeleteAndFindOneDeviceRequest'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/devices" value="'HandleGetAllDevicesRequest'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/devices/{id}/ports" value="'HandleGetOneDeviceForAllPortsRequest'"/>
+		
 		<set name="APIV1MapFunction" paramname="/onos/v1/topology" value="'HandleGetTopology'"/>
+		
+		
+		<set name="APIV1MapFunction" paramname="/onos/v1/flows/application/{appId}" value="'Handflowsbyappidrequest'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/flows" value="'Handflowsrequest'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}/{flowId}" value="'HandflowsDFrequest'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}" value="'HandflowsDrequest'"/>
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	</function>
 </starlang>

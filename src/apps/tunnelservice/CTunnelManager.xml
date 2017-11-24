@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTunnelManager.xml
+	@brief 		Class of tunnel management
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/09/13
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<!--
-			Author:
-					qiulei
-			Date:
-					20170913
-			Copyright: 
-					Nanjing StarOS Inc. All rights reserved.
-		-->	
 	<class name="CTunnelManager">
 		<private>
 			<hashmap name="tunnelContainer" keytype="long" valuetype="object"/>
@@ -171,15 +173,70 @@
 					</then>
 				</if>
 			</function>
-						
+			
+			<!--
+				@brief		ergodic the tunnel container calls the mytopchange function in the CTunnel class
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+				Input:
+		   			@param fromdevice 	Source Device id
+		   			@param todevice 	destination Device id
+			-->
+			<function name="mytopchange">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+				</parameters>
+				<log level="100">###### CTunnelManager mytopchange ######</log>
+				<log level="100"><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
+				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="object"/>
+				<object name="onetunnel"/>
+				<set name="tunnelContainerfirst" value="context.tunnelContainer.begin()"/>
+				<set name="tunnelContainerend" value="context.tunnelContainer.end()"/>
+
+				<for var="context.tunnelContaineriterator" from="context.tunnelContainerfirst" to="context.tunnelContainerend">
+					<set name="onetunnel" value="context.tunnelContaineriterator.second()"/>
+					<if cond="context.onetunnel.ptr == null">
+						<then>
+							<log level="100">CTunnelManager mytopchange onetunnel is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="mytopchange" class="onetunnel">
+						<parameters>
+							<string name="fromdevice" in="context.fromdevice.toString()"/>
+							<string name="todevice" in="context.todevice.toString()"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+			<!--
+				@brief		Start tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+			-->
 			<function name="ActiveTunnel">
 				<log>CTunnelManager ActiveTunnel</log>
 			</function>			
-						
+			<!--
+				@brief		Close tunnel
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/16
+			-->			
 			<function name="DeactiveTunnel">
 				<log>CTunnelManager DeactiveTunnel</log>
 			</function>
-			<!--yijian add-->
+			<!--
+				@brief		ergodic the tunnel container calls the mytopremove function in the CTunnel class
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Input:
+		   			@param fromdevice 	source device id
+		   			@param todevice 	destination device id
+		   			@param path 	JSON data of device attributes
+			-->
 			<function name="mytopremove">
 				<parameters>
 					<string name="fromdevice"/>
@@ -377,11 +434,48 @@
 				</for>
 				<set name="context.result" value="context.final_result.toBoolean()"/>
 			</function>
+			<!--
+				@brief		Get Tunnel Num
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/22
+				Output:
+		   			@param size 	size of tunnel Container
+			-->
 			<function name="getTunnelNum">
 				<parameters>
 					<long name="size"/>
 				</parameters>
 				<set name="context.size" value="thisclass.tunnelContainer.size()"/>
+			</function>
+
+			<!--
+				@brief		ergodic the tunnel container calls the DeviceUp function in the CTunnel class
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/20
+				Input:
+		   			@param deviceid   The device ID connected to the controller
+			-->
+			<function name="DeviceUp">
+				<parameters>
+					<string name="deviceid"/>
+				</parameters>
+				<log level="100">###### CTunnelManager DeviceUp ######</log>
+				<pair name="tunnelpair" keytype="long" valuetype="object"/>
+				<object name="tunnel"/>
+				<log level="100"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
+					<set name="context.tunnel" value="context.tunnelpair.second()"/>
+					<if cond="context.tunnel != null">
+						<then>
+							<log level="100">###### tunnelContainer tunnel is not null ######</log>
+							<function name="DeviceUp" class="context.tunnel">
+								<parameters>
+									<string name="deviceid" in="context.deviceid"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+				</for>
 			</function>
 		</public>
 	</class>

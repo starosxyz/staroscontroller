@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--StarOS Entry-->
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		staros.xml
+	@brief 		控制器主入口
+	@version 	1.1.0
+	@auth 		Yi Jian (yijian@staros.xyz)
+	@date		2017/11/24
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/function_callback.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/staros_http.xml"/>
@@ -92,6 +101,8 @@
 			<function >
 				<log>staros TimeOutEvent 2017.08.28</log>
 				<function name="OpenFlowDetect"/>
+				<!-- wangkang 2017/11/22 -->
+				<function name="OpenFlowKeepAliveDetect" class="DeviceManager"/>
 				<function name="Timeout" class="SessionManager"/>
 				<long name="toposize" />	
 				<function name="GettopoSize" class="TopoManager">
