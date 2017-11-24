@@ -28,7 +28,8 @@ SDN编程语言是专门为软件定义网络开发的一种编程语言，具�
 * 支持messageblock数据类型, 用于对流式报文数据做streamfrom, streamto操作处理.
 * 支持container容器类型。 容器有list, hashmap, array等类型.
 
-### 如何开始？
+## 如何运行StarOS控制器
+### 安装StarOS网络操作系统
 ```
 # git clone https://github.com/starosxyz/staroscontroller
 # cd staroscontroller/tools/installstaros
@@ -38,15 +39,63 @@ SDN编程语言是专门为软件定义网络开发的一种编程语言，具�
 # source ./env.sh
 # make
 # mv staroscontroller /opt/staros.xyz/
-# dipc start
 ```
-### 运行应用程序
+### 运行StarOS网络操作系统
 ```
-# starosctl startapp [appfile]
-# starosctl listapp 
-# starosctl stopapp [appid] 
+[root@localhost projects]# dipc start
+[11/24/2017 05:02:28.395]     
+[11/24/2017 05:02:28.395] ******************************************************************************************
+[11/24/2017 05:02:28.395] *
+[11/24/2017 05:02:28.395] *  Copyright (C) 2016-2017, Nanjing StarOS Technology Co., Ltd
+[11/24/2017 05:02:28.395] *  Welcome to StarOS Server
+[11/24/2017 05:02:28.395] *
+[11/24/2017 05:02:28.395] ******************************************************************************************
+All Process is started. 
+
+Start SYSTEM success!, pid=16482
+
+Start STAROS success!, pid=16485
+
+Start COREMAIN success!, pid=16479
+
+Start STARGUI success!, pid=16476
+
+Start SRPC success!, pid=16468
+
+Start SYSDB success!, pid=16462
+
+Start ALLCONF success!, pid=16472
+
+Start OAM success!, pid=16457
+
+Start SYSLOG success!, pid=16465
+
+Start DIPCSERVICE success!, pid=16453
+
+
+DIPC release version 1.5.0 Build Nov 23 2017 21:13:58
 ```
-### GUI
+### 运行控制器应用程序
+```
+# starosctl startapp /opt/staros.xyz/staroscontroller/starlang/main/staros.xml
+```
+### 停止控制器应用程序
+```
+[root@localhost projects]# starosctl listapp
+Total Size:1
+appid:1000        apppath:/opt/staros.xyz/staroscontroller/starlang/main/staros.xml
+[root@localhost projects]# starosctl stopapp 1000
+,OK
+[root@localhost projects]#
+```
+
+### 关闭StarOS网络操作系统
+```
+[root@localhost projects]# dipcctl stop
+```
+
+## GUI,StarOS控制器目前采用ONOS的管理界面
+
 * 控制器登UI地址:
 http://ip:9922/onos/ui/index.html
 
