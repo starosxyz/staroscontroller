@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_app.xml
+	@brief 		the handles of openflow app
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--OpenFlow Protocol-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/protocols/openflow/api/openflow_api.xml"/>
@@ -39,6 +61,11 @@
 	<!--include src="/opt/staros.xyz/staros/starlang/unittest/openflow_unittest.xml"/-->
 	<long name="openflowxidbase" value="0"/>
 	<hashmap name="switchmap" keytype="string" valuetype="long"/>
+	<!--
+		@brief 		start openflow
+		@auth 		hu peng
+		@date		2017/07/28
+	-->
 	<function name="startopenflow">
 		<params name="openflowparams"/>
 		<!--hu peng 2017/07/28-->
@@ -47,11 +74,15 @@
 		<set name="openflowparams" paramname="protocol" value="context.GlobalSetting.getParam('openflowprotocol').toString()"/>
 		<set name="openflowparams" paramname="cerfile" value="context.GlobalSetting.getParam('openflowcerfile').toString()"/>
 		<set name="openflowparams" paramname="keyfile" value="context.GlobalSetting.getParam('openflowkeyfile').toString()"/>
-		<openflow name="openflowserverobj" method="SERVER" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>
-		
+		<openflow name="openflowserverobj" method="SERVER" params="context.openflowparams" connectevent="openflow.Connected" disconnectedevent ="openflow.Disconnected"/>	
 	</function>
 	
 	<events>
+		<!--
+			@brief 		handle openflow connected message
+			@auth 		Wang Kang (kingsalone@sina.com)
+			@date		2017/11/27
+		-->
 		<onevent event="openflow.Connected">
 			<string name="jsonbody"/>
 			<params name="openflowparams"/>
@@ -94,13 +125,18 @@
 					</function-->
 				</function>
 		</onevent>
+		<!--
+			@brief 		handle openflow disconnected message 
+			@auth 		Wang Kang (kingsalone@sina.com)
+			@date		2017/11/27
+		-->
 		<onevent event="openflow.Disconnected">
 			<function>
 				<log level="100">openflow.Disconnected</log>
 				<!--YY 2017-08-03-->
 				<function name="removeDeviceByTransportId" class="DeviceManager">
 					<parameters>
-						<string name="transportid" in="event.getParam('transportid').toString()"/>			
+						<string name="transportid" in="event.getParam('transportid').toString()"/>		
 					</parameters>
 				</function>
 				<script><![CDATA[context.openflowserverobj.ptr.destroyDeviceChannel(event.getParam('transportid').toString())]]></script>
@@ -108,9 +144,6 @@
 		</onevent>
 		<!-- 0 -->
 		<onevent event="openflow.OFPT13_HELLO">
-		  <string name="switchSessionid"/>
-		  <string name="jsonvariable"/>
-		  <string name="jsonvariablefeatures"/>
 		  <boolean name="isstop" value="true"/>
 		  <object name="openflowdevice"/>
 		  <object name="port"/>
@@ -158,9 +191,6 @@
 		  </function>
 		</onevent>
 		<onevent event="openflow.OFPT13_HELLO2">
-		  <string name="switchSessionid"/>
-		  <string name="jsonvariable"/>
-		  <string name="jsonvariablefeatures"/>
 		  <boolean name="isstop" value="true"/>
 		  <object name="openflowdevice"/>
 		  <object name="port"/>
@@ -229,11 +259,7 @@
 		  </function>
 		</onevent>
 		<!-- 1 -->
-
-		<onevent event="openflow.OFPT13_ERROR">
-			<log>####################################</log>
-			<string name="switchSessionid"/>
-			
+		<onevent event="openflow.OFPT13_ERROR">			
 			<string name="messagetype"/>
 			<function>
 				<log>Get a Error Message</log>
@@ -273,14 +299,11 @@
 					</then>
 					<else>
 						<exit/>
-					</else>
-					
+					</else>	
 				</if>
-
 			</function>
 		</onevent>
 		<!-- 2 -->
-		<!-- wangkang 2017/11/22 -->
 		<onevent event="openflow.OFPT13_ECHO_REPLY">
 			<log> ######### openflow.OFPT13_ECHO_REPLY #########</log>
 			<function name="HandleKeepAliveResponse" class="DeviceManager">
@@ -289,7 +312,6 @@
 				</parameters>
 			</function>
 		</onevent>
-		
 		<onevent event="openflow.OFPT13_ECHO_REQUEST">
 			<long name="xid"/>
 			<string name="strjson"/>
@@ -572,29 +594,27 @@
 		</onevent>
 		<!--Reply 13-3-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_TABLE">
-		  <function>
-			<log>Get a MultipartReply.OFP13MP_TABLE Message</log>
-			<object name="deviceobj"/>
-			<function name="GetDeviceByTransportId" class="DeviceManager">
-				<parameters>
-					<string name="transportid" in="event.getParam('transportid').toString()"/>
-					<object name="onedeviceobj" out="context.deviceobj"/>
-				</parameters>
+			<function>
+				<log>Get a MultipartReply.OFP13MP_TABLE Message</log>
+				<object name="deviceobj"/>
+				<function name="GetDeviceByTransportId" class="DeviceManager">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<object name="onedeviceobj" out="context.deviceobj"/>
+					</parameters>
+				</function>
+				<if cond="context.deviceobj.ptr != null">
+					<then>
+						<function>
+							<function name="SetTableJson" class="context.deviceobj">
+						  		<parameters>
+								<string name="tablejson" in="event.getParam('eventdata').toString()"/>
+								</parameters>
+							</function>
+						</function>
+					</then>
+				</if>
 			</function>
-			
-<if cond="context.deviceobj.ptr != null">
-			
-<then>
-		  <function>
-		<function name="SetTableJson" class="context.deviceobj">
-		  <parameters>
-			<string name="tablejson" in="event.getParam('eventdata').toString()"/>
-			</parameters>
-			</function>
-		  </function>
-		</then>
-		</if>
-		  </function>
 		</onevent>
 		<!--Reply 13-4-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS">

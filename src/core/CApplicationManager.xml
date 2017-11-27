@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-		<!--
-			Author:
-					hupeng
-			Date:
-					2017-09-11
-			Copyright: 
-					Nanjing StarOS Inc. All rights reserved.
-		-->
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		Capplicatpn。xml
+	@brief 		app管理
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 	<class name="CApplication">
 		<private>
 			<string name="pathname"/>
@@ -50,11 +64,14 @@
 				<set name="thisclass.pathname" value="context.apppathname.toString()"/>
 			</function>
 		
-			<!-- 
-					auth:hupeng
-					data:2017-09-11
-					From CApplicationManager function send some information to this
-			-->
+	<!--
+		@brief		发送一个app的信息
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="Setallinfo" class="oneapp">
 				<parameters>
 					<string name="appversion"/>
@@ -92,11 +109,15 @@
 					</else>
 				</if>
 			</function>
-				<!-- 
-					auth:hupeng
-					data:2017-09-11
-					get app path
-				-->
+			
+	<!--
+		@brief		获得app的路径
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="Getpath">
 				<parameters>
 					<string name="apppath"/>
@@ -104,11 +125,14 @@
 				<set name="apppath" value="thisclass.pathname"/>
 			</function>
 			
-				<!-- 
-					auth:hupeng
-					data:2017-09-11
-					get appactionid
-				-->
+	<!--
+		@brief		获得app的id
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="GetApplicationId">
 				<parameters>
 					<string name="outappid"/>
@@ -139,11 +163,14 @@
 				
 			</function>
 			
-			<!-- 
-					auth:hupeng
-					data:2017-09-11
-					active application
-			-->
+	<!--
+		@brief		启动APP 更改active文件里面的状态
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			
 			<function name="ActiveApplication">
 				<string name="filecontent" value="'0'"/>
@@ -168,11 +195,14 @@
 				
 			</function>
 			
-			<!-- 
-					auth:hupeng
-					data:2017-09-11
-					deactive application
-			-->
+	<!--
+		@brief		停掉APP 更改APP里面的状态
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="DeactiveApplication">
 				<if cond="thisclass.state.toString()=='INSTALLED'">
 					<then>
@@ -194,7 +224,14 @@
 				</if>
 				
 			</function>
-			
+	<!--
+		@brief		把APP内容转成json
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 
 			<function name="ToJsonString">
 				<parameters>
@@ -256,17 +293,14 @@
 				<set name="thisclass.currentappname" value="context.inappname"/>
 			</function>
 			
-			<!-- 
-					auth:hupeng
-					data:2017-09-11
-					load application
-					1):find all apps floder and apps
-					2):judge whether is floder and judge active file whether exist (if active file not exist 
-						create file and if active file exist judge content whether is 0)
-					3)create application object and send value
-					4)create createbundle
+	<!--
+		@brief		通过他的路径，加载所有APP，并更改他对应的active文件状态
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
 
-			-->
+	-->
 			<function name="LoadApplication">
 				<log>LoadApplication</log>
 				<list name="listdir" valuetype="string"/>
@@ -364,6 +398,18 @@
 					</if>
 				</for>
 			</function>
+			
+	<!--
+		@brief		得到app的json
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output:
+			@param filename 	CApplication.xml
+		  	@param xmldata   	appstring
+		
+
+	-->
 			<function name="GetAppJsonString">
 				<parameters>
 					<!--appjson is return value-->
@@ -451,14 +497,14 @@
 					</then>
 				</if>
 			</function>
-			<!-- 
-				auth:hupeng
-				data:2017-09-11
-				regist application 
-				get value from every app.xml file
 			
-			
-			-->
+	<!--
+		@brief		注册APP
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output:
+	-->
 			<function name="RegistApplication">
 				<parameters>
 					<string name="id" />
@@ -490,11 +536,14 @@
 				</if>
 				
 			</function>
-			<!--
-			
-				 make  app deactive
-			
-			-->
+	<!--
+		@brief		app 停止事件
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="AppDeactiveEvent">
 				<parameters>
 					<string name="id"/>
@@ -517,11 +566,14 @@
 					</then>
 				</if>
 			</function>
-			<!--
-			
-				 make  app active
-			
-			-->
+	<!--
+		@brief		app开启事件
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="AppActiveEvent">
 				<parameters>
 					<string name="id" />
@@ -545,9 +597,14 @@
 				</if>
 			</function>
 			
-			<!--	
-				 make  app uninstall and floder delete
-			-->
+		<!--
+		@brief		卸载app
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
 			<function name="UninstallApp">
 				<parameters>
 					<string name="id"/>
@@ -573,6 +630,17 @@
 				</if>
 				<file method="deletefile" name="context.apppath.toString()"/>
 			</function>
+			
+			
+	<!--
+		@brief		获得app的boundleid
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+		Output: 
+
+	-->
+			
 			
 			<function name="GetBundleID">
 				<parameters>

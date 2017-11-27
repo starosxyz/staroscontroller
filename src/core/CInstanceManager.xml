@@ -1,5 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CInstanceManager.xml
+	@brief 		instance manager
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@class      CInstance
+		@brief 		The instance property is saved in the CInstance class
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
 	<class name="CInstance">
 		<private>
 			<string name="m_id" />
@@ -22,11 +50,18 @@
 				<set name="thisclass.m_uiAttached" value="true"/>
 				<set name="thisclass.m_labels" value="context.id.toString()"/>
 			</function>
+			<!--
+				@brief		json data of add instance 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Output:
+					@param jsonstring   json data of add instance
+			-->
 			<function name="ToJson">
 				<parameters>
-					<string name="jsonstring" />			
+					<string name="jsonstring"/>			
 				</parameters>
-				<string name="values"  />
+				<string name="values"/>
 				<reference variable="values">
 					<jsonbody>
 					<![CDATA[
@@ -53,6 +88,12 @@
 			</function>
 		</public>
 	</class>
+	<!--
+		@class      CInstanceManager
+		@brief 		instance manager
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
 	<class name="CInstanceManager">
 		<private>
 			<hashmap name="m_instanceContainer"  keytype="string" valuetype="object"/>
@@ -66,6 +107,14 @@
 					</parameters>
 				</function>
 			</function>
+			<!--
+				@brief		add instance 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param id    instance id
+					@param ip    instance ip
+			-->
 			<function name="addInstance">
 				<parameters>
 					<string name="id" />			
@@ -80,6 +129,13 @@
 				</new>
 				<insert name="m_instanceContainer" key="context.id.toString()" value="context.instance"/>
 			</function>
+			<!--
+				@brief		add instance request
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param transportid   transport id   
+			-->
 			<function name="AddInstanceRequest">
 				<parameters>
 					<string name="transportid" />						

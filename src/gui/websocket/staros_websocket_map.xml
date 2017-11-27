@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		staros_websocket_map.xml
+	@brief 		The function to handle websocket is placed in map
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang>
 	<params name="WebSocketHandlerMap" global="true"/>
+	<!--
+		@brief 		Init WebSocket Handler Map
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
 	<function name="InitWebSocketHandlerMap">
 		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="requestSummary" value="'HandleRequestSummary'"/>
@@ -35,7 +62,7 @@
 		<set name="WebSocketHandlerMap" paramname="groupDataRequest" value="'HandleGroupDataRequest'"/>
 		<!-- YY 20180828 -->
 		<set name="WebSocketHandlerMap" paramname="processorDataRequest" value="'HandleProcessorDataRequest'"/>
-	<!-- YY 20180831 -->
+		<!-- YY 20180831 -->
 		<set name="WebSocketHandlerMap" paramname="tableDataRequest" value="'HandleTableDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="tunnelDataRequest" value="'HandletunnelDataRequest'"/>
 		<!-- YY 20180912 -->

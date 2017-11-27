@@ -1,19 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang>
+	<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		setting.xml
+	@brief 		系统全局配置参数
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+
+
 	<params name="GlobalSetting" global="true"/>
 	<function name="InitSetting">
-	<!-- hu peng 2017/07/28-->
+		<!--设置OpenFlow监听地址-->
 		<set name="GlobalSetting" paramname="openflowip" value="'0.0.0.0'"/>
+		<!--设置OpenFlow监听端口-->
 		<set name="GlobalSetting" paramname="openflowopenflowport" value="'6633'"/>
+		<!--设置OpenFlow协议类型-->
 		<set name="GlobalSetting" paramname="openflowprotocol" value="'tcp'"/>
+		<!--设置OpenFlow证书，当协议类型是ssh有用-->
 		<set name="GlobalSetting" paramname="openflowcerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<!--设置OpenFlow私有证书，当协议类型是ssh有用-->
 		<set name="GlobalSetting" paramname="openflowkeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<!--设置GUI监听地址-->
 		<set name="GlobalSetting" paramname="guiip" value="'0.0.0.0'"/>
+		<!--设置GUI监听端口-->
 		<set name="GlobalSetting" paramname="guiport" value="'9922'"/>
+		<!--设置GUI协议类型，HTTP/HTTPS-->
 		<set name="GlobalSetting" paramname="guiprotocol" value="'http'"/>
+		<!--设置GUI协议类型，当协议类型是HTTPS有用-->
 		<set name="GlobalSetting" paramname="guicerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<!--设置GUI协议类型，当协议类型是HTTPS有用-->
 		<set name="GlobalSetting" paramname="guikeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
-									<!--OpenFlow Ip Setting-->
+		<!--OpenFlow Ip Setting-->
 		<function name="addSetting" class="gSettingsManager">
 			<parameters>
 				<string name="component" in="'GlobalSetting'"/>			

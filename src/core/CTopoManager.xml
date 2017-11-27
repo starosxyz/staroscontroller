@@ -1,19 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CTopoManager">
-		<!--
-		Author:
-		hupeng
-		Date:
-		2017-09-29
-		Copyright:
-		Nanjing StarOS Inc. All rights reserved.
-		-->
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTopoManager.xml
+	@brief 		topo路径管理
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 		<private>
 			<hashmap name="topoContainer" keytype="string" valuetype="list"/>
 		</private>
 		<public>
-	
+	<!--
+		@brief		添加topo路径
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/24
+		Input:
+			@param filename 	openflow_topology.xml
+		  	@param xmldata   	fromdevice,todevide,path
+		Output: 
+	-->
 			<function name="AddPath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -46,14 +68,26 @@
 					</else>
 				</if>
 			</function>
-			<!-- get all topoContainer size -->
+	<!--
+		@brief		获得topoContainer集合大小
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/24
+		Input:
+		Output: 
+	-->
 			<function name="GettopoSize">
 				<parameters>
 					<long name="toposize"/>
 				</parameters>
 				<set name="toposize" value="thisclass.topoContainer.size()"/>
 			</function>
-			<!--find pathlist from fromdevice and todevice -->
+	<!--
+		@brief		寻找路径
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/24
+		Input:
+		Output: 
+	-->
 			<function name="FindPath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -79,6 +113,15 @@
 					</else>
 				</if>
 			</function>
+			
+	<!--
+		@brief		删除所有路径
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/24
+		Input:
+		Output: 
+	-->
+			
 			<function name="RemoveAllPath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -102,9 +145,15 @@
 				</if>
 				
 			</function>
-			<!-- remove onetopo
-			if topoContainer listpath as same as  pass path remove it
-			-->
+	<!--
+		@brief		删除路径
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/24
+		Input:
+			@param filename 	openflow_topology.xml
+		  	@param xmldata   	fromdevice,todevice,path
+		Output: 
+	-->
 			<function name="RemovePath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -148,7 +197,13 @@
 					</then>
 				</if>
 			</function>
-			<!-- send link to webclient-->
+				<!--
+					@brief		发送所有路径到web客户端
+					@auth 		hu peng (hupeng@staros.xyz)
+					@date		2017/11/24
+					Input:
+					Output: 
+				-->
 			<function name="SendAddAllLinkToWebClient">
 				<parameters>
 					<string name="transportid"/>
@@ -257,7 +312,13 @@
 
 			</function>
 
-			<!--send link to webclient -->
+			<!--
+				@brief		发送所有路径
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="SendLinks">
 				<parameters>
 					<string name="transportid"/>

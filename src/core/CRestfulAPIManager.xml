@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CRestfulManager.xml
+	@brief 		restfulmanager
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Restful API Service-->
 	<class name="CRestfulAPIEntry">
@@ -42,6 +64,15 @@
 			<function name="CRestfulAPIManager">
 				<log>CRestfulAPIManager is create</log>
 			</function>
+			<!--
+				@brief		添加一个api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath2222 	请求信息
+					@param handler 	api对象
+				Output:					
+			-->	
 			<function name="AddAPIHandler">
 				<parameters>
 					<string name="requestpath2222"/>			
@@ -54,7 +85,14 @@
 				</if>				
 				
 			</function>
-			
+			<!--
+				@brief		删除一个api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath2222 	请求信息					
+				Output:					
+			-->
 			<function name="RemoveAPIHandler">
 					<parameters>
 						<string name="requestpath"  />		

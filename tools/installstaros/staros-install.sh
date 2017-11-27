@@ -28,53 +28,53 @@ function install_rpm() {
 	if [ -d /opt/staros.xyz/stardlls ];then
 		echo Stardlls check!
 	else
-		if [ -f ../package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/stardlls/raw/master/stardlls-$STARDLLS_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/stardlls/raw/master/stardlls-$STARDLLS_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	if [ -d /opt/staros.xyz/protocol ];then
 		echo protocol check!
 	else
-		if [ -f ../package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/protocol/raw/master/protocol-$PROTOCOL_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/protocol/raw/master/protocol-$PROTOCOL_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	if [ -d /opt/staros.xyz/starlang ];then
 		echo starlang check!
 	else
-		if [ -f ../package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/starlang/raw/master/starlang-$STARLANG_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/starlang/raw/master/starlang-$STARLANG_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	#check dipc
 	if [ -d /opt/staros.xyz/dipc ];then
 		echo DIPC check!
 	else
-		if [ -f ../package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/DIPC/raw/master/dipc-$DIPC_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/DIPC/raw/master/dipc-$DIPC_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	#check core
 	if [ -d /opt/staros.xyz/starcore ];then
 		echo StarCore check!
 	else
-		if [ -f ../package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/starcore/raw/master/starcore-$STARCORE_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/starcore/raw/master/starcore-$STARCORE_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	
@@ -82,11 +82,11 @@ function install_rpm() {
 	if [ -d /opt/staros.xyz/staros ];then
 		echo StarOS check!
 	else
-		if [ -f ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm --nodeps
+		if [ -f ./package/centos/staros-$STAROS_VERSION-1.x86_64.rpm ];then
+			rpm -ihv ./package/centos/staros-$STAROS_VERSION-1.x86_64.rpm --nodeps
 		else
-			wget -P ../package/centos/ https://github.com/starosxyz/staros/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
-			rpm -ihv ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm --nodeps
+			wget -P ./package/centos/ https://github.com/starosxyz/staros/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
+			rpm -ihv ./package/centos/staros-$STAROS_VERSION-1.x86_64.rpm --nodeps
 		fi
 	fi
 	rm -rf /opt/staros.xyz/dipc/scripts/startup.xml;
@@ -95,38 +95,38 @@ function install_rpm() {
 
 function get_rpm() {
 	#check stardlls
-	if [ -f ../package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/stardlls-$STARDLLS_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/stardlls/raw/master/stardlls-$STARDLLS_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/stardlls/raw/master/stardlls-$STARDLLS_VERSION-1.x86_64.rpm
 	fi
-	if [ -f ../package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/protocol-$PROTOCOL_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/protocol/raw/master/protocol-$PROTOCOL_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/protocol/raw/master/protocol-$PROTOCOL_VERSION-1.x86_64.rpm
 	fi
-	if [ -f ../package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/starlang-$STARLANG_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/starlang/raw/master/starlang-$STARLANG_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/starlang/raw/master/starlang-$STARLANG_VERSION-1.x86_64.rpm
 	fi
 	#check dipc
-	if [ -f ../package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/dipc-$DIPC_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/DIPC/raw/master/dipc-$DIPC_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/DIPC/raw/master/dipc-$DIPC_VERSION-1.x86_64.rpm
 	fi
 	#check core
-	if [ -f ../package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/starcore-$STARCORE_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/starcore/raw/master/starcore-$STARCORE_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/starcore/raw/master/starcore-$STARCORE_VERSION-1.x86_64.rpm
 	fi
 	#check staros
-	if [ -f ../package/centos/staros-$STAROS_VERSION-1.x86_64.rpm ];then
+	if [ -f ./package/centos/staros-$STAROS_VERSION-1.x86_64.rpm ];then
 		echo "check"
 	else
-		wget -P ../package/centos/ https://github.com/starosxyz/staros/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
+		wget -P ./package/centos/ https://github.com/starosxyz/staros/raw/master/staros-$STAROS_VERSION-1.x86_64.rpm
 	fi
 	
 }

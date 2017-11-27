@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		C
+	@brief 		topopogy的增删改查
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+-->
 	<!--
-		Author:
-				hupeng
-		Date:
-				2017-09-30
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
+		@brief		注册APP 到RestfulService
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	getCurrentBundleId
+		Output: 
+
 	-->
-	<!--定义：Topologys-->
+
 	<function name="RegisterHandler">
 		<log>insert tunnelserviceapi RegisterHandler</log>
 		
@@ -31,7 +43,16 @@
 
 	</function>
 	
-	
+	<!--
+		@brief		注销APP 到RestfulService
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	requestpath
+		Output: 
+		-->
+
 	<function name="UnRegisterHandler">
 		<function name="UnRegisterAPIHandler" class="RestfulService">
 			<parameters>
@@ -71,6 +92,20 @@
 			</if>				
 		</onevent>
 	</events>
+	
+	
+	<!--
+		@brief		发送所有topo路径 到RestfulService
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	topology.getAllTopology()，event.getParam('transportid').toString()
+		Output: 
+		-->
+
+	
+	
 	<function name="getAllTopogys">
 		<function name="SendResponse" class="RestfulService">
 			<parameters>
@@ -80,6 +115,20 @@
 		</function>
 		<log leve="1"><![CDATA[alltopo= '<%=topology.getAllTopology().toString()%>']]></log>
 	</function>	
+	
+	
+		<!--
+		@brief		从requestpath得到fromdevice和todevice在TopoManager获得路径，发送topo路径到RestfulService
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	pathlist
+		Output: 
+			@param filename 	CTopoManager.xml
+		  	@param xmldata   	fromdevice，todevice
+		
+		-->
 	<function name="getTopogy">
 		<string name="fromdevice"/>
 		<string name="todevice"/>
@@ -158,7 +207,19 @@
 
 
 	</function>
-	
+	<!--
+		@brief		从requestpath得到fromdevice和todevice，然后从event.getParam('eventdata')获得路径，
+					在TopoManager添加路径，回应正确或错误json到RestfulService
+		@auth 		hu peng (hupeng@staros.xyz)
+		@date		2017/11/27
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	pathlist
+		Output: 
+			@param filename 	CTopoManager.xml
+		  	@param xmldata   	fromdevice，todevice，event.getParam('eventdata')
+		
+		-->
 	<function name="addTopogy">
 		<string name="successresponse"/>
 		<object name="deviceobject"/>
@@ -200,6 +261,23 @@
 			</parameters>
 		</function>
 	</function>
+	
+		<!--
+			@brief		从requestpath得到fromdevice和todevice，
+						删除TopoManager里面对应的路径，回应正确或错误json到RestfulService
+			@auth 		hu peng (hupeng@staros.xyz)
+			@date		2017/11/27
+			Input:
+				@param filename 	CRestfulService.xml
+			  	@param xmldata   	pathlist
+			Output: 
+				@param filename 	CTopoManager.xml
+			  	@param xmldata   	fromdevice，todevice，event.getParam('eventdata')
+		
+		-->
+	
+	
+	
 	<function name="deleteTopogy">
 		<log leve="1">Topopogy deleteTopogy</log>	
 		<string name="fromdevice"/>

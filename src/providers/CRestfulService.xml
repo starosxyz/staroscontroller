@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CRestfulService.xml
+	@brief 		restfulservice
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Restful API Service-->
 	<class name="CRestfulService">
@@ -6,6 +28,16 @@
 			<function name="CRestfulService">
 				<log>CRestfulService is create</log>
 			</function>
+			<!--
+				@brief		注册api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param bundleid 	bundleid
+					@param handleevent 	处理事件
+					@param requestpathtest 	请求路径
+				Output:					
+			-->
 			<function name="RegisterAPIHandler">
 				<parameters>
 					<long name="bundleid"/>			
@@ -25,10 +57,16 @@
 						<string name="requestpath2222" in="context.requestpathtest.toString()"/>
 						<object name="handler" in="context.apiobj"/>
 					</parameters>
-				</function>
-				
-				
+				</function>							
 			</function>
+			<!--
+				@brief		删除api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath 	请求路径
+				Output:					
+			-->
 			<function name="UnRegisterAPIHandler">
 				<parameters>
 					<string name="requestpath"/>			
@@ -39,8 +77,16 @@
 					</parameters>
 				</function>
 			</function>
-			
-			
+			<!--
+				@brief		处理api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath 	请求路径
+					@param method 	方式
+					@param eventdata 	信息
+				Output:					
+			-->		
 			<function name="HandleAPI">
 				<parameters>
 					<string name="requestpath"/>
@@ -105,6 +151,15 @@
 					</else>
 				</if>
 			</function>
+			<!--
+				@brief		发送回应
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param transportid 	发包id
+					@param json 	信息					
+				Output:					
+			-->
 			<function name="SendResponse">	
 				<parameters>
 					<string name="transportid"/>

@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CPortManager.xml
+	@brief 		端口管理
+	@version 	1.1.0
+	@auth 		YangXiangrui
+	@date		2017/11/27
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CPort">
 		<private>
@@ -85,6 +107,13 @@
 					</else>
 				</if>
 			</function>
+			<!--
+				@brief		把设备描述转成JSON
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output:
+					@param outjson 	传出去的Json数据
+			-->
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
 					<string name="outjson" />
@@ -107,7 +136,13 @@
 				]]></script>
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
-			
+			<!--
+				@brief		判断portno的值
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output:
+					@param returnbool 	 传出去的bool值
+			-->
 			<function name="IsReservedPort">
 				<parameters>
 					<boolean name="returnbool" />
@@ -121,6 +156,13 @@
 					</else>
 				</if>
 			</function>
+			<!--
+				@brief		获取端口状态
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output:
+					@param outstate 	 传出去的状态值
+			-->
 			<function name="GetPortState">
 				<parameters>
 					<string name="outstate"/>
@@ -161,7 +203,13 @@
 				
 			</function>
 			<!--qiulei 20170907 end-->
-			
+			<!--
+				@brief		portno验证
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output:
+					@param returnbool 	 传出去的bool值
+			-->
 			<function name="IsValidatePort">
 				<parameters>
 					<boolean name="returnbool" />
@@ -190,7 +238,13 @@
 					</else>
 				</if>
 			</function>
-
+			<!--
+				@brief		更新端口状态
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Input:
+					@param portstate 	 传进来的端口状态
+			-->
 			<function name="UpdatePortState">
 				<parameters>
 					<string name="portstate" />
@@ -225,6 +279,13 @@
 				</if>
 	
 			</function>
+			<!--
+				@brief		拿去Json端口信息
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output:
+					@param jsonstring 	传出去的Json信息
+			-->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
 					<string name="jsonstring" />
@@ -259,6 +320,11 @@
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			<function name="MultiPartPortDescRequest"/>
 			</function>
+			<!--
+				@brief		将port信息存到hashmap
+				@auth 		YangXiangRui
+				@date		2017/11/15
+			-->
 			<function name="addPort">
 				<parameters>
 					<string name="advertised"/>
@@ -293,6 +359,13 @@
 				</new>
 				<insert name="portContainer" key="context.portno.toString()" value="context.portobj"/>
 			</function>
+			<!--
+				@brief		拿去所有设备的json信息
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output
+					@param outjson 	传出去的Json信息
+			-->
 			<function name="ForDeviceDetailReqJson">
 				<parameters>
 					<string name="outjson"/>
@@ -334,7 +407,13 @@
 					context.outjson.setValue(strjson);
 				]]></script>
 			</function>
-			
+			<!--
+				@brief		拿去port的json信息
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output
+					@param outjson 	传出去的Json信息
+			-->
 			<function name="ForPortDetailReqJson">
 				<parameters>
 					<string name="outjson"/>
@@ -343,7 +422,13 @@
 					
 				]]></script>
 			</function>
-			
+			<!--
+				@brief		获取port个数
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output
+					@param portnumber 	传出去的Port个数
+			-->
 			<function name="GetPortNumberSize">
 				<parameters>
 					<long name="portnumber" />
@@ -446,7 +531,13 @@
 					</else>
 				</if>
 			</function>
-			
+			<!--
+				@brief		更新端口状态
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Input
+					@param portstatestring 	port状态信息
+			-->
 			<function name="UpdatePortState">
 				<parameters>
 					<string name="portstatestring"/>
@@ -487,7 +578,6 @@
 				</if>
 				
 				</function>
-				
 			<function name="dumpinfo">
 				<string name="ports"/>
 				<pair name="onehostpair" keytype="string" valuetype="object"/>
@@ -495,6 +585,13 @@
 					<set name="ports" value="context.onehostpair.first()"/>
 				</for>
 			</function>
+			<!--
+				@brief		获取Json端口状态信息
+				@auth 		YangXiangRui
+				@date		2017/11/15
+				Output
+					@param jsonstring 传出去的Json端口状态信息
+			-->
 			<function name="GetPortsStateJsonData">
 				<parameters>	
 					<string name="jsonstring"/>
@@ -539,7 +636,11 @@
 					context.jsonstring.setValue(inforstring);
 				]]></script>
 			</function>
-				
+			<!--
+				@brief		多端口信息查询
+				@auth 		YangXiangRui
+				@date		2017/11/15
+			-->	
 			<function name="MultiPartPortDescRequest">
 				<string name="strjson"/>
 				<long name="xid" />

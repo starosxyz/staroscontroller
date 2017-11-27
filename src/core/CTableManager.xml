@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTableManager.xml
+	@brief 		tablemanager
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CTable">
 		<private>
@@ -20,6 +42,17 @@
 				<set name="thisclass.m_lookupcount" value="context.lookupcount.toString()"/>
 				<set name="thisclass.m_matchcount" value="context.matchcount.toString()"/>
 			</function>
+			<!--
+				@brief		更新table信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tableid 	tableid
+					@param activecount 	动作个数
+					@param lookupcount 	查找个数
+					@param matchcount 	匹配个数
+				Output:					
+			-->
 			<function name="UpdateTableInfo">
 				<parameters>
 					<string name="tableid"/>
@@ -49,6 +82,14 @@
 				<log>CTableManager is create</log>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			</function>
+			<!--
+				@brief		更新table信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tablestatestring 	table状态json信息
+				Output:					
+			-->
 			<function name="UpdateTableState">
 				<parameters>
 					<string name="tablestatestring"/>
@@ -99,16 +140,28 @@
 					</else>
 				</if>
 			</function>
-				
+			<!--
+				@brief		打印tableid
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:					
+			-->
 			<function name="dumpinfo">
 				<string name="tables"/>
 				<pair name="onetableContainer" keytype="string" valuetype="object"/>
-					<for var="onetableContainer" in="context.tableContainer">
-						<set name="tables" value="context.onetableContainer.first()"/>
-						<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
-					</for>
+				<for var="onetableContainer" in="context.tableContainer">
+					<set name="tables" value="context.onetableContainer.first()"/>
+					<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
+				</for>
 			</function>
-			
+			<!--
+				@brief		发送table请求
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:					
+			-->
 			<function name="SendTableRequest">
 				<long name="xid"/>							
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
@@ -121,21 +174,27 @@
 					</parameters>
 				</function>
 			</function>
+			<!--
+				@brief		设置tablejson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tablejson 	tablejson信息
+				Output:					
+			-->
 			<function name="SetTableJson">
 				<parameters>
 					<string name="tablejson"/>
 				</parameters>
 				<set name="thisclass.m_tablejson" value="context.tablejson.toString()"/>
-				</function>
-			<!-- 
-				YY 20170831
-				return TableManager's data
-				1) put TableManager's variable m_tablejson package in JSON
-				2) Put JSON in parameter : data
-				parameter:
-							json :
-									type :	string
-									style :	out
+			</function>			
+			<!--
+				@brief		return TableManager's data
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param data 	tablejson信息
+				Output:					
 			-->
 			<function name="GetTableData">
 				<parameters>

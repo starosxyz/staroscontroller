@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CHostManager.xml
+	@brief 		hostmanager
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CHost">
 		<private>
@@ -24,6 +46,13 @@
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
 			</function>
+			<!--
+				@brief		打印host信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:
+			-->	
 			<function name="printhost">
 				<log><![CDATA[m_mac <%=thisclass.m_mac.toString()%>]]></log>
 				<log><![CDATA[m_ip <%=thisclass.m_ip.toString()%>]]></log>
@@ -31,6 +60,14 @@
 				<log><![CDATA[m_deviceid <%=thisclass.m_deviceid.toString()%>]]> </log>
 				<log><![CDATA[m_port <%=thisclass.m_port.toString()%>]]></log>
 			</function>
+			<!--
+				@brief		获取hostjson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+				Output:
+					@param jsonstring 	host的json信息
+			-->	
 			<function name="ToString">
 				<parameters>
 					<string name="jsonstring"  out="context.outjson"/>
@@ -46,8 +83,16 @@
 						var strjson=JSON.stringify(onearray);
 						context.jsonstring.setValue(strjson);
 					]]></script>
-					</function>
-		<function name="ToAddHost2Json">
+			</function>
+			<!--
+				@brief		获取hostjson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+				Output:
+					@param strjson 	host的json信息
+			-->	
+			<function name="ToAddHost2Json">
 				<parameters>
 					<string name="strjson"/>
 				</parameters>
@@ -89,8 +134,7 @@
 						]]>
 					</jsonbody>
 				</reference>
-				<set name="strjson" value="context.addhostjson.toString()"/>
-				
+				<set name="strjson" value="context.addhostjson.toString()"/>				
 			</function>
 		</public>
 	</class>
@@ -102,6 +146,18 @@
 			<function name="CHostManager">
 				<log>CHostManager is create</log>				
 			</function>
+			<!--
+				@brief		添加一个host
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param mac 	host的mac信息
+					@param ip 	host的ip信息
+					@param vlan 	host的vlan信息
+					@param deviceid 	host的deviceid信息
+					@param port 	host的port信息
+				Output:					
+			-->	
 			<function name="addHost">
 				<parameters>
 					<string name="mac" />		
@@ -129,7 +185,13 @@
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
 				<log level="100"><![CDATA[CHostManager hostContainer.size = <%=context.hostContainer.size().toString()%>]]></log>
 			</function>
-
+			<!--
+				@brief		打印一个host信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+				Output:					
+			-->	
 			<function name="printhostmanager">
 				<object name="onehostinfo" />
 				<pair name="onehostpair"  keytype="string" valuetype="object"/>
@@ -146,6 +208,14 @@
 					</function>
 				</for>
 			</function>
+			<!--
+				@brief		获取所有hostjson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:
+					@param jsonstring 	所有hostjson信息					
+			-->	
 			<function name="GetHostJsonData">
 				<parameters>
 					<string name="jsonstring" />
@@ -196,7 +266,28 @@
 					context.jsonstring.setValue(strjson);
 				]]></script>
 			</function>
-		<function name="GetHostLinkJsonData">
+			<!--
+				@brief		获取hostjson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:	
+					@param key 	key信息
+					@param insts 	insts信息
+					@param summary 	summary信息
+					@param detail 	detail信息
+					@param hosts 	hosts信息
+					@param offdev 	offdev信息
+					@param dlbls 	dlbls信息
+					@param porthl 	porthl信息
+					@param bg 	bg信息
+					@param spr 	spr信息
+					@param ovid 	ovid信息
+					@param toolbar 	toolbar信息
+					@param type 	type信息				
+				Output:
+					@param outjson 	获取封装后的json信息					
+			-->	
+			<function name="GetHostLinkJsonData">
 				<parameters>
 					<string name="key" />
 					<string name="insts" />
@@ -290,6 +381,14 @@
 					</else>
 				</if>
 			</function>
+			<!--
+				@brief		发送host信息到web前端
+				@auth 		YY
+				@date		2017/11/27
+				Input:	
+					@param transportid 	发包id			
+				Output:								
+			-->
 			<function name="SendAddAllHostToWebClient">
 				<parameters>
 					<string name="transportid" />

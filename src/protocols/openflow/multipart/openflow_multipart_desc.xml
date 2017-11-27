@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_multipart_desc.xml
+	@brief 		send openflow_multipart_descrequest and openflow_multipart_descreply
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		send openflow_multipart_descrequest
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+			@param xid 	xid
+		Output:					
+	-->
 	<function name="OpenFlowMultiPartDescRequest">
 		<parameters>
 			<long name="xid"/>
@@ -21,6 +51,14 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		send openflow_multipart_descreply
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+			@param xid 	xid
+		Output:					
+	-->
 	<function name="OpenFlowMultiPartDescReply">
 		<parameters>
 			<long name="xid"/>
@@ -46,8 +84,14 @@
 			</parameters>
 		</function>
 	</function>
+	<!--
+		@brief		befroe send openflow_multipart_descreply match xid
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+		Output:					
+	-->
 	<function name="TestOpenFlowMultiPartDescRequest">
-		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toString()%>]]></log>
@@ -64,8 +108,14 @@
 			</wait>
 		</function>
 	</function>
+	<!--
+		@brief		befroe send openflow_multipart_descreply match xid
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+		Output:					
+	-->
 	<function name="TestOpenFlowMultiPartDescReply">
-		<boolean name="isstop" value="true"/>
 		<long name="xid"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<log><![CDATA[TestOpenFlowMultiPartDescReply xid=<%=context.xid.toString()%>]]></log>

@@ -23,7 +23,6 @@ endif
 
 all: check_dir $(buidlall)
 	cp -rf $(USER_ROOT)/LICENSE.txt $(PRJDIR)/$(PROJECT_NAME)/
-	cp -rf $(USER_ROOT)/ONOS_LICENSE.txt $(PRJDIR)/$(PROJECT_NAME)/
 	cp -rf $(USER_ROOT)/AUTHOR $(PRJDIR)/$(PROJECT_NAME)/
 	cp -rf $(USER_ROOT)/README.md $(PRJDIR)/$(PROJECT_NAME)/
 	cp -rf $(USER_ROOT)/src/* $(PRJDIR)/$(PROJECT_NAME)/starlang/
