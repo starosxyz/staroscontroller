@@ -10,6 +10,14 @@
 		Copyright: 
 				Nanjing StarOS Inc. All rights reserved.
 	-->	
+	
+	<!--
+		@brief		添加tunnel Tag
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
 	<function name="AddDocsAPITunnel">
 		<string name="tag"/>
 		<reference variable="tag">
@@ -31,6 +39,13 @@
 		<function name="addPath"/>
 	</function>
 	
+	<!--
+		@brief		删除tunnel Tag
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
 	<function name="RemoveDocsAPITunnel">
 	
 		<string name="tag"/>

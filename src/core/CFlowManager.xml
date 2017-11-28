@@ -334,6 +334,13 @@
 				4)Send FlowMod message to Device
 				5)return the resource id
 			-->
+			<!--
+				@brief		安装流表请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="InstallFlowTableRequest">
 				<parameters>
 					<string name="outflowid"/>
@@ -719,6 +726,14 @@
 				4)Send FlowMod message to Device
 				5)Delete the flow from flowcontainer
 			-->
+			<!--
+				@brief		卸载流表请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+					@param flowid   flowid
+				Output:
+			-->
 			<function name="UnInstallFlowTableRequest">
 				<parameters>
 					<string name="flowid" />
@@ -796,6 +811,14 @@
 				</function>
 				<remove name="flowsContainer" key="context.flowid.toString()"/>
 			</function>
+			
+			<!--
+				@brief		得到流表json数据
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
 			<function name="GetFlowJsonData">
 				<parameters>
 					<string name="jsonstring"/>
@@ -852,14 +875,20 @@
 				]]></script>
 				<set name="jsonstring" value="context.outjson"/>
 			</function>
+			
+			<!--
+				@brief		处理请求
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
 			<function name="HandleOpenFlowMultiPartFlowResponse">
 				<parameters>
 					<string name="flowjson" />
 				</parameters>
-				<log><![CDATA[846 flowjson!!!!!= '<%=context.flowjson.toString()%>']]></log>
 				<if cond="context.flowjson.toString()!=''">
 					<then>
-						<log level="100"><![CDATA[849 flowjson!!!!!= '<%=context.flowjson.toString()%>']]></log>
 						<object name="flowobj" />
 						<string name="flowobj_flowid"/>
 						<string name="json_cookie" />
@@ -956,6 +985,14 @@
 				</if>
 				
 			</function>
+			
+			<!--
+				@brief		发送流表请求
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
 			<function name="SendFlowRequest">
 				<long name="xid" />
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>										
@@ -965,9 +1002,15 @@
 						<string name="transportid"  in="thisclass.m_transportid.toString()"/>					
 					</parameters>
 				</function>
-				
 			</function>		
 			
+			<!--
+				@brief		安装流标
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
 			<function name="InstallARPFlow">
 				<string name="modstrjson" />
 				<reference variable="modstrjson">
@@ -1021,6 +1064,13 @@
 			</function>
 			
 			<!--qiulei 2017/07/27-->
+			<!--
+				@brief		安装流表
+				@auth 		qiulei
+				@date		2017/07/27
+				Input:
+				Output:
+			-->
 			<function name="InstallDiscoveryFlow">
 				<string name="modstrjson" />
 				<string name="resourceid"  value=""/>
@@ -1074,6 +1124,13 @@
 				</function>
 			</function>
 			
+			<!--
+				@brief		安装默认流表
+				@auth 		qiulei
+				@date		2017/07/27
+				Input:
+				Output:
+			-->
 			<function name="InstallDefaultFlow">
 				<!--function name="InstallARPFlow"/-->
 				<function name="InstallDiscoveryFlow"/>

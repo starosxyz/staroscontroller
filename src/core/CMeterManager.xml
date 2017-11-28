@@ -186,7 +186,7 @@
 			<!--
 				@brief		Get meter info
 				@auth 		qiulei
-				@date		2017/08/25
+				@date		2017/08/28
 				Output:
 					@param id 	 	 meterid
 					@param appid 	 appid

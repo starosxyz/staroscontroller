@@ -64,14 +64,13 @@
 				<set name="thisclass.pathname" value="context.apppathname.toString()"/>
 			</function>
 		
-	<!--
-		@brief		发送一个app的信息
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		发送一个app的信息
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="Setallinfo" class="oneapp">
 				<parameters>
 					<string name="appversion"/>
@@ -110,14 +109,13 @@
 				</if>
 			</function>
 			
-	<!--
-		@brief		获得app的路径
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		获得app的路径
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="Getpath">
 				<parameters>
 					<string name="apppath"/>
@@ -125,14 +123,13 @@
 				<set name="apppath" value="thisclass.pathname"/>
 			</function>
 			
-	<!--
-		@brief		获得app的id
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		获得app的id
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="GetApplicationId">
 				<parameters>
 					<string name="outappid"/>
@@ -163,15 +160,13 @@
 				
 			</function>
 			
-	<!--
-		@brief		启动APP 更改active文件里面的状态
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
-			
+			<!--
+				@brief		启动APP 更改active文件里面的状态
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="ActiveApplication">
 				<string name="filecontent" value="'0'"/>
 				<if cond="thisclass.state.toString()=='ACTIVE'">
@@ -195,14 +190,13 @@
 				
 			</function>
 			
-	<!--
-		@brief		停掉APP 更改APP里面的状态
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		停掉APP 更改APP里面的状态
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="DeactiveApplication">
 				<if cond="thisclass.state.toString()=='INSTALLED'">
 					<then>
@@ -224,15 +218,13 @@
 				</if>
 				
 			</function>
-	<!--
-		@brief		把APP内容转成json
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
-
+			<!--
+				@brief		把APP内容转成json
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="ToJsonString">
 				<parameters>
 					<!--appjson is return value-->
@@ -293,14 +285,13 @@
 				<set name="thisclass.currentappname" value="context.inappname"/>
 			</function>
 			
-	<!--
-		@brief		通过他的路径，加载所有APP，并更改他对应的active文件状态
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		通过他的路径，加载所有APP，并更改他对应的active文件状态
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="LoadApplication">
 				<log>LoadApplication</log>
 				<list name="listdir" valuetype="string"/>
@@ -399,17 +390,15 @@
 				</for>
 			</function>
 			
-	<!--
-		@brief		得到app的json
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output:
-			@param filename 	CApplication.xml
-		  	@param xmldata   	appstring
-		
-
-	-->
+			<!--
+			@brief		得到app的json
+			@auth 		hu peng (hupeng@staros.xyz)
+			@date		2017/11/27
+			Input:
+			Output:
+				@param filename 	CApplication.xml
+				@param xmldata   	appstring
+			-->
 			<function name="GetAppJsonString">
 				<parameters>
 					<!--appjson is return value-->
@@ -498,13 +487,13 @@
 				</if>
 			</function>
 			
-	<!--
-		@brief		注册APP
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output:
-	-->
+			<!--
+				@brief		注册APP
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output:
+			-->
 			<function name="RegistApplication">
 				<parameters>
 					<string name="id" />
@@ -536,14 +525,13 @@
 				</if>
 				
 			</function>
-	<!--
-		@brief		app 停止事件
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		app 停止事件
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="AppDeactiveEvent">
 				<parameters>
 					<string name="id"/>
@@ -566,14 +554,13 @@
 					</then>
 				</if>
 			</function>
-	<!--
-		@brief		app开启事件
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		app开启事件
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="AppActiveEvent">
 				<parameters>
 					<string name="id" />
@@ -597,14 +584,13 @@
 				</if>
 			</function>
 			
-		<!--
-		@brief		卸载app
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		卸载app
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="UninstallApp">
 				<parameters>
 					<string name="id"/>
@@ -632,16 +618,13 @@
 			</function>
 			
 			
-	<!--
-		@brief		获得app的boundleid
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
-			
-			
+			<!--
+				@brief		获得app的boundleid
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="GetBundleID">
 				<parameters>
 					<string name="appid" />

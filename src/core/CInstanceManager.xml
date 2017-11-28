@@ -113,7 +113,7 @@
 				@date		2017/11/27
 				Input:
 					@param id    instance id
-					@param ip    instance ip
+					@param ip    locall ip
 			-->
 			<function name="addInstance">
 				<parameters>

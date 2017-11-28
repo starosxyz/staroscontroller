@@ -9,6 +9,13 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->
 	<!--定义：tunnels-->
+	<!--
+		@brief		定义tunnels
+		@auth 		qiulei
+		@date		2017/11/28 pm
+		Input:
+		Output: 
+	-->
 	<function name="AddDefinitionTunnelsData">
 		<string name="definitionname"/>
 		<string name="definitioncontent"/>
@@ -141,6 +148,13 @@
 		
 	</function>
 	
+	<!--
+		@brief		删除tunnels
+		@auth 		qiulei
+		@date		2017/11/28 pm
+		Input:
+		Output: 
+	-->
 	<function name="RemoveDefinitionTunnelsData">
 		<string name="definitionname"/>
 		

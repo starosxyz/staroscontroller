@@ -9,6 +9,13 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->
 	<!--定义：Topologys-->
+	<!--
+		@brief		定义Topologys
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="AddDefinitionTopologysData">
 		<string name="definitionname"/>
 		<string name="definitioncontent"/>
@@ -101,6 +108,13 @@
 		
 	</function>
 	
+	<!--
+		@brief		删除Topologys
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="RemoveDefinitionTopologysData">
 		<string name="definitionname"/>
 		
@@ -115,6 +129,13 @@
 
 
 	<!--定义：Topology -->
+	<!--
+		@brief		定义Topology
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="AddDefinitionTopologyData">
 		<string name="definitionname"/>
 		<string name="definitioncontent"/>
@@ -191,6 +212,13 @@
 	</function>
 	
 	<!--删除：Topology-->
+	<!--
+		@brief		删除Topology
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="RemovePutRequestDocsAPITopology">
 		<string name="definitionname"/>
 		<string name="definitioncontent"/>
@@ -206,6 +234,13 @@
 	</function>
 
 	<!--定义 TopologyResult start-->
+	<!--
+		@brief		定义:TopologyResult
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="AddDefinitionTopologyResultData">
 		<string name="definitionname"/>
 		<string name="definitioncontent"/>
@@ -253,6 +288,13 @@
 		
 	</function>
 
+	<!--
+		@brief		删除TopologyResult
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="RemoveDefinitionTopologyResultData">
 		
 		<string name="definitionname"/>
@@ -270,13 +312,26 @@
 
 
 
-
+	<!--
+		@brief		注册
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="RegistDefinition">
 		<function name="AddDefinitionTopologysData"/>
 		<function name="AddDefinitionTopologyData"/>
 		<function name="AddDefinitionTopologyResultData"/>
 	</function>
 	
+	<!--
+		@brief		删除
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="DestroyDefinition">
 		<function name="RemoveDefinitionTopologysData"/>
 		<function name="RemovePutRequestDocsAPITopology"/>

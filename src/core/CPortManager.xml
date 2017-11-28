@@ -171,6 +171,13 @@
 			</function>
 			
 			<!--qiulei 20170907 start-->
+			<!--
+				@brief		判断端口是不是边缘端口
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/28
+				Input:
+		   			@param meterid 	meterid
+			-->
 			<function name="IsEdgePort">
 				<parameters>
 					<boolean name="returnbool"/>
@@ -280,7 +287,7 @@
 	
 			</function>
 			<!--
-				@brief		拿去Json端口信息
+				@brief		拿到Json端口信息
 				@auth 		YangXiangRui
 				@date		2017/11/15
 				Output:

@@ -14,6 +14,13 @@
 				Nanjing StarOS Inc. All rights reserved.
 	-->	
 	
+	<!--
+		@brief		添加Topology Tag
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="AddDocsAPITopology">
 		<string name="tag"/>
 		<reference variable="tag">
@@ -38,6 +45,13 @@
 		<function name="RegisterHandler"/>
 	</function>
 	
+	<!--
+		@brief		删除Topology Tag
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="RemoveDocsAPITopology">
 	
 		<string name="tag"/>

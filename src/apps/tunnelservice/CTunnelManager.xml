@@ -41,6 +41,14 @@
 			</function>
 			
 			<!--qiulei 20170913-->
+			<!--
+				@brief		添加tunnel
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output: 
+					@param outjson 	获取封装后的json信息
+			-->
 			<function name="addTunnel">
 				<parameters>
 					<long name="id"/>
@@ -112,6 +120,14 @@
 				<log><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
 			</function>
 			<!--qiulei 20170913-->
+			<!--
+				@brief		删除tunnel
+				@auth 		qiulei
+				@date		2017/11/20 pm
+				Input:
+					@param tunnel_id
+				Output: 
+			-->
 			<function name="removeTunnel">
 				<parameters>
 					<long name="tunnel_id"/>
@@ -126,6 +142,14 @@
 				</if>
 			</function>
 			
+			<!--
+				@brief		tunnel转换为json字符串
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output: 
+					@param AllTunnelJsonString
+			-->
 			<function name="AllTunnelToJsonStr">
 				<parameters>
 					<string name="AllTunnelJsonString"/>
@@ -171,6 +195,15 @@
 				
 			</function>
 			<!--qiulei 20170914 am get one tunnel object-->
+			
+			<!--
+				@brief		根据tunnel_id，得到1个tunnel对象
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output: 
+					@param AllTunnelJsonString
+			-->
 			<function name="GetOneTunnelObject">
 				<parameters>
 					<long name="tunnel_id"/>
@@ -356,6 +389,7 @@
 				</for>
 				<set name="context.result" value="context.final_result.toBoolean()"/>
 			</function>
+			
 			<function name="IsHasOutPort">
 				<parameters>
 					<string name="data"/>
@@ -386,6 +420,7 @@
 				</for>
 				<set name="context.result" value="context.final_result.toBoolean()"/>
 			</function>
+			
 			<function name="IsHasInVlan">
 				<parameters>
 					<string name="data"/>
@@ -416,6 +451,7 @@
 				</for>
 				<set name="context.result" value="context.final_result.toBoolean()"/>
 			</function>
+			
 			<function name="IsHasOutVlan">
 				<parameters>
 					<string name="data"/>

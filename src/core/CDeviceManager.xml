@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		Capplicatpn。xml
+	@brief 		device管理
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
 	<class name="CDeviceManager">
 		<private>
 			<hashmap name="deviceContainer" keytype="string" valuetype="object"/>
@@ -10,6 +32,13 @@
 				<log>CDeviceManager is create</log>
 			</function>
 			<!--qiulei 20171117pm-->
+			<!--
+				@brief		以json字符创返回所有device
+				@auth 		qiulei
+				@date		2017/11/27 pm
+				Input:
+				Output:
+			-->
 			<function name="AllDevicesToJsonStr">
 				<parameters>
 					<string name="AllDevicesJsonString"/>
@@ -59,7 +88,13 @@
 			
 			
 			
-			
+			<!--
+				@brief		传入device,返回device对象
+				@auth 		qiulei
+				@date		2017/11/27 pm
+				Input:
+				Output:
+			-->
 			<function name="getDevice">
 				<parameters>
 					<object name="outdevice"/>
@@ -94,6 +129,14 @@
 					</then>
 				</if>
 			</function>
+			
+			<!--
+				@brief		添加device
+				@auth 		qiulei
+				@date		2017/11/27 pm
+				Input:
+				Output:
+			-->
 			<function name="addDevice">
 				<parameters>
 					<string name="mfrdesc"/>
@@ -173,7 +216,15 @@
 					</parameters>
 				</function>
 			</function>
-				
+			
+			
+			<!--
+				@brief		根据datapathid,找到device对象
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="findDevice">
 				<parameters>
 					<string name="datapathid"/>
@@ -194,6 +245,14 @@
 				</if>	
 			</function>
 			
+			
+			<!--
+				@brief		根据datapathid,删除device对象
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="removeDevice">
 				<parameters>
 					<string name="datapathid"/>
@@ -238,6 +297,14 @@
 				</if>
 				
 			</function>
+			
+			<!--
+				@brief		根据Transportid,得到datapathid
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="GetDatapathIdByTransportid">
 				<parameters>
 					<string name="transportid"/>
@@ -245,6 +312,14 @@
 				</parameters>
 				<set name="datapathid" value="context.t2dContainer.getValue(context.transportid.toString())"/>
 			</function>
+			
+			<!--
+				@brief		根据datapathid找到transportid
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="GetTransportIdFromDevice">
 				<parameters>
 					<string name="datapathid"/>
@@ -271,6 +346,14 @@
 					</then>
 				</if>
 			</function>
+			
+			<!--
+				@brief		根据transportid,删除device
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="removeDeviceByTransportId">
 				<parameters>
 					<string name="transportid"/>
@@ -318,6 +401,14 @@
 					</function>
 				</for>
 			</function>
+			
+			<!--
+				@brief		将添加的所有device发送到前端
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="SendAddAllDeviceToWebClient">
 				<parameters>
 					<string name="transportid"/>
@@ -345,6 +436,14 @@
 					</function>
 				</for>
 			</function>
+			
+			<!--
+				@brief		将添加的所有Link发送到前端
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output:
+			-->
 			<function name="SendAddAllLinkToWebClient">
 				<parameters>
 					<string name="transportid"/>
@@ -452,6 +551,14 @@
 					</function>
 				</for>
 			</function>
+			
+			<!--
+				@brief		发送device信息到前端
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="SendDeviceInfoToWebClient">
 				<parameters>
 					<string name="transportid"/>
@@ -506,6 +613,14 @@
 					<jsonsrc src="sendjsonstr"/>
 				</websocket>
 			</function>
+			
+			<!--
+				@brief		发送device详细信息到前端
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="SendDetailDeviceInfoToWebClient">
 				<parameters>
 					<string name="transportid"/>
@@ -559,6 +674,14 @@
 					<jsonsrc src="sendjsonstr"/>
 				</websocket>
 			</function>
+			
+			<!--
+				@brief		监听
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="Detect">
 				<object name="thisswitch"/>
 				<string name="transportid"/>
@@ -580,6 +703,14 @@
 				<!--function name="SendPortStateRequest"/-->
 												<!--function name="SendFlowRequest"/-->
 			</function>
+			
+			<!--
+				@brief		device详细请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="DeviceDetailsReqJson">
 				<parameters>
 					<string name="transportid"/>
@@ -602,6 +733,13 @@
 				</websocket>
 			</function>
 			<!--YY sendlinks 2017-08-18 -->
+			<!--
+				@brief		发送links
+				@auth 		yy
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="SendLinks">
 				<parameters>
 					<string name="transportid"/>
@@ -744,7 +882,13 @@
 			
 			
 			<!--hupeng 20170818 send label 4pps-->
-			
+			<!--
+				@brief		link显示流量
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="sendhighlights">
 				<parameters>
 					<string name="transportid"/>
@@ -868,6 +1012,13 @@
 					
 			</function>
 			
+			<!--
+				@brief		发送详情
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="SendDetails">	
 				<parameters>	
 					<string name="transportid"/>
@@ -886,6 +1037,13 @@
 				</if>
 			</function>
 			<!--Send Packet To All Port By DeviceId-->
+			<!--
+				@brief		向所有端口发送报文
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="PacketOutToAllPort">	
 				<parameters>
 					<string name="datapathid"/>
@@ -919,6 +1077,13 @@
 				effect(作用):向所有设备上的端口发,
 				thinking analysis(思路分析):通过deviceContainer 遍历所有device,
 											得到device对象调用该对象的PacketOutToAllPort方法向device设备上的所有端口发,-->
+			<!--
+				@brief		向device设备上的所有端口发送
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="PacketOutToAllDevicePort">	
 				<parameters>
 					<string name="inportid"/>
@@ -949,6 +1114,13 @@
 
 			
 			<!--qiulei 2017.08.23   Send Packet To one Port By DeviceId   -->
+			<!--
+				@brief		向端口发报文
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="PacketOutToPort">
 				<parameters>
 					<string name="outputport"/>
@@ -978,6 +1150,13 @@
 				</if>
 			</function>
 			
+			<!--
+				@brief		得到datapathid,作废
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="GetDatapathId">	
 				<parameters>	
 					<string name="transportid" />
@@ -999,6 +1178,14 @@
 					</then>
 				</if>			
 			</function>
+			
+			<!--
+				@brief		发送流表请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="SendTableRequest">
 				<object name="device"/>
 				
@@ -1015,6 +1202,14 @@
 					</function>
 				</for>
 			</function>
+			
+			<!--
+				@brief		得到端口状态json数据
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="GetPortsStateJsonData">	
 				<parameters>
 					<string name="datapathid"/>

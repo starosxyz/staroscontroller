@@ -2,10 +2,24 @@
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServiceDocsApi.xml"/>
-	
+	<!--
+		@brief		注册Topology
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
 	<function name="RegisterAddDocsAPITopology">
 		<function name="AddDocsAPITopology"/>
 	</function>
+	
+	<!--
+		@brief		删除tunnel Tag
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
 	<function name="DestoryRemoveDocsAPITopology">
 		<function name="RemoveDocsAPITopology"/>
 	</function>

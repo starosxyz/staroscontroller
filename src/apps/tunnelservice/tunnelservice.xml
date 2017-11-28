@@ -113,21 +113,19 @@
 				</parameters>
 			</function>
 		</onevent>
-
+		<!--
+			@brief	 	Check that topology has changed
+			@auth 		Wang Kang (kingsalone@sina.com)
+			@date		2017/11/16
+			Output:
+				@param fromdevice 	Source Device id
+				@param todevice 	destination Device id
+		-->
 		<onevent event="mytopadd">
 			<function>
 				<log level="100">tunnelservice mytopadd</log>
 				<log level="100"><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
 				<log level="100"><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
-
-				<!--
-					@brief	 	Check that topology has changed
-					@auth 		Wang Kang (kingsalone@sina.com)
-					@date		2017/11/16
-					Output:
-			   			@param fromdevice 	Source Device id
-			   			@param todevice 	destination Device id
-				-->
 				<function name="mytopchange" class="tunnelManagerObject">
 					<parameters>
 						<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
@@ -136,21 +134,21 @@
 				</function>
 			</function>
 		</onevent>
+		<!--
+			@brief		Check that topology has changed to the path
+			@auth 		Wang Kang (kingsalone@sina.com)
+			@date		2017/09/22
+			Output:
+				@param fromdevice 	source device id
+				@param todevice 	destination device id
+				@param path 	JSON data of device attributes
+		-->
 		<onevent event="mytopremove">
 			<function>
 				<log>###### tunnelservice mytopremove ######</log>
 				<log><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
 				<log><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
 				<log><![CDATA[path<%=event.getParam('path').toString()%>]]> </log>
-				<!--
-					@brief		Check that topology has changed to the path
-					@auth 		Wang Kang (kingsalone@sina.com)
-					@date		2017/09/22
-					Output:
-			   			@param fromdevice 	source device id
-			   			@param todevice 	destination device id
-			   			@param path 	JSON data of device attributes
-				-->
 				<function name="mytopremove" class="tunnelManagerObject">
 					<parameters>
 						<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
@@ -160,19 +158,18 @@
 				</function>
 			</function>
 		</onevent>
-
+		<!--
+			@brief		the device is connected to the controller
+			@auth 		Wang Kang (kingsalone@sina.com)
+			@date		2017/11/20
+			Output:
+				@param deviceid   The device ID connected to the controller
+		-->
 		<!-- wangkang 2017/11/20 -->
 		<onevent event="deviceup">
 			<function>
 				<log level="100">###### tunnelservice deviceup ######</log>
 				<log level="100"><![CDATA[deviceid <%=event.getParam('datapathid').toString()%>]]> </log>
-				<!--
-					@brief		the device is connected to the controller
-					@auth 		Wang Kang (kingsalone@sina.com)
-					@date		2017/11/20
-					Output:
-			   			@param deviceid   The device ID connected to the controller
-				-->
 				<function name="DeviceUp" class="tunnelManagerObject">
 					<parameters>
 						<string name="deviceid" in="event.getParam('datapathid').toString()"/>

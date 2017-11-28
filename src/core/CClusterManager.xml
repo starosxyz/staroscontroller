@@ -12,6 +12,14 @@
 				introduction id ,type is String
 				introduction instanceinfo, type is hashmap
 			-->
+			
+			<!--
+				@brief		添加实例
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
 			<function name="addInstance">
 				<parameters>
 					<string name="id"/>
@@ -24,6 +32,13 @@
 				Call this function
 				introduction id ,type is String
 				output instanceinfo, type is hashmap
+			-->
+			<!--
+				@brief		找到实例
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
 			-->
 			<function name="findInstance">
 				<parameters>
@@ -44,6 +59,13 @@
 			<!--20170905 
 				Call this function
 				introduction id ,type is String
+			-->
+			<!--
+				@brief		删除实例
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
 			-->
 			<function name="removeInstance">
 				<parameters>

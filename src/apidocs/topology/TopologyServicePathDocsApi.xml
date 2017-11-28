@@ -7,13 +7,28 @@
 				2017-09-29
 		Copyright: 
 				Nanjing StarOS Inc. All rights reserved.
-	-->	
+	-->
+	
+	<!--
+		@brief		添加路径
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="addPath">		
 		<function name="allTopology"/>			
 		<!--function name="postTopology"/-->
 		<function name="otherTopologymethods"/>
 	</function>
 
+	<!--
+		@brief		删除路径
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="removePath">
 		<function name="removePath" class="APIDocsService">
 			<parameters>
@@ -32,6 +47,13 @@
 		</function>
 	</function>
 
+	<!--
+		@brief		定义所有Topology
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
 	<function name="allTopology">
 		<string name="name"/>
 		<string name="pathconntent"/>
@@ -71,7 +93,14 @@
 			</parameters>
 		</function>
 	</function>
-
+	
+	<!--
+		@brief		其他请求路径
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
 	<function name="otherTopologymethods">
 		<string name="name"/>
 		<string name="pathconntent"/>

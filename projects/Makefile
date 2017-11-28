@@ -38,6 +38,7 @@ check_dir:
 	@test -d $(PRJDIR)/$(PROJECT_NAME)/changelogs || mkdir -p $(PRJDIR)/$(PROJECT_NAME)/changelogs
 	@test -d $(PRJDIR)/$(PROJECT_NAME)/docs || mkdir -p $(PRJDIR)/$(PROJECT_NAME)/docs
 	@test -d $(PRJDIR)/$(PROJECT_NAME)/starlang || mkdir -p $(PRJDIR)/$(PROJECT_NAME)/starlang
+	@test -d $(PRJDIR)/$(PROJECT_NAME)/system || mkdir -p $(PRJDIR)/$(PROJECT_NAME)/system
 #################################################################################
 clean:
 	rm -rf $(TARNAME).tar.bz2

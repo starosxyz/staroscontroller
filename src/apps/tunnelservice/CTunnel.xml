@@ -223,8 +223,14 @@
 				<set name="t_bandwidth" value="thisclass.m_bandwidth.toLong()"/>
 			</function>
 			
-			<!--qiulei 20170913-->
-
+			<!--
+				@brief		tunnel对象的json信息
+				@auth 		qiulei
+				@date		2017/09/13 
+				Input:
+				Output: 
+					@param outjson 	获取封装后的json信息
+			-->
 			<function name="OneTunnelObjectToJsonString">
 				<parameters>
 					<string name="TunnelObjectToJson"/>
@@ -259,7 +265,14 @@
 				<set name="TunnelObjectToJson" value="context.values.toString()"/>
 			</function>
 			
-			<!--qiulei 20170913 update Tunnel-->
+			<!--
+				@brief		更新Tunnel
+				@auth 		qiulei
+				@date		2017/09/13 
+				Input:
+				Output: 
+					@param outjson 	获取封装后的json信息
+			-->
 			<function name="UpdateTunnel">
 				<parameters>
 					<string name="username"/>

@@ -42,6 +42,13 @@
 			</function>
 			
 			<!--qiulei 20170824 pm-->
+			<!--
+				@brief		得到api信息
+				@auth 		qiulei
+				@date		2017/08/24
+				Input:
+		   			@param meterid 	meterid
+			-->
 			<function name="GetAPIInfo">
 				<parameters>
 					<!--return eventname-->
