@@ -248,6 +248,11 @@
 		<vector name="pathvector" valuetype="string"/>
 		<set name="pathvector" value="event.getParam('params')"/>
 		<log level="11"><![CDATA[getTunnel vector.size = <%=context.pathvector.size().toString()%>]]></log>
+		<if cond="event.getParam('params').size()==0">
+			<then>
+				<exit/>
+			</then>
+		</if>
 		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
 		<object name="tunnel"/>
 		<string name="outjson"/>			

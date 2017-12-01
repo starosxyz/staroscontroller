@@ -45,6 +45,7 @@
 	
 	<logconfig dest="stdout" level="10" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<boolean name="isAPIAuth"  value="false"/>
+	<object name="globaltimer"/>
 	<events>
 		<!--
 			@brief		控制器入口事件处理
@@ -94,7 +95,7 @@
 				<!--qiulei 20170828 Monday-->
 				<set name="eventname"  value="'TimeOutEvent'"/>
 				<!--启动定时器-->
-				<timer method="StartTimer" event="TimeOutEvent" timeout="'2000'"/>
+				<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
 				<!--启动自动拓扑发现-->
 				<function name="startDiscovery" class="TopoManager"/> 
 				

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
+	<events>
+		<onevent event="bundleapp.startup">
+			<object name="m_db"/>
+			<params name="dbparams"/>
+			<set name="dbparams" paramname="dbname" value="'account'"/>
+			<set name="dbparams" paramname="dbtype" value="'sqlite'"/>
+			<database name="m_db" method="Open" params="context.dbparams"/>
+			<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" timeoutgoto="DBTimeOut_MS">
+				<log><![CDATA[open database db name <%=event.getName().toString()%>]]> </log>
+				<log><![CDATA[open database db result <%=event.getParam('result').toString()%>]]> </log>
+				<log><![CDATA[open database db description <%=event.getParam('description').toString()%>]]> </log>
+				<log><![CDATA[open database db transportid <%=event.getParam('transportid').toString()%>]]> </log>
+				<log><![CDATA[open database db eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
+			</wait>
+			<database name="m_db" method="ExecSQL">
+				<sql><![CDATA[
+					create table if not exists COMPANY(  
+					ID INT PRIMARY KEY     NOT NULL, 
+					NAME           TEXT    NOT NULL, 
+					AGE            INT     NOT NULL, 
+					ADDRESS        CHAR(50), 
+					SALARY         REAL );
+				]]></sql>
+			</database>
+			<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" timeoutgoto="DBTimeOut_MS">
+				<log><![CDATA[create table result <%=event.getParam('result').toString()%>]]> </log>
+				<log><![CDATA[create table description <%=event.getParam('description').toString()%>]]> </log>
+				<log><![CDATA[create table transportid <%=event.getParam('transportid').toString()%>]]> </log>
+				<log><![CDATA[create table eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
+			</wait>
+			<database name="m_db" method="ExecSQL">
+				<sql><![CDATA[
+					INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+					VALUES (1, 'Paul', 32, 'California', 20000.00 );
+					INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+					VALUES (2, 'Allen', 25, 'Texas', 15000.00 );
+					INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+					VALUES (3, 'Teddy', 23, 'Norway', 20000.00 );
+					INSERT INTO COMPANY (ID,NAME,AGE,ADDRESS,SALARY)
+					VALUES (4, 'Mark', 25, 'Rich-Mond ', 65000.00 );;
+				]]></sql>
+			</database>
+			<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" timeoutgoto="DBTimeOut_MS">
+				<log><![CDATA[insert table result <%=event.getParam('result').toString()%>]]> </log>
+				<log><![CDATA[insert table description <%=event.getParam('description').toString()%>]]> </log>
+				<log><![CDATA[insert table transportid <%=event.getParam('transportid').toString()%>]]> </log>
+				<log><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
+			</wait>
+			<database name="m_db" method="ExecSQL" databindlist="'id{ID:n};name{NAME:v};age{AGE:n};address{ADDRESS:v};salary{SALARY:n}'">
+				<sql><![CDATA[
+					SELECT * from COMPANY
+				]]></sql>
+			</database>
+			<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" timeoutgoto="DBTimeOut_MS">
+				<log><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]> </log>
+				<log><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]> </log>
+				<log><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]> </log>
+				<log><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]> </log>
+			</wait>
+			<label name="DBTimeOut_MS"/>
+			<log>DBTimeOut_MS</log>
+		</onevent>
+	</events>
+</starlang>
