@@ -7,7 +7,7 @@
 			<set name="dbparams" paramname="dbserver" value="'192.168.2.112'"/>
 			<set name="dbparams" paramname="username" value="'root'"/>
 			<set name="dbparams" paramname="password" value="'111111'"/>
-			<set name="dbparams" paramname="dbname" value="'sqltext'"/>
+			<set name="dbparams" paramname="dbname" value="'sqltest'"/>
 			<set name="dbparams" paramname="dbtype" value="'mysql'"/>
 			<database name="m_db" method="Open" params="context.dbparams"/>
 			<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" timeoutgoto="DBTimeOut_MS">

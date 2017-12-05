@@ -89,7 +89,7 @@
 			
 			
 			<!--
-				@brief		传入device,返回device对象
+				@brief		传入datapathid,返回device对象
 				@auth 		qiulei
 				@date		2017/11/27 pm
 				Input:
@@ -100,21 +100,7 @@
 					<object name="outdevice"/>
 					<string name="datapathid"/>
 				</parameters>
-				<pair name="devicepair" keytype="string" valuetype="object"/>
-				<string name="id" />
-				<object name="onedevice"/>
-				<for var="context.devicepair" in="context.deviceContainer">
-					<set name="context.onedevice" value="context.devicepair.second()"/>
-					<if cond="context.onedevice != null">
-						<then>
-							<function name="GetDatapathId" class="context.onedevice">
-								<parameters>
-									<string name="outdatapathid" out="context.id"/>
-								</parameters>
-							</function>
-						</then>
-					</if>	
-				</for>
+				
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<function>
