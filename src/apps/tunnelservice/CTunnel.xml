@@ -317,7 +317,7 @@
 			-->
 			<function name="ActiveTunnel">
 				<log>==============================</log>
-				<log level="100">##### Active Tunnel #####</log>
+				<log level="101">##### Active Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==true">
 					<then>
 						<function>
@@ -415,6 +415,17 @@
 								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
 								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+								<string name="ethtype" in="'0x0800'"/>
+							</parameters>
+						</function>
+						<function name="installRuleAtSameDevice" class="firstdevice">
+							<parameters>
+								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+								<string name="ethtype" in="'0x0806'"/>
 							</parameters>
 						</function>
 						<set name="m_bisActive" value="true"/>
@@ -428,6 +439,17 @@
 						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
 						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+					</parameters>
+				</function>
+				<function name="installRuleStart" class="firstdevice">
+					<parameters>
+						<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+						<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
 					</parameters>
 				</function>
 				<function name="installRuleEnd" class="lastdevice">
@@ -437,6 +459,17 @@
 						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
 						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+					</parameters>
+				</function>
+				<function name="installRuleEnd" class="lastdevice">
+					<parameters>
+						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
 					</parameters>
 				</function>
 
@@ -455,6 +488,14 @@
 						<parameters>
 							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+							<string name="ethtype" in="'0x0800'"/>
+						</parameters>
+					</function>
+					<function name="installRuleMid" class="onedevice">
+						<parameters>
+							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+							<string name="ethtype" in="'0x0806'"/>
 						</parameters>
 					</function>
 				</for>
@@ -467,7 +508,7 @@
 				@date		2017/11/24
 			-->
 			<function name="DeactiveTunnel">
-				<log level="100">##### Deactive Tunnel #####</log>
+				<log level="101">##### Deactive Tunnel #####</log>
 				<if cond="thisclass.m_bisActive.toBoolean()==false">
 					<then>
 						<function>
@@ -493,7 +534,7 @@
 				<object name="firstdevice"/>
 				<object name="lastdevice"/>
 				<boolean name="getpathresult"/>
-				<log level="100">### Vxlan Active Tunnel ###</log>
+				<log level="101">### Vxlan Active Tunnel ###</log>
 				<function name="GetShortPath">
 					<parameters>
 						<boolean name="result" out="context.getpathresult"/>
@@ -502,7 +543,7 @@
 		
 				<if cond="context.getpathresult.toBoolean()==false">
 					<then>
-						<log level="100">getpathresult is false</log>
+						<log level="101">getpathresult is false</log>
 						<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
 							<parameters>
 								<string name="deviceid" in="thisclass.m_fromdevice.toString()"/>
@@ -516,7 +557,7 @@
 						<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 							<then>
 								<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
-								<log level="100">##### m_tunneldevicemgr is not null #####</log>
+								<log level="101">##### m_tunneldevicemgr is not null #####</log>
 								<function name="GetFirstDevice" class="m_tunneldevicemgr">
 									<parameters>
 										<object name="firstdevice" out="context.firstdevice"/>
@@ -538,6 +579,16 @@
 										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+										<string name="ethtype" in="'0x0800'"/>
+									</parameters>
+								</function>
+								<function name="InstallVxlanTunnelStart" class="firstdevice">
+									<parameters>
+										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
+										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+										<string name="ethtype" in="'0x0806'"/>
 									</parameters>
 								</function>
 							</then>
@@ -550,6 +601,16 @@
 										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+										<string name="ethtype" in="'0x0800'"/>
+									</parameters>
+								</function>
+								<function name="InstallVxlanTunnelEnd" class="lastdevice">
+									<parameters>
+										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
+										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+										<string name="ethtype" in="'0x0806'"/>
 									</parameters>
 								</function>
 							</then>
@@ -558,11 +619,11 @@
 					</then>
 					<elseif cond="context.getpathresult.toBoolean()==true">
 						<then>
-							<log level="100">getpathresult is true</log>
+							<log level="101">getpathresult is true</log>
 							<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 								<then>
 									<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
-									<log level="100">##### m_tunneldevicemgr is not null #####</log>
+									<log level="101">##### m_tunneldevicemgr is not null #####</log>
 									<function name="GetFirstDevice" class="m_tunneldevicemgr">
 										<parameters>
 											<object name="firstdevice" out="context.firstdevice"/>
@@ -579,23 +640,39 @@
 
 							<if cond="context.firstdevice.ptr != null">
 								<then>
-									<log level="100">firstdevice is not null</log>
+									<log level="101">firstdevice is not null</log>
 									<function name="InstallVxlanZhuanXianStart" class="firstdevice">
 										<parameters>
 											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+											<string name="ethtype" in="'0x0800'"/>
+										</parameters>
+									</function>
+									<function name="InstallVxlanZhuanXianStart" class="firstdevice">
+										<parameters>
+											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+											<string name="ethtype" in="'0x0806'"/>
 										</parameters>
 									</function>
 								</then>
 							</if>
 							<if cond="context.lastdevice.ptr != null">
 								<then>
-									<log level="100">lastdevice is not null</log>
+									<log level="101">lastdevice is not null</log>
 									
 									<function name="InstallVxlanZhuanXianEnd" class="lastdevice">
 										<parameters>
 											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+											<string name="ethtype" in="'0x0800'"/>
+										</parameters>
+									</function>
+									<function name="InstallVxlanZhuanXianEnd" class="lastdevice">
+										<parameters>
+											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+											<string name="ethtype" in="'0x0806'"/>
 										</parameters>
 									</function>
 								</then>
@@ -619,7 +696,7 @@
 				<parameters>
 					<boolean name="result"/>
 				</parameters>
-				<log level="100">##### Get Shortest Path #####</log>
+				<log level="101">##### Get Shortest Path #####</log>
 				<string name="strlink"/>
 				<string name="strlink2"/>
 				<if cond="thisclass.m_fromdevice.toString()==thisclass.m_todevice.toString()">
@@ -647,11 +724,11 @@
 										<string name="json" in="context.strlink.toString()"/>
 									</parameters>
 								</function>
-								<log level="100">result true</log>
+								<log level="101">result true</log>
 								<set name="result" value="true"/>
 							</then>
 							<else>
-								<log level="100">result false</log>
+								<log level="101">result false</log>
 								<set name="result" value="false"/>
 							</else>
 						</if>
@@ -709,10 +786,10 @@
 					<string name="todevice"/>
 				</parameters>
 				<boolean name="isChange" value="false"/>
-				<log level="100">###### CTunnel mytopchange ######</log>
+				<log level="101">###### CTunnel mytopchange ######</log>
 				<log>Tunnel Top channge</log>
-				<log level="100"><![CDATA[CTunnel mytopchange fromdevice = <%=context.fromdevice.toString()%>]]></log>
-				<log level="100"><![CDATA[CTunnel mytopchange todevicetodevice = <%=context.todevice.toString()%>]]></log>
+				<log level="101"><![CDATA[CTunnel mytopchange fromdevice = <%=context.fromdevice.toString()%>]]></log>
+				<log level="101"><![CDATA[CTunnel mytopchange todevicetodevice = <%=context.todevice.toString()%>]]></log>
 				<function name="IsMyTopChange_old" class="m_tunneldevicemgr">
 					<parameters>
 						<string name="fromdevice" in="context.fromdevice.toString()"/>
@@ -729,6 +806,38 @@
 			</function>
 
 			<!--
+				@brief		If the tunnel is exists, isChange set ture
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/12/13 
+				Input:
+		   			@param fromdevice 	Source Device id
+		   			@param todevice 	destination Device id
+		   			@param isChange     Returns the state of Check whether tunnel exists
+										 ture: tunnel exists
+										 false:tunnel does not exist
+			-->
+			<function name="Is_Tunnel">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<boolean name="isChange"/>
+				</parameters>
+				<set name="isChange" value="false"/>
+				<log level="101">###### CTunnel Is_Tunnel ######</log>
+				<log level="101"><![CDATA[CTunnel Is_Tunnel fromdevice = <%=context.fromdevice.toString()%>]]></log>
+				<log level="101"><![CDATA[CTunnel Is_Tunnel todevice = <%=context.todevice.toString()%>]]></log>
+				<if cond="context.fromdevice.toString() == thisclass.m_fromdevice.toString()">
+					<then>
+						<if cond="context.todevice.toString() == thisclass.m_todevice.toString()">
+							<then>
+								<set name="context.isChange" value="true"/>	
+							</then>
+						</if>
+					</then>
+				</if>
+			</function>
+
+			<!--
 				@brief		If the device is connected to the controller, restart the tunnel
 				@auth 		Wang Kang (kingsalone@sina.com)
 				@date		2017/11/20
@@ -739,7 +848,7 @@
 				<parameters>
 					<string name="deviceid"/>
 				</parameters>
-				<log level="100">###### CTunnel DeviceUp ######</log>
+				<log level="101">###### CTunnel DeviceUp ######</log>
 				<boolean name="isChange" value="false"/>
 				<function name="FindDevice" class="thisclass.m_tunneldevicemgr">
 					<parameters>
@@ -747,7 +856,7 @@
 						<boolean name="ischanage" out="context.isChange"/>
 					</parameters>
 				</function>
-				<log level="100"><![CDATA[CTunnel DeviceUp isChange= <%=context.isChange.toString()%>]]></log>
+				<log level="101"><![CDATA[CTunnel DeviceUp isChange= <%=context.isChange.toString()%>]]></log>
 				<if cond="context.isChange.toBoolean()==true">
 					<then>
 						<function name="DeactiveTunnel"/>
@@ -756,6 +865,19 @@
 				</if>
 			</function>
 			
+			<function name="getInVlan">
+				<parameters>
+					<long name="invlan"/>
+				</parameters>
+				<set name="context.invlan" value="thisclass.m_serviceinvlan.toLong()"/>
+			</function>
+			<function name="getOutVlan">
+				<parameters>
+					<long name="outvlan"/>
+				</parameters>
+				<set name="context.outvlan" value="thisclass.m_serviceoutvlan.toLong()"/>
+			</function>
+
 		</public>
 	</class>
 </starlang>

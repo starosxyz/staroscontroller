@@ -37,7 +37,7 @@
 				@auth 		qiulei
 				@date		2017/11/27 pm
 				Input:
-				Output:
+				Output:     AllDevicesJsonString
 			-->
 			<function name="AllDevicesToJsonStr">
 				<parameters>
@@ -138,7 +138,7 @@
 					<string name="online"/>
 					<string name="protocol"/>	
 				</parameters>
-				<log level="100">addDevice start</log>	
+				<log level="100">addDevice start</log>			
 				<object name="deviceobject"/>
 				<string name="outtransid"/>
 				<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
@@ -172,12 +172,12 @@
 					</else>
 				</if>
 				<string name="onlinejson"/>
-				<!-- clear flow start 
+	
 				<log level="100">ClearFlow start</log>
 				<function name="ClearFlow" class="deviceobject"/>				
 				<wait event="NorFoundEvent" timeout="3000"/>
 				<log level="100">ClearFlow end</log>
-				 clear flow end -->
+			
 				<function name="SendDefaultFlow" class="deviceobject"/>
 
 				<function name="ToOnlineJson" class="deviceobject">
@@ -200,7 +200,7 @@
 					<parameters>
 						<string name="datapathid" in="context.datapathid.toString()"/>
 					</parameters>
-				</function>
+				</function>									
 			</function>
 			
 			
@@ -281,7 +281,6 @@
 						</function>
 					</then>
 				</if>
-				
 			</function>
 			
 			<!--
@@ -434,7 +433,7 @@
 				<parameters>
 					<string name="transportid"/>
 				</parameters>
-				<log>2017.09.18 enter CDeviceManager.SendAddAllLinkToWebClient method</log>
+				<log level="100">2017.09.18 enter CDeviceManager.SendAddAllLinkToWebClient method</log>
 				<object name="srcdevice"/>
 				<object name="dstdevice"/>
 				<string name="srcport"/>
@@ -1249,6 +1248,7 @@
 				<pair name="oneDevicePair_dump" keytype="string" valuetype="string"/>
 				<for var="oneDevicePair_dump" in="context.t2dContainer">
 					<set name="t2dkey" value="context.oneDevicePair_dump.first()"/>
+					<log><![CDATA[ CDeviceManager DumpT2d t2dkey= <%=context.t2dkey.toString()%>]]></log>
 				</for>
 			</function>
 			

@@ -123,7 +123,7 @@
 				<parameters>
 					<string name="json"/>
 				</parameters>
-				<log level="100">####### CTunnelDeviceManager GetTunnelDeviceFromJson ######</log>
+				<log level="101">####### CTunnelDeviceManager GetTunnelDeviceFromJson ######</log>
 				<string name="dstport"/>
 				<string name="srcport"/>
 				<list name="tempContainer" valuetype="hashmap"/>
@@ -155,9 +155,9 @@
 				
 				<for var="context.mapContaineriterator" from="context.tempContainerfirst" to="context.tempContainerend">
 					<set name="mapContainer" value="context.mapContaineriterator.value()"/>
-					<log level="100"><![CDATA[GetTunnelDeviceFromJson container device huhu=<%=context.mapContainer.getValue('device').toString()%>]]></log>
-					<log level="100"><![CDATA[GetTunnelDeviceFromJson container inport huhu=<%=context.mapContainer.getValue('inport').toString()%>]]></log>
-					<log level="100"><![CDATA[GetTunnelDeviceFromJson container outport huhu=<%=context.mapContainer.getValue('outport').toString()%>]]></log>
+					<log level="101"><![CDATA[GetTunnelDeviceFromJson container device huhu=<%=context.mapContainer.getValue('device').toString()%>]]></log>
+					<log level="101"><![CDATA[GetTunnelDeviceFromJson container inport huhu=<%=context.mapContainer.getValue('inport').toString()%>]]></log>
+					<log level="101"><![CDATA[GetTunnelDeviceFromJson container outport huhu=<%=context.mapContainer.getValue('outport').toString()%>]]></log>
 					<function name="addTunnelDevice">
 						<parameters>
 							<string name="deviceid" in="context.mapContainer.getValue('device').toString()"/>
@@ -230,12 +230,12 @@
 					<string name="todevice"/>
 					<boolean name="ischanage"/>
 				</parameters>
-				<log level="100">###### CTunnelDeviceManager IsMyTopChange_old ######</log>
+				<log level="101">###### CTunnelDeviceManager IsMyTopChange_old ######</log>
 				<object name="firstdevice"/>
 				<object name="lastdevice"/>
 				<string name="firstdeviceid"/>
 				<string name="lastdeviceid"/>
-				<log level="100"><![CDATA[context.tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
+				<log level="101"><![CDATA[context.tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
 				<set name="firstdevice" value="context.tunneldeviceContainer.front()"/>
 				<set name="lastdevice" value="context.tunneldeviceContainer.back()"/>
 				<if cond="context.firstdevice!=null">
@@ -387,21 +387,21 @@
 					<string name="deviceid"/>
 					<boolean name="ischanage"/>
 				</parameters>
-				<log level="100">###### CTunnelDeviceManager FindDevice ######</log>
+				<log level="101">###### CTunnelDeviceManager FindDevice ######</log>
 				<object name="onetunneldevice"/>
 				<string name="onedeviceid"/>
-				<log level="100"><![CDATA[FindDevice tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
+				<log level="101"><![CDATA[FindDevice tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></log>
 				<for var="onetunneldevice" in="tunneldeviceContainer">
-					<log level="100">FindDevice for </log>
+					<log level="101">FindDevice for </log>
 					<function name="GetTunnelDeviceId" class="onetunneldevice">
 						<parameters>
 							<string name="outtunneldeviceid" out="context.onedeviceid"/>
 						</parameters>
 					</function>
-					<log level="100"><![CDATA[FindDevice onedeviceid= <%=context.onedeviceid.toString()%>]]></log>
+					<log level="101"><![CDATA[FindDevice onedeviceid= <%=context.onedeviceid.toString()%>]]></log>
 					<if cond="context.onedeviceid.toString() == context.deviceid.toString()">
 						<then>
-							<log level="100">The Device was found </log>
+							<log level="101">The Device was found </log>
 							<set name="context.ischanage" value="true"/>
 						</then>
 					</if>

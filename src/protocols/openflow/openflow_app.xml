@@ -618,27 +618,27 @@
 		</onevent>
 		<!--Reply 13-4-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_STATS">
-		  <function>
-			<log>Get a MultipartReply.OFP13MP_PORT_STATS Message</log>
-			<object name="deviceobj"/>
-			<function name="GetDeviceByTransportId" class="DeviceManager">
-		  <parameters>
-			<string name="transportid" in="event.getParam('transportid').toString()"/>
-			<object name="onedeviceobj" out="context.deviceobj"/>
-			</parameters>
-		  </function>
-		<if cond="context.deviceobj.ptr != null">
-			<then>
-				<function>
-					<function name="HandlePortStateResponse" class="context.deviceobj">
-					  	<parameters>
-							<string name="portstatejson" in="event.getParam('eventdata').toString()"/>
-						</parameters>
-					</function>
-				  </function>
-			</then>
-		</if>
-		  </function>
+			<function>
+				<log>Get a MultipartReply.OFP13MP_PORT_STATS Message</log>
+				<object name="deviceobj"/>
+				<function name="GetDeviceByTransportId" class="DeviceManager">
+					<parameters>
+					<string name="transportid" in="event.getParam('transportid').toString()"/>
+					<object name="onedeviceobj" out="context.deviceobj"/>
+					</parameters>
+				</function>
+				<if cond="context.deviceobj.ptr != null">
+					<then>
+						<function>
+							<function name="HandlePortStateResponse" class="context.deviceobj">
+								<parameters>
+									<string name="portstatejson" in="event.getParam('eventdata').toString()"/>
+								</parameters>
+							</function>
+						</function>
+					</then>
+				</if>
+			</function>
 		</onevent>
 		<!--Reply 13-5-->
 		<onevent event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_QUEUE">

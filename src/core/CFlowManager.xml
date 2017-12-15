@@ -324,6 +324,7 @@
 					<string name="transportid"/>
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<function name="UninstallFlowByFlowMod"/>
 			</function>
 
 			<!--
@@ -376,8 +377,6 @@
 						<string name="flowjson"  in="context.sendjson.toString()"/>
 					</parameters>
 				</new>									
-				
-				
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				
 				<!---qiulei 20170831 start-->
@@ -1229,6 +1228,102 @@
 				<for var="oneFlowPair" in="context.flowsContainer">
 					<set name="flowkey" value="context.oneFlowPair.first()"/>
 				</for>			
+			</function>
+			
+			
+			<!--
+				@brief		Uninstall Flow By FlowMod
+				@auth 		YangXiangRui
+				@date		2017/12/12
+			-->
+			<function name="UninstallFlowByFlowMod">
+				<long name="xid"/>
+				<string name="replyjson"/>
+				<string name="modstrjson"/>
+				<hashmap name="flowinfo" keytype="string" valuetype="string"/>
+				<hashmap name="deviceflowinfo" keytype="string" valuetype="hashmap"/>
+				<pair name="onedeviceflowinfopair" keytype="string" valuetype="hashmap"/>
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				
+				<log level="100"> #####Send OpenFlowMultiPartFlowRequest#####</log>
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>					
+					</parameters>
+				</function>
+				
+				<log level="100"> #####Send end#####</log>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
+					<log level="100"> #####wait is success#####</log>
+					<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+					<log level="101"><![CDATA[replyjson = <%=context.replyjson.toString()%>]]></log>
+					<script><![CDATA[							
+						var info = JSON.parse(context.replyjson.toString());
+						if (info.statslist!=null)
+						{
+							context.print(info.statslist.length);
+							for(var i=0;i<info.statslist.length;i++)
+							{
+								var offlow = context.createHashMap("string","string");
+								if (offlow != null)
+								{
+									var strmatchjson=JSON.stringify(info.statslist[i].match);								
+									offlow.addValue('cookie', info.statslist[i].cookie);
+									offlow.addValue('flags', info.statslist[i].flags);
+									offlow.addValue('hardtimeout', info.statslist[i].hardtimeout);
+									offlow.addValue('idletimeout', info.statslist[i].idletimeout);
+									offlow.addValue('tableid', info.statslist[i].tableid);
+									offlow.addValue('priority', info.statslist[i].priority);
+									offlow.addValue('match', strmatchjson);
+									context.print(strmatchjson);
+									context.deviceflowinfo.addValue(info.statslist[i].cookie, offlow);
+									context.destroyHashMap(offlow);
+								}
+							}
+						}
+					]]></script>
+					<log level="100"> #####JS EXEC end#####</log>
+					<for var="onedeviceflowinfopair" in="context.deviceflowinfo">
+						<log level="100"> #####FOR START#####</log>
+						<set name="flowinfo" value="context.onedeviceflowinfopair.second()"/>
+						<!--<log level="100"><![CDATA[onedeviceflowinfopair size=<%=context.onedeviceflowinfopair.size().toString()%>]]></log>-->						
+						<script><![CDATA[		
+							var matchtemp = JSON.parse(context.flowinfo.getValue('match').toString());
+							
+							var matchinfo = new Object();
+								matchinfo['matchfieldlist'] = matchtemp.matchfieldlist.toString();
+								matchinfo['type'] = matchtemp.type.toString();
+								
+							var flowsinfo=new Object();
+								flowsinfo['cookie'] = context.flowinfo.getValue('cookie').toString();
+								flowsinfo['cookiemask'] = "0";
+								flowsinfo['tableid'] = context.flowinfo.getValue('tableid').toString();
+								flowsinfo['command'] = "3";
+								flowsinfo['idletimeout'] = context.flowinfo.getValue('idletimeout').toString();
+								flowsinfo['hardtimeout'] = context.flowinfo.getValue('hardtimeout').toString();
+								flowsinfo['priority'] = context.flowinfo.getValue('priority').toString();
+								flowsinfo['bufferid'] = "0xffffffff";
+								flowsinfo['outport'] = "0xffffffff";
+								flowsinfo['outgroup'] = "0xffffffff";
+								flowsinfo['flags'] = context.flowinfo.getValue('flags').toString();
+										
+								flowsinfo['match']= matchinfo;
+		
+							var strjson=JSON.stringify(flowsinfo);
+							context.modstrjson.setValue(strjson);
+						]]></script>			
+						<log level="101"><![CDATA[modstrjson = <%=context.modstrjson.toString()%>]]></log>
+						<log level="100"> #####Send_OFPT13_FLOW_MOD start#####</log>
+						<function name="Send_OFPT13_FLOW_MOD">
+							<parameters>
+								<string name="transportid" in="context.m_transportid.toString()"/>
+								<string name="strjson" in="context.modstrjson.toString()"/>
+							</parameters>
+						</function>
+						<log level="100"> #####Send_OFPT13_FLOW_MOD end#####</log>
+					</for>
+				</wait>
 			</function>
 		</public>
 	</class>

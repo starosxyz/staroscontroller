@@ -282,9 +282,7 @@
 					<else>
 						<exit/>
 					</else>
-					
 				</if>
-	
 			</function>
 			<!--
 				@brief		拿到Json端口信息
@@ -360,8 +358,7 @@
 						<string name="peer"  in="context.peer.toString()"/>
 						<string name="state"  in="context.state.toString()"/>	
 						<string name="supported"  in="context.supported.toString()"/>
-						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
-						
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>	
 					</parameters>
 				</new>
 				<insert name="portContainer" key="context.portno.toString()" value="context.portobj"/>
@@ -656,6 +653,7 @@
 				<hashmap name="deviceportinfo" keytype="string" valuetype="hashmap"/>
 				<pair name="onedeviceportinfopair" keytype="string" valuetype="hashmap"/>
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<log level="101">######## CPortManager MultiPartPortDescRequest ##########</log>
 				<function>
 					<reference variable="strjson">
 						<jsonbody><![CDATA[ 
@@ -672,8 +670,9 @@
 						</parameters>
 					</function>
 					<log><![CDATA[for test out wait=<%=context.m_transportid.toString()%>]]></log>
-					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000">
+					<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_PORT_DESC,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
 						<function>
+							<log level="101">wait is success</log>
 							<log><![CDATA[for test in wait=<%=context.m_transportid.toString()%>]]></log>
 							<set name="replyjson" value="event.getParam('eventdata').toString()"/>
 							<script><![CDATA[							
@@ -704,7 +703,7 @@
 									}
 								}
 							]]></script>
-							<log><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size().toString()%>]]></log>
+							<log level="101"><![CDATA[deviceportinfo size=<%=context.deviceportinfo.size().toString()%>]]></log>
 							<for var="onedeviceportinfopair" in="context.deviceportinfo">
 								<function>
 									<set name="portinfo" value="context.onedeviceportinfopair.second()"/>
@@ -756,8 +755,7 @@
 											}
 										}
 									]]></script>
-						<for var="i" in="context.portstatelist">
-							
+						<for var="i" in="context.portstatelist">	
 							<function name="UpdatePortState">
 								<parameters>
 									<string name="portstatestring"  in="context.i.toString()"/>
@@ -771,7 +769,7 @@
 				</if>
 			
 			</function>
-		<function name="SendPortStateRequest">
+			<function name="SendPortStateRequest">
 				<long name="xid" />
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				<function name="OpenFlowMultiPartPortStatsRequest">

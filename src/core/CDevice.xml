@@ -915,7 +915,7 @@
 			-->
 			<function name="ClearFlow">		
 				<log level="10">CDevice ClearFlow</log>				
-				<function name="ClearFlow" class="thisclass.sshdevice">
+				<function name="ClearFlow_v150" class="thisclass.sshdevice">
 					<parameters>
 						<string name="ip" in="thisclass.m_peeripaddr.toString()"/>
 					</parameters>

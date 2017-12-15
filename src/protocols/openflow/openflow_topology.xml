@@ -34,26 +34,25 @@
 				<string name="removedata"/>
 				<script>
 					<![CDATA[
-					var fromdevice = event.getParam('fromdevice').toString();
-					var todevice = event.getParam('todevice').toString();
-					var path = event.getParam('path').toString();
-					var info = JSON.parse(path);
-					var json = new Object();
-					json['event'] = "removeLink";
-					var payload = new Object();
-					payload['id'] = "of:" + fromdevice + "/" + info.paths[0].src.port + "-of:" + todevice + "/" + info.paths[0].dst.port;
-					payload['type'] = "direct";
-					payload['expected'] = false;
-					payload['online'] = true;
-					payload['linkWidth'] = 1.2;
-					payload['src'] = "of:" + fromdevice;
-					payload['srcPort'] = info.paths[0].src.port;
-					payload['dst'] = "of:" + todevice;
-					payload['dstPort'] = info.paths[0].dst.port;
-					json['payload'] = payload;
-					var strjson=JSON.stringify(json);
-					context.removedata.setValue(strjson);
-
+						var fromdevice = event.getParam('fromdevice').toString();
+						var todevice = event.getParam('todevice').toString();
+						var path = event.getParam('path').toString();
+						var info = JSON.parse(path);
+						var json = new Object();
+						json['event'] = "removeLink";
+						var payload = new Object();
+						payload['id'] = "of:" + fromdevice + "/" + info.paths[0].src.port + "-of:" + todevice + "/" + info.paths[0].dst.port;
+						payload['type'] = "direct";
+						payload['expected'] = false;
+						payload['online'] = true;
+						payload['linkWidth'] = 1.2;
+						payload['src'] = "of:" + fromdevice;
+						payload['srcPort'] = info.paths[0].src.port;
+						payload['dst'] = "of:" + todevice;
+						payload['dstPort'] = info.paths[0].dst.port;
+						json['payload'] = payload;
+						var strjson=JSON.stringify(json);
+						context.removedata.setValue(strjson);
 					]]>
 				</script>
 			</function>
@@ -85,34 +84,34 @@
 		-->
 		<onevent event="Topology.OnPathAddEvent">
 			<function>
-				<log>Topology.OnPathAddEvent</log>
+				<log level="100">Topology.OnPathAddEvent</log>
 				<string name="adddata"/>
 				<string name="isTorF" value="false"/>
 				<script>
 					<![CDATA[
-					var fromdevice = event.getParam('fromdevice').toString();
-					var todevice = event.getParam('todevice').toString();
-					var path = event.getParam('path').toString();
-					var info = JSON.parse(path);
-					if (info.paths.length == 1)
-					{
-					var json = new Object();
-					json['event'] = "addLink";
-					var payload = new Object();
-					payload['id'] = "of:" + fromdevice + "/" + info.paths[0].src.port + "-of:" + todevice + "/" + info.paths[0].dst.port;
-					payload['type'] = "direct";
-					payload['expected'] = false;
-					payload['online'] = true;
-					payload['linkWidth'] = 1.2;
-					payload['src'] = "of:" + fromdevice;
-					payload['srcPort'] = info.paths[0].src.port;
-					payload['dst'] = "of:" + todevice;
-					payload['dstPort'] = info.paths[0].dst.port;
-					json['payload'] = payload;
-					var strjson=JSON.stringify(json);
-					context.adddata.setValue(strjson);
-					context.isTorF.setValue("true");
-					}
+						var fromdevice = event.getParam('fromdevice').toString();
+						var todevice = event.getParam('todevice').toString();
+						var path = event.getParam('path').toString();
+						var info = JSON.parse(path);
+						if (info.paths.length == 1)
+						{
+							var json = new Object();
+							json['event'] = "addLink";
+							var payload = new Object();
+							payload['id'] = "of:" + fromdevice + "/" + info.paths[0].src.port + "-of:" + todevice + "/" + info.paths[0].dst.port;
+							payload['type'] = "direct";
+							payload['expected'] = false;
+							payload['online'] = true;
+							payload['linkWidth'] = 1.2;
+							payload['src'] = "of:" + fromdevice;
+							payload['srcPort'] = info.paths[0].src.port;
+							payload['dst'] = "of:" + todevice;
+							payload['dstPort'] = info.paths[0].dst.port;
+							json['payload'] = payload;
+							var strjson=JSON.stringify(json);
+							context.adddata.setValue(strjson);
+							context.isTorF.setValue("true");
+						}
 					]]>
 				</script>
 				<if cond="context.isTorF.toString() == 'true'">

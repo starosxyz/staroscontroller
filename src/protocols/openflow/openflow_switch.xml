@@ -64,9 +64,7 @@
 		</function>	
 		<wait event="openflow.OFPT13_FEATURES_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
 			<function>
-				
 				<log><![CDATA[Recieve Features Reply:=<%=event.getParam('eventdata').toString()%>]]></log>
-				
 				<script>
 					<![CDATA[
 							var info = JSON.parse(event.getParam('eventdata').toString());
@@ -78,11 +76,8 @@
 							context.transportid.setValue(event.getParam('transportid').toString());
 					]]>
 				</script>				
-				
 			</function>
 		</wait>
-		
-		
 		<string name="desc"/>
 		<reference variable="desc">
 			<jsonbody><![CDATA[ 
@@ -111,10 +106,9 @@
 							context.hwdesc.setValue(info.hwdesc);								
 					]]>
 				</script>
-				
 			</function>
 		</wait>
-		<log>start to adddevice</log>	
+		<log level="100">start to adddevice</log>	
 		<function name="addDevice" class="DeviceManager">
 			<parameters>
 				<string name="mfrdesc" in="context.mfrdesc.toString()"/>
@@ -161,7 +155,6 @@
 				<string name="datapathid" in="context.datapathid.toString()"/>
 			</parameters>
 		</function-->
-	
 	</function>
 	
 	<function name="OpenFlowFeatures">

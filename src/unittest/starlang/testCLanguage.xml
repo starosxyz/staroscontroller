@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/unittest/starlang/addtest.c"/>
+	<events>
+		<onevent name="bundleapp.startup">
+			<function name="print"/>
+		</onevent>
+	</events>
+</starlang>

@@ -890,7 +890,7 @@
 			<string name="strjson"/>
 		</parameters>
 		<params name="openflowparams" />
-        <log>Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC</log>
+        <log level="101">Send_OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>
 		<openflow name="openflowserverobj" method="openflow.OFPT13_MULTIPART_REQUEST.OFP13MP_PORT_DESC" params="context.openflowparams">
 			<jsonsrc src="strjson"/>

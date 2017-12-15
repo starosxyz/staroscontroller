@@ -59,6 +59,7 @@
 			<string name="eventname"/>
 			<function>
 				<set name="injson" value="'[]'"/>
+				<syslog level="INFO">Hello StarOS</syslog>
 				<log level="100">##########STAROS application start#######</log>
 				<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
 				<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
@@ -130,6 +131,15 @@
 				<log leve="1"><![CDATA[toposize= '<%=context.toposize.toString()%>']]></log>
 			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+				<log>insert staroscontroller onevent *</log>
+				<log><![CDATA[result = <%=event.getParam('result').toString()%>]]></log>
+				<log><![CDATA[description = <%=event.getParam('description').toString()%>]]></log>
+				<log><![CDATA[transportid = <%=event.getParam('transportid').toString()%>]]></log>
+				<log><![CDATA[eventdata = <%=event.getParam('eventdata').toString()%>]]></log>
 			</function>
 		</onevent>
 	</events>

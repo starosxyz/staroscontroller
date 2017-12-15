@@ -45,7 +45,10 @@
 					context.ip.toString().indexOf(":") != -1 ? context.local_ip.setValue(context.ip.toString().split(":")[0]) : context.local_ip.setValue(context.ip.toString())					
 					context.print("CSSHDevice ip = " + context.ip.toString())
 					context.print("CSSHDevice local_ip = " + context.local_ip.toString())
-				]]></script>				
+				]]></script>	
+
+				<log level="100"><![CDATA[!!!!!!!!!!!!!ip= <%=context.local_ip.toString()%>]]> </log>		
+
 				<params name="clientparams"/>
 				<set name="clientparams" paramname="password" value="'TESTSDN12345678'"/>
 				<set name="clientparams" paramname="username" value="'SDNTEST'"/>
@@ -53,19 +56,20 @@
 				<set name="clientparams" paramname="keepalive" value="'disable'"/>
 				<set name="clientparams" paramname="listenip" value="context.local_ip.toString()"/>
 				<set name="clientparams" paramname="listenport" value="'22'"/>
-				<ssh name="thisclass.sshobj" action="StartClient" params="clientparams" connectedevent="SSH_v150.connected"/>
+				<ssh name="thisclass.sshobj" action="StartClient" params="clientparams" connectedevent="SSH_v150.connected"  dataevent="SSH_v150.dataevent"/>
 			</function>
 			<onevent event="SSH_v150.connected">
 					<function>
-							<log level="10">SSH_v150.connected event</log>
-							<log><![CDATA[transportid= <%=event.getParam("transportid").toString()%>]]> </log>
+							<log level="100">SSH_v150.connected event</log>
+							<log level="100"><![CDATA[transportid= <%=event.getParam("transportid").toString()%>]]> </log>
 							<ssh name="thisclass.sshobj" action="SendData" transportid="event.getParam('transportid').toString()">
 									<applicationdata>
-											<![CDATA[
-												ovs-ofctl del-flows br0
+											<![CDATA[ovs-ofctl  dump-flows br0 -O openflow13
+											ovs-ofctl  del-flows br0 -O openflow13
 											]]>
 									</applicationdata>
 							</ssh>
+							<log level="100">SSH_v150.connected is end</log>
 					</function>
 			</onevent>
 			<!--
@@ -107,11 +111,15 @@
 							</ssh>
 					</function>
 			</onevent>
+			<onevent event="SSH_v150.dataevent">
+			  <function>
+			  </function>
+			 </onevent>
 			<onevent event="SSH.dataevent">
 			  <function>
 					<log level="10"><![CDATA[get a event '<%=event.getName()%>']]></log>
 					<log level="10">SSH.dataevent rec a data</log>
-					<log><![CDATA[eventdata <%=event.getParam("eventdata").toString()%>]]> </log>
+					<log level="100"><![CDATA[eventdata <%=event.getParam("eventdata").toString()%>]]> </log>
 					<if cond="event.getParam('eventdata').toString()=='Password:'">
 						<then>
 							<log level="10">SDNSwitch-1</log>
@@ -120,8 +128,7 @@
 								]]></applicationdata>
 							</ssh>
 							<ssh name="thisclass.sshobj" action="SendData" transportid="event.getParam('transportid').toString()">
-								<applicationdata><![CDATA[
-									ovs-ofctl del-flows br0
+								<applicationdata><![CDATA[ovs-ofctl del-flows br0
 								]]></applicationdata>
 							</ssh>
 						</then>

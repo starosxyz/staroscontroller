@@ -92,6 +92,7 @@
 					<string name="appId"/>
 					<string name="datapathid"/>
 					<string name="inputport"/>
+					<string name="ethtype"/>
 				</parameters>
 				<string name="strdropflow"/>
 				<object name="flowmgrobj"/>
@@ -119,6 +120,12 @@
 												"oxmfield":"0",
 												"hasmask":"false",
 												"inport":"<%=context.inputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
 											}
 										]
 									},

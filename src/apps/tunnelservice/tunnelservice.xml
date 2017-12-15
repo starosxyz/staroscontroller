@@ -123,9 +123,9 @@
 		-->
 		<onevent event="mytopadd">
 			<function>
-				<log level="100">tunnelservice mytopadd</log>
-				<log level="100"><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
-				<log level="100"><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
+				<log level="101">tunnelservice mytopadd</log>
+				<log level="101"><![CDATA[fromdevice <%=event.getParam('fromdevice').toString()%>]]> </log>
+				<log level="101"><![CDATA[todevice <%=event.getParam('todevice').toString()%>]]> </log>
 				<function name="mytopchange" class="tunnelManagerObject">
 					<parameters>
 						<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
@@ -168,8 +168,8 @@
 		<!-- wangkang 2017/11/20 -->
 		<onevent event="deviceup">
 			<function>
-				<log level="100">###### tunnelservice deviceup ######</log>
-				<log level="100"><![CDATA[deviceid <%=event.getParam('datapathid').toString()%>]]> </log>
+				<log level="101">###### tunnelservice deviceup ######</log>
+				<log level="101"><![CDATA[deviceid <%=event.getParam('datapathid').toString()%>]]> </log>
 				<function name="DeviceUp" class="tunnelManagerObject">
 					<parameters>
 						<string name="deviceid" in="event.getParam('datapathid').toString()"/>
@@ -180,8 +180,8 @@
 
 		<onevent event="devicedown">
 			<function>
-				<log level="100">###### tunnelservice devicedown ######</log>
-				<log level="100"><![CDATA[deviceid <%=event.getParam('datapathid').toString()%>]]> </log>
+				<log level="101">###### tunnelservice devicedown ######</log>
+				<log level="101"><![CDATA[deviceid <%=event.getParam('datapathid').toString()%>]]> </log>
 			</function>
 		</onevent>
 		

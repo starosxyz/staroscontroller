@@ -117,7 +117,7 @@
 				</new>
 				
 				<insert name="tunnelContainer" key="thisclass.id.toLong()" value="context.tunnelObject"/>
-				<log><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
+				<log level="101"><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
 			</function>
 			<!--qiulei 20170913-->
 			<!--
@@ -209,13 +209,22 @@
 					<long name="tunnel_id"/>
 					<object name="TunnelObject"/>
 				</parameters>
-
+				<log level="100">#############################################</log>
+				<log level="100"><![CDATA[GetOneTunnelObject tunnel_id = <%=context.tunnel_id.toString()%>]]></log>
+				<log level="100">#############################################</log>
 				<if cond="context.tunnelContainer.hasValue(context.tunnel_id.toLong())==true">
 					<then>
 						<function>
+							<log level="100">#############################################</log>
+							<log level="100"><![CDATA[GetOneTunnelObject tunnelContainer.size = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+							<log level="100">#############################################</log>
 							<lookup name="tunnelContainer" key="context.tunnel_id.toLong()" output="context.TunnelObject"/>
 						</function>
 					</then>
+					<else>
+						<syslog level="FATAL"><![CDATA[tunnel null tunnelContainer.size = <%=thisclass.tunnelContainer.size().toString()%>]]></syslog>
+						<log level="100"> tunnel is null </log>
+					</else>
 				</if>
 			</function>
 			
@@ -232,8 +241,8 @@
 					<string name="fromdevice"/>
 					<string name="todevice"/>
 				</parameters>
-				<log level="100">###### CTunnelManager mytopchange ######</log>
-				<log level="100"><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
+				<log level="101">###### CTunnelManager mytopchange ######</log>
+				<log level="101"><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
 				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="object"/>
 				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="object"/>
 				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="object"/>
@@ -253,6 +262,57 @@
 						<parameters>
 							<string name="fromdevice" in="context.fromdevice.toString()"/>
 							<string name="todevice" in="context.todevice.toString()"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+
+
+			<!--
+				@brief		Check whether tunnel exists,if the tunnel does not exists,add tunnel 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/12/13
+				Input:
+		   			@param fromdevice 	Source Device id
+		   			@param todevice 	destination Device id
+		   			@param isChange     Returns the state of Check whether tunnel exists
+										 ture: tunnel exists
+										 false:tunnel does not exist
+			-->
+			<function name="Is_Tunnel">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<boolean name="isChange"/>
+				</parameters>
+				<log level="101">###### CTunnelManager Is_Tunnel ######</log>
+				<log level="101"><![CDATA[CTunnelManager tunnelContainer.size = <%=context.tunnelContainer.size().toString()%>]]></log>
+				<if cond="context.tunnelContainer.size() == 0">
+					<then>
+						<set name="context.isChange" value="false"/>
+						<exit/>
+					</then>
+				</if>
+				<hashmap-iterator name="tunnelContaineriterator" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerfirst" keytype="long" valuetype="object"/>
+				<hashmap-iterator name="tunnelContainerend" keytype="long" valuetype="object"/>
+				<object name="onetunnel"/>
+				<set name="tunnelContainerfirst" value="context.tunnelContainer.begin()"/>
+				<set name="tunnelContainerend" value="context.tunnelContainer.end()"/>
+
+				<for var="context.tunnelContaineriterator" from="context.tunnelContainerfirst" to="context.tunnelContainerend">
+					<set name="onetunnel" value="context.tunnelContaineriterator.second()"/>
+					<if cond="context.onetunnel.ptr == null">
+						<then>
+							<log level="100">CTunnelManager Is_Tunnel onetunnel is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="Is_Tunnel" class="onetunnel">
+						<parameters>
+							<string name="fromdevice" in="context.fromdevice.toString()"/>
+							<string name="todevice" in="context.todevice.toString()"/>
+							<boolean name="isChange" out="context.isChange"/>
 						</parameters>
 					</function>
 				</for>
@@ -507,15 +567,15 @@
 				<parameters>
 					<string name="deviceid"/>
 				</parameters>
-				<log level="100">###### CTunnelManager DeviceUp ######</log>
+				<log level="101">###### CTunnelManager DeviceUp ######</log>
 				<pair name="tunnelpair" keytype="long" valuetype="object"/>
 				<object name="tunnel"/>
-				<log level="100"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
+				<log level="101"><![CDATA[tunnelContainer.size() = <%=thisclass.tunnelContainer.size().toString()%>]]></log>
 				<for var="context.tunnelpair" in="thisclass.tunnelContainer">
 					<set name="context.tunnel" value="context.tunnelpair.second()"/>
 					<if cond="context.tunnel != null">
 						<then>
-							<log level="100">###### tunnelContainer tunnel is not null ######</log>
+							<log level="101">###### tunnelContainer tunnel is not null ######</log>
 							<function name="DeviceUp" class="context.tunnel">
 								<parameters>
 									<string name="deviceid" in="context.deviceid"/>

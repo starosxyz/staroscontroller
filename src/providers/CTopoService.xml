@@ -246,7 +246,7 @@
 					<string name="todevice"/>
 					<string name="outjson"/>
 				</parameters>
-				<log level="100">Ctopyserver getShortestPath</log>
+				<log level="101">Ctopyserver getShortestPath</log>
 				<string name="shortestlink"/>
 				<function name="getShortestLink">
 					<parameters>

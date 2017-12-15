@@ -175,8 +175,76 @@
 			Output:
 		-->	
 		<onevent event="processaddtunnelrequest">
-			<log>tunnelserviceapi processtunnelsrequest</log>					
-			<function name="addTunnel"/>				
+			<log level="100">tunnelserviceapi processaddtunnelsrequest</log>
+			<boolean name="isChange"/>
+			<string name="fromdevice"/>
+			<string name="todevice"/>
+			<hashmap name="tunnelmap" keytype="string" valuetype="string"/>
+			<hashmap name="tunnelinfo" keytype="long" valuetype="hashmap"/>
+			<pair name="onetunnelpair" keytype="string" valuetype="string"/>
+			<boolean name="isdb" value="true"/>
+			<if cond="event.getParam('eventdata').toString() == ''">
+				<then>
+					<log level="100">addtunnel eventdata is null</log>
+					<exit/>
+				</then>	
+			</if>
+			<script><![CDATA[
+				var json = JSON.parse(event.getParam('eventdata').toString());
+				context.print(event.getParam('eventdata').toString());
+				if(json.specialLine == null)
+				{
+					context.isdb.setValue(false);
+				}
+			]]></script>
+			<if cond="context.isdb.toBoolean() == false">
+				<then>
+					<function name="addTunnel"/>
+				</then>
+				<else>
+					<log level="100">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       isdb is true #####</log>
+					<script><![CDATA[
+						var json = JSON.parse(event.getParam('eventdata').toString());
+						if(json.specialLine != null)
+						{
+							for (var i = 0; i < json.specialLine.length; i++)
+							{
+								var onehashmap = context.createHashMap("string","string");
+								onehashmap.addValue('fromdevice', (json.specialLine[i].inputPort.split("/")[0]).split(":")[1]);
+								onehashmap.addValue('todevice', (json.specialLine[i].outputPort.split("/")[0]).split(":")[1]);
+								context.tunnelinfo.addValue(i,onehashmap);
+								context.destroyHashMap(onehashmap);
+							}
+						}	
+					]]></script>
+					<for var="onetunnelpair" in="tunnelinfo">
+						<log level="100"> ######### processaddtunnelrequest FOR START #########</log>
+						<set name="tunnelmap" value="context.onetunnelpair.second()"/>
+						<set name="fromdevice" value="context.tunnelmap.getValue('fromdevice').toString()"/>	
+						<set name="todevice" value="context.tunnelmap.getValue('todevice').toString()"/>
+						<log level="101"><![CDATA[++++++ fromdevice = <%=context.fromdevice.toString()%>]]></log>
+						<log level="101"><![CDATA[++++++ todevice = <%=context.todevice.toString()%>]]></log>
+
+						<function name="Is_Tunnel" class="context.tunnelManagerObject">
+							<parameters>
+								<string name="fromdevice" in="context.fromdevice.toString()"/>
+								<string name="todevice" in="context.todevice.toString()"/>
+								<boolean name="isChange" out="context.isChange"/>
+							</parameters>
+						</function>	
+
+						<if cond="context.isChange.toBoolean()==false">
+							<then>
+								<function name="addOldTunnel">
+									<parameters>
+										<long name="specialLineid" in="context.onetunnelpair.first().toLong()"/>
+									</parameters>
+								</function>
+							</then>
+						</if>	
+					</for>
+				</else>
+			</if>						
 		</onevent>
 		<!--
 			@brief		获取所有tunnels
@@ -197,7 +265,7 @@
 			Output:
 		-->
 		<onevent event="processtunnelrequest">
-			<log>tunnelserviceapi processrequest</log>			
+			<log level="100">tunnelserviceapi processrequest</log>			
 			<if cond="event.getParam('method').toString()=='GET'">
 				<then>
 					<log>insert method get</log>
@@ -208,7 +276,7 @@
 					<function name="updateTunnel"/>						
 				</elseif>				
 				<else>
-					<log>insert method delete</log>
+					<log level="100">insert method delete</log>
 					<function name="deleteTunnel"/>						
 				</else>									
 			</if>				
@@ -253,7 +321,14 @@
 				<exit/>
 			</then>
 		</if>
-		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+		<long name="resourceid"/>
+		<script><![CDATA[
+			var id = event.getParam('params').getIndexOf(0).toString()
+			if (id.indexOf("{") == -1)
+				context.resourceid.setValue(id)
+			else
+				context.resourceid.setValue(id.split("{")[1].split("}")[0])
+		]]></script>
 		<object name="tunnel"/>
 		<string name="outjson"/>			
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
@@ -295,7 +370,14 @@
 	-->	
 	<function name="updateTunnel">		
 		<log>insert method == put</log>
-		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+		<long name="resourceid"/>
+		<script><![CDATA[
+			var id = event.getParam('params').getIndexOf(0).toString()
+			if (id.indexOf("{") == -1)
+				context.resourceid.setValue(id)
+			else
+				context.resourceid.setValue(id.split("{")[1].split("}")[0])
+		]]></script>
 		<object name="tunnel"/>
 		<string name="outjson"/>
 		<string name="username"/>
@@ -325,7 +407,9 @@
 		<long name="innum"/>
 		<object name="outdeviceportobj"/>
 		<long name="outdeivceportnum"/>
-		<long name="outnum"/>			
+		<long name="outnum"/>		
+		<long name="tunnel_invlan"/>
+		<long name="tunnel_outvlan"/>	
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
@@ -530,11 +614,23 @@
 				<exit/>
 			</then>
 		</if-->
+		<function name="getInVlan" class="context.tunnel">
+			<parameters>
+				<long name="invlan" out="context.tunnel_invlan"/>
+			</parameters>			
+		</function>
+		<function name="getOutVlan" class="context.tunnel">
+			<parameters>
+				<long name="outvlan" out="context.tunnel_outvlan"/>
+			</parameters>			
+		</function>	
 		<function name="UpdateTunnel" class="context.tunnel">
 			<parameters>											
 				<string name="username" in="context.username.toString()"/>
 				<string name="inputPort" in="context.outputPort.toString()"/>
 				<string name="outputPort" in="context.outputPort.toString()"/>
+				<long name="invlan" in="context.tunnel_invlan.toLong()"/>					
+				<long name="outvlan" in="context.tunnel_outvlan.toLong()"/>
 				<string name="type" in="context.type.toString()"/>
 				<string name="state" in="context.state.toString()"/>
 				<long name="inputvlanid" in="context.inputvlanid.toLong()"/>
@@ -904,6 +1000,334 @@
 			</parameters>
 		</function>
 	</function>
+	
+	<!--
+		@brief	       恢复一个tunnel
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+		Output:
+	-->	
+	<function name="addOldTunnel">
+		<parameters>
+			<long name="specialLineid"/>
+		</parameters>
+		<string name="username"/>
+		<string name="inputPort"/>
+		<string name="outputPort"/>
+		<string name="type"/>
+		<string name="state"/>
+		<long name="inputvlanid"/>
+		<long name="outputvlanid"/>
+		
+		<!-- wangkang 2017/10/27 -->	
+		<string name="inputtunnelport"/>
+		<string name="outputtunnelport"/>
+		<long name="vxlantunnelid"/>
+		<!-- wangkang 2017/11/13 -->	
+		<string name="inputvxlanport"/>
+		<string name="outputvxlanport"/>
+
+		<long name="bandwidth"/>
+		<long name="resourceid"/>
+		<string name="outjson"/>
+		<object name="tunnel"/>
+		<string name="inputdevice" value=""/>
+		<string name="outputdevice" value=""/>
+		<object name="indevice"/>
+		<object name="outdevice"/>
+		<long name="putindexof" value="0"/>
+		<boolean name="result"/>
+		<boolean name="IsAlikePort" value="false"/>
+		<object name="indeviceportobj"/>
+		<long name="indeivceportnum"/>
+		<long name="innum"/>
+		<object name="outdeviceportobj"/>
+		<long name="outdeivceportnum"/>
+		<long name="outnum"/>
+		<script><![CDATA[									
+			var json = JSON.parse(event.getParam('eventdata').toString());
+			var local_username = json.specialLine[context.specialLineid.toLong()].username;
+			var local_inputport = json.specialLine[context.specialLineid.toLong()].inputPort;
+			var local_outputPort = json.specialLine[context.specialLineid.toLong()].outputPort;
+			var local_type = json.specialLine[context.specialLineid.toLong()].type;
+			var local_state = "active";
+			var local_inputvlanid = json.specialLine[context.specialLineid.toLong()].inputvlanid;
+			var local_outputvlanid = json.specialLine[context.specialLineid.toLong()].outputvlanid;
+			var local_inputtunnelport = json.specialLine[context.specialLineid.toLong()].inputtunnel;
+			var local_outputtunnelport = json.specialLine[context.specialLineid.toLong()].outputtunnel;
+			var local_inputvxlanport= json.specialLine[context.specialLineid.toLong()].inputvxlanport;
+			var local_outputvxlanport = json.specialLine[context.specialLineid.toLong()].outputvxlanport;
+			var local_bandwidth = json.specialLine[context.specialLineid.toLong()].bandwidth;
+			context.username.setValue(local_username);
+			context.inputPort.setValue(local_inputport);
+			context.outputPort.setValue(local_outputPort);
+			context.type.setValue(local_type);
+			context.state.setValue(local_state);
+			context.inputvlanid.setValue(local_inputvlanid);
+			context.outputvlanid.setValue(local_outputvlanid);
+			context.inputtunnelport.setValue(local_inputtunnelport);
+			context.outputtunnelport.setValue(local_outputtunnelport);
+			context.inputvxlanport.setValue(local_inputvxlanport);
+			context.outputvxlanport.setValue(local_outputvxlanport);
+			context.bandwidth.setValue(local_bandwidth);
+			if(local_type == 'vlan')
+			{
+				if (local_inputport == local_outputPort)
+				{
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputport.indexOf("of:") != -1) && (local_outputPort.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputport.split(":")[1] != '')
+					{
+						if (local_inputport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_inputport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputport.split("/")[1]);
+								context.inputdevice.setValue(local_inputport.split(":")[1].split("/")[0]);
+							}
+						}
+					}
+					if (local_outputPort.split(":")[1] != '')
+					{
+						if (local_outputPort.split(":")[1].split("/")[0] != '')
+						{
+							if (local_outputPort.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputPort.split("/")[1]);
+								context.outputdevice.setValue(local_outputPort.split(":")[1].split("/")[0]);
+							}						
+						}
+					}	
+				}
+			}
+			if(local_type == 'vxlan')
+			{
+				if (local_inputtunnelport == local_outputtunnelport)
+				{
+					context.IsAlikePort.setValue(true);
+				}
+				if ((local_inputtunnelport.indexOf("of:") != -1) && (local_outputtunnelport.indexOf("of:") != -1))
+				{
+					context.putindexof.setValue(1);
+					if (local_inputtunnelport.split(":")[1] != '')
+					{
+						if (local_inputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_inputtunnelport.split("/")[1] != '')
+							{
+								context.innum.setValue(local_inputtunnelport.split("/")[1]);
+								context.inputdevice.setValue(local_inputtunnelport.split(":")[1].split("/")[0]);
+							}
+						}
+					}
+					if (local_outputtunnelport.split(":")[1] != '')
+					{
+						if (local_outputtunnelport.split(":")[1].split("/")[0] != '')
+						{
+							if (local_outputtunnelport.split("/")[1] != '')
+							{
+								context.outnum.setValue(local_outputtunnelport.split("/")[1]);
+								context.outputdevice.setValue(local_outputtunnelport.split(":")[1].split("/")[0]);
+							}						
+						}
+					}	
+				}								
+			}	
+					
+		]]></script>
+		<if cond="context.IsAlikePort.toBoolean() == true">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The port data can not alike!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="IsHasValue" class="context.tunnelManagerObject">
+			<parameters>
+				<string name="style" in="'inport'"/>
+				<string name="data" in="context.inputPort.toString()"/>
+				<boolean name="result" out="context.result"/>
+			</parameters>
+		</function>
+		<if cond="context.result.toBoolean()==true">
+			<then>
+				<log level="2">inport</log>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This tunnel is already had!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="IsHasValue" class="context.tunnelManagerObject">
+			<parameters>
+				<string name="style" in="'outport'"/>
+				<string name="data" in="context.outputPort.toString()"/>
+				<boolean name="result" out="context.result"/>
+			</parameters>
+		</function>
+		<if cond="context.result.toBoolean()==true">
+			<then>
+				<log level="2">outputPort</log>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This tunnel is already had!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="IsHasValue" class="context.tunnelManagerObject">
+			<parameters>
+				<string name="style" in="'invlan'"/>
+				<string name="data" in="context.inputvlanid.toString()"/>
+				<boolean name="result" out="context.result"/>
+			</parameters>
+		</function>
+		<if cond="context.putindexof.toLong()!=1">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'Port is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<if cond="context.inputdevice.toString()=='' || context.outputdevice.toString()==''">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="context.resourceid.toLong()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'Port is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<object name="outdevice" out="context.indevice"/>
+				<string name="datapathid" in="context.inputdevice.toString()"/>
+			</parameters>
+		</function>		
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<object name="outdevice" out="context.outdevice"/>
+				<string name="datapathid" in="context.outputdevice.toString()"/>
+			</parameters>
+		</function>		
+		<if cond="context.indevice.ptr==null || context.outdevice.ptr==null">
+			<then>
+				<log level="100">indevice is null or outdevice is null</log>
+				<log level="100"><![CDATA[indevice = <%=context.inputdevice.toString()%>]]></log>
+				<log level="100"><![CDATA[outdevice = <%=context.outputdevice.toString()%>]]></log>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.indevice">
+			<parameters>
+				<object name="outportmgr" out="context.indeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.indeviceportobj">
+			<parameters>
+				<long name="portnumber" out="context.indeivceportnum"/>
+			</parameters>
+		</function>
+		<!--if cond="context.innum.toLong() > context.indeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This portnum is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if-->
+		<function name="GetPortManager" class="context.outdevice">
+			<parameters>
+				<object name="outportmgr" out="context.outdeviceportobj"/>
+			</parameters>
+		</function>
+		<function name="GetPortNumberSize" class="context.outdeviceportobj">
+			<parameters>
+				<long name="portnumber" out="context.outdeivceportnum"/>
+			</parameters>
+		</function>
+		<!--if cond="context.outnum.toLong() > context.outdeivceportnum.toLong()">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<long name="resourceid" in="-1"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This portnum is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if-->		
+		<function name="addTunnel" class="context.tunnelManagerObject">
+			<parameters>
+				<long name="id" out="context.resourceid"/>
+				<string name="username" in="context.username.toString()"/>
+				<string name="inputPort" in="context.inputPort.toString()"/>
+				<string name="outputPort" in="context.outputPort.toString()"/>
+				<string name="type" in="context.type.toString()"/>
+				<string name="state" in="context.state.toString()"/>
+				<long name="inputvlanid" in="context.inputvlanid.toLong()"/>
+				<long name="outputvlanid" in="context.outputvlanid.toLong()"/>
+				<!-- wangkang 2017/10/27 -->	
+				<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+				<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+				<!-- wangkang 2017/11/13 -->	
+				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
+				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
+				<long name="bandwidth" in="context.bandwidth.toLong()"/>
+			</parameters>
+		</function>
+		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
+			<parameters>
+				<long name="tunnel_id" in="context.resourceid.toLong()"/>
+				<object name="TunnelObject" out="context.tunnel"/>
+			</parameters>			
+		</function>
+		<if cond="context.tunnel==null">
+			<then>
+				<log>tunnel is null</log>
+			</then>
+			<else>
+				<function name="ActiveTunnel" class="context.tunnel"/>
+			</else>
+		</if>		
+	</function>
+	
 	<!--
 		@brief		删除一个tunnel
 		@auth 		YY
@@ -912,36 +1336,58 @@
 		Output:
 	-->	
 	<function name="deleteTunnel">
-		<long name="resourceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+		<long name="resourceid"/>
+		<script><![CDATA[
+			var id = event.getParam('params').getIndexOf(0).toString()
+			if (id.indexOf("{") == -1)
+				context.resourceid.setValue(id)
+			else
+				context.resourceid.setValue(id.split("{")[1].split("}")[0])
+		]]></script>
 		<string name="outjson"/>
-		<object name="tunnel"/>		
+		<object name="tunnel"/>
+		<long name="size"/>
+		<log level="100">#############################################</log>
+		<syslog level="INFO"><![CDATA[deleteTunnel resourceid = <%=context.resourceid.toString()%>]]></syslog>
+		<log level="100">#############################################</log>
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
 				<object name="TunnelObject" out="context.tunnel"/>
 			</parameters>			
 		</function>
+		<syslog level="INFO">deleteTunnel 1</syslog>
+		<function name="getTunnelNum" class="context.tunnelManagerObject">
+			<parameters>
+				<long name="size" out="context.size"/>
+			</parameters>
+		</function>
+		<syslog level="INFO">deleteTunnel 2</syslog>
 		<if cond="context.tunnel.ptr==null">
 			<then>
 				<log>tunnel is null</log>
+				<syslog level="INFO">deleteTunnel 3</syslog>
 				<function name="ErrorDataResponse">
 					<parameters>
 						<long name="resourceid" in="context.resourceid.toLong()"/>
 						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="description" in="'This id is wrong!'"/>
+						<string name="description" in="context.size.toString()"/>
 					</parameters>
 				</function>
 				<exit/>
 			</then>
 			<else>
+				<syslog level="INFO">deleteTunnel 4</syslog>
 				<function name="DeactiveTunnel" class="context.tunnel"/>
 			</else>
-		</if>			
+		</if>
+		<syslog level="INFO">deleteTunnel 5</syslog>
 		<function name="removeTunnel" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
 			</parameters>
 		</function>		
+		<syslog level="INFO">deleteTunnel 6</syslog>
 		<script><![CDATA[
 			var json = new Object();
 			var one = new Object();

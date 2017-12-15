@@ -33,7 +33,7 @@
 					<set name="clientparams" paramname="username" value="'SDNTEST'"/>
 					<set name="clientparams" paramname="keyFile" value="'/opt/staros.xyz/staros/system/keyfile.pem'"/>
 					<set name="clientparams" paramname="keepalive" value="'disable'"/>
-					<set name="clientparams" paramname="listenip" value="'192.168.2.115'"/>
+					<set name="clientparams" paramname="listenip" value="'192.168.2.155'"/>
 					<set name="clientparams" paramname="listenport" value="'22'"/>
 					<ssh name="thisclass.sshobj" action="StartClient" params="clientparams" connectedevent="SSH.connected" dataevent="SSH.dataevent"/>
 			</function>

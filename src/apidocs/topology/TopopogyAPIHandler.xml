@@ -29,7 +29,7 @@
 			<parameters>
 				<long name="bundleid" in="context.getCurrentBundleId()"/>			
 				<string name="handleevent" in="'processtopologysrequest'"/>
-				<string name="requestpathtest" in="'/topologyservice/topologys'"/>			
+				<string name="requestpathtest" in="'/onos/v1/topologyservice/topologys'"/>			
 			</parameters>
 		</function>
 
@@ -37,7 +37,7 @@
 			<parameters>
 				<long name="bundleid" in="context.getCurrentBundleId()"/>			
 				<string name="handleevent" in="'topogyprocessrequest'"/>
-				<string name="requestpathtest" in="'/topologyservice/topology'"/>			
+				<string name="requestpathtest" in="'/onos/v1/topologyservice/topology'"/>			
 			</parameters>
 		</function>
 
@@ -56,13 +56,13 @@
 	<function name="UnRegisterHandler">
 		<function name="UnRegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<string name="requestpath" in="'/topologyservice/topologys'"/>			
+				<string name="requestpath" in="'/onos/v1/topologyservice/topologys'"/>			
 			</parameters>
 		</function>
 
 		<function name="UnRegisterAPIHandler" class="RestfulService">
 			<parameters>
-				<string name="requestpath" in="'/topologyservice/topology'"/>			
+				<string name="requestpath" in="'/onos/v1/topologyservice/topology'"/>			
 			</parameters>
 		</function>
 	</function>
