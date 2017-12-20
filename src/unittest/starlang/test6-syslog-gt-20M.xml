@@ -3,13 +3,14 @@
 	<logconfig dest="stdout"/>
 		<!--/opt/staros.xyz/staroscontroller/starlang/unittest/starlang/test6-syslog-gt-20M.xml -->
 		<function name="testfun">
-			<log level="100">enter testfun         2017.12.15</log>
+			<log level="100">---enter testfun         2017.12.15</log>
 			
 			<long name="i" value="0"/>
 			<for var="i" from="0" to="210000">
 				<syslog level="INFO"><![CDATA[aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-aaaa-<%=context.i.toString()%>]]></syslog>
 			</for>
-			<log level="100">execute testfun  end       2017.12.15</log>
+			
+			<log level="100">---execute testfun  end       2017.12.15</log>
 		</function>
 		
 	<events>		
