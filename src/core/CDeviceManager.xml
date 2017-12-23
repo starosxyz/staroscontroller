@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
 <!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -22,6 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<class name="CDeviceManager">
 		<private>
 			<hashmap name="deviceContainer" keytype="string" valuetype="object"/>
@@ -1280,6 +1280,7 @@
 				<object name="device"/>
 				<object name="flowobj"/>
 				<list name="flowjsonstrs" valuetype="string"/>
+				<list name="flowjsonstrlist" valuetype="string"/>
 					<for var="onedevice" in="context.deviceContainer">
 						<function>
 							<set name="device" value="context.onedevice.second()"/>
@@ -1296,13 +1297,18 @@
 												<list name="flowjsonstr" out="context.flowjsonstrs"/>
 											</parameters>
 										</function>
-										
+										<if cond="context.flowjsonstrs.size()!=0">
+											<then>
+												<set name="flowjsonstrlist" value="context.flowjsonstrs"/>
+											</then>
+										</if>
 								</then>
 							</if>
 						</function>
 					</for>
-					<log level="100"><![CDATA[ CDevice 1100 flowjsonstrs size!!!!!= '<%=context.flowjsonstrs.size().toString()%>']]></log>
-					<set name="flowjsonstr" value="context.flowjsonstrs"/>
+					<log level="100"><![CDATA[ CDevice 1305 flowjsonstrlist size!!!!!= '<%=context.flowjsonstrlist.size().toString()%>']]></log>
+					<log level="100"><![CDATA[ CDevice 1306 flowjsonstrs size!!!!!= '<%=context.flowjsonstrs.size().toString()%>']]></log>
+					<set name="flowjsonstr" value="context.flowjsonstrlist"/>
 			</function>
 			
 			<!--
@@ -1420,22 +1426,30 @@
 				<object name="device"/>
 				<object name="flowobj"/>
 				<list name="flowjsonstrs" valuetype="string"/>
+				<log level="100"><![CDATA[cdevice deviceContainer size=<%=context.deviceContainer.size().toString()%>]]></log>
 				<if cond="context.deviceid.toString()!=''">
 					<then>
 						<log level="100"><![CDATA[cdevice 1192 thisdeviceid=<%=context.deviceid.toString()%>']]></log>
-						<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
-						<function name="GetFlowManager" class="device">
-							<parameters>
-								<object name="outflowmgr" out="context.flowobj"/>
-							</parameters>
-						</function>
-						<function name="getflowBydeviceid" class="flowobj">
-								<parameters>
-									<string name="deviceid" in="context.deviceid.toString()"/>
-									<list name="flowjsonstr" out="context.flowjsonstrs"/>
-								</parameters>
-						</function>
-						<set name="flowjsonstr" value="context.flowjsonstrs"/>
+						<if cond="context.deviceContainer.hasValue(context.deviceid.toString())">
+							<then>
+								<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
+								<function name="GetFlowManager" class="device">
+									<parameters>
+										<object name="outflowmgr" out="context.flowobj"/>
+									</parameters>
+								</function>
+								<function name="getflowBydeviceid" class="flowobj">
+										<parameters>
+											<string name="deviceid" in="context.deviceid.toString()"/>
+											<list name="flowjsonstr" out="context.flowjsonstrs"/>
+										</parameters>
+								</function>
+								<set name="flowjsonstr" value="context.flowjsonstrs"/>
+							</then>
+							<else>
+								<exit/>
+							</else>
+						</if>
 					</then>
 				</if>
 			</function>
@@ -1687,6 +1701,7 @@
 				</parameters>
 				<object name="flowobj"/>
 				<object name="device"/>
+				<log level="100"><![CDATA[deviceid =<%=context.deviceid.toString()%>']]></log>
 				<lookup name="deviceContainer" key="context.deviceid.toString()" output="context.device"/>
 					<if cond="context.device.ptr!=null">
 						<then>

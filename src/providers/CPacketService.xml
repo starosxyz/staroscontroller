@@ -268,9 +268,17 @@
 				<string name="local_ethtype"/>
 				<script><![CDATA[
 					var info = JSON.parse(context.data.toString());
-					var js_ethtype = info.payload.ethtype;
-					context.local_ethtype.setValue(js_ethtype);
+					if (info.payload != null)
+					{
+						var js_ethtype = info.payload.ethtype;
+						context.local_ethtype.setValue(js_ethtype);
+					}
 				]]></script>
+				<if cond="context.local_ethtype.size()==0">
+					<then>
+						<exit/>
+					</then>
+				</if>
 				<log level="100">###### CPacketserver HOSTDATA #######</log>
 				<if cond="context.local_ethtype.toString()=='2054'">
 					<then>

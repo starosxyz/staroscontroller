@@ -380,6 +380,7 @@
 				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
 				
 				<!---qiulei 20170831 start-->
+			
 				<string name="BarrierStrJson" />
 				<reference variable="BarrierStrJson">
 					<jsonbody><![CDATA[ 
@@ -389,6 +390,7 @@
 					]]></jsonbody>
 				</reference>
 				<!--openflow_api中的方法-->
+				<log level="100"><![CDATA[393 thisclass.m_transportid= <%=thisclass.m_transportid.toString()%>]]></log>		
 				<function name="Send_OFPT13_BARRIER_REQUEST">
 					<parameters>
 						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
@@ -425,17 +427,18 @@
 					<string name="appid"/>
 					<list name="flowjsonstr"/>
 				</parameters>
+				<log level="100">CFlowManager GetFlowByappid</log>
 				<object name="flowobj"/>
 				<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
 				<string name="appId"/>
 				<string name="flowjson"/>
 				<list name="flowjsons" valuetype="string"/>
+				<log level="100"><![CDATA[CFlowManager 436 flowsContainer size= '<%=context.flowsContainer.size().toString()%>']]></log>
 				<for var="oneFlowsPair" in="context.flowsContainer">
 					<set name="flowobj" value="context.oneFlowsPair.second()"/>
 					<if cond="context.flowobj.ptr==null">
 						<then>
-							<log>flowobj is null</log>
-							<exit/>
+							<log level="100">flowobj is null</log>
 						</then>
 					</if>
 						<function name="GetFlowJsonStringbyappidid" class="flowobj">
@@ -445,18 +448,21 @@
 							</parameters>
 						</function>	
 						
-						
+					<log level="100"><![CDATA[CFlowManager 451 appId = '<%=context.appId.toString()%>']]></log>
+					<log level="100"><![CDATA[CFlowManager  452 appid = '<%=context.appid.toString()%>']]></log>		
 					<if cond="context.appId.toString()==context.appid.toString()">
 						<then>
+							<log level="100"><![CDATA[CFlowManager 455 flowjson = '<%=context.flowjson.toString()%>']]></log>
 							<insert name="context.flowjsons" value="context.flowjson.toString()"/>
 						</then>
 						<else>
-							<log>not getflowbyappid</log>
+							<log leve="100">not getflowbyappid</log>
 						</else>
-					</if>
-						
+					</if>		
 				</for>
 				<set name="flowjsonstr" value="context.flowjsons"/>
+				
+				<log level="100"><![CDATA[CFlowManager 464 flowjsonstr size= '<%=context.flowjsonstr.size().toString()%>']]></log>
 			</function>
 			
 			<!--
@@ -550,13 +556,20 @@
 								<string name="flowid" out="context.flowid"/>
 							</parameters>
 						</function>	
-						<script><![CDATA[
-							var json = JSON.parse(context.flowjson.toString());
-							json.flowid=context.flowid.toString();
-							var strjson=JSON.stringify(json);
-							context.strjson.setValue(strjson);
-					]]></script>
-						<insert name="flowjsons" value="context.strjson"/>				
+						<log level="200"><![CDATA[cflowmanager flowjson =<%=context.flowjson.toString()%>']]></log>
+						<log level="200"><![CDATA[cflowmanager flowid =<%=context.flowid.toString()%>']]></log>
+						<if cond="context.flowjson.toString()!=''">
+							<then>
+								<script><![CDATA[
+									var json = JSON.parse(context.flowjson.toString());
+									json.flowid=context.flowid.toString();
+									var strjson=JSON.stringify(json);
+									context.strjson.setValue(strjson);
+								]]></script>
+								<insert name="flowjsons" value="context.strjson"/>		
+							</then>
+						</if>
+		
 				</for>	
 				<set name="context.flowjsonstr" value="context.flowjsons"/>
 			</function>
@@ -584,27 +597,34 @@
 				<string name="appid"/>
 				<object name="flowentry"/>
 				<string name="strjson"/>
-				<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
-				<if cond="context.flowentry.ptr!=null">
+				<if cond="thisclass.flowsContainer.hasValue(context.flowid.toString())==true">
 					<then>
-						<function name="GetFlowJsonStringbyflowid" class="context.flowentry">
-							<parameters>
-								<string name="jsonstring"  out="context.flowjson"/>
-									<string name="flowid" out="context.flowid"/>
-							</parameters>
-						</function>	
-						<script><![CDATA[
-							var json = JSON.parse(context.flowjson.toString());
-							json.flowid=context.flowid.toString();
-							var strjson=JSON.stringify(json);
-							context.strjson.setValue(strjson);
-						]]></script>
-						
-						<log level="100"><![CDATA[Cflowmgr 553 flowjson=<%=context.flowjson.toString()%>']]></log>
-						<set name="flowjsonstr" value="context.strjson"/>
+						<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
+						<if cond="context.flowentry.ptr!=null">
+							<then>
+								<function name="GetFlowJsonStringbyflowid" class="context.flowentry">
+									<parameters>
+										<string name="jsonstring"  out="context.flowjson"/>
+										<string name="flowid" out="context.flowid"/>
+									</parameters>
+								</function>	
+								<script><![CDATA[
+									var json = JSON.parse(context.flowjson.toString());
+									json.flowid=context.flowid.toString();
+									var strjson=JSON.stringify(json);
+									context.strjson.setValue(strjson);
+								]]></script>
+								
+								<log level="100"><![CDATA[Cflowmgr 553 flowjson=<%=context.flowjson.toString()%>']]></log>
+								<set name="flowjsonstr" value="context.strjson"/>
+							</then>
+							<else>
+								<log level="100">flowentry is null</log>
+							</else>
+						</if>
 					</then>
 					<else>
-						<log level="100">flowentry is null</log>
+						<exit/>
 					</else>
 				</if>
 			</function>

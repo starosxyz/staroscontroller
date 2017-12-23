@@ -222,8 +222,8 @@
 						</function>
 					</then>
 					<else>
-						<syslog level="FATAL"><![CDATA[tunnel null tunnelContainer.size = <%=thisclass.tunnelContainer.size().toString()%>]]></syslog>
 						<log level="100"> tunnel is null </log>
+						<syslog level="FATAL"><![CDATA[tunnel null tunnelContainer.size = <%=thisclass.tunnelContainer.size().toString()%>]]></syslog>
 					</else>
 				</if>
 			</function>

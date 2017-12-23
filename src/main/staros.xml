@@ -58,6 +58,8 @@
 			<!--qiulei 20170828 Monday-->
 			<string name="eventname"/>
 			<function>
+				<!--设置CPU亲和性-->
+				<!--affinity cpuset="0,1,2,3"/-->
 				<set name="injson" value="'[]'"/>
 				<syslog level="INFO">Hello StarOS</syslog>
 				<log level="100">##########STAROS application start#######</log>

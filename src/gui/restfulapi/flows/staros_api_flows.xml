@@ -94,6 +94,15 @@
 				<hashmap name="queryparams" />
 			</parameters>
 			<log level="100">73 handflowdf</log>
+			<log level="100"><![CDATA[97 pathvector size!!!!!= '<%=context.pathvector.size()%>']]></log>
+			<log level="100"><![CDATA[98 deviceid = '<%=context.pathvector.getIndexOf(0).toString()%>']]></log>
+			<log level="100"><![CDATA[99 flowid = '<%=context.pathvector.getIndexOf(1).toString()%>']]></log>
+			<string name="deviceid"/>
+			<set name="deviceid" value="context.pathvector.getIndexOf(0)"/>
+			<string name="flowid"/>
+			<set name="flowid" value="context.pathvector.getIndexOf(1)"/>
+			<log level="100"><![CDATA[104 deviceid = '<%=context.deviceid.toString()%>']]></log>
+			<log level="100"><![CDATA[105 flowid = '<%=context.flowid.toString()%>']]></log>
 			<if cond="context.method.toString()=='GET'">
 				<then>
 					<function name="getflowBydeviceidflowid">
@@ -122,7 +131,7 @@
 				<vector name="pathvector"/>
 				<hashmap name="queryparams" />
 			</parameters>
-			<log level="11">101 ----staros_api_flows.xml HandflowsDrequest</log>
+			<log level="11">101 ----staros_api_flows.xml HandflowsDrequest start</log>
 			<if cond="context.method.toString()=='GET'">
 				<then>
 					<function name="getflowBydeviceid">
@@ -139,6 +148,7 @@
 					</function>
 				</else>
 			</if>
+			<log level="11">101 ----staros_api_flows.xml HandflowsDrequest end</log>
 		</function>
 		
 	<!--
@@ -360,13 +370,33 @@
 		<string name="deviceid" value="context.pathvector.getIndexOf(0).toString()"/>
 		<list name="flowjsonstr" valuetype="string"/>
 		<string name="strjson"/>
+		<!-- YY 2017-12-22 -->
+		<object name="deviceobj"/>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<object name="outdevice" out="context.deviceobj"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The device is not found !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<!-- YY 2017-12-22 -->
 		<function name="GetflowBydeviceid" class="DeviceManager">
 			<parameters>
 				<string  name="deviceid" in="context.deviceid.toString()"/>
 				<list name="flowjsonstr" out="context.flowjsonstr"/>
 			</parameters>
 		</function>
-		<log><![CDATA[staros_api_flows 356!!!!!= '<%=context.flowjsonstr.size().toString()%>']]></log>
+		<log level="100"><![CDATA[staros_api_flows 356!!!!!= '<%=context.flowjsonstr.size().toString()%>']]></log>
 		<if cond="context.flowjsonstr.size()!=0">
 			<then>
 			
@@ -432,7 +462,27 @@
 		<string name="deviceid" value="context.pathvector.getIndexOf(0).toString()"/>
 		<string name="flowid" value="context.pathvector.getIndexOf(1).toString()"/>
 		<string name="flowjsonstr"/>
-		<string name="strjson"/>			
+		<string name="strjson"/>	
+		<!-- YY 2017-12-22 -->	
+		<object name="deviceobj"/>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<object name="outdevice" out="context.deviceobj"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>	
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The device is not found !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<!-- YY 2017-12-22 -->
 		<function name="GetflowBydeviceidflowid" class="DeviceManager">
 			<parameters>
 				<string name="flowid"  in="context.flowid.toString()"/>
@@ -491,8 +541,7 @@
 		</parameters>
 		<log level="100">api_flows addflowBydeviceid</log>
 		<string name="deviceid"/>
-		<string name="appid"/>
-
+		<string name="appid"/>		
 			<script><![CDATA[
 					var str = event.getParam('requestpath').toString();
 					var array = str.split("/");
@@ -504,6 +553,26 @@
 					context.appid.setValue(thisappid);
 			
 			]]></script>
+			<!-- YY 2017-12-22 -->	
+			<object name="deviceobj"/>
+			<function name="getDevice" class="DeviceManager">
+				<parameters>
+					<object name="outdevice" out="context.deviceobj"/>
+					<string name="datapathid" in="context.deviceid.toString()"/>
+				</parameters>
+			</function>	
+			<if cond="context.deviceobj.ptr==null">
+				<then>
+					<function name="ErrorDataResponse">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="description" in="'The device is not found !'"/>
+						</parameters>
+					</function>
+					<exit/>
+				</then>
+			</if>
+			<!-- YY 2017-12-22 -->
 			<log level="100"><![CDATA[418 huhuhuhuh api_flows appid!!!!!= '<%=context.appid.toString()%>']]></log>
 			<if cond="context.appid.toString()!=''">
 				<then>
@@ -511,13 +580,12 @@
 						<then>
 							<string name="json"/>
 							<function name="AddflowBydeviceid" class="DeviceManager">
-										<parameters>
-											<string name="deviceid" in="context.deviceid.toString()"/>
-											<string name="appid" in="context.appid.toString()"/>
-											<string name="jsonstr" in="context.eventdata.toString()"/>
-										</parameters>
+								<parameters>
+									<string name="deviceid" in="context.deviceid.toString()"/>
+									<string name="appid" in="context.appid.toString()"/>
+									<string name="jsonstr" in="context.eventdata.toString()"/>
+								</parameters>
 							</function>
-							
 							<function name="success">
 								<parameters>
 									<string name="json" out="context.json"/>
@@ -529,8 +597,6 @@
 									<string name="json" in="context.json.toString()"/>
 								</parameters>
 							</function>
-							
-
 						</then>
 						<else>
 							<function name="ErrorDataResponse">
@@ -576,6 +642,9 @@
 		<string name="appid"/>
 		<list name="flowdeviceidlist" valuetype="string"/>	
 		<list name="flowlist" valuetype="string"/>
+		<list name="legalidlist" valuetype="string"/>
+		<string name="onedeviceid"/>
+		<object name="deviceobj"/>
 			<script><![CDATA[				
 					var str = event.getParam('requestpath').toString();
 					var array = str.split("/");
@@ -600,11 +669,35 @@
 				<then>
 					<string name="json"/>
 					<log level="100">hu 500  api_flows addflows </log>
+					<!-- YY 2017-12-22 -->
+					<for var="context.onedeviceid" in="context.flowdeviceidlist">						
+						<function name="getDevice" class="DeviceManager">
+							<parameters>
+								<object name="outdevice" out="context.deviceobj"/>
+								<string name="datapathid" in="context.onedeviceid.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.deviceobj.ptr!=null">
+							<then>
+								<insert name="context.legalidlist" value="context.onedeviceid.toString()"/>
+							</then>
+							<else>
+								<function name="ErrorDataResponse">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="description" in="'The device is not found !'"/>
+									</parameters>
+								</function>
+								<break/>
+							</else>
+						</if>
+					</for>
+					<!-- YY 2017-12-22 -->
 					<function name="Addflows" class="DeviceManager">
 						<parameters>
-							<list name="flowdeviceidlist" in="context.flowdeviceidlist"/>
-							<list name="flowlist" in="context.flowlist"/>
 							<string name="appid" in="context.appid.toString()"/>
+							<list name="flowdeviceidlist" in="context.legalidlist"/>
+							<list name="flowlist" in="context.flowlist"/>
 						</parameters>
 					</function>
 					<function name="success">
@@ -715,6 +808,28 @@
 		<string name="result"/>
 		<string name="json"/>
 		<log level="100">api_flows 556 deleteflowBydeviceidflowid</log>
+		<log level="100"><![CDATA[deviceid =<%=context.deviceid.toString()%>']]></log>
+		<log level="100"><![CDATA[flowid =<%=context.flowid.toString()%>']]></log>
+		<!-- YY 2017-12-22 -->
+		<object name="deviceobj"/>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<object name="outdevice" out="context.deviceobj"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>	
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The device is not found !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<!-- YY 2017-12-22 -->
 		<function name="DeleteBydeviceidflowid" class="DeviceManager">
 			<parameters>
 				<string name="deviceid" in="context.deviceid.toString()"/>

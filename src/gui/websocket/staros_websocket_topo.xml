@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang>
 <!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -22,7 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
-
+<starlang>
 	<function name="HandleUpdatePrefReq">
 		<function>
 			<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">

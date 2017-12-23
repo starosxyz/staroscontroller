@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang>
 <!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -22,6 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
+<starlang>
 	<params name="APIV1MapFunction" global="true"/>
 	<function name="InitAPIMapFunction">
 		<log level="11">Init API Map Function</log>
@@ -36,14 +36,6 @@
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows" value="'Handflowsrequest'"/>
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}/{flowId}" value="'HandflowsDFrequest'"/>
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}" value="'HandflowsDrequest'"/>
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
 	</function>
 </starlang>

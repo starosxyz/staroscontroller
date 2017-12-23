@@ -25,27 +25,43 @@
 	<!--wangkang 2017/09/13 -->
 	<class name="CTunnel">
 		<private>
+			<!--隧道标识-->
 			<long name="m_id"/>
+			<!--隧道创建者-->
 			<string name="m_username"/>
+			<!--隧道入口，流量从这个口进入-->
 			<string name="m_inputPort"/>
+			<!--隧道出口，经过隧道后，流量从这个口出去-->
 			<string name="m_outputPort"/>
-			
-			<long name="m_serviceinvlan"/>			
+			<!--经过隧道的报文的服务vlan,入口方向-->
+			<long name="m_serviceinvlan"/>	
+			<!--经过隧道的报文的服务vlan,出口方向-->		
 			<long name="m_serviceoutvlan"/>
+			<!--隧道类型，执行vxlan/vlan-->
 			<string name="m_type"/>
+
 			<string name="m_state"/>
+			<!--如果是vlan类型，入口流量的vlanid-->
 			<long name="m_inputvlanid"/>
+			<!--如果是vlan类型，出口流量的vlanid-->
+			<!--这个两个vlanid目前相等-->
 			<long name="m_outputvlanid"/>
 			
-			<!-- wangkang 2017/10/27 -->	
+			<!-- wangkang 2017/10/27 -->
+			<!-- vxlan类型的虚拟隧道入口，流量从这个口进入 -->
 			<string name="m_inputtunnelport"/>
+			<!-- vxlan类型的虚拟隧道出口，经过隧道后，流量从这个口出去 -->
 			<string name="m_outputtunnelport"/>
+			<!-- vxlan类型，流量的vxlanid-->
 			<long name="m_vxlantunnelid"/>
-			<!-- wangkang 2017/11/13 -->
+
+			<!-- vxlan类型的隧道入口，流量从这个口进入 -->
 			<string name="m_inputvxlanport"/>
+			<!-- vxlan类型的隧道出口，经过隧道后，流量从这个口出去 -->
 			<string name="m_outputvxlanport"/>
-			
+			<!-- 带宽 -->
 			<long name="m_bandwidth"/>
+
 			<object name="m_tunneldevicemgr"/>
 			<boolean name="m_bisActive" value="false"/>
 			

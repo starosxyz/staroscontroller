@@ -32,7 +32,7 @@
 		</function>
 
 	<events>
-		<onevent name="bundleapp.startup">
+		<onevent event="bundleapp.startup">
 			<function name="testfun"/>
 			<function name="PrintList"/>
 		</onevent>

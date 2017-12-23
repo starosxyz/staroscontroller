@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 	Copyright (C) 2013-2017 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -22,6 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 <!--
 enum ofp_error_type {
 	OFPET_HELLO_FAILED = 0, /* Hello protocol failed. */

@@ -1002,9 +1002,9 @@
 	</function>
 	
 	<!--
-		@brief	       恢复一个tunnel
-		@auth 		YY
-		@date		2017/09/14
+		@brief	    根据json数组恢复一个tunnel
+		@auth 		YXR
+		@date		2017/12/20
 		Input:
 		Output:
 	-->	

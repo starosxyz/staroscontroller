@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 <!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -22,6 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/device/staros_api_device.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/flows/staros_api_flows.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
@@ -532,7 +532,8 @@
 			<else>
 				<log level="11">502 --staros_api_vi.xml</log>
 				<vector name="pathvector"/>
-				<set name="functionname" value="global.APIV1MapFunction.matchFind(context.requestpath.toString(),context.pathvector)"/>
+				<hashmap name="queryparam" keytype="string" valuetype="string"/>
+				<set name="functionname" value="global.APIV1MapFunction.matchFind(context.requestpath.toString(),context.pathvector,context.queryparam)"/>
 				
 				<if cond="context.functionname.toString() != ''">
 					<then>
@@ -543,6 +544,7 @@
 								<string name="method" in="context.method.toString()"/>
 								<string name="eventdata" in="context.eventdata.toString()"/>
 								<vector name="pathvector" in="context.pathvector"/>
+								<hashmap name="queryparam" in="context.queryparam"/>
 							</parameters>
 						</function>
 					</then>

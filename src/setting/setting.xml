@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang>
-	<!--
+<!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
@@ -22,8 +21,7 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
-
-
+<starlang>
 	<params name="GlobalSetting" global="true"/>
 	<function name="InitSetting">
 		<!--设置OpenFlow监听地址-->

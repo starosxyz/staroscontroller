@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<class name="CTopoManager">
 <!--
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
@@ -23,6 +21,8 @@
 	See the License for the specific language governing permissions and
 	limitations under the License.
 -->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CTopoManager">
 		<private>
 			<hashmap name="topoContainer" keytype="string" valuetype="list"/>
 		</private>
