@@ -22,7 +22,7 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<class name="CDeviceManager">
+	<class name="CDeviceManager" extends="CListenerBase">
 		<private>
 			<hashmap name="deviceContainer" keytype="string" valuetype="object"/>
 			<hashmap name="t2dContainer" keytype="string" valuetype="string"/>
@@ -142,7 +142,6 @@
 				<object name="deviceobject"/>
 				<string name="outtransid"/>
 				<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
-				
 				<log level="100"><![CDATA[CDevice addDevice datapathid = <%=context.datapathid.toString()%>]]></log>
 				<if cond="thisclass.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
@@ -171,6 +170,16 @@
 						<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
 					</else>
 				</if>
+				<string name="functionname"/>
+				<for var="context.functionname" in="context.listernellist">
+					<function callback="functionname">
+						<parameters>
+								<string name="type" in="'add'"/>
+								<object name="deviceobj" in="context.deviceobject"/>					
+						</parameters>
+					</function>		
+				</for>
+
 				<string name="onlinejson"/>
 	
 				<log level="100">ClearFlow start</log>
@@ -261,6 +270,15 @@
 									<exit/>
 								</then>
 							</if>
+							<string name="functionname"/>
+							<for var="context.functionname" in="context.listernellist">
+								<function callback="functionname">
+									<parameters>
+										<string name="type" in="'remove'"/>
+										<object name="deviceobj" in="context.deviceobject"/>					
+									</parameters>
+								</function>		
+							</for>
 							<function name="ToOfflineJson" class="deviceobject">
 								<parameters>
 									<string name="strjson" out="offlinejson"/>
@@ -1807,6 +1825,36 @@
 					</else>
 				</if>	
 		    </function>
+			<!--qiulei 2017/12/28-->
+			<function name="getAllDeviceFlowCounts">
+				<parameters>
+					<long name="AllDeviceflowCounts"/>
+				</parameters>
+				
+				<long name="AllDeviceFlowNumber" value="0"/>
+				<long name="oneDeviceFlowNumber"/>
+				
+				<object name="deviceObj"/>
+				<pair name="oneDevicePair" keytype="string" valuetype="object"/>
+				
+				<for var="oneDevicePair" in="context.deviceContainer">
+					<function>
+						<set name="deviceObj" value="context.oneDevicePair.second()"/>
+						<if cond="context.deviceObj.ptr != null">
+							<then>
+								<function name="GetFlowCounts" class="deviceObj">
+									<parameters>
+										<long name="oneDeviceFlowCounts" out="context.oneDeviceFlowNumber"/>					
+									</parameters>
+								</function>
+								<set name="AllDeviceFlowNumber" value="context.AllDeviceFlowNumber.toLong()+context.oneDeviceFlowNumber.toLong()"/>
+							</then>
+						</if>
+					</function>
+				</for>
+				<set name="AllDeviceflowCounts" value="context.AllDeviceFlowNumber.toLong()"/>
+			</function>
 		</public>
+
 	</class>
 </starlang>

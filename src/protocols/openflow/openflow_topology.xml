@@ -135,7 +135,7 @@
 			<function name="AddPath" class="TopoManager">
 				<parameters>
 					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
-					<string name="todevide" in="event.getParam('todevice').toString()"/>
+					<string name="todevice" in="event.getParam('todevice').toString()"/>
 					<string name="path" in="event.getParam('path').toString()"/>
 				</parameters>
 			</function>

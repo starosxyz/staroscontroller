@@ -1,5 +1,0 @@
-{"event":"processorDataRequest","payload":{}}
-
-
-
-{"event":"processorDataResponse","payload":{"processors":[{"id":"715827884","type":"director","priority":"1","processor":"org.onosproject.incubator.net.neighbour.impl.NeighbourResolutionManager$InternalPacketProcessor","packets":"0","avgMillis":"0.00000"}],"annots":{"no_rows_msg":"No packet processors found"}}}

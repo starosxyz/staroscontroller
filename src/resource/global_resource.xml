@@ -23,6 +23,7 @@
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	<!--Group Resource -->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CListenerBase.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CFlowManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CApplicationManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CMeterManager.xml"/>
@@ -48,9 +49,12 @@
 	<!--qiulei 2017.08.24 Thursday-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CRestfulAPIManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTunnelManager.xml"/>
+	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CAPIDocsService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CDeviceService.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTrafficMonitor.xml"/>
 
+<include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
 	<object name="ApplicationManager" global="true"/>
 	<!--qiulei 20170811-->
 	<object name="ClusterManager" global="true"/>
@@ -74,6 +78,9 @@
 	<object name="TopoManager" global="true"/>
 	<!--object name="FlowManager" global="true"/-->
 	<object name="DeviceService" global="true"/>
+	<object name="ListenerBase" global="true"/>
+	<object name="traffic" global="true"/>
+	<object name="uiExtension" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -101,7 +108,10 @@
 		
 		<new name="SwaggerFile" class="CswaggerFile"/>
 		<new name="TopoManager" class="CTopoManager"/>
+		<new name="ListenerBase" class="CListenerBase"/>
 		<!--new name="FlowManager" class="CFlowManager"/-->
 		<new name="ApplicationManager" class="CApplicationManager"/>
+		<new name="traffic" class="CTrafficMonitor"/>
+	<new name="uiExtension" class="CUiExtensionManager"/>
 	</function>
 </starlang>

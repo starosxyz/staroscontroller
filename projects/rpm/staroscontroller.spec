@@ -37,6 +37,7 @@ rm -rf %{buildroot}
 /opt/staros.xyz/staroscontroller
 
 %post
+cp -rf /opt/staros.xyz/staroscontroller/staroscontroller-service /usr/local/bin/
 echo StarOS successfully, StarOS is a SDN network operating system
 
 %preun

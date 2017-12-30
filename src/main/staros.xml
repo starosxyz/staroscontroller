@@ -43,13 +43,105 @@
 	<object name="openflowserverobj"  global="true"/>
 	<object name="restfulserver"  global="true"/>
 	
-	<logconfig dest="stdout" level="10" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<logconfig dest="stdout" level="0" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<boolean name="isAPIAuth"  value="false"/>
 	<object name="globaltimer"/>
+	<function name="testpython">
+		<uint8 name="testuint8"/>
+		<int16 name="testint16"/>
+		<uint16 name="testuint16"/>
+		<int32 name="testint32"/>
+		<uint32 name="testuint32"/>
+		<int64 name="testlong"/>
+		<uint64 name="testulong"/>
+		<int64 name="testint64"/>
+		<uint64 name="testuint64"/>
+		<boolean name="testboolean"/>
+		<string name="teststring"/>
+		<pyvariable name="pyvariable"/>
+		<function>
+		<python><![CDATA[
+import os;
+import libstarlang;
+
+libstarlang.setValueUChar("context.testuint8",28);
+libstarlang.setValueShort("context.testint16",25);
+libstarlang.setValueUShort("context.testuint16",222);
+libstarlang.setValueInt("context.testint32",254);
+libstarlang.setValueUInt("context.testuint32",21);
+libstarlang.setValueLong("context.testlong",222);
+libstarlang.setValueULong("context.testulong",2223);
+libstarlang.setValueLongLong("context.testint64",23222);
+libstarlang.setValueULongLong("context.testuint64",232222222222222222);
+libstarlang.setValueString("context.teststring","sdsdfsdfsdfsdf");
+libstarlang.syslog("INFO","i am syslog");
+libstarlang.log(100,"i am xml log");
+a=libstarlang.getValueUChar("context.testuint8");
+b=libstarlang.getValueShort("context.testint16");
+c=libstarlang.getValueUShort("context.testuint16");
+d=libstarlang.getValueInt("context.testint32");
+e=libstarlang.getValueUInt("context.testuint32");
+f=libstarlang.getValueLong("context.testlong");
+g=libstarlang.getValueULong("context.testulong");
+h=libstarlang.getValueLongLong("context.testint64");
+i=libstarlang.getValueULongLong("context.testuint64");
+k=libstarlang.getValueString("context.teststring");
+print(a);
+print(b);
+print(c);
+print(d);
+print(e);
+print(f);
+print(g);
+print(h);
+print(i);
+print(k);
+libstarlang.setValuePython("context.pyvariable",k);
+n=libstarlang.getValuePython("context.pyvariable");
+print(n);
+import os;
+import libstarlang;
+
+import threading
+
+class mythread(threading.Thread):
+    def run(self):
+        for i in range(1,5):
+            libstarlang.postEvent("pythonevent","eventdata")
+
+ma = mythread();
+mb = mythread();
+ma.start()
+mb.start()
+			]]></python>
+			<log><![CDATA[ testuint8= <%=context.testuint8.toString()%>]]></log>
+			<log><![CDATA[ testint16= <%=context.testint16.toString()%>]]></log>
+			<log><![CDATA[ testuint16= <%=context.testuint16.toString()%>]]></log>
+			<log><![CDATA[ testint32= <%=context.testint32.toString()%>]]></log>
+			<log><![CDATA[ testlong= <%=context.testlong.toString()%>]]></log>
+			<log><![CDATA[ testulong= <%=context.testulong.toString()%>]]></log>
+			<log><![CDATA[ testint64= <%=context.testint64.toString()%>]]></log>
+			<log><![CDATA[ testuint64= <%=context.testuint64.toString()%>]]></log>
+			<log><![CDATA[ testboolean= <%=context.testboolean.toString()%>]]></log>
+			<log><![CDATA[ teststring= <%=context.teststring.toString()%>]]></log>
+			<log><![CDATA[ pyvariable= <%=context.pyvariable.toString()%>]]></log>
+		</function>
+	</function>
 	<events>
 		<!--
-			@brief		控制器入口事件处理
-			@date		2017/09/06
+		/**********************************************************************
+		* 函数名称：bundleapp.startup
+		* 功能描述：控制器入口事件处理
+		* 访问的表：无
+		* 修改的表：无
+		* 输入参数：无             
+		* 输出参数：无
+		* 返 回 值：void
+		* 其它说明：
+		* 修改日期      版本号  修改人      修改内容
+		* **********************************************************************
+		* 2017/09/06    V1.1    易建        创建
+		************************************************************************/
 		-->
 		<onevent event="bundleapp.startup">
 			<long name="calloutSession" />
@@ -60,9 +152,15 @@
 			<function>
 				<!--设置CPU亲和性-->
 				<!--affinity cpuset="0,1,2,3"/-->
+				<function name="testpython"/>
 				<set name="injson" value="'[]'"/>
 				<syslog level="INFO">Hello StarOS</syslog>
 				<log level="100">##########STAROS application start#######</log>
+				<python><![CDATA[
+						import sys
+						print("Current Operating System:"+sys.platform)
+						print("Current Operating System Version:"+sys.version)
+					]]></python>
 				<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
 				<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
 				<remotecall method="DiscoveryTestMethod">
@@ -72,6 +170,12 @@
 							]]>
 						</applicationdata>
 				</remotecall>
+				<python><![CDATA[
+import sys;
+sys.path.append("/opt/staros.xyz/staroscontroller/starlang/python/");
+import a;
+a.printme()
+				]]></python>
 				<wait event="hellorequest" timeout="1000"/>
 				<!--1.初始化全局变量 -->
 				<function name="InitGlobalResource"/>
@@ -94,13 +198,14 @@
 				<function name="InitInstrunctionMap"/>
 				<function name="InitActionsMap"/>
 				<function name="InitActionsNameMap"/>
-
+				
 				<!--qiulei 20170828 Monday-->
 				<set name="eventname"  value="'TimeOutEvent'"/>
 				<!--启动定时器-->
 				<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
 				<!--启动自动拓扑发现-->
 				<function name="startDiscovery" class="TopoManager"/> 
+				
 				
 				<!--qiulei 201700929 Monday-->
 				<function name="RegisterAddDocsAPITopology"/>
@@ -135,9 +240,14 @@
 				<!--raise name="'TimeOutEvent'"/-->
 			</function>
 		</onevent>
+		<!--For Python Test-->
+		<onevent event="pythonevent">
+			<log leve="1"><![CDATA[pythonevent= '<%=event.getParam('eventdata').toString()%>']]></log>
+		</onevent>
 		<onevent event="*">
 			<function>
 				<log>insert staroscontroller onevent *</log>
+				<log><![CDATA[getName = <%=event.getName().toString()%>]]></log>
 				<log><![CDATA[result = <%=event.getParam('result').toString()%>]]></log>
 				<log><![CDATA[description = <%=event.getParam('description').toString()%>]]></log>
 				<log><![CDATA[transportid = <%=event.getParam('transportid').toString()%>]]></log>

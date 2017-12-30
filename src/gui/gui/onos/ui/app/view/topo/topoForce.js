@@ -478,6 +478,7 @@
             class: d.class,
             memento: metaUi
         });
+		uplink.zoomer().reset();
     }
 
 

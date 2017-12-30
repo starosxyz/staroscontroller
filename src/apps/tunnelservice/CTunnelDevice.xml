@@ -30,7 +30,10 @@
 			<string name="m_outputPort"/>
 			<string name="m_flowid"/>
 			<string name="m_flowid2"/>
+			<string name="m_flowid3"/>
+			<string name="m_flowid4"/>
 			<string name="m_dropid"/>
+			<string name="m_dropid2"/>
 			<long name="m_meterid"/>
 		</private>	
 		<public>
@@ -77,11 +80,51 @@
 					<string name="outport"/>
 					<string name="outvlan"/>
 					<long name="bandwith"/>
+				</parameters>
+				<function name="InstallRuleAtSameDevice">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleAtSameDevice">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleAtSameDevice">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<string name="jsonout2in"/>
 				<string name="jsonin2out"/>
-
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice inport = <%= context.inport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice invlan = <%= context.invlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice outport = <%= context.outport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice outvlan = <%= context.outvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice bandwith = <%= context.bandwith.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice ethtype = <%= context.ethtype.toString()%>]]></syslog>
 				<log>CTunnelDevice installRuleAtSameDevice</log>
 				<!--
 				<function name="InstallMeter">	
@@ -119,7 +162,7 @@
 												"oxmfield":"5",
 												"hasmask":"false",
 												"ethtype":"<%=context.ethtype.toString()%>"
-											}，
+											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"6",
@@ -172,7 +215,7 @@
 												"oxmfield":"5",
 												"hasmask":"false",
 												"ethtype":"<%=context.ethtype.toString()%>"
-											}，
+											},
 											{
 												"oxmclass":"0x8000",
 												"oxmfield":"6",
@@ -196,44 +239,22 @@
 							}
 					]]></jsonbody>
 				</reference>
-				<if cond="context.ethtype.toString() == '0x0800'">
-					<then>
-						<function name="InstallFlow" class="flowservice">
-							<parameters>
-								<string name="outflowid" out="thisclass.m_flowid"/>
-								<string name="strjson" in="context.jsonin2out.toString()"/>
-								<string name="appId" in="'tunnelservice'"/>
-								<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
-							</parameters>
-						</function>
-						<function name="InstallFlow" class="flowservice">
-							<parameters>
-								<string name="outflowid" out="thisclass.m_flowid2"/>
-								<string name="strjson" in="context.jsonout2in.toString()"/>
-								<string name="appId" in="'tunnelservice'"/>
-								<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
-							</parameters>
-						</function>
-					</then>
-					<else>
-						<function name="InstallFlow" class="flowservice">
-							<parameters>
-								<string name="outflowid" out="thisclass.m_flowid3"/>
-								<string name="strjson" in="context.jsonin2out.toString()"/>
-								<string name="appId" in="'tunnelservice'"/>
-								<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
-							</parameters>
-						</function>
-						<function name="InstallFlow" class="flowservice">
-							<parameters>
-								<string name="outflowid" out="thisclass.m_flowid4"/>
-								<string name="strjson" in="context.jsonout2in.toString()"/>
-								<string name="appId" in="'tunnelservice'"/>
-								<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
-							</parameters>
-						</function>
-					</else>
-				</if>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
 				
 				<if cond="context.m_flowid == ''">
 					<then>
@@ -264,7 +285,7 @@
 			* 返 回 值：void
 			* 其它说明：
 			* 修改日期      版本号  修改人      修改内容
-			* ---------------------------------------------------------------------
+			* **********************************************************************
 			* 2017/12/20    V1.1    王康        创建
 			************************************************************************/
 			-->
@@ -275,7 +296,42 @@
 					<string name="serviceinvlan"/>
 					<string name="serviceoutvlan"/>
 					<long name="bandwith"/>
+				</parameters>
+				<function name="InstallRuleStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<long name="bandwith"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<syslog level="INFO"> <![CDATA[installRuleStart inport = <%= context.inport.toString()%>]]></syslog>
 				<syslog level="INFO"> <![CDATA[installRuleStart invlan = <%= context.invlan.toString()%>]]></syslog>
@@ -483,7 +539,7 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -491,7 +547,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -502,11 +558,38 @@
 				<log><![CDATA[jsonout2in = <%=context.jsonout2in.toString()%>]]></log>			
 			</function>
 
+
 			<function name="installRuleMid">
 				<parameters>
 					<string name="serviceinvlan"/>
 					<string name="serviceoutvlan"/>
+				</parameters>
+				<function name="InstallRuleMid">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleMid">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleMid">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -622,7 +705,7 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -630,13 +713,14 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
 					</parameters>
 				</function>
 			</function>
+
 			<function name="installRuleEnd">
 				<parameters>
 					<string name="serviceinvlan"/>
@@ -644,7 +728,43 @@
 					<string name="outport"/>
 					<string name="outvlan"/>
 					<long name="bandwith"/>
+				</parameters>
+				<function name="InstallRuleEnd">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleEnd">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+
+			<function name="InstallRuleEnd">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -854,7 +974,7 @@
 				
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -862,7 +982,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -879,6 +999,36 @@
 		   			@param vxlantunnelid 	vxlan tunnelid
 		   			@param bandwith 	Source Device bandwith
 			-->
+			<function name="installVxlanTunnelStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+				</parameters>
+				<function name="InstallVxlanTunnelStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
 			<function name="InstallVxlanTunnelStart">
 				<parameters>
 					<string name="inport"/>
@@ -886,6 +1036,8 @@
 					<long name="vxlantunnelid"/>
 					<long name="bandwith"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1006,7 +1158,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1014,7 +1166,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1044,6 +1196,36 @@
 		   			@param vxlantunnelid 	vxlantunnelid
 		   			@param bandwith 	destination Device bandwith
 			-->
+			<function name="installVxlanTunnelEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+				</parameters>
+				<function name="InstallVxlanTunnelEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
 			<function name="InstallVxlanTunnelEnd">
 				<parameters>
 					<string name="outport"/>
@@ -1051,6 +1233,8 @@
 					<long name="vxlantunnelid"/>
 					<long name="bandwith"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1171,7 +1355,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1179,7 +1363,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1208,11 +1392,40 @@
 		   			@param inport 	Source Device inport
 		   			@param inputport 	Source Device vxlan inport
 			-->
+			<function name="installVxlanZhuanXianStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+				</parameters>
+				<function name="InstallVxlanZhuanXianStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="dropid" out="thisclass.m_dropid"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanZhuanXianStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="dropid" out="thisclass.m_dropid2"/>
+					</parameters>
+				</function>
+			</function>
 			<function name="InstallVxlanZhuanXianStart">
 				<parameters>
 					<string name="inport"/>
 					<string name="inputport"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="dropid"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1318,7 +1531,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1326,7 +1539,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1334,7 +1547,7 @@
 				</function>
 				<function name="InstallDropFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_dropid"/>
+						<string name="outflowid" out="context.dropid"/>
 						<string name="inputport" in="context.inputport.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1369,11 +1582,40 @@
 		   			@param outport 	destination Device outport
 		   			@param outputport 	destination Device vxlan outport
 			-->
+			<function name="installVxlanZhuanXianEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+				</parameters>
+				<function name="InstallVxlanZhuanXianEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="dropid" out="thisclass.m_dropid"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanZhuanXianEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="dropid" out="thisclass.m_dropid2"/>
+					</parameters>
+				</function>
+			</function>
 			<function name="InstallVxlanZhuanXianEnd">
 				<parameters>
 					<string name="outport"/>
 					<string name="outputport"/>
 					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="dropid"/>
 				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
@@ -1479,7 +1721,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1487,7 +1729,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1495,7 +1737,7 @@
 				</function>
 				<function name="InstallDropFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_dropid"/>
+						<string name="outflowid" out="context.dropid"/>
 						<string name="inputport" in="context.outputport.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1586,12 +1828,32 @@
 						<string name="flowid" in="thisclass.m_flowid2.toString()"/>
 					</parameters>
 				</function>
+				<!--uninstall flow 3-->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid3.toString()"/>
+					</parameters>
+				</function>
+				<!--uninstall flow 4-->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid4.toString()"/>
+					</parameters>
+				</function>
 				<!-- wangkang 2017/11/16 
 					uninstall dropflow -->
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
 						<string name="flowid" in="thisclass.m_dropid.toString()"/>
+					</parameters>
+				</function>
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_dropid2.toString()"/>
 					</parameters>
 				</function>
 				<!--uninstall meter-->

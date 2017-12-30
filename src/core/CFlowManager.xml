@@ -326,7 +326,15 @@
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 				<function name="UninstallFlowByFlowMod"/>
 			</function>
-
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of tunnelContainer-->
+			<function name="GetFlowCounts">
+				<parameters>
+					<long name="flowCounts"/>
+				</parameters>
+				<set name="flowCounts" value="context.flowsContainer.size()"/>
+			</function>
+			
 			<!--
 				Install Flow.
 				1)use DataPathId find the flowcontainer

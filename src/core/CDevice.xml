@@ -54,7 +54,7 @@
 			
 			<!-- wangkang 2017/11/22-->
 			<long name="m_requestcount"/>
-
+			<string name="m_metaUi"/>
 			<object name="sshdevice"/>
 		</private>
 		<public>
@@ -120,7 +120,20 @@
 				<set name="thisclass.m_requestcount" value="0"/>
 				<!--function name="MultiPartPortDescRequest"/-->
 			</function>
-		
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of flowCounts-->
+			<function name="GetFlowCounts">
+				<parameters>
+					<long name="oneDeviceFlowCounts"/>
+				</parameters>
+				
+				<function name="GetFlowCounts" class="m_flowmgr">
+					<parameters>
+						<long name="flowCounts" out="context.oneDeviceFlowCounts"/>
+					</parameters>
+				</function>
+			</function>
+			
 			<!--qiulei 20171120 pm 添加DeviceDetailInfoToJsonStr方法  单个device的详细信息,包含了端口的详细信息-->
 			<!--
 				@brief		调用该方法返回单个device的详细信息,包含了端口的详细信息
@@ -408,6 +421,8 @@
 					<string name="strjson" />
 				</parameters>
 				<string name="onlinejson"/>
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
 				<script><![CDATA[
 						var json = new Object();
 						json['event'] = "updateDevice";
@@ -438,9 +453,11 @@
 							three_one_array['lng'] = 0;
 							three_one_array['lat'] = 0;
 							
-						threearray['equivLoc'] = three_one_array;
-						
-						payload['metaUi'] = threearray;
+						threearray['equivLoc'] = context.memento.toString();
+						if (context.memento.size()!=0)
+						{
+							payload['metaUi'] = context.memento.toString();
+						}
 						json['payload'] = payload;			
 						var strjson = JSON.stringify(json);
 						context.onlinejson.setValue(strjson);
@@ -460,6 +477,8 @@
 				<parameters>
 					<string name="strjson" />
 				</parameters>
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
 				<string name="offlinejson" />
 				<script><![CDATA[
 						var json = new Object();
@@ -487,7 +506,10 @@
 						three_one_array['lng'] = 0;
 						three_one_array['lat'] = 0;
 						threearray['equivLoc'] = three_one_array;
-						payload['metaUi'] = threearray;
+						if (context.memento.size()!=0)
+						{
+							payload['metaUi'] = context.memento.toString();
+						}
 						json['payload'] = payload;
 						
 						var strjson = JSON.stringify(json);
@@ -510,40 +532,67 @@
 					<string name="strjson" />
 				</parameters>
 				<string name="adddevicejson" />
-				<reference variable="adddevicejson">
-					<jsonbody>
-						<![CDATA[
-							{
-								"event":"addDevice",
-								"payload":
-								{
-									"id":"of:<%=thisclass.m_datapathid.toString()%>",
-									"type":"switch",
-									"online":true,
-									"labels":
-										[
-										"","of:<%=thisclass.m_datapathid.toString()%>",
-										"of:<%=thisclass.m_datapathid.toString()%>"
-										],
-									"props":
-										{
-											"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
-											"protocol":"OF_13",
-											"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
-										},
-									"metaUi":
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
+				<if cond="context.memento.size()==0">
+					<then>
+						<reference variable="adddevicejson">
+							<jsonbody>
+								<![CDATA[
 									{
-										"equivLoc":
-											{
-											"lng":-98.18860657853635,
-											"lat":43.492555430485986
-											}
-									}
-								}
-							}	
-						]]>
-					</jsonbody>
-				</reference>
+										"event":"addDevice",
+										"payload":
+										{
+											"id":"of:<%=thisclass.m_datapathid.toString()%>",
+											"type":"switch",
+											"online":true,
+											"labels":
+												[
+												"","of:<%=thisclass.m_datapathid.toString()%>",
+												"of:<%=thisclass.m_datapathid.toString()%>"
+												],
+											"props":
+												{
+													"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
+													"protocol":"OF_13",
+													"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
+												}
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+					</then>
+					<else>
+						<reference variable="adddevicejson">
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"addDevice",
+										"payload":
+										{
+											"id":"of:<%=thisclass.m_datapathid.toString()%>",
+											"type":"switch",
+											"online":true,
+											"labels":
+												[
+												"","of:<%=thisclass.m_datapathid.toString()%>",
+												"of:<%=thisclass.m_datapathid.toString()%>"
+												],
+											"props":
+												{
+													"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
+													"protocol":"OF_13",
+													"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
+												},
+											"metaUi":<%=context.memento.toString()%>
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+					</else>
+				</if>
 				<set name="strjson" value="context.adddevicejson.toString()"/>
 			</function>
 			
@@ -971,6 +1020,27 @@
 				</function>
 					
 				<set name="thisclass.m_requestcount" value="thisclass.m_requestcount.toLong()+1"/>
+			</function>
+			<!--
+			/**********************************************************************
+			* 函数名称：GetMetaUi
+			* 功能描述：添加MetaUi
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：无             
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2017/12/29    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="GetMetaUi">		
+				<parameters>
+					<string name="memento"/>
+				</parameters>
+				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
 			</function>
 		</public>
 	</class>

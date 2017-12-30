@@ -30,9 +30,6 @@
 	-->
 	<function name="InitWebSocketHandlerMap">
 		<set name="WebSocketHandlerMap" paramname="clusterDataRequest" value="'HandleClusterDataRequest'"/>
-		<set name="WebSocketHandlerMap" paramname="requestSummary" value="'HandleRequestSummary'"/>
-		<set name="WebSocketHandlerMap" paramname="topoSelectOverlay" value="'HandletopoSelectOverlay'"/>
-		<set name="WebSocketHandlerMap" paramname="topoStart" value="'HandletopoStart'"/>
 		<set name="WebSocketHandlerMap" paramname="updatePrefReq" value="'HandleUpdatePrefReq'"/>
 		<set name="WebSocketHandlerMap" paramname="bootstrap" value="'HandleBootStrap'"/>
 		<!--qiulei 20170728-->
@@ -40,8 +37,6 @@
 		
 		<!--YY 20170728-->
 		<set name="WebSocketHandlerMap" paramname="linkDataRequest" value="'HandleLinkDataReq'"/>
-		<!--YY 20170731-->
-		<set name="WebSocketHandlerMap" paramname="requestDetails" value="'HandleDetailsReq'"/>	
 		<!--hupeng 20170731-->
 		<set name="WebSocketHandlerMap" paramname="requestAllTraffic" value="'HandleShowHighlights'"/>	
 		<!--qiulei 20170731-->
@@ -65,7 +60,29 @@
 		<!-- YY 20170831 -->
 		<set name="WebSocketHandlerMap" paramname="tableDataRequest" value="'HandleTableDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="tunnelDataRequest" value="'HandletunnelDataRequest'"/>
-		<!-- YY 20170912 -->
-		<set name="WebSocketHandlerMap" paramname="updatePrefReq" value="'HandleHostLinkRequest'"/>
+		<!--top-->
+		<set name="WebSocketHandlerMap" paramname="topoStop" value="'HandleTopoStop'"/>
+		<set name="WebSocketHandlerMap" paramname="requestSummary" value="'HandleRequestSummary'"/>
+		<set name="WebSocketHandlerMap" paramname="topoSelectOverlay" value="'HandletopoSelectOverlay'"/>
+		<set name="WebSocketHandlerMap" paramname="topoStart" value="'HandleTopoStart'"/>
+		<set name="WebSocketHandlerMap" paramname="spriteListRequest" value="'HandleSpriteListRequest'"/>
+		<set name="WebSocketHandlerMap" paramname="spriteDataRequest" value="'HandleSpriteDataRequest'"/>
+		<set name="WebSocketHandlerMap" paramname="equalizeMasters" value="'HandleEqualizeMasters'"/>
+		<set name="WebSocketHandlerMap" paramname="cancelSummary" value="'HandleCancelSummary'"/>
+		<set name="WebSocketHandlerMap" paramname="cancelTraffic" value="'HandleCancelTraffic'"/>
+		<set name="WebSocketHandlerMap" paramname="requestDeviceLinkFlows" value="'HandleRequestDeviceLinkFlows'"/>
+		<set name="WebSocketHandlerMap" paramname="requestAllPortTraffic" value="'HandleRequestAllPortTraffic'"/>
+		<set name="WebSocketHandlerMap" paramname="requestAllFlowTraffic" value="'HandleRequestAllFlowTraffic'"/>
+		<set name="WebSocketHandlerMap" paramname="selectIntent" value="'HandleSelectIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="requestSelectedIntentTraffic" value="'HandleRequestSelectedIntentTraffic'"/>
+		<set name="WebSocketHandlerMap" paramname="requestPrevRelatedIntent" value="'HandleRequestPrevRelatedIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="requestNextRelatedIntent" value="'HandleRequestNextRelatedIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="requestRelatedIntents" value="'HandleRequestRelatedIntents'"/>
+		<set name="WebSocketHandlerMap" paramname="addMultiSourceIntent" value="'HandleAddMultiSourceIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="resubmitIntent" value="'HandleResubmitIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="removeIntent" value="'HandleRemoveIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="addHostIntent" value="'HandleAddHostIntent'"/>
+		<set name="WebSocketHandlerMap" paramname="updateMeta" value="'HandleUpdateMeta'"/>
+		<set name="WebSocketHandlerMap" paramname="requestDetails" value="'HandleDetailsReq'"/>	
 	</function>
 </starlang>

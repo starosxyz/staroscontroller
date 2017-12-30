@@ -26,6 +26,7 @@ all: check_dir $(buidlall)
 	cp -rf $(USER_ROOT)/AUTHOR $(PRJDIR)/$(PROJECT_NAME)/
 	cp -rf $(USER_ROOT)/README.md $(PRJDIR)/$(PROJECT_NAME)/
 	cp -rf $(USER_ROOT)/src/* $(PRJDIR)/$(PROJECT_NAME)/starlang/
+	cp -rf $(USER_ROOT)/tools/staroscontroller-service $(PRJDIR)/$(PROJECT_NAME)/
 	echo "Packing " $(TARNAME) "..."
 	tar jcvf $(TARNAME).tar.bz2 -C $(PRJDIR) $(PROJECT_NAME)    
 	@echo "build " $(PROJECT_NAME) " done!"

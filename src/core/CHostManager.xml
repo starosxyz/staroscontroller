@@ -138,11 +138,12 @@
 			</function>
 		</public>
 	</class>
-	<class name="CHostManager">
+	<class name="CHostManager" extends="CListenerBase">
 		<private>
-			<hashmap name="hostContainer"  keytype="string" valuetype="object"/>
+			<hashmap name="hostContainer" keytype="string" valuetype="object"/>
 		</private>
 		<public>
+			
 			<function name="CHostManager">
 				<log>CHostManager is create</log>				
 			</function>
@@ -183,7 +184,74 @@
 					</then>
 				</if>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
+				<string name="functionname"/>
+				<for var="context.functionname" in="context.listernellist">
+					<function callback="functionname">
+						<parameters>
+								<string name="type" in="'add'"/>
+								<string name="hostobject" in="context.hostobj.toString()"/>					
+						</parameters>
+					</function>		
+				</for>
 				<log level="100"><![CDATA[CHostManager hostContainer.size = <%=context.hostContainer.size().toString()%>]]></log>
+			</function>
+			
+			<!--
+				@brief		删除一个host
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param mac 	    host的mac信息
+					@param vlan 	host的vlan信息
+				Output:					
+			-->	
+			<function name="RemoveHost"> 
+				<parameters>
+					<string name="mac"/>
+					<string name="vlan"/>
+				</parameters>
+				<string name="functionname"/>
+				<object name="hostobj"/>
+				<pair name="onehostpair"/>
+				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
+					<then>
+						<function name="FindHost">
+							<parameters>
+								<string name="mac" in="context.mac.toString()"/>
+								<string name="vlan" in="context.vlan.toString()"/>
+								<object name="hostobj" out="context.hostobj"/>
+							</parameters>
+						</function>
+						<for var="context.functionname" in="context.listernellist">
+							<function callback="functionname">
+								<parameters>
+									<string name="type" in="'remove'"/>
+									<string name="hostobject" in="context.hostobj"/>						
+								</parameters>
+							</function>		
+						</for>
+						<remove name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()"/>
+					</then>
+				</if>
+			</function>
+
+			<function name="FindHost">
+				<parameters>
+					<string name="mac"/>
+					<string name="vlan"/>
+					<object name="hostobj"/>
+				</parameters>
+				<string name="hostcontainerkey"/>
+				<pair name="onehostpair" keytype="string" valuetype="object"/>
+				<for var="context.onehostpair" in="thisclass.hostContainer">
+					<set name="context.hostcontainerkey" value="context.onehostpair.first().toString()"/>
+					<if cond="context.hostcontainerkey.toString() == context.mac.toString()+'/'+context.vlan.toString()">
+						<then>
+							<set name="context.hostobj" value="context.onehostpair.second()"/>
+							<exit/>
+						</then>
+					</if>
+				</for>
 			</function>
 			<!--
 				@brief		打印一个host信息
@@ -412,6 +480,14 @@
 					</if>										
 					
 				</for>				
+			</function>
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of hostContainer-->
+			<function name="GetHostCounts">
+				<parameters>
+					<long name="hostCounts"/>
+				</parameters>
+				<set name="hostCounts" value="context.hostContainer.size()"/>	
 			</function>
 		</public>
 	</class>

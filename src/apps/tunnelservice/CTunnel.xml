@@ -107,35 +107,36 @@
 				<set name="thisclass.m_type" value="context.type.toString()"/>
 				<set name="thisclass.m_state" value="context.state.toString()"/>
 				<set name="thisclass.m_inputvlanid" value="context.inputvlanid.toLong()"/>
-				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
 				<set name="thisclass.m_inputtunnelport" value="context.inputtunnelport.toString()"/>
 				<set name="thisclass.m_outputtunnelport" value="context.outputtunnelport.toString()"/>
-				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>	
 				<set name="thisclass.m_inputvxlanport" value="context.inputvxlanport.toString()"/>
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>
+				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
+				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
 				<script><![CDATA[
-					var inputport = thisclass.m_inputPort.toString();
-					var oneinputid = (inputport.split("/")[0]).split(":")[1];	
-					var inputport = inputport.split("/")[1];					
-					var inputtunnelport = thisclass.m_inputtunnelport.toString().split("/")[1];
-					var outputtunnelport = thisclass.m_outputtunnelport.toString().split("/")[1];	
-					var inputvxlanport = thisclass.m_inputvxlanport.toString();	
-					var inputvxlanport = inputvxlanport.split("/")[1];
-					var outputvxlanport = thisclass.m_outputvxlanport.toString();	
-					var outputvxlanport = outputvxlanport.split("/")[1];				
-					var outputport = thisclass.m_outputPort.toString();
-					var oneoutputid = (outputport.split("/")[0]).split(":")[1];
-					var outputport = outputport.split("/")[1];
-					thisclass.m_fromdevice.setValue(oneinputid);
-					thisclass.m_todevice.setValue(oneoutputid);
+					var inputdevice = thisclass.m_inputPort.toString();	
+					var inputport = inputdevice.split("/")[1];
+					var inputdeviceid = (inputdevice.split("/")[0]).split(":")[1];
+
+					var outputdevice = context.outputPort.toString();
+					var outputport = outputdevice.split("/")[1];
+					var outputdeviceid = (outputdevice.split("/")[0]).split(":")[1];
+
+					var oneinputtunnelport = context.inputtunnelport.toString().split("/")[1];
+					var oneoutputtunnelport = context.outputtunnelport.toString().split("/")[1];	
+					var oneinputvxlanport = context.inputvxlanport.toString().split("/")[1];	
+					var oneoutputvxlanport = context.outputvxlanport.toString().split("/")[1];		
+					
+					thisclass.m_fromdevice.setValue(inputdeviceid);
+					thisclass.m_todevice.setValue(outputdeviceid);
 					thisclass.m_fromdeviceport.setValue(inputport);
 					thisclass.m_todeviceport.setValue(outputport);
-					thisclass.m_fromtunnelport.setValue(inputtunnelport);
-					thisclass.m_totunnelport.setValue(outputtunnelport);
-					thisclass.m_fromvxlanport.setValue(inputvxlanport);
-					thisclass.m_tovxlanport.setValue(outputvxlanport);
+					thisclass.m_fromtunnelport.setValue(oneinputtunnelport);
+					thisclass.m_totunnelport.setValue(oneoutputtunnelport);
+					thisclass.m_fromvxlanport.setValue(oneinputvxlanport);
+					thisclass.m_tovxlanport.setValue(oneoutputvxlanport);
 				]]></script>
 			</function>
 
@@ -310,7 +311,7 @@
 					<string name="outputvxlanport"/>						
 					<long name="bandwidth"/>
 				</parameters>
-				
+				<syslog level="INFO">##############3UPdate Start##########</syslog>	
 				<set name="thisclass.m_username" value="context.username.toString()"/>
 				<set name="thisclass.m_inputPort" value="context.inputPort.toString()"/>
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
@@ -324,7 +325,7 @@
 				<set name="thisclass.m_outputtunnelport" value="context.outputtunnelport.toString()"/>			
 				<set name="thisclass.m_inputvxlanport" value="context.inputvxlanport.toString()"/>
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>	
-				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
+				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>	
 			</function>
 			<!--
 				@brief		Start Tunnel
@@ -431,17 +432,6 @@
 								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
 								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-								<string name="ethtype" in="'0x0800'"/>
-							</parameters>
-						</function>
-						<function name="installRuleAtSameDevice" class="firstdevice">
-							<parameters>
-								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
-								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
-								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-								<string name="ethtype" in="'0x0806'"/>
 							</parameters>
 						</function>
 						<set name="m_bisActive" value="true"/>
@@ -455,17 +445,6 @@
 						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
 						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-						<string name="ethtype" in="'0x0800'"/>
-					</parameters>
-				</function>
-				<function name="installRuleStart" class="firstdevice">
-					<parameters>
-						<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-						<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
-						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-						<string name="ethtype" in="'0x0806'"/>
 					</parameters>
 				</function>
 				<function name="installRuleEnd" class="lastdevice">
@@ -475,17 +454,6 @@
 						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
 						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-						<string name="ethtype" in="'0x0800'"/>
-					</parameters>
-				</function>
-				<function name="installRuleEnd" class="lastdevice">
-					<parameters>
-						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
-						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-						<string name="ethtype" in="'0x0806'"/>
 					</parameters>
 				</function>
 
@@ -504,14 +472,6 @@
 						<parameters>
 							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-							<string name="ethtype" in="'0x0800'"/>
-						</parameters>
-					</function>
-					<function name="installRuleMid" class="onedevice">
-						<parameters>
-							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-							<string name="ethtype" in="'0x0806'"/>
 						</parameters>
 					</function>
 				</for>
@@ -589,44 +549,24 @@
 						</if>
 						<if cond="context.firstdevice.ptr != null">
 							<then>
-								<function name="InstallVxlanTunnelStart" class="firstdevice">
+								<function name="installVxlanTunnelStart" class="firstdevice">
 									<parameters>
 										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-										<string name="ethtype" in="'0x0800'"/>
-									</parameters>
-								</function>
-								<function name="InstallVxlanTunnelStart" class="firstdevice">
-									<parameters>
-										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
-										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
-										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-										<string name="ethtype" in="'0x0806'"/>
 									</parameters>
 								</function>
 							</then>
 						</if>
 						<if cond="context.lastdevice.ptr != null">
 							<then>
-								<function name="InstallVxlanTunnelEnd" class="lastdevice">
+								<function name="installVxlanTunnelEnd" class="lastdevice">
 									<parameters>
 										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
 										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
 										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-										<string name="ethtype" in="'0x0800'"/>
-									</parameters>
-								</function>
-								<function name="InstallVxlanTunnelEnd" class="lastdevice">
-									<parameters>
-										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
-										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
-										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-										<string name="ethtype" in="'0x0806'"/>
 									</parameters>
 								</function>
 							</then>
@@ -657,18 +597,10 @@
 							<if cond="context.firstdevice.ptr != null">
 								<then>
 									<log level="101">firstdevice is not null</log>
-									<function name="InstallVxlanZhuanXianStart" class="firstdevice">
+									<function name="installVxlanZhuanXianStart" class="firstdevice">
 										<parameters>
 											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
-											<string name="ethtype" in="'0x0800'"/>
-										</parameters>
-									</function>
-									<function name="InstallVxlanZhuanXianStart" class="firstdevice">
-										<parameters>
-											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
-											<string name="ethtype" in="'0x0806'"/>
 										</parameters>
 									</function>
 								</then>
@@ -677,18 +609,10 @@
 								<then>
 									<log level="101">lastdevice is not null</log>
 									
-									<function name="InstallVxlanZhuanXianEnd" class="lastdevice">
+									<function name="installVxlanZhuanXianEnd" class="lastdevice">
 										<parameters>
 											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
-											<string name="ethtype" in="'0x0800'"/>
-										</parameters>
-									</function>
-									<function name="InstallVxlanZhuanXianEnd" class="lastdevice">
-										<parameters>
-											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
-											<string name="ethtype" in="'0x0806'"/>
 										</parameters>
 									</function>
 								</then>

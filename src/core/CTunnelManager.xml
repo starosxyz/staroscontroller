@@ -102,6 +102,15 @@
 				<log>CHostManager is create</log>
 				<function name="addtunneltest"/>
 			</function>
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of tunnelContainer-->
+			<function name="GetTunnelCounts">
+				<parameters>
+					<long name="tunnelCounts"/>
+				</parameters>
+				<set name="tunnelCounts" value="context.tunnelContainer.size()"/>
+			</function>
+			
 			<function name="addTunnel">
 				<parameters>
 					<string name="id"/>		

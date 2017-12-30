@@ -199,10 +199,13 @@
 			]]></script>
 			<if cond="context.isdb.toBoolean() == false">
 				<then>
+					<syslog level="INFO"><![CDATA[ADD json= <%=event.getParam('eventdata').toString()%>]]></syslog>
 					<function name="addTunnel"/>
 				</then>
 				<else>
+					<syslog level="INFO"> 1 add old tunnel</syslog>
 					<log level="100">@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@       isdb is true #####</log>
+					<syslog level="INFO"><![CDATA[ADD OLD json= <%=event.getParam('eventdata').toString()%>]]></syslog>
 					<script><![CDATA[
 						var json = JSON.parse(event.getParam('eventdata').toString());
 						if(json.specialLine != null)
@@ -218,7 +221,7 @@
 						}	
 					]]></script>
 					<for var="onetunnelpair" in="tunnelinfo">
-						<log level="100"> ######### processaddtunnelrequest FOR START #########</log>
+						<syslog level="INFO"> ######### processaddtunnelrequest FOR START #########</syslog>
 						<set name="tunnelmap" value="context.onetunnelpair.second()"/>
 						<set name="fromdevice" value="context.tunnelmap.getValue('fromdevice').toString()"/>	
 						<set name="todevice" value="context.tunnelmap.getValue('todevice').toString()"/>
@@ -235,6 +238,7 @@
 
 						<if cond="context.isChange.toBoolean()==false">
 							<then>
+								<syslog level="INFO"> ######### addOldTunnel START #########</syslog>
 								<function name="addOldTunnel">
 									<parameters>
 										<long name="specialLineid" in="context.onetunnelpair.first().toLong()"/>
@@ -265,7 +269,8 @@
 			Output:
 		-->
 		<onevent event="processtunnelrequest">
-			<log level="100">tunnelserviceapi processrequest</log>			
+			<log level="100">tunnelserviceapi processrequest</log>	
+			<syslog level="INFO"><![CDATA[ProcessTunnelrequest json= <%=event.getParam('method').toString()%>]]></syslog>		
 			<if cond="event.getParam('method').toString()=='GET'">
 				<then>
 					<log>insert method get</log>
@@ -371,6 +376,7 @@
 	<function name="updateTunnel">		
 		<log>insert method == put</log>
 		<long name="resourceid"/>
+		<syslog level="INFO"><![CDATA[update event 1= <%=event.getParam('params').getIndexOf(0).toString()%>]]></syslog>		
 		<script><![CDATA[
 			var id = event.getParam('params').getIndexOf(0).toString()
 			if (id.indexOf("{") == -1)
@@ -416,6 +422,7 @@
 				<object name="TunnelObject" out="context.tunnel"/>
 			</parameters>
 		</function>
+		<syslog level="INFO"><![CDATA[update event 2= <%=event.getParam('eventdata').toString()%>]]></syslog>		
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
@@ -511,6 +518,7 @@
 		]]></script>
 		<if cond="context.IsAlikePort.toBoolean() == true">
 			<then>
+				<syslog level="INFO">############# 1 #############</syslog>		
 				<function name="ErrorDataResponse">
 					<parameters>
 						<long name="resourceid" in="-1"/>
@@ -523,6 +531,7 @@
 		</if>
 		<if cond="context.putindexof.toLong()!=1">
 			<then>
+				<syslog level="INFO">############# 2 #############</syslog>		
 				<function name="ErrorDataResponse">
 					<parameters>
 						<long name="resourceid" in="context.resourceid.toLong()"/>
@@ -534,7 +543,8 @@
 			</then>
 		</if>
 		<if cond="context.inputdevice.toString()=='' || context.outputdevice.toString()==''">
-			<then>
+			<then>	
+				<syslog level="INFO">############# 3 #############</syslog>		
 				<function name="ErrorDataResponse">
 					<parameters>
 						<long name="resourceid" in="context.resourceid.toLong()"/>
@@ -559,6 +569,7 @@
 		</function>
 		<if cond="context.indevice.ptr==null || context.outdevice.ptr==null">
 			<then>
+				<syslog level="INFO">############# 4 #############</syslog>		
 				<log>indevicde is null or outdevice is null</log>
 				<function name="ErrorDataResponse">
 					<parameters>
@@ -624,10 +635,11 @@
 				<long name="outvlan" out="context.tunnel_outvlan"/>
 			</parameters>			
 		</function>	
+		<syslog level="INFO">############# 5 #############</syslog>		
 		<function name="UpdateTunnel" class="context.tunnel">
 			<parameters>											
 				<string name="username" in="context.username.toString()"/>
-				<string name="inputPort" in="context.outputPort.toString()"/>
+				<string name="inputPort" in="context.inputPort.toString()"/>
 				<string name="outputPort" in="context.outputPort.toString()"/>
 				<long name="invlan" in="context.tunnel_invlan.toLong()"/>					
 				<long name="outvlan" in="context.tunnel_outvlan.toLong()"/>
@@ -702,6 +714,7 @@
 		<object name="outdeviceportobj"/>
 		<long name="outdeivceportnum"/>
 		<long name="outnum"/>
+		
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.username;
@@ -796,6 +809,8 @@
 			}	
 					
 		]]></script>
+		<syslog level="INFO"><![CDATA[inputport = <%= context.inputPort.toString()%>]]></syslog>
+		<syslog level="INFO"><![CDATA[outputport=<%=context.outputPort.toString()%>]]></syslog>
 		<if cond="context.IsAlikePort.toBoolean() == true">
 			<then>
 				<function name="ErrorDataResponse">
@@ -1337,6 +1352,7 @@
 	-->	
 	<function name="deleteTunnel">
 		<long name="resourceid"/>
+		<syslog level="INFO"><![CDATA[delete json= <%=event.getParam('params').getIndexOf(0).toString()%>]]></syslog>
 		<script><![CDATA[
 			var id = event.getParam('params').getIndexOf(0).toString()
 			if (id.indexOf("{") == -1)

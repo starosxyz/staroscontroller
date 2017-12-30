@@ -9,9 +9,9 @@ StarOS控制器是为快速开发软件定义网络应用程序而开发的一�
 
 ### 控制器特点
 
-* XML和javascript编写控制器APP.
+* XML和javascript/python编写控制器APP.
 * 支持集群.
-*  XML/javascript和C++互补.
+*  XML/javascript/python和C++互补.
 * 支持Restful-http/Restful-https/netconf协议.
 * 支持OpenFlow1.3协议.
 * 支持NETCONF over SSH ([RFC 4742](https://tools.ietf.org/html/rfc4742), [RFC 6242](https://tools.ietf.org/html/rfc6242)).
@@ -43,37 +43,6 @@ SDN编程语言是专门为软件定义网络开发的一种编程语言，具�
 ### 二，运行StarOS网络操作系统
 ```
 [root@localhost projects]# dipc start
-[11/24/2017 05:02:28.395]     
-[11/24/2017 05:02:28.395] ******************************************************************************************
-[11/24/2017 05:02:28.395] *
-[11/24/2017 05:02:28.395] *  Copyright (C) 2016-2017, Nanjing StarOS Technology Co., Ltd
-[11/24/2017 05:02:28.395] *  Welcome to StarOS Server
-[11/24/2017 05:02:28.395] *
-[11/24/2017 05:02:28.395] ******************************************************************************************
-All Process is started. 
-
-Start SYSTEM success!, pid=16482
-
-Start STAROS success!, pid=16485
-
-Start COREMAIN success!, pid=16479
-
-Start STARGUI success!, pid=16476
-
-Start SRPC success!, pid=16468
-
-Start SYSDB success!, pid=16462
-
-Start ALLCONF success!, pid=16472
-
-Start OAM success!, pid=16457
-
-Start SYSLOG success!, pid=16465
-
-Start DIPCSERVICE success!, pid=16453
-
-
-DIPC release version 1.5.0 Build Nov 23 2017 21:13:58
 ```
 ### 三，运行控制器应用程序
 ```

@@ -31,8 +31,7 @@
 
 	<!--YY 20170728-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_links.xml"/>
-	<!--YY 20170731-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_requestDetails.xml"/>
+
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_showHighlights.xml"/>
 	<!--hupeng 20170804-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_host.xml"/>
@@ -53,6 +52,7 @@
 		Input:
 			@param websockettype 	websocket type
 	-->
+	<string name="websockettransportid" global="true"/>
 	<function name="HandleWebSocket">
 		<parameters>
 			<string name="websockettype"/>
@@ -61,6 +61,10 @@
 		<boolean name="isHaveHandler"/>
 		<log>HandleWebSocket</log>
 		<log><![CDATA[HandleWebSocket websockettype <%=context.websockettype.toString()%>]]></log>
+		<script><![CDATA[
+				var json = JSON.parse(event.getParam('eventdata').toString());
+			]]></script>
+		<set name="context.websockettransportid" value="event.getParam('transportid').toString()"/>
 		<if cond="global.WebSocketHandlerMap.hasParam(context.websockettype) == true">
 			<then>
 				<function>
@@ -71,7 +75,7 @@
 			<else>
 				<function>
 					<log><![CDATA[Don't have the WebSocketHandlerMap for websockettype= <%=context.websockettype.toString()%>]]></log>
-					<log><![CDATA[event data= <%=event.getParam('eventdata').toString()%>]]></log>
+					<syslog level="INFO"><![CDATA[event data= <%=event.getParam('eventdata').toString()%>]]></syslog>
 				</function>
 			</else>
 		</if>
