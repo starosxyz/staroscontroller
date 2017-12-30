@@ -1,0 +1,3 @@
+#!/bin/bash
+dipcctl start
+starosctl startapp /opt/staros.xyz/staroscontroller/starlang/main/staros.xml
