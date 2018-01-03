@@ -143,7 +143,12 @@
 				<string name="outtransid"/>
 				<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
 				<log level="100"><![CDATA[CDevice addDevice datapathid = <%=context.datapathid.toString()%>]]></log>
-				<if cond="thisclass.deviceContainer.hasValue(context.datapathid.toString())">
+				<if cond="context.datapathid.toString() == ''">
+					<then>
+						<exit/>
+					</then>
+				</if>
+				<if cond="thisclass.deviceContainer.hasValue(context.datapathid.toString()) == true">
 					<then>
 						<log level="100">this device already have</log>
 						<lookup name="thisclass.deviceContainer" key="context.datapathid.toString()" output="context.deviceobject"/>
@@ -165,7 +170,9 @@
 								<string name="protocol" in="context.protocol.toString()"/>	
 							</parameters>
 						</new>
+						<remove name="deviceContainer" key="context.datapathid.toString()"/>
 						<insert name="deviceContainer" key="context.datapathid.toString()" value="context.deviceobject"/>
+						<remove name="t2dContainer" key="context.transportid.toString()"/>
 						<insert name="t2dContainer" key="context.transportid.toString()" value="context.datapathid.toString()"/>
 						<log level="100"><![CDATA[CDeviceManager deviceContainer  = <%=thisclass.deviceContainer.size().toString()%>]]></log>
 					</else>

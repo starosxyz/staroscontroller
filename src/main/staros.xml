@@ -43,7 +43,7 @@
 	<object name="openflowserverobj"  global="true"/>
 	<object name="restfulserver"  global="true"/>
 	
-	<logconfig dest="stdout" level="0" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
+	<logconfig dest="stdout" level="100" filename="/opt/staros.xyz/staroscontroller/logs/starosapps.log" logturnoff="false"/>
 	<boolean name="isAPIAuth"  value="false"/>
 	<object name="globaltimer"/>
 	<function name="testpython">

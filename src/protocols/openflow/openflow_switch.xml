@@ -49,6 +49,7 @@
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toString()%>]]></log>
 		<string name="jsonvariable"/>
+		<string name="desc"/>
 		<reference variable="jsonvariable">
 			<jsonbody><![CDATA[ 
 					{
@@ -62,99 +63,104 @@
 				<string name="strjson" in="context.jsonvariable.toString()"/>
 			</parameters>
 		</function>	
-		<wait event="openflow.OFPT13_FEATURES_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+		<wait event="openflow.OFPT13_FEATURES_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()"  timeout="3000" timeoutgoto="WaitReplyFailure">
 			<function>
 				<log><![CDATA[Recieve Features Reply:=<%=event.getParam('eventdata').toString()%>]]></log>
-				<script>
-					<![CDATA[
-							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.auxiliaryid.setValue(info.auxiliaryid);
-							context.buffers.setValue(info.buffers);
-							context.capabilities.setValue(info.capabilities);
-							context.datapathid.setValue(info.datapathid);
-							context.tables.setValue(info.tables);
-							context.transportid.setValue(event.getParam('transportid').toString());
-					]]>
-				</script>				
+				<script><![CDATA[
+					var info = JSON.parse(event.getParam('eventdata').toString());
+					context.auxiliaryid.setValue(info.auxiliaryid);
+					context.buffers.setValue(info.buffers);
+					context.capabilities.setValue(info.capabilities);
+					context.datapathid.setValue(info.datapathid);
+					context.tables.setValue(info.tables);
+					context.transportid.setValue(event.getParam('transportid').toString());
+				]]></script>
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<reference variable="desc">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.xid.toString()%>",
+								"flags":"0"
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="strjson" in="context.desc.toString()"/>
+					</parameters>
+				</function>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()" timeout="3000" timeoutgoto="WaitDESCFailure">
+					<function>		
+						<log><![CDATA[OFP13MP_DESC Reply:=<%=event.getParam('eventdata').toString()%>]]></log>		
+						<script><![CDATA[
+									var info = JSON.parse(event.getParam('eventdata').toString());
+									context.mfrdesc.setValue(info.mfrdesc);
+									context.swdesc.setValue(info.swdesc);	
+									context.serialnum.setValue(info.serialnum);	
+									context.dpdesc.setValue(info.dpdesc);	
+									context.hwdesc.setValue(info.hwdesc);								
+						]]></script>
+						<log level="100">start to adddevice</log>	
+						<function name="addDevice" class="DeviceManager">
+							<parameters>
+								<string name="mfrdesc" in="context.mfrdesc.toString()"/>
+								<string name="swdesc" in="context.swdesc.toString()"/>
+								<string name="serialnum" in="context.serialnum.toString()"/>
+								<string name="dpdesc" in="context.dpdesc.toString()"/>
+								<string name="hwdesc" in="context.hwdesc.toString()"/>
+								<string name="transportid" in="context.transportid.toString()"/>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+								<string name="localipaddr" in="context.localipaddr.toString()"/>
+								<string name="peeripaddr" in="context.peeripaddr.toString()"/>
+								<string name="type" in="'switch'"/>
+								<string name="online" in="'true'"/>
+								<string name="protocol" in="'OF_13'"/>					
+							</parameters>
+						</function>
+						<!--qiulei 20170807 -->
+						
+						<log>执行InstallDefaultFlow 2017.8.07</log>
+						<!--function name="InstallDefaultFlow">
+							<parameters>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+							</parameters>
+						</function-->
+						
+						<!--qiulei 20170818 pm 发送测试报文 group-->
+						<!--function name="testaddgroup" class="GroupManager">
+							<parameters>
+									<string name="datapathid" in="context.datapathid.toString()"/>
+							</parameters>
+						</function-->
+						<!--function name="testremovegroup" class="GroupManager">	
+							<parameters>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+							</parameters>
+						</function-->
+						<!--function name="testaddmeter" class="MeterManager">	
+							<parameters>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+							</parameters>
+						</function -->
+						<!--function name="testremovemeter" class="MeterManager">	
+							<parameters>
+								<string name="datapathid" in="context.datapathid.toString()"/>
+							</parameters>
+						</function-->
+					</function>
+				</wait>	
+				<goto label="OpenFlowFeaturesOK"/>
 			</function>
 		</wait>
-		<string name="desc"/>
-		<reference variable="desc">
-			<jsonbody><![CDATA[ 
-					{
-						"xid":"<%=context.xid.toString()%>",
-						"flags":"0"
-					}
-			]]></jsonbody>
-		</reference>
-		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_DESC">
-			<parameters>
-				<string name="transportid" in="event.getParam('transportid').toString()"/>
-				<string name="strjson" in="context.desc.toString()"/>
-			</parameters>
-		</function>
-		<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_DESC" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
-			<function>		
-				<log><![CDATA[OFP13MP_DESC Reply:=<%=event.getParam('eventdata').toString()%>]]></log>		
-				<script>
-					<![CDATA[
-							var info = JSON.parse(event.getParam('eventdata').toString());
-							context.mfrdesc.setValue(info.mfrdesc);
-							context.swdesc.setValue(info.swdesc);	
-							context.serialnum.setValue(info.serialnum);	
-							context.dpdesc.setValue(info.dpdesc);	
-							context.hwdesc.setValue(info.hwdesc);								
-					]]>
-				</script>
-			</function>
-		</wait>
-		<log level="100">start to adddevice</log>	
-		<function name="addDevice" class="DeviceManager">
-			<parameters>
-				<string name="mfrdesc" in="context.mfrdesc.toString()"/>
-				<string name="swdesc" in="context.swdesc.toString()"/>
-				<string name="serialnum" in="context.serialnum.toString()"/>
-				<string name="dpdesc" in="context.dpdesc.toString()"/>
-				<string name="hwdesc" in="context.hwdesc.toString()"/>
-				<string name="transportid" in="context.transportid.toString()"/>
-				<string name="datapathid" in="context.datapathid.toString()"/>
-				<string name="localipaddr" in="context.localipaddr.toString()"/>
-				<string name="peeripaddr" in="context.peeripaddr.toString()"/>
-				<string name="type" in="'switch'"/>
-				<string name="online" in="'true'"/>
-				<string name="protocol" in="'OF_13'"/>					
-			</parameters>
-		</function>
-		<!--qiulei 20170807 -->
-		
-		<log>执行InstallDefaultFlow 2017.8.07</log>
-		<!--function name="InstallDefaultFlow">
-			<parameters>
-				<string name="datapathid" in="context.datapathid.toString()"/>
-			</parameters>
-		</function-->
-		
-		<!--qiulei 20170818 pm 发送测试报文 group-->
-		<!--function name="testaddgroup" class="GroupManager">
-			<parameters>
-					<string name="datapathid" in="context.datapathid.toString()"/>
-			</parameters>
-		</function-->
-		<!--function name="testremovegroup" class="GroupManager">	
-			<parameters>
-				<string name="datapathid" in="context.datapathid.toString()"/>
-			</parameters>
-		</function-->
-		<!--function name="testaddmeter" class="MeterManager">	
-			<parameters>
-				<string name="datapathid" in="context.datapathid.toString()"/>
-			</parameters>
-		</function -->
-		<!--function name="testremovemeter" class="MeterManager">	
-			<parameters>
-				<string name="datapathid" in="context.datapathid.toString()"/>
-			</parameters>
-		</function-->
+		<label name="WaitReplyFailure"/>
+		<log>WaitReplyFailure</log>
+		<exit/>
+		<label name="WaitDESCFailure"/>
+		<log>WaitDESCFailure</log>
+		<exit/>
+		<label name="OpenFlowFeaturesOK"/>
+		<log>OpenFlowFeaturesOK</log>
 	</function>
 	
 	<function name="OpenFlowFeatures">

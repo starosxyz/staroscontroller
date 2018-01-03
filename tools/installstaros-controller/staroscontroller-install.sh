@@ -91,16 +91,16 @@ function install_rpm() {
 	fi
 	
 	#check staroscontroller
-	if [ -d /opt/staros.xyz/staroscontroller ];then
-		echo StarOSController check!
-	else
-		if [ -f ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm ];then
-			rpm -ihv ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm --nodeps
-		else
-			wget -P ./package/centos/ https://github.com/starosxyz/staroscontroller/raw/master/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm
-			rpm -ihv ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm --nodeps
-		fi
-	fi
+	#if [ -d /opt/staros.xyz/staroscontroller ];then
+	#	echo StarOSController check!
+	#else
+	#	if [ -f ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm ];then
+	#		rpm -ihv ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm --nodeps
+	#	else
+	#		wget -P ./package/centos/ https://github.com/starosxyz/staroscontroller/raw/master/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm
+	#		rpm -ihv ./package/centos/staroscontroller-$STAROSCONTROLLER_VERSION-1.x86_64.rpm --nodeps
+	#	fi
+	#fi
 	
 	rm -rf /opt/staros.xyz/dipc/scripts/startup.xml;
 	cp /opt/staros.xyz/staros/scripts/startup.xml /opt/staros.xyz/dipc/scripts/
@@ -159,7 +159,7 @@ function uninstall_rpm() {
 	rpm -e starlang --nodeps
 	rpm -e protocol --nodeps
 	rpm -e stardlls --nodeps	
-	rpm -e staroscontroller --nodeps
+	#rpm -e staroscontroller --nodeps
 	
 }
 

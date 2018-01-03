@@ -346,7 +346,7 @@
 					<then>
 						<for var="context.middevice" from="context.beginit" to="context.endit">
 							<insert name="devicelist" value="context.middevice.value()"/>
-							<log><![CDATA[devicelist size=<%=context.devicelist.size().toString()%>]]></log>			
+							<log><![CDATA[devicelist size=<%=context.devicelist.size().toString()%>]]></log>		
 						</for>
 					</then>
 					<else>
