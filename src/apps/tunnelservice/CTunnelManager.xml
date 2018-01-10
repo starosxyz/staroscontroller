@@ -65,7 +65,8 @@
 					<!-- wangkang 2017/11/13 -->	
 					<string name="inputvxlanport"/>
 					<string name="outputvxlanport"/>			
-					<long name="bandwidth"/>				
+					<long name="bandwidth"/>	
+					<string name="policyid"/>			
 				</parameters>
 				<long name="vxlantunnelid"/>
 				<!--qiulei 20170919 pm-->
@@ -114,6 +115,7 @@
 						<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
 						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
 						<long name="bandwidth" in="context.bandwidth.toLong()"/>
+						<string name="policyid" in="context.policyid.toString()"/>
 					</parameters>
 				</new>
 				

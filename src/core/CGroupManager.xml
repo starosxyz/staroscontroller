@@ -38,15 +38,13 @@
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bucketjson" value="context.bucketjson.toString()"/>
 			</function>
-			
-	<!--
-		@brief		更新数据状态
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
+			<!--
+				@brief		更新数据状态
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="UpdateState">
 				<parameters>
 					<string name="packets" />
@@ -55,19 +53,14 @@
 				<set name="thisclass.m_packets" value="context.packets.toString()"/>
 				<set name="thisclass.m_bytes" value="context.bytes.toString()"/>
 			</function>
-			
-			
-			
-	<!--
-		@brief		更改json数据
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-
-	-->
-			
-			
+			<!--
+				@brief		更改json数据
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+		
+			-->
 			<function name="ToJsonString">
 				<parameters>
 					<string name="jsonstring"/>
@@ -189,15 +182,13 @@
 					</function>
 				</for>
 			</function>
-			
-	<!--
-		@brief		把json更改成String
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->
-			
+			<!--
+				@brief		把json更改成String
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="GroupToJsonString">
 				<parameters>
 					<string name="groupjson"/>
@@ -245,15 +236,13 @@
 				]]></script>				
 
 			</function>
-			
-	<!--
-		@brief		从json中拿状态
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->
-			
+			<!--
+				@brief		从json中拿状态
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->
 			<function name="FetchStateFromJson">
 				<parameters>
 					<string name="groupjson"/>
@@ -275,9 +264,6 @@
 						context.bucketjsonlist.addValue(JSON.stringify(onebucket));
 					}
 				]]></script>
-				
-				<!--hu-->
-				
 				<for var="bucketsobj" in="context.m_buckets">
 					<function>
 						<set name="bucketstring" value="context.bucketjsonlist.getValue(context.i.toLong())"/>
@@ -296,7 +282,6 @@
 					</function>
 				</for>
 			</function>
-			
 			<!--
 				@brief		Set group messages state
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -332,14 +317,13 @@
 				<function name="testaddgroup"/>
 				<function name="InstallErrorGroup"/>
 			</function>
-			
-	<!--
-		@brief		下载包请求
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->	
+			<!--
+				@brief		下载包请求
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->	
 			<function name="InstallGroupRequest">
 				<parameters>
 					<string name="in_strjson" />
@@ -375,16 +359,13 @@
 				<insert name="groupContainer" key="context.in_groupid.toString()" value="context.groupobj"/>
 				<set name="thisclass.m_groupid" value="thisclass.m_groupid.toLong()+1"/>
 			</function>
-			
-			
-	<!--
-		@brief		通过groupid卸载包请求
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->	
-			
+			<!--
+				@brief		通过groupid卸载包请求
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->	
 			<function name="UnInstallGroupRequest">
 				<parameters>
 					<string name="groupid" />
@@ -519,15 +500,13 @@
 				</function>				
 			</function>
 			<!-- for Get Group Json Data-->
-			
-			
-	<!--
-		@brief		拿到包json数据
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->	
+			<!--
+				@brief		拿到包json数据
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->	
 			<function name="GetGroupJsonData">	
 				<parameters>
 					<string name="jsonstring" />
@@ -578,17 +557,13 @@
 					
 				]]></script>
 			</function>	
-			
-			
-	<!--
-		@brief		提交包状态回应
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->	
-			
-			
+			<!--
+				@brief		提交包状态回应
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->	
 			<function name="HandleGroupStateResponse">
 				<parameters>
 					<string name="groupjson"/>
@@ -627,14 +602,13 @@
 					</function>
 				</for>
 			</function>	
-			
-	<!--
-		@brief		包状态请求
-		@auth 		wang kang (hupeng@staros.xyz)
-		@date		2017/11/27
-		Input:
-		Output: 
-	-->	
+			<!--
+				@brief		包状态请求
+				@auth 		wang kang (hupeng@staros.xyz)
+				@date		2017/11/27
+				Input:
+				Output: 
+			-->	
 			<function name="GroupStateRequest">
 				<long name="xid" />
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
@@ -645,7 +619,6 @@
 					</parameters>
 				</function>
 			</function>	
-			
 			<!--
 				@brief		Find group object from groupContainer
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -669,7 +642,6 @@
 					</then>
 				</if>
 			</function>
-			
 			<!--
 				@brief		Print groupid from groupContainer
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -683,7 +655,6 @@
 					<log><![CDATA[groupkey=<%=context.groupkey.toString()%>]]></log>
 				</for>
 			</function>
-		
 		</public>
 	</class>
 </starlang>

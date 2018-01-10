@@ -120,7 +120,44 @@
 			<string name="type"/>
 			<object name="hostobject"/>	
 		</parameters>
+		<log level="100">$$$$$$$$$$$$$$</log>
+		<log level="100"><![CDATA[ hostListenerProcess type= <%=context.type.toString()%>]]></log>
+		<log level="100">$$$$$$$$$$$$$$</log>
 		<log>hostListenerProcess</log>
+		<string name="strjson"/>
+		<if cond="context.hostobject.ptr==null">
+			<then>
+				<log>context.hostobject.ptr==null</log>
+				<exit/>
+			</then>
+		</if>
+		<if cond="context.type=='remove'">
+			<then>
+				<!--获取删除host json信息-->
+				<log level="100">topo websocket removehost </log>
+				<function name="ToRemoveHost2Json" class="hostobject">
+					<parameters>
+						<string name="strjson" out="context.strjson"/>
+					</parameters>
+				</function>
+			</then>
+		</if>
+		<if cond="context.type.toString()=='add'">
+			<then>
+				<function name="ToAddHost2Json" class="hostobject">
+					<parameters>
+						<string name="strjson" out="context.strjson"/>
+					</parameters>
+				</function>
+			</then>
+		</if>
+		
+		<!--向所有客户端发送删除host消息-->
+		<function name="SendToAllClient" class="WebSocketManager">
+			<parameters>
+				<string name="strjson" in="context.strjson.toString()"/>			
+			</parameters>
+		</function>
 	</function>
 	<function name="AddListeners">
 		<function>
@@ -329,7 +366,7 @@
 		<function name="stopMonitoring" class="traffic"/>
 	</function>
 	<function name="HandleDetailsReq">
-		<string name="datapathid"/>
+		<string name="id"/>
 		<string name="type"/>
 		<script><![CDATA[
 			var info = JSON.parse(event.getParam("eventdata").toString());
@@ -342,20 +379,20 @@
 					type='unkown';
 				}
 				context.type.setValue(type);
-				if (dataid != null)
-				{
-					var final_id = dataid.split(":")[1];
-					context.datapathid.setValue(final_id);
-				}
+				context.id.setValue(dataid);
 			}
 			]]>
 		</script>
 		<if cond="context.type=='device'">
 			<then>
+				<script><![CDATA[
+					var final_id = context.id.toString().split(":")[1];
+					context.id.setValue(final_id);
+				]]></script>
 				<function name="SendDetails" class="DeviceManager">	
 					<parameters>
 						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="datapathid" in="context.datapathid.toString()"/>	
+						<string name="datapathid" in="context.id.toString()"/>	
 					</parameters>
 				</function>
 			</then>
@@ -363,7 +400,7 @@
 				<function name="SendDetails" class="HostManager">	
 					<parameters>
 						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="datapathid" in="context.datapathid.toString()"/>	
+						<string name="hostid" in="context.id.toString()"/>	
 					</parameters>
 				</function>
 			</elseif>
@@ -383,8 +420,7 @@
 				var dataid = info.payload.id;
 				if (dataid != null)
 				{
-					var final_id = dataid.split(":")[1];
-					context.id.setValue(final_id);
+					context.id.setValue(dataid);
 				}
 				var memento=info.payload.memento;
 				if (memento != null)
@@ -398,6 +434,12 @@
 		<if cond="context.memento.size() == 0 ">
 			<then>
 				<syslog level="INFO"> ###### HandleUpdateMeta memento is NULL ######</syslog>
+				<exit/>
+			</then>
+		</if>
+		<if cond="context.id.size() == 0 ">
+			<then>
+				<syslog level="INFO"> ###### HandleUpdateMeta id is NULL ######</syslog>
 				<exit/>
 			</then>
 		</if>

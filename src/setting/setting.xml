@@ -44,6 +44,7 @@
 		<set name="GlobalSetting" paramname="guicerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
 		<!--设置GUI协议类型，当协议类型是HTTPS有用-->
 		<set name="GlobalSetting" paramname="guikeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<set name="GlobalSetting" paramname="hosttimeout" value="10000"/>
 		<!--OpenFlow Ip Setting-->
 		<function name="addSetting" class="gSettingsManager">
 			<parameters>
@@ -164,6 +165,19 @@
 				<string name="value" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
 				<string name="defValue" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>	
 				<string name="desc" in="'OpenFlow Protocol Gui Private Key'"/>		
+			</parameters>
+		</function>
+	<!--Add Host Timeout-->
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'hosttimeout'"/>			
+				<string name="id" in="'GlobalSetting::hosttimeout'"/>
+				<string name="type" in="'long'"/>	
+				<string name="value" in="'10000'"/>
+				<string name="defValue" in="'10000'"/>	
+				<string name="desc" in="'Host Timeout'"/>		
 			</parameters>
 		</function>
 	</function>

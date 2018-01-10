@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		VGatewayServicePathDocsApi.xml
+	@brief 		定义路径
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/01/08
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<!--
+		@brief		添加路径
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="vGateway_addPath">		
+		<function name="allVGateway"/>			
+		<function name="addVGatewayPostRequestPath"/>
+		<function name="otherVGatewaymethods"/>
+	</function>
+
+	<!--
+		@brief		删除路径
+		@auth 		qiulei
+		@date		2018/01/09
+		Input:
+		Output: 
+	-->
+	<function name="vGateway_removePath">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/vGatewayservice/vGateways'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/vGatewayservice/vGateway'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/vGatewayservice/vGateway/{ip}'"/>
+			</parameters>
+		</function>
+	</function>
+
+	<!--
+		@brief		定义所有VGateway
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="allVGateway">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"vGatewayservice"
+						],
+						"summary": "Returns all VGateways",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/VGateways"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/vGatewayservice/vGateways'"/>
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180110-->
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="addVGatewayPostRequestPath">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"post": {
+						"tags": [
+							"vGatewayservice"
+						],
+						"summary": "Create a new VGateway",
+						"description": "",
+						"parameters": [
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
+								"description": "Create one vGateway",
+								"required": true,
+								"schema": {
+									"$ref": "#/definitions/VGateway"
+								}					
+							}
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/VGatewayResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/vGatewayservice/vGateway'"/>
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180110-->
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<!--
+		@brief		其他请求路径
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="otherVGatewaymethods">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"vGatewayservice"
+						],
+						"summary": "Returns one VGateway",
+						"description": "",
+						"parameters": [
+							{
+								"name": "ip",
+								"in": "path",
+								"type": "string",
+								"description": "Get one vGateway by ip",
+								"required": true						
+							}
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/VGateway"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},					
+					
+					"delete": {
+						"tags": [
+							"vGatewayservice"
+						],
+						"summary": "Removes one VGateway",
+						"description": "",
+						"parameters": [
+							{
+								"name": "ip",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one VGateway by ip",
+								"required": "true"
+							}
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/VGatewayResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					
+					
+					
+					"put": {
+						"tags": [
+							"vGatewayservice"
+						],
+						"summary": "Update a VGateway",
+						"description": "",
+						"parameters": [
+							{
+								"name": "ip",
+								"in": "path",		
+								"type": "string",			
+								"description": "Updata one VGateway by ip",
+								"required": true
+							},
+							{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
+								"schema": {
+									"$ref": "#/definitions/VGateway"
+								},
+								"description": "Update one VGateway",
+								"required": true
+							}
+						],
+						"consumes": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/VGatewayResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/vGatewayservice/vGateway/{ip}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

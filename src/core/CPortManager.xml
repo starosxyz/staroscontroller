@@ -185,10 +185,10 @@
 				
 				<object name="openflowdevice"/>
 				<set name="openflowdevice" value="context.openflowserverobj.ptr.getDevice(thisclass.m_transportid.toString())"/>
-				<if cond="context.openflowdevice!=null">
+				<if cond="context.openflowdevice.ptr!=null">
 					<then>
 						<long name="number"/>
-						<set name="number" value="context.openflowdevice.getNeigborSize(thisclass.m_portno.toString())"/>
+						<set name="number" value="context.openflowdevice.ptr.getNeigborSize(thisclass.m_portno.toString())"/>
 						<if cond="context.number.toLong()==0">
 							<then>
 								<function>
@@ -447,6 +447,7 @@
 					<string name="pkoutjson"/>
 					<messageblock name="msgblock"/>
 				</parameters>
+				<syslog level="INFO">PM POTAP</syslog>
 				<object name="portobj"/>
 				<boolean name="isvalidataport"/>
 				<boolean name="isedgeport"/>
@@ -473,9 +474,11 @@
 					
 					<if cond="(context.isvalidataport.toBoolean()==true) &amp;&amp;(context.isedgeport.toBoolean()==true)">
 						<then>
+							<syslog level="INFO">1</syslog>
 							<function>
 								<if cond="context.inportid.toString()!=context.oneportpair.first()">
 									<then>
+										<syslog level="INFO">2</syslog>
 										<function name="SendOpenFlowPacketOut">
 											<parameters>
 												<string name="outputport"  in="context.oneportpair.first()"/>

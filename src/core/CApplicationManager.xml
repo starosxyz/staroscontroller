@@ -41,14 +41,10 @@
 			<list name="required_apps"  valuetype="string"/>
 			<list name="features" valuetype="string"/>
 			<list name="permissions" valuetype="string"/>
-			
 			<string name="m_apppath"/>
 			<string name="pathends" />
-			
 		</private>
 		<public>
-		
-		
 			<function name="CApplication">
 				<parameters>
 					<string name="apppath"/>
@@ -63,7 +59,6 @@
 				<set name="thisclass._iconid_state" value="context.appiconstate.toString()"/>
 				<set name="thisclass.pathname" value="context.apppathname.toString()"/>
 			</function>
-		
 			<!--
 				@brief		发送一个app的信息
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -108,7 +103,6 @@
 					</else>
 				</if>
 			</function>
-			
 			<!--
 				@brief		获得app的路径
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -122,7 +116,6 @@
 				</parameters> 
 				<set name="apppath" value="thisclass.pathname"/>
 			</function>
-			
 			<!--
 				@brief		获得app的id
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -136,9 +129,6 @@
 				</parameters>
 				<set name="outappid" value="thisclass.id.toString()"/>
 			</function>
-			
-			
-
 			<function name="SetApplicationInfo">
 				<parameters>
 					<string name="appversion" />
@@ -155,11 +145,8 @@
 				<set name="thisclass.title" value="context.apptitle.toString()"/>
 				<set name="thisclass.desc" value="context.appdesc.toString()"/>
 				<set name="thisclass.url" value="context.appurl.toString()"/>
-				<set name="thisclass.bundleid" value="context.appbundleid.toLong()"/>
-		
-				
+				<set name="thisclass.bundleid" value="context.appbundleid.toLong()"/>	
 			</function>
-			
 			<!--
 				@brief		启动APP 更改active文件里面的状态
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -186,10 +173,8 @@
 						<file method="deletefile" name="context.pathends.toString()"/>
 						<file method="writefile" name="context.pathends.toString()" data="context.filecontent.toMessageBlock()"/>
 					</else>
-				</if>
-				
+				</if>	
 			</function>
-			
 			<!--
 				@brief		停掉APP 更改APP里面的状态
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -284,7 +269,6 @@
 				</parameters>
 				<set name="thisclass.currentappname" value="context.inappname"/>
 			</function>
-			
 			<!--
 				@brief		通过他的路径，加载所有APP，并更改他对应的active文件状态
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -303,7 +287,6 @@
 				<string name="activitefile"/>
 				<boolean name="isfile" />
 				<object name="oneapp"/>
-				
 				<string name="apppath" />
 				<string name="appname" />
 				<string name="appstate" />
@@ -389,7 +372,6 @@
 					</if>
 				</for>
 			</function>
-			
 			<!--
 			@brief		得到app的json
 			@auth 		hu peng (hupeng@staros.xyz)
@@ -486,7 +468,6 @@
 					</then>
 				</if>
 			</function>
-			
 			<!--
 				@brief		注册APP
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -523,7 +504,6 @@
 						</function>
 					</then>
 				</if>
-				
 			</function>
 			<!--
 				@brief		app 停止事件
@@ -569,7 +549,6 @@
 				<string name="apppath"/>
 				<string name="strkey"/>
 				<string name="strvalue" />
-
 				<if cond="thisclass.appsContainer.hasValue(context.id.toString())">
 					<then>
 						<function>
@@ -583,7 +562,6 @@
 					</then>
 				</if>
 			</function>
-			
 			<!--
 				@brief		卸载app
 				@auth 		hu peng (hupeng@staros.xyz)
@@ -616,8 +594,6 @@
 				</if>
 				<file method="deletefile" name="context.apppath.toString()"/>
 			</function>
-			
-			
 			<!--
 				@brief		获得app的boundleid
 				@auth 		hu peng (hupeng@staros.xyz)

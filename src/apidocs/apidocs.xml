@@ -24,6 +24,9 @@
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/topology/TopologyServiceDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/policy/PolicyServiceDocsApi.xml"/>
+	<!--20180110-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/vGateway/VGatewayServiceDocsApi.xml"/>
 	<!--
 		@brief		注册Topology
 		@auth 		qiulei
@@ -33,6 +36,10 @@
 	-->
 	<function name="RegisterAddDocsAPITopology">
 		<function name="AddDocsAPITopology"/>
+		<!--staros-controller-1.1.0\src\apidocs\policy\PolicyServiceDocsApi.xml qiulei20180108-->
+		<function name="AddDocsAPIPolicy"/>
+		<!--staros-controller-1.1.0\src\apidocs\vGateway\VGatewayServiceDocsApi.xml qiulei20180108-->
+		<function name="AddDocsAPIVGateway"/>
 	</function>
 	
 	<!--
@@ -44,5 +51,10 @@
 	-->
 	<function name="DestoryRemoveDocsAPITopology">
 		<function name="RemoveDocsAPITopology"/>
+		<!--staros-controller-1.1.0\src\apidocs\policy\PolicyServiceDocsApi.xml qiulei20180108-->
+		<function name="RemoveDocsAPIPolicy"/>
+		<!--staros-controller-1.1.0\src\apidocs\vGateway\VGatewayServiceDocsApi.xml qiulei20180108-->
+		<function name="RemoveDocsAPIVGateway"/>
+		
 	</function>
 </starlang>

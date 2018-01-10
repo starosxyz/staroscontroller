@@ -422,7 +422,7 @@
 				</parameters>
 				<string name="onlinejson"/>
 				<string name="memento"/>
-				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
 				<script><![CDATA[
 						var json = new Object();
 						json['event'] = "updateDevice";
@@ -478,7 +478,7 @@
 					<string name="strjson" />
 				</parameters>
 				<string name="memento"/>
-				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
 				<string name="offlinejson" />
 				<script><![CDATA[
 						var json = new Object();
@@ -533,7 +533,7 @@
 				</parameters>
 				<string name="adddevicejson" />
 				<string name="memento"/>
-				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
 				<if cond="context.memento.size()==0">
 					<then>
 						<reference variable="adddevicejson">
@@ -761,6 +761,7 @@
 					<messageblock name="msgblock" />
 				</parameters>
 				<log>insert CDevice's PacketOutToAllPort</log>
+				<syslog level="INFO">D POTAP</syslog>
 				<function name="PacketOutToAllPort" class="thisclass.m_ports">
 					<parameters>	
 						<string name="transportid"  in="thisclass.m_transportid"/>

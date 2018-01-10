@@ -80,26 +80,26 @@
 					</function>		
 				</for>
 			</function>
-	<!--
-		@brief		获得topoContainer集合大小
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		获得topoContainer集合大小
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="GettopoSize">
 				<parameters>
 					<long name="toposize"/>
 				</parameters>
 				<set name="toposize" value="thisclass.topoContainer.size()"/>
 			</function>
-	<!--
-		@brief		寻找路径
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		寻找路径
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="FindPath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -126,13 +126,13 @@
 				</if>
 			</function>
 			
-	<!--
-		@brief		删除所有路径
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		删除所有路径
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			
 			<function name="RemoveAllPath">
 				<parameters>
@@ -157,15 +157,15 @@
 				</if>
 				
 			</function>
-	<!--
-		@brief		删除路径
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-			@param filename 	openflow_topology.xml
-		  	@param xmldata   	fromdevice,todevice,path
-		Output: 
-	-->
+			<!--
+				@brief		删除路径
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	openflow_topology.xml
+				  	@param xmldata   	fromdevice,todevice,path
+				Output: 
+			-->
 			<function name="RemovePath">
 				<parameters>
 					<string name="fromdevice"/>
@@ -220,13 +220,13 @@
 					</then>
 				</if>
 			</function>
-				<!--
-					@brief		发送所有路径到web客户端
-					@auth 		hu peng (hupeng@staros.xyz)
-					@date		2017/11/24
-					Input:
-					Output: 
-				-->
+			<!--
+				@brief		发送所有路径到web客户端
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="SendAddAllLinkToWebClient">
 				<parameters>
 					<string name="transportid"/>

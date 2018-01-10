@@ -393,9 +393,9 @@
 		<!-- 10 -->
 		<onevent event="openflow.OFPT13_PACKET_IN">
 		  <function>
-			<log level="100">Get a PacketIn Message</log>
-			<log level="100"><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
-			<log level="100"><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
+			<log>Get a PacketIn Message</log>
+			<!--<log level="100"><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>-->
+			<!--<log level="100"><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>-->
 			<string name="datapathid"/>
 			<function name="GetDatapathIdByTransportid" class="DeviceManager">
 				<parameters>

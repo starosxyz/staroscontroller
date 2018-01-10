@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		VGatewayAPIHandler.xml vGateway_
+	@brief 		VGateway的增删改查
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		注册APP 到RestfulService
+		@auth 		qiulei
+		@date		20180110
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	getCurrentBundleId
+		Output: 
+
+	-->
+
+	<function name="vGateway_RegisterHandler">
+		<log>insert tunnelserviceapi RegisterHandler</log>
+		
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processvGatewaysrequest'"/>
+				<string name="requestpathtest" in="'/onos/v1/vGatewayservice/vGateways'"/>			
+			</parameters>
+		</function>
+
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processcreateonevGatewayrequest'"/>
+				<string name="requestpathtest" in="'/onos/v1/vGatewayservice/vGateway'"/>			
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processdeleteormodifyorupdateonevGatewayrequest'"/>
+				<string name="requestpathtest" in="'/onos/v1/vGatewayservice/vGateway/{ip}'"/>			
+			</parameters>
+		</function>
+
+	</function>
+	
+	<!--
+		@brief		注销APP 到RestfulService
+		@auth 		qiulei
+		@date		20180110
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	requestpath
+		Output: 
+		-->
+
+	<function name="vGateway_UnRegisterHandler">
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpath" in="'/onos/v1/vGatewayservice/vGateways'"/>			
+			</parameters>
+		</function>
+
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpath" in="'/onos/v1/vGatewayservice/vGateway'"/>			
+			</parameters>
+		</function>
+		
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpathtest" in="'/onos/v1/vGatewayservice/vGateway/{ip}'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	<events>
+		<onevent event="processvGatewaysrequest">
+			<log level="100">得到所有VGateways</log>
+			<function name="getAllVGateways"/>				
+		</onevent>
+
+		<onevent event="processcreateonevGatewayrequest">
+			<log level="100">创建一个vGateway</log>
+			<function name="createOneVGateway"/>
+		</onevent>
+		
+		<onevent event="processdeleteormodifyorupdateonevGatewayrequest">
+			<if cond="event.getParam('method').toString()=='GET'">
+				<then>
+					<log level="100">得到一个vGateway</log>
+					<function name="getOneVGatewayByIp"/>
+				</then>
+				<elseif cond="event.getParam('method').toString()=='DELETE'">
+
+					<log level="100">删除一个vGateway</log>
+					<function name="deleOneteVGatewayByIp"/>
+				</elseif>
+				<elseif cond="event.getParam('method').toString()=='PUT'">
+					<log level="100">更新一个vGateway</log>
+					<function name="updateOneVGatewayByIp"/>
+				</elseif>								
+			</if>
+		</onevent>
+	</events>
+	
+	
+	<function name="getAllVGateways">
+	
+		<string name="successresponse"/>
+		<function name="vGateway_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log leve="100">execute deleOneteVGatewayByIp Method over ----VGatewayAPIHandler.xml 312</log>
+	</function>
+	
+	<function name="createOneVGateway">
+		<log leve="100">enter createOneVGateway Method  ----VGatewayAPIHandler.xml 157</log>
+		
+		<string name="ip"/>
+		<string name="netmask"/>
+		<string name="vmac"/>
+		<string name="successresponse"/>
+		
+		<script><![CDATA[
+			context.print("----166 vGateway数据:"+event.getParam('eventdata').toString());
+
+			var json = JSON.parse(event.getParam('eventdata').toString());
+	
+			var ip = json.ip;
+			var netmask = json.netmask;
+			var vmac = json.vmac;
+			
+			context.ip.setValue(ip);
+			context.netmask.setValue(netmask);
+			context.vmac.setValue(vmac);
+		]]></script>
+		
+		<function name="Addvgateway" class="vGatewayManager">
+			<parameters>
+				<string name="ip" in="context.ip.toString()"/>
+				<string name="netmask" in="context.netmask.toString()"/>
+				<string name="vmac" in="context.vmac.toString()"/>
+			</parameters>
+		</function>
+		
+		
+		<function name="vGateway_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log leve="100">execute createOneVGateway over  ----VGatewayAPIHandler.xml 200</log>
+	</function>
+	
+	<function name="getOneVGatewayByIp">
+		
+		<log leve="100">enter getOneVGatewayByIp Method  ----VGatewayAPIHandler.xml 203</log>
+		<string name="ip"/>
+		<string name="vGatewayJsonStr"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("--212 行  requestpath="+str);
+			var arr = str.split("/");
+			var pathIp=arr[arr.length-1];
+			context.ip.setValue(pathIp);
+			
+		]]></script>
+		
+		<log leve="100"><![CDATA[ip=<%=context.ip.toString()%>----VGatewayAPIHandler.xml 218]]></log>
+		
+		<function name="getVGatewayJsonStrByIp" class="vGatewayManager">
+			<parameters>
+				<string name="ip" in="context.ip"/>
+				<string name="OneVGatewayJsonStr" out="context.vGatewayJsonStr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.vGatewayJsonStr.toString()==''">
+			<then>
+				<log leve="100"><![CDATA[ip=<%=context.ip.toString()%>不存在----VGatewayAPIHandler.xml 229]]></log>
+		
+				<function name="vGateway_ErrorDatasResponse">
+					<parameters>
+						<string name="ip" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This ip is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.vGatewayJsonStr.toString()"/>
+			</parameters>
+		</function>
+		
+		<log leve="100">execute getOneVGatewayByIp Method over ----VGatewayAPIHandler.xml 247</log>
+	</function>
+	
+	<function name="deleOneteVGatewayByIp">
+		<log leve="100">enter deleOneteVGatewayByIp Method  ----VGatewayAPIHandler.xml 260</log>
+		<string name="ip"/>
+		<object name="onevGateway"/>
+		<string name="successresponse"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("requestpath!!"+str);
+			var arr = str.split("/");
+			var pathIp=arr[arr.length-1];
+			context.ip.setValue(pathIp);
+		]]></script>
+		
+		
+		<function name="FindvGateway" class="vGatewayManager">
+			<parameters>
+				<string name="ip" in="context.ip.toString()"/>
+				<object name="vgateway" out="context.onevGateway"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.onevGateway==null">
+			<then>
+				<function name="vGateway_ErrorDatasResponse">
+					<parameters>
+						<string name="ip" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This ip is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="RemovevGateway" class="vGatewayManager">
+			<parameters>
+				<string name="ip" in="context.ip"/>
+			</parameters>
+		</function>
+		
+		<function name="vGateway_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log leve="100">execute deleOneteVGatewayByIp Method over ----VGatewayAPIHandler.xml 312</log>
+	</function>
+	
+	<function name="updateOneVGatewayByIp">
+		<log leve="100">enter updateOneVGatewayByIp Method  ----VGatewayAPIHandler.xml 317</log>
+	
+		<string name="ip"/>
+		
+		<string name="netmask"/>
+		<string name="vmac"/>
+		<string name="successresponse"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("requestpath!!"+str);
+			var arr = str.split("/");
+			var pathIp=arr[arr.length-1];
+			context.ip.setValue(pathIp);
+		]]></script>
+
+		<script><![CDATA[
+			context.print("vGateway更新数据:"+event.getParam('eventdata').toString());
+			var json = JSON.parse(event.getParam('eventdata').toString());
+
+			var netmask = json.netmask;
+			var vmac = json.vmac;
+			
+			context.netmask.setValue(netmask);
+			context.vmac.setValue(vmac);
+			
+		]]></script>
+
+		<function name="vGateway_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log leve="100">execute updateOneVGatewayByIp Method over ----VGatewayAPIHandler.xml 348</log>
+		
+	</function>	
+
+
+	
+	
+	<function name="vGateway_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		
+		<string name="response"/>
+		<reference variable="response">
+			<jsonbody><![CDATA[ 
+				{
+					"result":{
+						"code": "0",
+						"description": "ok"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<set name="successresponse" value="context.response.toString()"/>
+	</function>
+	
+	<function name="vGateway_ErrorDatasResponse">
+		<parameters>
+			<string name="ip"/>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.ip = context.ip.toString();
+				one.code = "-1";
+				one.description = context.description.toString();						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

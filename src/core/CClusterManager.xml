@@ -46,12 +46,12 @@
 				<insert name="InstanceContainer" key="context.id.toString()" value="context.instanceinfo"/>
 				<string name="strfunname"/>
 				<for var="context.strfunname" in="context.listernellist">
-						<function callback="strfunname">
-							<parameters>
-								<string name="type" in="'add'"/>
-								<hashmap name="instanceinfo" in="contex.instanceinfo"/>			
-							</parameters>
-						</function>
+					<function callback="strfunname">
+						<parameters>
+							<string name="type" in="'add'"/>
+							<hashmap name="instanceinfo" in="contex.instanceinfo"/>			
+						</parameters>
+					</function>
 				</for>
 			</function>
 			

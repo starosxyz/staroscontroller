@@ -29,7 +29,6 @@
 			<long name="m_current"  />
 		</private>
 		<public>
-		
 			<function name="CSession">
 				<parameters>
 					<string name="sessionid"/>
@@ -62,17 +61,16 @@
 						var timestamp=new Date().getTime();
 						return timestamp;
 					}
-					
 					context.m_current.setValue(getCurrentTimerInMs());
 				]]></script>
 			</function>
-	<!--
-		@brief		重置session时间
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		重置session时间
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="ResetTime">
 				<script><![CDATA[
 					function getCurrentTimerInMs() {
@@ -83,60 +81,49 @@
 					context.m_current.setValue(getCurrentTimerInMs());
 				]]></script>
 			</function>
-			
-			
-	<!--
-		@brief		拿到时间
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
-			
-			
+			<!--
+				@brief		拿到时间
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="Gettime">
 				<parameters>
 					<long name="time" />
 				</parameters>
 				<set name="time" value="thisclass.m_current.toLong()"/>
 			</function>
-	<!--
-		@brief		拿到用户名
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		拿到用户名
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			
 			<function name="GetUsername">
 				<parameters>
 					<string name="username"/>
 				</parameters>
 				<set name="username" value="thisclass.m_username.toString()"/>
-			</function>
-			
-			
-			
+			</function>	
 		</public>
 	</class>
 	<class name="CSessionManager">
 		<private>
 			<hashmap name="SessionContainer"  keytype="string" valuetype="object"/>
 		</private>
-		<public>
-			
-			
-	<!--
-		@brief		创建session对象
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-			@param filename 	staros_gui.xml
-		  	@param xmldata   	sessionid,username
-		Output: 
-	-->
-			
-			
+		<public>	
+		<!--
+			@brief		创建session对象
+			@auth 		hu peng (hupeng@staros.xyz)
+			@date		2017/11/24
+			Input:
+				@param filename 	staros_gui.xml
+			  	@param xmldata   	sessionid,username
+			Output: 
+		-->
 			<function name="CreateSession">
 				<parameters>
 					<string name="sessionid" />
@@ -172,36 +159,30 @@
 					</else>
 				</if>
 			</function>
-	<!--
-		@brief		删除session对象
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-			@param filename 	staros_gui.xml
-		  	@param xmldata   	sessionid
-		Output: 
-	-->
-			
-		
+			<!--
+				@brief		删除session对象
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_gui.xml
+				  	@param xmldata   	sessionid
+				Output: 
+			-->
 			<function name="RemoveSession">
 					<parameters>
 						<string name="sessionid" />
 					</parameters>
 					<remove name="SessionContainer" key="context.sessionid.toString()"/>
 			</function>
-			
-	<!--
-		@brief		找到session
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-			@param filename 	staros_gui.xml
-		  	@param xmldata   	sessionid
-		Output: 
-	-->
-		
-			
-			
+			<!--
+				@brief		找到session
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	staros_gui.xml
+				  	@param xmldata   	sessionid
+				Output: 
+			-->
 			<function name="FindSession">				
 				<parameters>
 					<string name="sessionid" />	
@@ -217,13 +198,13 @@
 					</else>
 				</if>
 			</function>	
-	<!--
-		@brief		超时（移除session对象）
-		@auth 		hu peng (hupeng@staros.xyz)
-		@date		2017/11/24
-		Input:
-		Output: 
-	-->
+			<!--
+				@brief		超时（移除session对象）
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
 			<function name="Timeout">
 				<long name="current"  />
 				<long name="oncurrent" />
@@ -236,10 +217,9 @@
 								var timestamp=new Date().getTime();
 								return timestamp;
 							}
-							
 							context.current.setValue(getCurrentTimerInMs());
 					]]></script>
-				<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size().toString()%>']]></log>
+					<log><![CDATA[Timeout SessionContainer!!!!!= '<%=context.SessionContainer.size().toString()%>']]></log>
 					<for var="oneSessionContainer" in="context.SessionContainer">
 						<set name="sessionobj" value="context.oneSessionContainer.second()"/>
 						<set name="sessionid" value="context.oneSessionContainer.first()"/>
@@ -268,10 +248,6 @@
 						<remove name="SessionContainer" key="context.sessionid.toString()"/>
 					</for>
 			</function>
-		
-
-				
-				
 		</public>
 	</class>
 </starlang>

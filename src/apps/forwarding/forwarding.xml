@@ -30,14 +30,17 @@
 	Copyright: 
 			Nanjing StarOS Inc. All rights reserved.
 -->
+	
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
 	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
 	<object name="flowservice" value="global.FlowService" reference="true"/>
 	<object name="meterservice" value="global.MeterService" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="toposervice" value="global.TopoService" reference="true"/>
+
 	<events>
-		<onevent event="bundleapp.startup">			
+		<onevent event="bundleapp.startup">
+			<log level="101">----enter bundleapp.startup START----41</log>
 			<!-- YY 2017-08-21 -->
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
@@ -47,16 +50,17 @@
 					<string name="origin" in="'Nanjing StarOS Inc.'"/>
 					<string name="title" in="'app for forwarding'"/>
 					<string name="desc" in="'2.10.10.0'"/>		
-					<string name="url" in="'192.168.228.128'"/>
+					<string name="url" in="'192.168.137.128'"/>
 					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
 			</function>			
 			
-			
 			<log>forwarding app startup</log>
+			<log level="101">----enter bundleapp.startup END----59</log>
 		</onevent>
 		
 		<onevent event="bundleapp.active">
+			<log level="101">----enter bundleapp.active start----61</log>
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
 					<string name="app_name" in="'forwarding'"/>
@@ -64,21 +68,26 @@
 					<string name="eth_type" in="'0x0806'"/>
 				</parameters>
 			</function>
+			<log level="101">----enter bundleapp.active end----71</log>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
+			<log level="101">----enter ~bundleapp.deactive start----75</log>
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
 					<string name="app_name" in="'nullapp'"/>									
 				</parameters>
 			</function>
+			<log level="101">----enter ~bundleapp.deactive end----79</log>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
 			<!-- YY 2017-08-21 -->
-			
+			<log level="101">----enter ~bundleapp.shutdown ----84</log>
 		</onevent>
+		
 		<onevent event="PacketInEvent">
+			<log level="101">----enter PacketInEvent method start----87</log>
 			<!-- YY 2017-08-21 -->		
 			<messageblock name="packetmsgblock"/>
 			<string name="inportid"/>
@@ -97,6 +106,7 @@
 			]]></script>
 			<set name="packetmsgblock" value="event.getMessageBlock()"/>
 			<log><![CDATA[packetmsgblock size=<%=context.packetmsgblock.getChainedLength().toString()%>]]></log>
+			
 			<function name="PacketOutToAllPort" class="context.devicemgr">
 				<parameters>	
 					<string name="datapathid" in="event.getParam('datapathid').toString()"/>
@@ -105,13 +115,16 @@
 					<messageblock name="msgblock" in="context.packetmsgblock"/>	
 				</parameters>
 			</function>
+			
+			<log level="101">----enter PacketInEvent method end----115</log>
 		</onevent>
 		
 		<onevent event="*">
 			<function>
-			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
-			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+				<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
+				<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>
+		
 	</events>
 </starlang>

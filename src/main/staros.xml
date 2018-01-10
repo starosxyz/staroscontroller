@@ -157,9 +157,9 @@ mb.start()
 				<syslog level="INFO">Hello StarOS</syslog>
 				<log level="100">##########STAROS application start#######</log>
 				<python><![CDATA[
-						import sys
-						print("Current Operating System:"+sys.platform)
-						print("Current Operating System Version:"+sys.version)
+import sys
+print("Current Operating System:"+sys.platform)
+print("Current Operating System Version:"+sys.version)
 					]]></python>
 				<localcall method="hellotest" inparam="context.injson" outparam="context.outjson"/>
 				<log><![CDATA[ localcall output value <%=context.outjson.toString()%>]]></log>
@@ -206,7 +206,7 @@ a.printme()
 				<!--启动自动拓扑发现-->
 				<function name="startDiscovery" class="TopoManager"/> 
 				
-				
+
 				<!--qiulei 201700929 Monday-->
 				<function name="RegisterAddDocsAPITopology"/>
 			</function>
@@ -238,6 +238,8 @@ a.printme()
 				<log leve="1"><![CDATA[toposize= '<%=context.toposize.toString()%>']]></log>
 			<!--wait event="InvalidEvent" timeout="2000"/-->
 				<!--raise name="'TimeOutEvent'"/-->
+			<!-- yijian add for Host Timeout-->
+				<function name="CheckHostTimeout" class="HostManager"/>
 			</function>
 		</onevent>
 		<!--For Python Test-->

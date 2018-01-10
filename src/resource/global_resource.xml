@@ -42,6 +42,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CRestfulService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CMeterService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSettingsManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CvGatewayManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTableManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CSessionManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTopoManager.xml"/>
@@ -53,6 +54,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CAPIDocsService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CDeviceService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTrafficMonitor.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPolicyManager.xml"/>	
 
 <include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
 	<object name="ApplicationManager" global="true"/>
@@ -81,6 +83,9 @@
 	<object name="ListenerBase" global="true"/>
 	<object name="traffic" global="true"/>
 	<object name="uiExtension" global="true"/>
+	<object name="PolicyManager" global="true"/>
+	<!--YXR-->
+	<object name="vGatewayManager" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -112,6 +117,10 @@
 		<!--new name="FlowManager" class="CFlowManager"/-->
 		<new name="ApplicationManager" class="CApplicationManager"/>
 		<new name="traffic" class="CTrafficMonitor"/>
-	<new name="uiExtension" class="CUiExtensionManager"/>
+		<new name="uiExtension" class="CUiExtensionManager"/>
+		<new name="PolicyManager" class="CPolicyManager"/>
+
+		<!--yxr-->
+		<new name="vGatewayManager" class="CvGatewayManager"/>
 	</function>
 </starlang>

@@ -1062,7 +1062,7 @@
 					<messageblock name="msgblock"/>
 				</parameters>
 				<object name="device"/>
-				<log>PacketOutToAllPort !!!!!!!!!!!!!!</log>
+				<syslog level="INFO">DM POTAP</syslog>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>

@@ -269,6 +269,255 @@
 					</then>
 				</if>
 			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installRuleAtSameDevice">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallRuleAtSameDevice">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleAtSameDevice">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleAtSameDevice">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<string name="jsonout2in"/>
+				<string name="jsonin2out"/>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice inport = <%= context.inport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice invlan = <%= context.invlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice outport = <%= context.outport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice outvlan = <%= context.outvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice bandwith = <%= context.bandwith.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice srcip = <%= context.srcip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice dstip = <%= context.dstip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice ipproto = <%= context.ipproto.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleAtSameDevice ethtype = <%= context.ethtype.toString()%>]]></syslog>
+				<log>CTunnelDevice installRuleAtSameDevice</log>
+				<!--
+				<function name="InstallMeter">	
+					<parameters>
+						<string name="bandwith" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+				-->			
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.invlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.outvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.m_flowid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2 == ''">
+					<then>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
 			<!--
 			/**********************************************************************
 			* 函数名称：installRuleStart
@@ -279,8 +528,7 @@
 			*               invlan  		: 报文的vlan标识;
 			*               serviceinvlan  	: 服务vlan;
 			*               serviceoutvlan  : 出口服务vlan;
-			*               bandwith 		: 带宽;
-			*               ethtype 		: 以太报文类型;              
+			*               bandwith 		: 带宽;             
 			* 输出参数：无
 			* 返 回 值：void
 			* 其它说明：
@@ -558,6 +806,363 @@
 				<log><![CDATA[jsonout2in = <%=context.jsonout2in.toString()%>]]></log>			
 			</function>
 
+			<!--
+			/**********************************************************************
+			* 函数名称：installRuleStart
+			* 功能描述：安装流表封装接口
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：    inport  		: 开始端口;
+			*               invlan  		: 报文的vlan标识;
+			*               serviceinvlan  	: 服务vlan;
+			*               serviceoutvlan  : 出口服务vlan;
+			*               bandwith 		: 带宽; 
+			*               srcip           : 源ip;
+			*               dstip 			: 目的ip;
+			*               ipproto    : 传输协议;      
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/09    V1.1    王康        创建
+			************************************************************************/
+			-->
+			<function name="installRuleStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallRuleStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<syslog level="INFO"> <![CDATA[installRuleStart inport = <%= context.inport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleStart invlan = <%= context.invlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleStart serviceinvlan = <%= context.serviceinvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleStart serviceoutvlan = <%= context.serviceoutvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleStart bandwith = <%= context.bandwith.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleStart ethtype = <%= context.ethtype.toString()%>]]></syslog>
+				<log>Ctunnerdevice installRuleStart</log>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<!--
+				<function name="InstallMeter">	
+					<parameters>
+						<string name="bandwith" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+				-->
+				<if cond="context.invlan.toString() == '0' ">
+					<then>
+						<reference variable="jsonin2out">
+							<jsonbody><![CDATA[ 
+									{
+										"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+										"cookie":"0",
+										"cookiemask":"0",
+										"tableid":"0",
+										"command":"0",
+										"idletimeout":"0",
+										"hardtimeout":"0",
+										"priority":"40000",
+										"bufferid":"0xffffffff",
+										"outport":"0xffffffff",
+										"outgroup":"0xffffffff",
+										"flags":"1",
+										"match":{
+												"type":"1",
+												"matchfieldlist":[
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"0",
+														"hasmask":"false",
+														"inport":"<%=context.inport.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"10",
+														"hasmask":"false",
+														"ipproto":"<%=context.ipproto.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.srcip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"12",
+														"hasmask":"false",
+														"dstip":"<%=context.dstip.toString()%>"
+													}
+												]
+											},
+										"instructionlist":[
+											{
+												"type":"4",
+												"actionlist":[
+													{
+														"type":"17",
+														"ethertype":"0x8100",
+														"maxlen":"0xffff"
+													},
+													{
+														"type":"25",
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.serviceinvlan.toString()%>"
+													},
+													{
+														"type":"0",
+														"outport":"<%=thisclass.m_outputPort.toString()%>",
+														"maxlen":"0xffff"
+													}
+												]
+											}
+										]
+									}
+							]]></jsonbody>
+						</reference>
+					</then>
+					<else>
+						<reference variable="jsonin2out">
+							<jsonbody><![CDATA[ 
+									{
+										"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+										"cookie":"0",
+										"cookiemask":"0",
+										"tableid":"0",
+										"command":"0",
+										"idletimeout":"0",
+										"hardtimeout":"0",
+										"priority":"40000",
+										"bufferid":"0xffffffff",
+										"outport":"0xffffffff",
+										"outgroup":"0xffffffff",
+										"flags":"1",
+										"match":{
+												"type":"1",
+												"matchfieldlist":[
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"0",
+														"hasmask":"false",
+														"inport":"<%=context.inport.toString()%>"
+													},
+												    {
+														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"10",
+														"hasmask":"false",
+														"ipproto":"<%=context.ipproto.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.srcip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"12",
+														"hasmask":"false",
+														"dstip":"<%=context.dstip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.invlan.toString()%>"
+													}
+												]
+											},
+										"instructionlist":[
+											{
+												"type":"4",
+												"actionlist":[
+													{
+														"type":"17",
+														"ethertype":"0x8100",
+														"maxlen":"0xffff"
+													},
+													{
+														"type":"25",
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.serviceinvlan.toString()%>"
+													},
+													{
+														"type":"0",
+														"outport":"<%=thisclass.m_outputPort.toString()%>",
+														"maxlen":"0xffff"
+													}
+												]
+											}
+										]
+									}
+							]]></jsonbody>
+						</reference>
+					</else>
+				</if>			
+				
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_outputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"18",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<log><![CDATA[jsonin2out = <%=context.jsonin2out.toString()%>]]></log>
+				<log><![CDATA[jsonout2in = <%=context.jsonout2in.toString()%>]]></log>			
+			</function>
+
 
 			<function name="installRuleMid">
 				<parameters>
@@ -679,6 +1284,220 @@
 												"oxmfield":"5",
 												"hasmask":"false",
 												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=thisclass.m_inputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installRuleMid">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallRuleMid">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleMid">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleMid">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<syslog level="INFO"> <![CDATA[installRuleMid serviceinvlan = <%= context.serviceinvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleMid serviceoutvlan = <%= context.serviceoutvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleMid srcip = <%= context.srcip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleMid dstip = <%= context.dstip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleMid ipproto = <%= context.ipproto.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleMid ethtype = <%= context.ethtype.toString()%>]]></syslog>
+				<log>CTunnelDevice installRuleMid</log>
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_inputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=thisclass.m_outputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_outputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -989,6 +1808,345 @@
 					</parameters>
 				</function>
 			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installRuleEnd">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallRuleEnd">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleEnd">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+
+			<function name="InstallRuleEnd">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+
+				<syslog level="INFO"> <![CDATA[installRuleEnd outport = <%= context.outport.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd outvlan = <%= context.outvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd serviceinvlan = <%= context.serviceinvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd serviceoutvlan = <%= context.serviceoutvlan.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd bandwith = <%= context.bandwith.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd srcip = <%= context.srcip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd dstip = <%= context.dstip.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd ipproto = <%= context.ipproto.toString()%>]]></syslog>
+				<syslog level="INFO"> <![CDATA[installRuleEnd ethtype = <%= context.ethtype.toString()%>]]></syslog>
+				<log>CTunnelDevice installRuleEnd</log>
+				<!--
+				<function name="InstallMeter">	
+					<parameters>
+						<string name="bandwith" in="context.bandwith.toString()"/>
+					</parameters>	
+				</function>
+				-->
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_inputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"6",
+												"hasmask":"false",
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"18",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<if cond="context.outvlan.toString() == '0' ">
+					<then>
+						<reference variable="jsonout2in">
+							<jsonbody><![CDATA[ 
+									{
+										"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+										"cookie":"0",
+										"cookiemask":"0",
+										"tableid":"0",
+										"command":"0",
+										"idletimeout":"0",
+										"hardtimeout":"0",
+										"priority":"40000",
+										"bufferid":"0xffffffff",
+										"outport":"0xffffffff",
+										"outgroup":"0xffffffff",
+										"flags":"1",
+										"match":{
+												"type":"1",
+												"matchfieldlist":[
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"0",
+														"hasmask":"false",
+														"inport":"<%=context.outport.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"10",
+														"hasmask":"false",
+														"ipproto":"<%=context.ipproto.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.dstip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"12",
+														"hasmask":"false",
+														"dstip":"<%=context.srcip.toString()%>"
+													}
+												]
+											},
+										"instructionlist":[
+											{
+												"type":"4",
+												"actionlist":[
+													{
+														"type":"17",
+														"ethertype":"0x8100",
+														"maxlen":"0xffff"
+													},
+													{
+														"type":"25",
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.serviceoutvlan.toString()%>"
+													},
+													{
+														"type":"0",
+														"outport":"<%=thisclass.m_inputPort.toString()%>",
+														"maxlen":"0xffff"
+													}
+												]
+											}
+										]
+									}
+							]]></jsonbody>
+						</reference>
+					</then>
+					<else>
+						<reference variable="jsonout2in">
+							<jsonbody><![CDATA[ 
+									{
+										"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+										"cookie":"0",
+										"cookiemask":"0",
+										"tableid":"0",
+										"command":"0",
+										"idletimeout":"0",
+										"hardtimeout":"0",
+										"priority":"40000",
+										"bufferid":"0xffffffff",
+										"outport":"0xffffffff",
+										"outgroup":"0xffffffff",
+										"flags":"1",
+										"match":{
+												"type":"1",
+												"matchfieldlist":[
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"0",
+														"hasmask":"false",
+														"inport":"<%=context.outport.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"10",
+														"hasmask":"false",
+														"ipproto":"<%=context.ipproto.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.dstip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"12",
+														"hasmask":"false",
+														"dstip":"<%=context.srcip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.outvlan.toString()%>"
+													}
+												]
+											},
+										"instructionlist":[
+											{
+												"type":"4",
+												"actionlist":[
+													{
+														"type":"17",
+														"ethertype":"0x8100",
+														"maxlen":"0xffff"
+													},
+													{
+														"type":"25",
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.serviceoutvlan.toString()%>"
+													},
+													{
+														"type":"0",
+														"outport":"<%=thisclass.m_inputPort.toString()%>",
+														"maxlen":"0xffff"
+													}
+												]
+											}
+										]
+									}
+							]]></jsonbody>
+						</reference>
+					</else>
+				</if>
+				
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+			</function>
 			<!--
 				@brief		The controller sends the Vxlan Tunnel flows to the source device
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -1131,6 +2289,246 @@
 												"oxmfield":"5",
 												"hasmask":"false",
 												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+
+				<if cond="context.m_flowid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2 == ''">
+					<then>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installVxlanTunnelStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallVxlanTunnelStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanTunnelStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				
+				<log level="101">### CTunnelDevice InstallVxlanTunnelStart###</log>
+				<log level="101"><![CDATA[TunnelStart inport= <%=context.inport.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart inputtunnelport= <%=context.inputtunnelport.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart bandwith= <%=context.bandwith.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart srcip= <%=context.srcip.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart dstip= <%=context.dstip.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelStart ipproto= <%=context.ipproto.toString()%>]]></log>
+				<log level="101">#############################################</log>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+									"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"25",
+												"oxmfield":"38",
+												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.inputtunnelport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -1384,6 +2782,246 @@
 				</if>	
 			</function>
 
+			<!-- wangkang 2018/01/09 -->
+			<function name="installVxlanTunnelEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallVxlanTunnelEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanTunnelEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				
+				<log level="101">### CTunnelDevice InstallVxlanTunnelEnd###</log>
+				<log level="101"><![CDATA[TunnelEnd outport= <%=context.outport.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd outputtunnelport= <%=context.outputtunnelport.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd bandwith= <%=context.bandwith.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd srcip= <%=context.srcip.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd dstip= <%=context.dstip.toString()%>]]></log>
+				<log level="101"><![CDATA[TunnelEnd ipproto= <%=context.ipproto.toString()%>]]></log>
+				<log level="101">#############################################</log>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"25",
+												"oxmfield":"38",
+												"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+												"maxlen":"0xffff"
+											},
+											{
+												"type":"0",
+												"outport":"<%=context.outputtunnelport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+
+				<if cond="context.m_flowid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2 == ''">
+					<then>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>	
+			</function>
+
 			<!--
 				@brief		The controller sends the Vxlan ZhuanXian flows to the source device
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -1574,6 +3212,241 @@
 					</then>
 				</if>	
 			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installVxlanZhuanXianStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallVxlanZhuanXianStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="dropid" out="thisclass.m_dropid"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanZhuanXianStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="dropid" out="thisclass.m_dropid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanZhuanXianStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="dropid"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				
+				<log level="101">### CTunnelDevice InstallVxlanZhuanXianStart###</log>
+				<log level="101"><![CDATA[ZhuanXianStart inport= <%=context.inport.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianStart srcip= <%=context.srcip.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianStart dstip= <%=context.dstip.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianStart ipproto= <%=context.ipproto.toString()%>]]></log>
+				<log level="101">#############################################</log>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+									"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=thisclass.m_outputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_outputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallDropFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.dropid"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+						<string name="ethtype" in="context.ethtype.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.m_flowid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2 == ''">
+					<then>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_dropid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>	
+			</function>
 			<!--
 				@brief		The controller sends the Vxlan ZhuanXian flows to the destination device
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -1700,6 +3573,241 @@
 												"oxmfield":"5",
 												"hasmask":"false",
 												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=thisclass.m_inputPort.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallDropFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.dropid"/>
+						<string name="inputport" in="context.outputport.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+						<string name="ethtype" in="context.ethtype.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.m_flowid == ''">
+					<then>
+						<log>context.m_flowid == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_flowid2 == ''">
+					<then>
+						<log>context.m_flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.m_dropid == ''">
+					<then>
+						<log>context.m_flowid == 0</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+
+			<!-- wangkang 2018/01/09 -->
+			<function name="installVxlanZhuanXianEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallVxlanZhuanXianEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="dropid" out="thisclass.m_dropid"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanZhuanXianEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="dropid" out="thisclass.m_dropid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanZhuanXianEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="dropid"/>
+				</parameters>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				
+				<log level="101">### CTunnelDevice InstallVxlanZhuanXianEnd###</log>
+				<log level="101"><![CDATA[ZhuanXianEnd outport= <%=context.outport.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianEnd srcip= <%=context.srcip.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianEnd dstip= <%=context.dstip.toString()%>]]></log>
+				<log level="101"><![CDATA[ZhuanXianEnd ipproto= <%=context.ipproto.toString()%>]]></log>
+				<log level="101">#############################################</log>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=thisclass.m_inputPort.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
 											}
 										]
 									},

@@ -141,7 +141,7 @@
 	<!-- 10 -->
     <onevent event="openflow.OFPT13_PACKET_IN">
       <function>
-      	<log dest="stdout">Get a PacketIn Message</log>
+      	<!--<log dest="stdout">Get a PacketIn Message</log>-->
 		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
 		<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
       </function>

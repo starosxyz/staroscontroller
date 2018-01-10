@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		hostservice.xml
+	@brief 		hostservice
+	@version 	1.1.0
+	@auth 		YXR
+	@date		2018/1/8
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>
+	<object name="globaltimer"/>
+	<hashmap name="hosthashmap" keytype="string" valuetype="string"/>
+	<hashmap name="timehashmap" keytype="string" valuetype="long"/>
+	
+	<function name="SendARPtoHost">
+		<long name="time"/>
+		<long name="currentm"/>
+		<set name="context.currentm" value="context.currentms()"/>
+		<pair name="onetime" keytype="string" valuetype="long"/>
+		<long name="timeoutvalue" value="global.GlobalSetting.getParam('hosttimeout').toLong()"/>
+		<boolean name="isTimeout"/>
+		<string name="sip" />
+		<for var="context.onetime" in="context.timehashmap">
+			<set name="context.time" value="context.onetime.second().toLong()"/>
+			<set name="context.sip" value="context.onetime.first().toString()"/>
+			<python><![CDATA[
+import os;
+import libstarlang;
+f=libstarlang.getValueLong("context.onetime");
+print(f);
+a=libstarlang.getValueLong("context.currentm");
+print(a);
+b=libstarlang.getValueLong("context.timeoutvalue");
+if(a-f>=b):
+    libstarlang.setValueBool("context.isTimeout",True);
+else:
+    libstarlang.setValueBool("context.isTimeout",False);
+			]]></python>	
+			<if cond="context.isTimeout.toBoolean() == true">	
+				<then>
+					<remove name="timehashmap" key="context.sip.toString()"/>
+					<remove name="hosthashmap" key="context.sip.toString()"/>
+				</then>
+			</if>
+		</for>
+		
+		<if cond="context.hosthashmap.size() == 0">
+			<then>
+				<exit/>
+			</then>
+		</if>
+		<string name="sendjson"/>
+		<string name="outputport" />
+		<string name="payloadjson"/>
+		<string name="transportid"/>
+		<messageblock name="msgblock" value="''"/>
+		
+		<pair name="onehost" keytype="string" valuetype="string"/>
+		<for var="context.onehost" in="context.hosthashmap">
+			<set name="context.sendjson" value="context.onehost.second().toString()"/>
+			<script><![CDATA[
+				var json = JSON.parse(context.sendjson.toString());
+				context.outputport.setValue(json.outputport);
+				context.payloadjson.setValue(json.payloadjson);
+				context.transportid.setValue(json.transportid);
+			]]></script>
+			<function name="SendOpenFlowPacketOut">
+				<parameters>
+					<string name="outputport"  in="context.outputport.toString()"/>
+					<string name="payloadjson"  in="context.payloadjson.toString()"/>
+					<string name="transportid"  in="context.transportid.toString()"/>
+					<messageblock name="msgblock" in="context.msgblock"/>
+				</parameters>
+			</function>
+		</for>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">			
+			<!-- YY 2017-08-21 -->
+			<function name="RegistApplication" class="context.applicationmgr">
+				<parameters>
+					<string name="id" in="'hostservice'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'starosapp'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'app for hostservice'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.80.10'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
+				</parameters>
+			</function>			
+
+			<syslog level="INFO">vgatway app startup</syslog>
+			<string name="eventname"/>
+			<set name="eventname"  value="'TimeOutEvent'"/>
+			<!--启动SendARP定时器-->
+			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
+		</onevent>	
+		
+		<onevent event="TimeOutEvent">
+			<function name="SendARPtoHost"/>
+		</onevent>
+		
+		<onevent event="bundleapp.active">
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'hostservice'"/>
+					<string name="event_name" in="'PacketInEvent'"/>					
+					<string name="eth_type" in="'0x0800'"/>					
+				</parameters>
+			</function>	
+		</onevent>
+		
+		<onevent event="~bundleapp.deactive">
+			<function name="removeProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'hostservice'"/>									
+				</parameters>
+			</function>
+			<timer name="context.globaltimer" method="StopTimer"/>
+		</onevent>
+		
+		<onevent event="~bundleapp.shutdown">
+
+		</onevent>
+		
+		<onevent event="PacketInEvent">
+			<syslog level="INFO">###hostservice PacketInEvent####</syslog>
+			<messageblock name="packetmsgblock"/>
+			<string name="inportid"/>
+			<string name="pkoutjson"/>
+			<string name="transportid"/>
+			<string name="dpid" value="event.getParam('datapathid').toString()"/>
+			<string name="srcip"/>
+			<string name="srcmac"/>
+			<boolean name="is_Have" value="false"/>
+			<string name="jsonstring"/>
+			<string name="vmac"/>
+			<string name="vgw"/>
+			<!--<syslog level="INFO"><![CDATA[PacketInEvent = <%=event.getParam('eventdata').toString()%>]]></syslog>-->
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if (info.match != null) {
+					var inport_id = info.match.matchfieldlist[0].inport;					
+					context.inportid.setValue(inport_id);
+				}
+				if (info.payload != null) {
+					var pay_load = info.payload;
+					var strjson=JSON.stringify(pay_load);
+					var sip = info.payload.ethernetpayload.senderprotocoladdress;
+					var src_mac = info.payload.smac;
+					context.pkoutjson.setValue(strjson);	
+					context.srcip.setValue(sip);	
+					context.srcmac.setValue(src_mac);					
+				}
+			]]></script>
+			
+			<function name="Is_HaveGeteway" class="context.vgatewaymanager">
+				<parameters>
+					<string name="ip" in="context.srcip.toString()"/>
+					<boolean name="is_have" out="context.is_Have"/>
+					<string name="outvmac" out="context.vmac"/>
+					<string name="outip" out="context.vgw"/>
+				</parameters>
+			</function>
+
+			<if cond="context.is_Have.toBoolean() == false">
+				<then>
+					<syslog level="INFO">###is_have false####</syslog>
+					<exit/>
+				</then>
+				<elseif cond="context.hosthashmap.hasValue(context.srcip.toString())==true">
+					<syslog level="INFO">##hasValue(context.srcip.toString())==true##</syslog>
+					<string name="iptemp" />
+					<string name="jsonstr" />
+					<long name="currentm" value="context.currentms()"/>
+					<remove name="timehashmap" key="context.srcip.toString()"/>
+					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentms()"/>
+				</elseif>
+				<else>
+					<function name="GetTransportIdFromDevice" class="context.devicemgr">
+						<parameters>
+							<string name="datapathid" in="context.dpid.toString()"/>
+							<string name="transportid" out="context.transportid"/>
+						</parameters>
+					</function>
+					<script><![CDATA[
+						var pljson = JSON.parse(context.pkoutjson.toString());
+						pljson.dmac = context.srcmac.toString();
+						pljson.smac = context.vmac.toString();
+						pljson.ethernetpayload.senderhardwareaddress = context.vmac.toString();
+						pljson.ethernetpayload.targethardwareaddress = context.srcmac.toString();					
+						pljson.ethernetpayload.senderprotocoladdress = context.vgw.toString();
+						pljson.ethernetpayload.targetprotocoladdress = context.srcip.toString();
+						var strjson=JSON.stringify(pljson);
+						
+						var json = new Object();
+						json['outputport']=context.inportid.toString();
+						json['transportid']=context.transportid.toString();
+						json['payloadjson']=strjson;
+						var payload=JSON.stringify(json);
+						context.jsonstring.setValue(payload);
+					]]></script>
+					<insert name="hosthashmap" key="context.srcip.toString()" value="context.jsonstring.toString()"/>
+					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentms()"/>
+					<syslog level="INFO">##insert end##</syslog>
+				</else>
+			</if>
+		</onevent>
+		
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

@@ -29,6 +29,7 @@
 			<string name="m_vlan" />
 			<string name="m_deviceid" />	
 			<string name="m_port" />
+			<long name="m_starttime"/>
 		</private>
 		<public>
 			<function name="CHost">
@@ -45,7 +46,21 @@
 					<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
+					<set name="thisclass.m_starttime" value="context.currentms()"/>
 			</function>
+			
+			<function name="Setcurrenttime">
+				<set name="thisclass.m_starttime" value="context.currentms()"/>
+			</function>
+			<function name="Gethostmacvlan">
+				<parameters>
+					<string name="mac" />			
+					<string name="vlan" />
+				</parameters>
+				<set name="context.mac" value="thisclass.m_mac.toString()"/>
+				<set name="context.vlan" value="thisclass.m_vlan.toString()"/>
+			</function>
+			
 			<!--
 				@brief		打印host信息
 				@auth 		YY
@@ -97,44 +112,253 @@
 					<string name="strjson"/>
 				</parameters>
 				<string name="addhostjson" />
-				<reference variable="addhostjson">
-					<jsonbody>
-						<![CDATA[
-							{
-								"event":"addHost",
-								"payload":
-								{
-									"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
-									"type":"endstation",
-									"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
-									"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
-									"cp":
+				<string name="addhostjson2" />
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue(thisclass.m_mac.toString()+'/'+thisclass.m_vlan.toString())"/>
+				<log level="100"><![CDATA[ memento= <%=context.memento.toString()%>]]></log>
+				<if cond="context.memento.toString()==''">
+					<then>
+						<reference variable="addhostjson">
+							<jsonbody>
+								<![CDATA[
 									{
-										"device":"<%=thisclass.m_deviceid.toString()%>",
-										"port":<%=thisclass.m_port.toString()%>
-									},
-									"labels":
-										[
-											"<%=thisclass.m_ip.toString()%>",
-											"<%=thisclass.m_mac.toString()%>"
-										],
-									"props":{},
-									"metaUi":
-									{
-										"x":317.73021781939826,
-										"y":199.57886255805693,
-										"equivLoc":
+										"event":"addHost",
+										"payload":
 										{
-										"lng":-98.18860657853635,
-										"lat":43.492555430485986
+											"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+											"type":"endstation",
+											"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+											"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+											"cp":
+											{
+												"device":"<%=thisclass.m_deviceid.toString()%>",
+												"port":"<%=thisclass.m_port.toString()%>"
+											},
+											"labels":
+												[
+													"<%=thisclass.m_ip.toString()%>",
+													"<%=thisclass.m_mac.toString()%>"
+												],
+											"props":{}
+											
 										}
-									}
-								}
-							}	
-						]]>
-					</jsonbody>
-				</reference>
-				<set name="strjson" value="context.addhostjson.toString()"/>				
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+						<set name="strjson" value="context.addhostjson.toString()"/>	
+					</then>
+					<else>
+						<reference variable="addhostjson2">
+								<jsonbody>
+									<![CDATA[
+										{
+											"event":"addHost",
+											"payload":
+											{
+												"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+												"type":"endstation",
+												"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+												"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+												"cp":
+												{
+													"device":"<%=thisclass.m_deviceid.toString()%>",
+													"port":"<%=thisclass.m_port.toString()%>"
+												},
+												"labels":
+													[
+														"<%=thisclass.m_ip.toString()%>",
+														"<%=thisclass.m_mac.toString()%>"
+													],
+												"props":{},
+												"metaUi":<%=context.memento.toString()%>
+											}
+										}	
+									]]>
+								</jsonbody>
+							</reference>
+							<set name="strjson" value="context.addhostjson2.toString()"/>	
+					</else>
+				</if>		
+			</function>
+			<!--
+				@brief		获取hostjson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+				Output:
+					@param strjson 	host的json信息
+			-->	
+			<function name="ToRemoveHost2Json">
+				<parameters>
+					<string name="strjson"/>
+				</parameters>
+				<string name="addhostjson" />
+				<string name="addhostjson2" />
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue(thisclass.m_mac.toString()+'/'+thisclass.m_vlan.toString())"/>
+				
+				<if cond="context.memento.toString()==''">
+					<then>
+						<reference variable="addhostjson">
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"removeHost",
+										"payload":
+										{
+											"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+											"type":"endstation",
+											"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+											"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+											"cp":
+											{
+												"device":"<%=thisclass.m_deviceid.toString()%>",
+												"port":"<%=thisclass.m_port.toString()%>"
+											},
+											"labels":
+												[
+													"<%=thisclass.m_ip.toString()%>",
+													"<%=thisclass.m_mac.toString()%>"
+												],
+											"props":{}
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+						<set name="strjson" value="context.addhostjson.toString()"/>	
+					</then>
+					<else>
+						<reference variable="addhostjson2">
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"removeHost",
+										"payload":
+										{
+											"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+											"type":"endstation",
+											"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+											"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+											"cp":
+											{
+												"device":"<%=thisclass.m_deviceid.toString()%>",
+												"port":"<%=thisclass.m_port.toString()%>"
+											},
+											"labels":
+												[
+													"<%=thisclass.m_ip.toString()%>",
+													"<%=thisclass.m_mac.toString()%>"
+												],
+											"props":{},
+											"metaUi":<%=context.memento.toString()%>
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+						<set name="strjson" value="context.addhostjson2.toString()"/>	
+					</else>
+				</if>
+							
+			</function>
+			<function name="GetHostDetails">	
+				<parameters>
+					<string name="stringdetail"/>
+				</parameters>
+				<script><![CDATA[
+					var oneArray = new Array();			
+						oneArray.push("Mac");
+						oneArray.push("Ip");
+						oneArray.push("VLan");
+						oneArray.push("-");
+						oneArray.push("Latitude");
+						oneArray.push("Longitude");
+					
+					var twoarray = new Object();				
+						twoarray['id'] = thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString();
+						twoarray['Mac'] = thisclass.m_mac.toString();
+						twoarray['Ip'] = thisclass.m_ip.toString();
+						twoarray['VLan'] = thisclass.m_vlan.toString();
+						twoarray['-'] = "";
+						twoarray['Latitude'] = null;
+						twoarray['Longitude'] = null;
+					
+					var payload = new Object();
+						payload['title'] = thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString();
+						payload['type'] = "endstation";
+						payload['id'] = thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString();
+						payload['propOrder'] = oneArray;
+						payload['props'] = twoarray;
+					
+					var json = new Object();						
+						json['event'] = "showDetails";
+						json['payload'] = payload;
+						
+					var strjson=JSON.stringify(json);
+					context.stringdetail.setValue(strjson);
+				
+				]]></script>
+			</function>
+			<!--
+			/**********************************************************************
+			* 函数名称：CheckTimeout
+			* 功能描述：Host超时
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：无        
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/04    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="CheckTimeout">
+				<parameters>
+					<long name="startime"/>
+					<boolean name="isTimeout"/>
+				</parameters>
+				<long name="timeoutvalue" value="global.GlobalSetting.getParam('hosttimeout').toLong()"/>
+				<python><![CDATA[
+import os;
+import libstarlang;
+f=libstarlang.getValueLong("thisclass.m_starttime");
+print(f);
+a=libstarlang.getValueLong("context.startime");
+print(a);
+b=libstarlang.getValueLong("context.timeoutvalue");
+if(a-f>=b):
+    libstarlang.setValueBool("context.isTimeout",True);
+else:
+    libstarlang.setValueBool("context.isTimeout",False);
+				]]></python>
+				<log><![CDATA[CheckTimeout timeoutvalue = <%=context.timeoutvalue.toString()%>]]></log>
+				<log><![CDATA[CheckTimeout startime = <%=context.startime.toString()%>]]></log>
+				<log><![CDATA[CheckTimeout m_starttime = <%=thisclass.m_starttime.toString()%>]]></log>
+			</function>
+			<!--
+			/**********************************************************************
+			* 函数名称：GetHostId
+			* 功能描述：获取HostId
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：无        
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/04    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="GetHostId">
+				<parameters>
+					<string name="hostid"/>
+				</parameters>
+				<set name="hostid" value="thisclass.m_mac.toString()+'/'+thisclass.m_vlan.toString()"/>
 			</function>
 		</public>
 	</class>
@@ -167,8 +391,17 @@
 					<string name="deviceid" />	
 					<string name="port"/>				
 				</parameters>
+
 				<log level="100">###### CHostManager addHost #######</log>
 				<object name="hostobj"/>	
+				<object name="host"/>
+				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
+					<then>
+						<lookup name="thisclass.hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" output="context.host"/>
+						<function name="Setcurrenttime" class="host"/>
+						<exit/>
+					</then>
+				</if>
 				<new name="hostobj" class="CHost">
 					<parameters>
 						<string name="mac"  in="context.mac.toString()"/>		
@@ -176,26 +409,21 @@
 						<string name="vlan"  in="context.vlan.toString()"/>
 						<string name="deviceid"  in="context.deviceid.toString()"/>	
 						<string name="port"  in="context.port.toString()"/>				
-				</parameters>
+					</parameters>
 				</new>
-				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
-					<then>
-						<exit/>
-					</then>
-				</if>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
+				<syslog level="INFO"><![CDATA[host container size<%=context.hostContainer.size().toString()%>]]></syslog>
 				<string name="functionname"/>
 				<for var="context.functionname" in="context.listernellist">
 					<function callback="functionname">
 						<parameters>
 								<string name="type" in="'add'"/>
-								<string name="hostobject" in="context.hostobj.toString()"/>					
+								<object name="hostobject" in="context.hostobj"/>					
 						</parameters>
 					</function>		
 				</for>
 				<log level="100"><![CDATA[CHostManager hostContainer.size = <%=context.hostContainer.size().toString()%>]]></log>
 			</function>
-			
 			<!--
 				@brief		删除一个host
 				@auth 		YY
@@ -210,6 +438,7 @@
 					<string name="mac"/>
 					<string name="vlan"/>
 				</parameters>
+				<log level="100">###### CHostManager RemoveHost #######</log>
 				<string name="functionname"/>
 				<object name="hostobj"/>
 				<pair name="onehostpair"/>
@@ -226,7 +455,7 @@
 							<function callback="functionname">
 								<parameters>
 									<string name="type" in="'remove'"/>
-									<string name="hostobject" in="context.hostobj"/>						
+									<object name="hostobject" in="context.hostobj"/>						
 								</parameters>
 							</function>		
 						</for>
@@ -488,6 +717,106 @@
 					<long name="hostCounts"/>
 				</parameters>
 				<set name="hostCounts" value="context.hostContainer.size()"/>	
+			</function>
+		<!--
+			/**********************************************************************
+			* 函数名称：SendDetails
+			* 功能描述：发送Host详细信息到浏览器
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：transportid   通道id
+			*			hostid        HostId         
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/04    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="SendDetails">	
+				<parameters>
+					<string name="transportid"/>
+					<string name="hostid"/>	
+				</parameters>
+				<object name="hostobj"/>
+				<string name="stringdetail"/>
+				<lookup name="thisclass.hostContainer" key="context.hostid.toString()" output="context.hostobj"/>
+				<if cond="context.hostobj.ptr ==null">
+					<then>
+						<exit/>
+					</then>
+				</if>
+				<function name="GetHostDetails" class="hostobj">	
+					<parameters>
+						<string name="stringdetail" out="context.stringdetail"/>
+					</parameters>
+				</function>
+				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+					<jsonsrc src="stringdetail"/>
+				</websocket>
+			</function>
+			<!--
+			/**********************************************************************
+			* 函数名称：CheckHostTimeout
+			* 功能描述：Host超时
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：无        
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/04    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="CheckHostTimeout">
+				<object name="hostobj" />
+				<long name="starttime" value="context.currentms()"/>
+				<pair name="onehostpair"  keytype="string" valuetype="object"/>
+				<boolean name="isTimeOut"/>
+				<list name="removelist" valuetype="object"/>
+				<object name="toremoveobj"/>
+				<string name="hostid"/>
+				<string name="functionname"/>
+				<for var="onehostpair" in="context.hostContainer">
+					<set name="hostobj" value="context.onehostpair.second()"/>
+					<if cond="context.hostobj.ptr!=null">
+						<then>
+							<function name="CheckTimeout" class="hostobj">
+								<parameters>
+									<long name="startime" in="context.starttime"/>
+									<boolean name="isTimeout" out="context.isTimeOut"/>
+								</parameters>
+							</function>
+							<if cond="context.isTimeOut.toBoolean()==true">
+								<then>
+									<insert name="context.removelist" value="context.hostobj"/>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>
+				<log><![CDATA[CheckHostTimeout removelist= <%=context.removelist.size().toString()%>]]></log>
+				<for var="toremoveobj" in="context.removelist">
+					<function>
+						<for var="context.functionname" in="context.listernellist">
+							<function callback="functionname">
+								<parameters>
+									<string name="type" in="'remove'"/>
+									<object name="hostobject" in="context.toremoveobj"/>						
+								</parameters>
+							</function>		
+						</for>
+						<function name="GetHostId" class="context.toremoveobj">
+							<parameters>
+								<string name="hostid" out="context.hostid"/>
+							</parameters>
+						</function>
+						<remove name="thisclass.hostContainer" key="context.hostid.toString()"/>
+					</function>
+				</for>
 			</function>
 		</public>
 	</class>

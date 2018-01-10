@@ -1,37 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <starlang xmlns="http://www.staros.xyz/starcore" scope="application">
 	<logconfig dest="stdout"/>
-		<!--/opt/staros.xyz/staroscontroller/starlang/unittest/starlang/test6-syslog-gt-20M.xml -->
-		<function name="testPython">
-			<log level="100">---enter testPython		2017.12.28</log>
-			<long name="starttime" value="context.currentms()"/>
-			<python><![CDATA[
-for i in range(1, 90001):
-    a =1
+	<!--/opt/staros.xyz/staroscontroller/starlang/unittest/starlang/test6-syslog-gt-20M.xml -->
+	<function name="testPython">
+		<log level="100">---enter testPython		2017.12.28</log>
+		<long name="starttime" value="context.currentms()"/>
+		
+		<python><![CDATA[
+for i in range(1, 2000001):
+	a =1
 	b=2
 	c=a+b
+		]]></python>
+		
+		<long name="stoptime" value="context.currentms()"/>
+		<long name="runTimeDifference"/>
+		<!--long name="result" value="context.stoptime.toLong()-context.starttime.toLong()"/-->
+		
+		<function>
+			<python><![CDATA[
+import os;
+import libstarlang;
+starttime2=libstarlang.getValueLong("context.starttime");
+stoptime2=libstarlang.getValueLong("context.stoptime");
+result2=stoptime2-starttime2;
+libstarlang.setValueLong("context.runTimeDifference",result2);
 			]]></python>
-			<long name="stoptime" value="context.currentms()"/>
-			<long name="result" value="context.stoptime.toLong()-context.starttime.toLong()"/>
-			<log level="100"><![CDATA[python result = <%=context.result.toLong()%>]]></log>
+			<log level="100"><![CDATA[python runTimeDifference=<%=context.runTimeDifference.toLong()%>]]></log>
 		</function>
 		
-		<function name="testJS">
-			<log level="100">---enter testJS		2017.12.28</log>
-			<long name="starttime" value="context.currentms()"/>
-			
-			<script><![CDATA[
-					for(var i=0;i<90000;i++){
-						var num = 1
-						var num2 =2
-						var num3=num+num2;
-					}
-			]]></script>
-			
-			<long name="stoptime" value="context.currentms()"/>
-			<long name="result" value="context.stoptime.toLong()-context.starttime.toLong()"/>
-			<log level="100"><![CDATA[js result = <%=context.result.toLong()%>]]></log>
+	</function>
+	
+	<function name="testJS">
+		<log level="100">---enter testJS		2017.12.28</log>
+		<long name="starttime" value="context.currentms()"/>
+		
+		<script><![CDATA[
+				for(var i=0;i<2000000;i++){
+					var num = 1
+					var num2 =2
+					var num3=num+num2;
+				}
+		]]></script>
+		
+		<long name="stoptime" value="context.currentms()"/>
+		<!--long name="result" value="context.stoptime.toLong()-context.starttime.toLong()"/-->
+		
+		<long name="runTimeDifference"/>
+		
+		<function>
+			<python><![CDATA[
+import os;
+import libstarlang;
+starttime2=libstarlang.getValueLong("context.starttime");
+stoptime2=libstarlang.getValueLong("context.stoptime");
+result2=stoptime2-starttime2;
+libstarlang.setValueLong("context.runTimeDifference",result2);
+			]]></python>
+			<log level="100"><![CDATA[js runTimeDifference=<%=context.runTimeDifference.toLong()%>]]></log>
 		</function>
+	</function>
 
 	<events>		
 		<onevent event="bundleapp.startup">
@@ -40,6 +68,7 @@ for i in range(1, 90001):
 			<function name="testJS"/>
 		</onevent>
 	</events>
+	
 </starlang>
 
 

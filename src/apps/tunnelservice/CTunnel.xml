@@ -61,6 +61,8 @@
 			<string name="m_outputvxlanport"/>
 			<!-- 带宽 -->
 			<long name="m_bandwidth"/>
+			<!--  策略id -->
+			<string name="m_policyid"/>
 
 			<object name="m_tunneldevicemgr"/>
 			<boolean name="m_bisActive" value="false"/>
@@ -73,6 +75,12 @@
 			<string name="m_todeviceport"/>
 			<string name="m_totunnelport"/>
 			<string name="m_tovxlanport"/>
+
+			<!-- wangkang 2018/01/09 -->
+			<string name="m_srcip"/>
+			<string name="m_dstip"/>
+			<string name="m_ipproto"/>
+			<boolean name="m_ispolicy" value="false"/>
 		</private>
 		<public>
 			<function name="CTunnel">
@@ -97,6 +105,7 @@
 					<string name="inputvxlanport"/>
 					<string name="outputvxlanport"/>	
 					<long name="bandwidth"/>
+					<string name="policyid"/>
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toLong()"/>
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -114,6 +123,7 @@
 				<set name="thisclass.m_outputvlanid" value="context.outputvlanid.toLong()"/>
 				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
+				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
 				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
 				<script><![CDATA[
 					var inputdevice = thisclass.m_inputPort.toString();	
@@ -138,6 +148,31 @@
 					thisclass.m_fromvxlanport.setValue(oneinputvxlanport);
 					thisclass.m_tovxlanport.setValue(oneoutputvxlanport);
 				]]></script>
+				<!-- wangkang 2018/01/09 -->
+				<string name="oneipproto"/>
+				<function name="GetPolicyDetailInfo" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.policyid"/>
+						<string name="srcIp" out="thisclass.m_srcip"/>
+						<string name="dstIp" out="thisclass.m_dstip"/>
+						<string name="content" out="context.oneipproto"/>
+						<boolean name="result" out="thisclass.m_ispolicy"/>
+					</parameters>
+				</function>
+				<if cond="context.oneipproto.toString() == 'TCP' ">
+					<then>
+						<log level="100">CTunnel transport protocol is TCP</log>
+						<set name="thisclass.m_ipproto" value="'6'"/>
+					</then>
+					<elseif cond="context.oneipproto.toString() == 'UDP' ">
+						<log level="100">CTunnel transport protocol is UDP</log>
+						<set name="thisclass.m_ipproto" value="'17'"/>
+					</elseif>
+					<else>
+						<log level="100">CTunnel transport protocol is ICMP</log>
+						<set name="thisclass.m_ipproto" value="'1'"/>
+					</else>
+				</if>
 			</function>
 
 			<function name="GetTunnelId">
@@ -239,6 +274,13 @@
 				</parameters>
 				<set name="t_bandwidth" value="thisclass.m_bandwidth.toLong()"/>
 			</function>
+
+			<function name="GetTunnel_policyid">
+				<parameters>
+					<string name="t_policyid"/>
+				</parameters>
+				<set name="t_policyid" value="thisclass.m_policyid.toString()"/>
+			</function>
 			
 			<!--
 				@brief		tunnel对象的json信息
@@ -310,6 +352,7 @@
 					<string name="inputvxlanport"/>
 					<string name="outputvxlanport"/>						
 					<long name="bandwidth"/>
+					<string name="policyid"/>
 				</parameters>
 				<syslog level="INFO">##############3UPdate Start##########</syslog>	
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -326,6 +369,13 @@
 				<set name="thisclass.m_inputvxlanport" value="context.inputvxlanport.toString()"/>
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>	
+				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
+				<log level="100">######## CTunnel UpdateTunnel Deactive Tunnel start #######</log>
+				<function name="DeactiveTunnel"/>
+				<syslog level="INFO">###DeactiveTunnel end ###</syslog>
+				<log level="100">######## CTunnel UpdateTunnel Deactive Tunnel end #######</log>
+				<function name="ActiveTunnel"/>
+				<syslog level="INFO">###ActiveTunnel end ###</syslog>
 			</function>
 			<!--
 				@brief		Start Tunnel
@@ -425,37 +475,86 @@
 				<if cond="context.firstdevice.equal(context.lastdevice)">
 					<then>
 						<log>context.firstdevice==context.lastdevice</log>
-						<function name="installRuleAtSameDevice" class="firstdevice">
+						<if cond="thisclass.m_ispolicy.toBoolean() == true">
+							<then>
+								<function name="installRuleAtSameDevice" class="firstdevice">
+									<parameters>
+										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+										<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+										<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+										<string name="srcip" in="thisclass.m_srcip.toString()"/>
+										<string name="dstip" in="thisclass.m_dstip.toString()"/>
+										<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+									</parameters>
+								</function>
+							</then>
+							<else>
+								<function name="installRuleAtSameDevice" class="firstdevice">
+									<parameters>
+										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+										<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+										<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+									</parameters>
+								</function>
+							</else>
+						</if>
+						<set name="m_bisActive" value="true"/>
+						<exit/>
+					</then>
+				</if>
+
+				<if cond="thisclass.m_ispolicy.toBoolean() == true">
+					<then>
+						<function name="installRuleStart" class="firstdevice">
 							<parameters>
 								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+								<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+								<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+								<string name="srcip" in="thisclass.m_srcip.toString()"/>
+								<string name="dstip" in="thisclass.m_dstip.toString()"/>
+								<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+							</parameters>
+						</function>
+						<function name="installRuleEnd" class="lastdevice">
+							<parameters>
+								<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+								<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
+								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+								<string name="srcip" in="thisclass.m_srcip.toString()"/>
+								<string name="dstip" in="thisclass.m_dstip.toString()"/>
+								<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<function name="installRuleStart" class="firstdevice">
+							<parameters>
+								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
+								<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+								<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+							</parameters>
+						</function>
+						<function name="installRuleEnd" class="lastdevice">
+							<parameters>
+								<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+								<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
 								<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 								<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
 								<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
 							</parameters>
 						</function>
-						<set name="m_bisActive" value="true"/>
-						<exit/>
-					</then>
+					</else>
 				</if>
-				<function name="installRuleStart" class="firstdevice">
-					<parameters>
-						<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-						<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
-						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-					</parameters>
-				</function>
-				<function name="installRuleEnd" class="lastdevice">
-					<parameters>
-						<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-						<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-						<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-						<string name="outvlan" in="thisclass.m_outputvlanid.toString()"/>
-						<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-					</parameters>
-				</function>
 
 				<set name="middevicefirst" value="context.middevice.begin()"/>
 				<set name="middeviceend" value="context.middevice.end()"/>				
@@ -468,12 +567,27 @@
 							<exit/>
 						</then>
 					</if>
-					<function name="installRuleMid" class="onedevice">
-						<parameters>
-							<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
-							<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
-						</parameters>
-					</function>
+					<if cond="thisclass.m_ispolicy.toBoolean() == true">
+						<then>
+							<function name="installRuleMid" class="onedevice">
+								<parameters>
+									<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+									<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+									<string name="srcip" in="thisclass.m_srcip.toString()"/>
+									<string name="dstip" in="thisclass.m_dstip.toString()"/>
+									<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+								</parameters>
+							</function>
+						</then>
+						<else>
+							<function name="installRuleMid" class="onedevice">
+								<parameters>
+									<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
+									<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
+								</parameters>
+							</function>
+						</else>
+					</if>
 				</for>
 				<set name="m_bisActive" value="true"/>
 			</function>
@@ -549,26 +663,60 @@
 						</if>
 						<if cond="context.firstdevice.ptr != null">
 							<then>
-								<function name="installVxlanTunnelStart" class="firstdevice">
-									<parameters>
-										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-										<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
-										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
-										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-									</parameters>
-								</function>
+								<if cond="thisclass.m_ispolicy.toBoolean() == true">
+									<then>
+										<function name="installVxlanTunnelStart" class="firstdevice">
+											<parameters>
+												<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+												<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
+												<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+												<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+												<string name="srcip" in="thisclass.m_srcip.toString()"/>
+												<string name="dstip" in="thisclass.m_dstip.toString()"/>
+												<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+											</parameters>
+										</function>
+									</then>
+									<else>
+										<function name="installVxlanTunnelStart" class="firstdevice">
+											<parameters>
+												<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+												<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
+												<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+												<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+											</parameters>
+										</function>
+									</else>
+								</if>
 							</then>
 						</if>
 						<if cond="context.lastdevice.ptr != null">
 							<then>
-								<function name="installVxlanTunnelEnd" class="lastdevice">
-									<parameters>
-										<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-										<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
-										<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
-										<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
-									</parameters>
-								</function>
+								<if cond="thisclass.m_ispolicy.toBoolean() == true">
+									<then>
+										<function name="installVxlanTunnelEnd" class="lastdevice">
+											<parameters>
+												<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+												<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
+												<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+												<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+												<string name="srcip" in="thisclass.m_srcip.toString()"/>
+												<string name="dstip" in="thisclass.m_dstip.toString()"/>
+												<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+											</parameters>
+										</function>
+									</then>
+									<else>
+										<function name="installVxlanTunnelEnd" class="lastdevice">
+											<parameters>
+												<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+												<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
+												<long name="vxlantunnelid" in="thisclass.m_vxlantunnelid.toLong()"/>
+												<long name="bandwith" in="thisclass.m_bandwidth.toLong()"/>
+											</parameters>
+										</function>
+									</else>
+								</if>
 							</then>
 						</if>
 						<set name="m_bisActive" value="true"/>
@@ -597,24 +745,53 @@
 							<if cond="context.firstdevice.ptr != null">
 								<then>
 									<log level="101">firstdevice is not null</log>
-									<function name="installVxlanZhuanXianStart" class="firstdevice">
-										<parameters>
-											<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-											<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
-										</parameters>
-									</function>
+									<if cond="thisclass.m_ispolicy.toBoolean() == true">
+										<then>
+											<function name="installVxlanZhuanXianStart" class="firstdevice">
+												<parameters>
+													<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+													<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+													<string name="srcip" in="thisclass.m_srcip.toString()"/>
+													<string name="dstip" in="thisclass.m_dstip.toString()"/>
+													<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+												</parameters>
+											</function>
+										</then>
+										<else>
+											<function name="installVxlanZhuanXianStart" class="firstdevice">
+												<parameters>
+													<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+													<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+												</parameters>
+											</function>
+										</else>
+									</if>
 								</then>
 							</if>
 							<if cond="context.lastdevice.ptr != null">
 								<then>
 									<log level="101">lastdevice is not null</log>
-									
-									<function name="installVxlanZhuanXianEnd" class="lastdevice">
-										<parameters>
-											<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-											<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
-										</parameters>
-									</function>
+									<if cond="thisclass.m_ispolicy.toBoolean() == true">
+										<then>
+											<function name="installVxlanZhuanXianEnd" class="lastdevice">
+												<parameters>
+													<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+													<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+													<string name="srcip" in="thisclass.m_srcip.toString()"/>
+													<string name="dstip" in="thisclass.m_dstip.toString()"/>
+													<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+												</parameters>
+											</function>
+										</then>
+										<else>
+											<function name="installVxlanZhuanXianEnd" class="lastdevice">
+												<parameters>
+													<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+													<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+												</parameters>
+											</function>
+										</else>
+									</if>
 								</then>
 							</if>
 							<set name="m_bisActive" value="true"/>

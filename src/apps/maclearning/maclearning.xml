@@ -28,6 +28,8 @@
 	<object name="meterservice" value="global.MeterService" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="toposervice" value="global.TopoService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	
 	<list name="resourceid_list" valuetype="string"/>
 	<hashmap name="machashmap" keytype="string" valuetype="string"/>
 	<function name="installflow">
@@ -125,14 +127,14 @@
 					<string name="origin" in="'Nanjing StarOS Inc.'"/>
 					<string name="title" in="'app for maclearning'"/>
 					<string name="desc" in="'2.10.10.0'"/>		
-					<string name="url" in="'192.168.228.128'"/>
+					<string name="url" in="'192.168.80.10'"/>
 					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
 			</function>			
 			
 					
 			
-			<function name="addTopoListener" class="TopoService">				
+			<function name="addTopoListener" class="context.toposervice">				
 				<parameters>
 					<string name="appid" in="'maclearning'"/>
 					<string name="add_eventname" in="'mytopadd'"/>
@@ -140,7 +142,7 @@
 				</parameters>
 			</function>	
 			
-			<log>maclearning app startup</log>
+			<syslog level="INFO">maclearning app startup</syslog>
 		</onevent>	
 		
 		<onevent event="bundleapp.active">
@@ -172,7 +174,7 @@
 			<!-- YY 2017-08-21 -->
 			
 			
-			<function name="removeTopoListener" class="TopoService">
+			<function name="removeTopoListener" class="context.toposervice">
 				<parameters>
 					<string name="appid" in="'maclearning'"/>
 				</parameters>
@@ -193,6 +195,7 @@
 			<string name="dstmac"/>
 			<string name="ethtype"/>
 			<string name="result_mac"/>
+			<syslog level="INFO"><![CDATA[PacketInEvent = <%=event.getParam('eventdata').toString()%>]]></syslog>
 			<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if (info.match != null) {
@@ -212,11 +215,14 @@
 				}
 
 			]]></script>
-			<set name="packetmsgblock" value="event.getMessageBlock()"/>			
+			<set name="packetmsgblock" value="event.getMessageBlock()"/>	
+			<syslog level="INFO"><![CDATA[ethtype = <%=context.ethtype.toString()%>]]></syslog>
 			<if cond="context.ethtype.toString()=='2054'">
 				<then>
+					<syslog level="INFO">####ethtype is APR####</syslog>
 					<if cond="context.dstmac.toString()=='ff:ff:ff:ff:ff:ff'">
 						<then>
+							<syslog level="INFO">####Packet Out To All Port####</syslog>
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
 									<string name="datapathid" in="event.getParam('datapathid').toString()"/>
@@ -238,7 +244,8 @@
 										</parameters>
 									</function>
 								</then>
-								<else>																
+								<else>		
+									<syslog level="INFO">####hasValue is true####</syslog>
 									<function name="PacketOutToPort" class="context.devicemgr">
 										<parameters>	
 											<string name="outputport" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
@@ -253,14 +260,16 @@
 						</else>
 					</if>
 					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
-				<then>
-					<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+						<then>
+							<syslog level="INFO">####insert mac hashmap####</syslog>
+							<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
+						</then>
+					</if>
 				</then>
-			</if>
-			</then>
 				<else>					
 					<if cond="context.machashmap.hasValue(context.dstmac.toString())==false">
-						<then>																					
+						<then>		
+							<syslog level="INFO">####PacketOut To AllPort####</syslog>
 							<function name="PacketOutToAllPort" class="context.devicemgr">
 								<parameters>
 									<string name="datapathid" in="event.getParam('datapathid').toString()"/>
@@ -270,7 +279,8 @@
 								</parameters>
 							</function>
 						</then>
-						<else>					
+						<else>	
+							<syslog level="INFO">####hasValue is true####</syslog>
 							<function name="PacketOutToPort" class="context.devicemgr">
 								<parameters>	
 									<string name="outputport" in="context.machashmap.getValue(context.dstmac.toString()).toString()"/>
@@ -291,6 +301,9 @@
 					</if>	
 					<if cond="context.machashmap.hasValue(context.srcmac.toString())==false">
 						<then>
+							<syslog level="INFO">####Insert MAC hashmap####</syslog>
+							<syslog level="INFO"><![CDATA[key = <%=context.srcmac.toString()%>]]></syslog>
+							<syslog level="INFO"><![CDATA[value = <%=context.inportid.toString()%>]]></syslog>
 							<insert name="machashmap" key="context.srcmac.toString()" value="context.inportid.toString()"/>
 						</then>
 					</if>
