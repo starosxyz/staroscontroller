@@ -35,6 +35,7 @@
 	<hashmap name="timehashmap" keytype="string" valuetype="long"/>
 	
 	<function name="SendARPtoHost">
+		<!--<syslog level="INFO">##SendARPtoHost##</syslog>-->
 		<long name="time"/>
 		<long name="currentm"/>
 		<set name="context.currentm" value="context.currentms()"/>
@@ -48,9 +49,11 @@
 			<python><![CDATA[
 import os;
 import libstarlang;
-f=libstarlang.getValueLong("context.onetime");
+f=libstarlang.getValueLong("context.time");
+print("f=");
 print(f);
 a=libstarlang.getValueLong("context.currentm");
+print("a=");
 print(a);
 b=libstarlang.getValueLong("context.timeoutvalue");
 if(a-f>=b):
@@ -58,6 +61,7 @@ if(a-f>=b):
 else:
     libstarlang.setValueBool("context.isTimeout",False);
 			]]></python>	
+			<!--<syslog level="INFO"><![CDATA[isTimeout = <%=context.isTimeout.toBoolean()%>]]></syslog>-->
 			<if cond="context.isTimeout.toBoolean() == true">	
 				<then>
 					<remove name="timehashmap" key="context.sip.toString()"/>
@@ -68,6 +72,7 @@ else:
 		
 		<if cond="context.hosthashmap.size() == 0">
 			<then>
+				<syslog level="INFO">##hosthashmap.size() == 0##</syslog>
 				<exit/>
 			</then>
 		</if>
@@ -75,7 +80,7 @@ else:
 		<string name="outputport" />
 		<string name="payloadjson"/>
 		<string name="transportid"/>
-		<messageblock name="msgblock" value="''"/>
+		<messageblock name="msgblock" value="0"/>
 		
 		<pair name="onehost" keytype="string" valuetype="string"/>
 		<for var="context.onehost" in="context.hosthashmap">
@@ -86,6 +91,10 @@ else:
 				context.payloadjson.setValue(json.payloadjson);
 				context.transportid.setValue(json.transportid);
 			]]></script>
+			<syslog level="INFO"><![CDATA[outputport = <%=context.outputport.toString%>]]></syslog>
+			<syslog level="INFO"><![CDATA[payloadjson = <%=context.payloadjson.toString%>]]></syslog>
+			<syslog level="INFO"><![CDATA[transportid = <%=context.transportid.toString%>]]></syslog>
+			<syslog level="INFO"><![CDATA[msgblock = <%=context.msgblock.toString%>]]></syslog>
 			<function name="SendOpenFlowPacketOut">
 				<parameters>
 					<string name="outputport"  in="context.outputport.toString()"/>
@@ -98,7 +107,6 @@ else:
 	</function>
 	<events>
 		<onevent event="bundleapp.startup">			
-			<!-- YY 2017-08-21 -->
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'hostservice'"/>
@@ -112,14 +120,16 @@ else:
 				</parameters>
 			</function>			
 
-			<syslog level="INFO">vgatway app startup</syslog>
+			<syslog level="INFO">vgatway app startup</syslog>	
 			<string name="eventname"/>
 			<set name="eventname"  value="'TimeOutEvent'"/>
 			<!--启动SendARP定时器-->
-			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
+			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>		
+			
 		</onevent>	
 		
 		<onevent event="TimeOutEvent">
+			<!--<syslog level="INFO">##TimeOutEvent##</syslog>-->
 			<function name="SendARPtoHost"/>
 		</onevent>
 		
@@ -130,7 +140,7 @@ else:
 					<string name="event_name" in="'PacketInEvent'"/>					
 					<string name="eth_type" in="'0x0800'"/>					
 				</parameters>
-			</function>	
+			</function>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
@@ -139,7 +149,6 @@ else:
 					<string name="app_name" in="'hostservice'"/>									
 				</parameters>
 			</function>
-			<timer name="context.globaltimer" method="StopTimer"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
@@ -188,18 +197,18 @@ else:
 
 			<if cond="context.is_Have.toBoolean() == false">
 				<then>
-					<syslog level="INFO">###is_have false####</syslog>
 					<exit/>
 				</then>
 				<elseif cond="context.hosthashmap.hasValue(context.srcip.toString())==true">
-					<syslog level="INFO">##hasValue(context.srcip.toString())==true##</syslog>
 					<string name="iptemp" />
 					<string name="jsonstr" />
-					<long name="currentm" value="context.currentms()"/>
+					<long name="currentm" />
+					<set name="context.currentm" value="context.currentms()"/>
 					<remove name="timehashmap" key="context.srcip.toString()"/>
-					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentms()"/>
+					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentm.toLong()"/>
 				</elseif>
 				<else>
+					<syslog level="INFO">##insert start##</syslog>
 					<function name="GetTransportIdFromDevice" class="context.devicemgr">
 						<parameters>
 							<string name="datapathid" in="context.dpid.toString()"/>
@@ -224,7 +233,12 @@ else:
 						context.jsonstring.setValue(payload);
 					]]></script>
 					<insert name="hosthashmap" key="context.srcip.toString()" value="context.jsonstring.toString()"/>
-					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentms()"/>
+					<syslog level="INFO"><![CDATA[JSONstr = <%= context.jsonstring.toString()%>]]></syslog>
+					
+					<long name="inserttime" />
+					<set name="context.inserttime" value="context.currentms()"/>
+					<syslog level="INFO"><![CDATA[inserttime = <%= context.inserttime.toLong()%>]]></syslog>
+					<insert name="timehashmap" key="context.srcip.toString()" value="context.inserttime.toLong()"/>
 					<syslog level="INFO">##insert end##</syslog>
 				</else>
 			</if>

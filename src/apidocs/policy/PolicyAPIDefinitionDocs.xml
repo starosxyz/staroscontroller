@@ -28,6 +28,7 @@
 		@date		2018/01/08
 		Input:
 		Output: 
+		getAll,返回的结果案例
 	-->
 	<function name="AddDefinitionPolicysData">
 		<string name="definitionname"/>
@@ -306,6 +307,7 @@
 		<function name="AddDefinitionPolicysData"/>
 		<function name="AddDefinitionPolicyData"/>
 		<function name="AddDefinitionPolicyResultData"/>
+		<function name="AddPolicysJsonDemo"/>
 	</function>
 	
 	<!--
@@ -319,5 +321,97 @@
 		<function name="RemoveDefinitionPolicysData"/>
 		<function name="RemovePutRequestDocsAPIPolicy"/>
 		<function name="RemoveDefinitionPolicyResultData"/>
+		<function name="RemovePolicysJsonDemo"/>
+	</function>
+	<!--
+		@brief		定义 PolicysJsonDemo
+		@auth 		qiulei
+		@date		2018/01/11
+		Input:
+		Output: 
+	-->
+	<function name="AddPolicysJsonDemo">
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
+
+		<set name="definitionname" value="'PolicysJsonDemo'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+					"type": "object",
+					"title": "policys",
+					"required": [
+						"policys"
+					],
+					"properties": {
+						"policys": {
+							"type": "array",
+							"xml": {
+								"name": "policys",
+								"wrapped": true
+							},
+							"items": {
+								"type": "object",
+								"title": "policy",
+								"required": [
+									"policyid",
+									"srcIp",
+									"dstIp",
+									"content"
+								],
+								"properties": {
+									"policyid": {
+												"type": "string",
+												"example": "3"
+											},
+									"srcIp": {
+												"type": "string",
+												"example": "192.168.137.128"
+											},
+									"dstIp": {
+												"type": "string",
+												"example": "192.168.137.129"
+											},
+									"content": {
+												"type": "string",
+												"example": "3"
+											}
+								}
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--
+		@brief		删除 PolicysJsonDemo
+		@auth 		qiulei
+		@date		2018/01/111
+		Input:
+		Output: 
+	-->
+	<function name="RemovePolicysJsonDemo">
+		<string name="definitionname"/>
+		
+		<set name="definitionname" value="'PolicysJsonDemo'" />
+
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180111-->
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
 	</function>
 </starlang>

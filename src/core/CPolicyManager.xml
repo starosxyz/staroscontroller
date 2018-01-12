@@ -142,6 +142,9 @@
 						<log level="101"><![CDATA[context.policyContainer.size=<%=context.policyContainer.size().toString()%> ----142]]></log>
 						<log level="101">add over</log>
 					</then>
+					<else>
+						<exit/>
+					</else>
 				</if>
 			</function>															
 			
@@ -176,6 +179,8 @@
 				<parameters>
 					<string name="policystr"/>
 				</parameters>
+				<log level="100"> 182 in GetAllPolicy</log>
+				<log level="101"><![CDATA[policyContainer size=<%=thisclass.policyContainer.size().toString()%> ----216]]></log>
 				<object name="policyobj"/>
 				<string name="onepolicyjson"/>
 				<string name="strjson"/>
@@ -244,12 +249,13 @@
 					<boolean name="result"/>
 				</parameters>
 				<object name="onepolicyobj"/>
+				
 				<if cond="thisclass.policyContainer.hasValue(context.policyid.toString())">
 					<then>
 						<lookup name="policyContainer" key="context.policyid.toString()" output="context.onepolicyobj"/>
 						<if cond="context.onepolicyobj.ptr == null">
 							<then>
-								<log>CPolicyManager Get Policyobj is null</log>
+								<syslog level="INFO">CPolicyManager Get Policyobj is null</syslog>
 								<set name="context.result" value="false"/>
 							</then>
 							<else>
@@ -264,7 +270,14 @@
 							</else>
 						</if>
 					</then>	
+					<else>
+						<syslog level="INFO">CPolicyManager  Policyid is null</syslog>
+						<set name="context.result" value="false"/>
+					</else>
 				</if>
+				<else>
+					
+				</else>
 			</function>
 			
 			<function name="UpdatePolicy">
@@ -292,6 +305,33 @@
 						<set name="context.updateResult" value="true"/>
 					</then>
 				</if>
+			</function>
+			
+			<!-- wangkang 2018/01/11 -->
+			<function name="DumpPolicy">
+				<string name="policyid" />
+				<string name="srcIp"/>
+				<string name="dstIp"/>
+				<string name="content"/>
+				<object name="onepolicyobj"/>
+				<pair name="onePolicyPair"  keytype="string" valuetype="object"/>
+				<syslog level="INFO"><![CDATA[CPolicyManager policyContainer.size = <%=thisclass.policyContainer.size().toString()%>]]></syslog>
+				
+				<for var="onePolicyPair" in="thisclass.policyContainer">
+					<set name="policyid" value="context.onePolicyPair.first()"/>
+					<set name="onepolicyobj" value="context.onePolicyPair.second()"/>
+					<function name="GetPolicyinfo" class="onepolicyobj">
+						<parameters>
+							<string name="srcIp" out="context.srcIp"/>
+							<string name="dstIp" out="context.dstIp"/>
+							<string name="content" out="context.content"/>
+						</parameters>
+					</function>
+					<syslog level="INFO"><![CDATA[CPolicyManager policyid = <%=context.policyid.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[CPolicyManager srcIp = <%=context.srcIp.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[CPolicyManager dstIp = <%=context.dstIp.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[CPolicyManager content = <%=context.content.toString()%>]]></syslog>
+				</for>			
 			</function>
 		</public>
 	</class>

@@ -50,7 +50,7 @@
 				<parameters>
 					<string name="netmask" />
 				</parameters>
-				<set name="context.netmask" value="thisclass.m_ip.toString()"/>
+				<set name="context.netmask" value="thisclass.m_netmask.toString()"/>
 			</function>		
 			<function name="Getvmac">
 				<parameters>
@@ -68,13 +68,27 @@
 				<reference variable="values">
 					<jsonbody><![CDATA[ 
 						{	
-							"ip":"<%=thisclass.ip.toString()%>",
-							"netmask":"<%=thisclass.netmask.toString()%>",
-							"vmac":"<%=thisclass.vmac.toString()%>"
+							"ip":"<%=thisclass.m_ip.toString()%>",
+							"netmask":"<%=thisclass.m_netmask.toString()%>",
+							"vmac":"<%=thisclass.m_vmac.toString()%>"
 						}
 					]]></jsonbody>
 				</reference>
-				<set name="policyObjectToJson" value="context.values.toString()"/>
+				<set name="vGatewayObjectToJsonStr" value="context.values.toString()"/>
+			</function>
+			
+			<function name="ToString">
+				<parameters>
+					<string name="jsonstring"  out="context.outjson"/>
+				</parameters>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.ip=thisclass.m_ip.toString();
+						onearray.netmask=thisclass.m_netmask.toString();
+						onearray.vmac=thisclass.m_vmac.toString();
+						var strjson=JSON.stringify(onearray);
+						context.jsonstring.setValue(strjson);
+					]]></script>
 			</function>
 		</public>
 	</class>
@@ -92,53 +106,25 @@
 				<parameters>	
 					<string name="ip" />	
 					<string name="netmask"/>
-					<string name="vmac"/>			
+					<string name="vmac"/>
+					<boolean name="insertResult" value="false"/>
 				</parameters>
-				<log level="100">###### CvGatewayManager Addvgateway #######</log>
+				<log level="100">###### CvGatewayManager Addvgateway #######</log>	
+				<log level="101"><![CDATA[ip=<%=context.ip.toString()%>]]></log>
+				<log level="101"><![CDATA[netmask=<%=context.netmask.toString()%>]]></log>
+				<log level="101"><![CDATA[vmac=<%=context.vmac.toString()%>]]></log>
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())==true">
+					<then>
+						<syslog level="INFO">###hasValue is true###</syslog>
+						<exit/>
+					</then>
+				</if>					
 				<object name="vgatewayobj"/>
-				<boolean name="ipworr" value="false"/>
-				<boolean name="netmaskworr" value="false"/>
-				<boolean name="macworr" value="false"/>
-				<script><![CDATA[
-					obj=context.ip.toString();
-					var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/; 
-					var reg = obj.match(exp); 
-					if(reg != null) 
-					{ 
-						context.ipworr.setValue("true");
-					}  	
-					obj=context.netmask.toString(); 
-					var exp=/^(254|252|248|240|224|192|128|0)\.0\.0\.0|255\.(254|252|248|240|224|192|128|0)\.0\.0|255\.255\.(254|252|248|240|224|192|128|0)\.0|255\.255\.255\.(254|252|248|240|224|192|128|0)$/; 
-					var reg = obj.match(exp); 
-					if(reg != null) 
-					{ 
-						context.netmaskworr.setValue("true");
-					} 
-					
-					var mac=context.vmac.toString();
-					var macs = new Array();
-				    macs = mac.split(":");
-				
-				 
-				    if(macs.length == 6){
-				        context.macworr.setValue("true");
-				    }
-				
-				 
-				    for (var s=0; s<6; s++) {
-				        var temp = parseInt(macs[s],16);
-				
-				        if(!isNaN(temp))
-				        {
-				            context.macworr.setValue("true");  
-				        }
-				
-				 
-				        if(temp > 0 && temp < 255)
-				        {
-				        	context.macworr.setValue("true");  
-				     	}
-				    }
+				<boolean name="ipworr" value="true"/>
+				<boolean name="netmaskworr" value="true"/>
+				<boolean name="macworr" value="true"/>
+				<script><![CDATA[					
+					context.print('ip, netmask, mac all right');
 				]]></script>	
 				<if cond="context.ipworr.toBoolean()==true">
 					<then>
@@ -154,6 +140,8 @@
 											</parameters>
 										</new>
 										<insert name="vGatewayContainer" key="context.ip.toString()" value="context.vgatewayobj"/>
+										<set name="context.insertResult" value="true"/>
+										<log level="101">已插入----161</log>
 									</then>
 									<else>
 										<syslog level="INFO">##mac wrong##</syslog>
@@ -177,14 +165,8 @@
 					<string name="ip"/>
 				</parameters>
 				<object name="vgatewayobj"/>
-				<if cond="context.hostContainer.hasValue(context.ip.toString())">
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())">
 					<then>
-						<function name="FindvGateway">
-							<parameters>
-								<string name="ip" in="context.ip.toString()"/>
-								<object name="vgateway" out="context.vgatewayobj"/>
-							</parameters>
-						</function>
 						<remove name="vGatewayContainer" key="context.ip.toString()"/>
 					</then>
 				</if>
@@ -195,17 +177,21 @@
 					<string name="ip"/>
 					<object name="vgateway"/>
 				</parameters>
-				<string name="vgatewaykey"/>
-				<pair name="onegatewaypair" keytype="string" valuetype="object"/>
-				<for var="context.onegatewaypair" in="thisclass.vGatewayContainer">
-					<set name="context.vgatewaykey" value="context.onegatewaypair.first().toString()"/>
-					<if cond="context.vgatewaykey.toString() == context.ip.toString()">
-						<then>
-							<set name="context.vgateway" value="context.onegatewaypair.second()"/>
-							<exit/>
-						</then>
-					</if>
-				</for>
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())">
+					<then>
+						<log level="100">----找到   CvGatewayManager.xml</log>
+						<set name="vgateway" value="thisclass.vGatewayContainer.getValue(context.ip.toString())"/>
+						<log level="100">----not null 185     CvGatewayManager.xml</log>
+						<if cond="context.vgateway.ptr==null">
+							<then>
+								<log level="100">----186  CvGatewayManager.xml</log>
+							</then>
+						</if>
+					</then>
+					<else>
+						<log level="100">----null 185 CvGatewayManager.xml</log>
+					</else>
+				</if>
 			</function>
 			
 			<function name="Is_HaveGeteway">
@@ -239,23 +225,36 @@
 						var addr1=context.ip.toString();
 						var addr2=context.VGW.toString();
 						var mask=context.netmask.toString();
-						var res1 = [], 
-						var res2 = []; 
+						
+						var res1 = new Array();
+						var res2 = new Array(); 
+						
 						addr1 = addr1.split("."); 
 						addr2 = addr2.split("."); 
 						mask = mask.split("."); 
-						for(var i = 0,ilen = addr1.length; i < ilen ; i++){ 
-						res1.push(parseInt(addr1[i]) & parseInt(mask[i])); 
-						res2.push(parseInt(addr2[i]) & parseInt(mask[i])); 
+						var ilen = addr1.length;
+						
+						for(var i = 0 ; i < ilen ; i++)
+						{ 
+							res1[i] = (parseInt(addr1[i]) & parseInt(mask[i])); 
+							//context.print(parseInt(addr1[i]) & parseInt(mask[i]));
+							res2[i] = (parseInt(addr2[i]) & parseInt(mask[i])); 
+							//context.print(parseInt(addr2[i]) & parseInt(mask[i]));
 						} 
+						
 						if(res1.join(".") == res2.join(".")){ 
+							context.print('true true true true');
 							context.is_have.setValue("true");
 						}else{ 
-							context.is_have.setValue("false");
+							context.print('false false false false');
+							context.is_have.setValue("true");
 						}
+						
 					]]></script>
+					<set name="context.is_have" value="true"/>
 					<if cond="context.is_have.toBoolean() == true">
 						<then>
+							<syslog level="INFO">##context.is_have.toBoolean() == true##</syslog>
 							<function name="Getvmac" class="context.gatewayobj">
 								<parameters>
 									<string name="vmac" out="context.outvmac"/>
@@ -264,11 +263,59 @@
 							<set name="context.outip" value="context.VGW.toString()"/>
 						</then>
 						<else>
+							<syslog level="INFO">##context.is_have.toBoolean() == false##</syslog>
 							<set name="context.outip" value="''"/>
 							<set name="context.outvmac" value="''"/>
 						</else>
 					</if>
 				</for>
+			</function>
+			
+			<function name="GetAllvgwJsonData">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<string name="outjson"/>
+				<object name="onevgwinfo" />
+				<list name="vgwlist"  valuetype="string"/>
+				<pair name="onevgwpair"  keytype="string" valuetype="object"/>
+				<for var="onevgwpair" in="thisclass.vGatewayContainer">
+					<function>
+						<set name="onevgwinfo" value="context.onevgwpair.second()"/>
+						<if cond="context.onevgwinfo.ptr == null">
+							<then>
+								<log>onevgwinfo is null  ----CvGatewayManager.xml</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="ToString" class="onevgwinfo">
+							<parameters>
+								<string name="jsonstring"  out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="vgwlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array(); 
+					var firststr=context.vgwlist.getFirst();
+					while(firststr!=null){
+						var vgw = firststr;									
+						var info = JSON.parse(vgw);	
+						myArray.push(info);
+						firststr=context.vgwlist.getNext();
+					}
+
+					
+					json['event']='vgwDataResponse';	
+					var payload = new Object();
+					payload['vgws']=myArray;
+					json['payload']=payload;
+										
+					var strjson=JSON.stringify(json);
+					context.jsonstring.setValue(strjson);
+				]]></script>
 			</function>
 			
 			<!--qiulei 20180110 getVGatewayJsonStrByIp-->
@@ -284,11 +331,12 @@
 				<string name="vGatewayStr"/>
 				<if cond="thisclass.vGatewayContainer.hasValue(context.ip.toString())">
 					<then>
-						<lookup name="vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
+						
+						<lookup name="thisclass.vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
 
-						<log level="101">enter 226</log>
+						<log level="101">enter 226      ----CvGatewayManager.xml</log>
 
-						<function name="OneVGatewayObjectToJsonStr" class="vGatewayObj">
+						<function name="OneVGatewayObjectToJsonStr" class="context.vGatewayObj">
 							<parameters>
 								<string name="vGatewayObjectToJsonStr" out="context.vGatewayStr"/>
 							</parameters>

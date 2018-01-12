@@ -41,8 +41,8 @@
 		<reference variable="tag">
 			<jsonbody><![CDATA[
 				{
-					"name": "vGatewayservice",
-					"description": "Query and Manage VGateway Service"
+					"name": "vgateway",
+					"description": "Query and Manage VGateway"
 				}
 			]]></jsonbody>
 		</reference>
@@ -79,8 +79,8 @@
 		<reference variable="tag">
 			<jsonbody><![CDATA[
 				{
-					"name": "vGatewayservice",
-					"description": "Query and Manage VGateway Service"
+					"name": "vgateway",
+					"description": "Query and Manage VGateway"
 				}
 			]]></jsonbody>
 		</reference>

@@ -41,8 +41,8 @@
 		<reference variable="tag">
 			<jsonbody><![CDATA[
 				{
-					"name": "policyservice",
-					"description": "Query and Manage Policy Service"
+					"name": "policy",
+					"description": "Query and Manage Policy"
 				}
 			]]></jsonbody>
 		</reference>
@@ -79,8 +79,8 @@
 		<reference variable="tag">
 			<jsonbody><![CDATA[
 				{
-					"name": "policyservice",
-					"description": "Query and Manage Policy Service"
+					"name": "policy",
+					"description": "Query and Manage Policy"
 				}
 			]]></jsonbody>
 		</reference>

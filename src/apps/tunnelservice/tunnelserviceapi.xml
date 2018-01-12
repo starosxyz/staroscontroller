@@ -415,7 +415,8 @@
 		<long name="outdeivceportnum"/>
 		<long name="outnum"/>		
 		<long name="tunnel_invlan"/>
-		<long name="tunnel_outvlan"/>	
+		<long name="tunnel_outvlan"/>
+		<string name="policyid"/>	
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
 			<parameters>
 				<long name="tunnel_id" in="context.resourceid.toLong()"/>
@@ -437,6 +438,7 @@
 			var local_inputvxlanport= json.inputvxlanport;
 			var local_outputvxlanport = json.outputvxlanport;
 			var local_bandwidth = json.bandwidth;
+			var local_policyid = json.policyid;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
 			context.outputPort.setValue(local_outputPort);
@@ -449,6 +451,7 @@
 			context.inputvxlanport.setValue(local_inputvxlanport);
 			context.outputvxlanport.setValue(local_outputvxlanport);
 			context.bandwidth.setValue(local_bandwidth);
+			context.policyid.setValue(local_policyid);
 			if(local_type == 'vlan')
 			{
 				if (local_inputport == local_outputPort)
@@ -654,6 +657,7 @@
 				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
 				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>			
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
+				<string name="policyid" in="context.policyid.toString()"/>
 			</parameters>
 		</function>			
 		<script><![CDATA[
@@ -714,6 +718,7 @@
 		<object name="outdeviceportobj"/>
 		<long name="outdeivceportnum"/>
 		<long name="outnum"/>
+		<string name="policyid"/>
 		
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
@@ -729,6 +734,7 @@
 			var local_inputvxlanport= json.inputvxlanport;
 			var local_outputvxlanport = json.outputvxlanport;
 			var local_bandwidth = json.bandwidth;
+			var local_policyid = json.policyid;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
 			context.outputPort.setValue(local_outputPort);
@@ -741,6 +747,7 @@
 			context.inputvxlanport.setValue(local_inputvxlanport);
 			context.outputvxlanport.setValue(local_outputvxlanport);
 			context.bandwidth.setValue(local_bandwidth);
+			context.policyid.setValue(local_policyid);
 			if(local_type == 'vlan')
 			{
 				if (local_inputport == local_outputPort)
@@ -982,6 +989,7 @@
 				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
 				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
+				<string name="policyid" in="context.policyid.toString()"/>
 			</parameters>
 		</function>
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">
@@ -1060,6 +1068,8 @@
 		<object name="outdeviceportobj"/>
 		<long name="outdeivceportnum"/>
 		<long name="outnum"/>
+		<string name="policyid"/>
+
 		<script><![CDATA[									
 			var json = JSON.parse(event.getParam('eventdata').toString());
 			var local_username = json.specialLine[context.specialLineid.toLong()].username;
@@ -1074,6 +1084,7 @@
 			var local_inputvxlanport= json.specialLine[context.specialLineid.toLong()].inputvxlanport;
 			var local_outputvxlanport = json.specialLine[context.specialLineid.toLong()].outputvxlanport;
 			var local_bandwidth = json.specialLine[context.specialLineid.toLong()].bandwidth;
+			var local_policyid = json.specialLine[context.specialLineid.toLong()].policyid;
 			context.username.setValue(local_username);
 			context.inputPort.setValue(local_inputport);
 			context.outputPort.setValue(local_outputPort);
@@ -1086,6 +1097,7 @@
 			context.inputvxlanport.setValue(local_inputvxlanport);
 			context.outputvxlanport.setValue(local_outputvxlanport);
 			context.bandwidth.setValue(local_bandwidth);
+			context.policyid.setValue(local_policyid);
 			if(local_type == 'vlan')
 			{
 				if (local_inputport == local_outputPort)
@@ -1325,6 +1337,7 @@
 				<string name="inputvxlanport" in="context.inputvxlanport.toString()"/>
 				<string name="outputvxlanport" in="context.outputvxlanport.toString()"/>
 				<long name="bandwidth" in="context.bandwidth.toLong()"/>
+				<string name="policyid" in="context.policyid.toString()"/>
 			</parameters>
 		</function>
 		<function name="GetOneTunnelObject" class="context.tunnelManagerObject">

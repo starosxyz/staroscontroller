@@ -741,7 +741,7 @@ else:
 				</parameters>
 				<object name="hostobj"/>
 				<string name="stringdetail"/>
-				<lookup name="thisclass.hostContainer" key="context.hostid.toString()" output="context.hostobj"/>
+				<set name="hostobj" value="thisclass.hostContainer.getValue('hostid').toString()"/>
 				<if cond="context.hostobj.ptr ==null">
 					<then>
 						<exit/>

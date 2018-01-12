@@ -95,7 +95,7 @@
 						<long name="vxlantunnelid" out="context.vxlantunnelid"/>
 					</parameters>
 				</function>
-				
+				<syslog level="INFO"><![CDATA[CTunnelManager policyid = <%=context.policyid.toString()%>]]></syslog>
 				<object name="tunnelObject"/>
 				<new name="tunnelObject" class="CTunnel">
 					<parameters>

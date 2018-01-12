@@ -148,6 +148,8 @@
 					thisclass.m_fromvxlanport.setValue(oneinputvxlanport);
 					thisclass.m_tovxlanport.setValue(oneoutputvxlanport);
 				]]></script>
+				<function name="DumpPolicy" class="PolicyManager"/>
+				
 				<!-- wangkang 2018/01/09 -->
 				<string name="oneipproto"/>
 				<function name="GetPolicyDetailInfo" class="PolicyManager">
@@ -159,20 +161,26 @@
 						<boolean name="result" out="thisclass.m_ispolicy"/>
 					</parameters>
 				</function>
+				<syslog level="INFO"><![CDATA[CTunnel policyid = <%=context.policyid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel srcIp = <%=thisclass.m_srcip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel dstIp = <%=thisclass.m_dstip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel ipproto = <%=context.oneipproto.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel result = <%=thisclass.m_ispolicy.toBoolean()%>]]></syslog>
 				<if cond="context.oneipproto.toString() == 'TCP' ">
 					<then>
-						<log level="100">CTunnel transport protocol is TCP</log>
+						<syslog level="INFO">CTunnel transport protocol is TCP</syslog>
 						<set name="thisclass.m_ipproto" value="'6'"/>
 					</then>
 					<elseif cond="context.oneipproto.toString() == 'UDP' ">
-						<log level="100">CTunnel transport protocol is UDP</log>
+						<syslog level="INFO">CTunnel transport protocol is UDP</syslog>
 						<set name="thisclass.m_ipproto" value="'17'"/>
 					</elseif>
 					<else>
-						<log level="100">CTunnel transport protocol is ICMP</log>
+						<syslog level="INFO">CTunnel transport protocol is ICMP</syslog>
 						<set name="thisclass.m_ipproto" value="'1'"/>
 					</else>
 				</if>
+				<syslog level="INFO"><![CDATA[CTunnel ipproto = <%=thisclass.m_ipproto.toString()%>]]></syslog>
 			</function>
 
 			<function name="GetTunnelId">
@@ -316,7 +324,8 @@
 							"vxlantunnelid":"<%=thisclass.m_vxlantunnelid.toLong().toString()%>",
 							"inputvxlanPort":"<%=thisclass.m_inputvxlanport.toString()%>",
 							"outputvxlanPort":"<%=thisclass.m_outputvxlanport.toString()%>",
-							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>"
+							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>",
+							"policyid":"<%=thisclass.m_policyid.toString()%>"
 						}
 					]]></jsonbody>
 				</reference>
@@ -370,10 +379,8 @@
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>	
 				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
-				<log level="100">######## CTunnel UpdateTunnel Deactive Tunnel start #######</log>
 				<function name="DeactiveTunnel"/>
 				<syslog level="INFO">###DeactiveTunnel end ###</syslog>
-				<log level="100">######## CTunnel UpdateTunnel Deactive Tunnel end #######</log>
 				<function name="ActiveTunnel"/>
 				<syslog level="INFO">###ActiveTunnel end ###</syslog>
 			</function>
@@ -475,9 +482,10 @@
 				<if cond="context.firstdevice.equal(context.lastdevice)">
 					<then>
 						<log>context.firstdevice==context.lastdevice</log>
+						<syslog level="INFO"><![CDATA[CTunnel VlanActiveTunnel result = <%=thisclass.m_ispolicy.toBoolean()%>]]></syslog>
 						<if cond="thisclass.m_ispolicy.toBoolean() == true">
 							<then>
-								<function name="installRuleAtSameDevice" class="firstdevice">
+								<function name="installRuleAtSameDevicepolicy" class="firstdevice">
 									<parameters>
 										<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 										<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
@@ -509,7 +517,7 @@
 
 				<if cond="thisclass.m_ispolicy.toBoolean() == true">
 					<then>
-						<function name="installRuleStart" class="firstdevice">
+						<function name="installRuleStartpolicy" class="firstdevice">
 							<parameters>
 								<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 								<string name="invlan" in="thisclass.m_inputvlanid.toString()"/>
@@ -521,7 +529,7 @@
 								<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
 							</parameters>
 						</function>
-						<function name="installRuleEnd" class="lastdevice">
+						<function name="installRuleEndpolicy" class="lastdevice">
 							<parameters>
 								<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 								<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
@@ -569,7 +577,7 @@
 					</if>
 					<if cond="thisclass.m_ispolicy.toBoolean() == true">
 						<then>
-							<function name="installRuleMid" class="onedevice">
+							<function name="installRuleMidpolicy" class="onedevice">
 								<parameters>
 									<string name="serviceinvlan" in="thisclass.m_serviceinvlan.toString()"/>
 									<string name="serviceoutvlan" in="thisclass.m_serviceoutvlan.toString()"/>
@@ -665,7 +673,7 @@
 							<then>
 								<if cond="thisclass.m_ispolicy.toBoolean() == true">
 									<then>
-										<function name="installVxlanTunnelStart" class="firstdevice">
+										<function name="installVxlanTunnelStartpolicy" class="firstdevice">
 											<parameters>
 												<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 												<string name="inputtunnelport" in="thisclass.m_fromtunnelport.toString()"/>
@@ -694,7 +702,7 @@
 							<then>
 								<if cond="thisclass.m_ispolicy.toBoolean() == true">
 									<then>
-										<function name="installVxlanTunnelEnd" class="lastdevice">
+										<function name="installVxlanTunnelEndpolicy" class="lastdevice">
 											<parameters>
 												<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 												<string name="outputtunnelport" in="thisclass.m_totunnelport.toString()"/>
@@ -747,7 +755,7 @@
 									<log level="101">firstdevice is not null</log>
 									<if cond="thisclass.m_ispolicy.toBoolean() == true">
 										<then>
-											<function name="installVxlanZhuanXianStart" class="firstdevice">
+											<function name="installVxlanZhuanXianStartpolicy" class="firstdevice">
 												<parameters>
 													<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
 													<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
@@ -773,7 +781,7 @@
 									<log level="101">lastdevice is not null</log>
 									<if cond="thisclass.m_ispolicy.toBoolean() == true">
 										<then>
-											<function name="installVxlanZhuanXianEnd" class="lastdevice">
+											<function name="installVxlanZhuanXianEndpolicy" class="lastdevice">
 												<parameters>
 													<string name="outport" in="thisclass.m_todeviceport.toString()"/>
 													<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
