@@ -187,6 +187,29 @@
 			context.content.setValue(content);
 		]]></script>
 		
+		<string name="policyJsonStr"/>
+		<function name="GetPolicybyid" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid"/>
+				<string name="onepolicystr" out="context.policyJsonStr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.policyJsonStr.toString()!=''">
+			<then>
+				<log level="100"><![CDATA[policyid=<%=context.policyid.toString()%>已存在----PolicyAPIHandler.xml 200]]></log>
+		
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is exist'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
 		<function name="AddPolicy" class="PolicyManager">
 			<parameters>
 				<string name="policyid" in="context.policyid.toString()"/>

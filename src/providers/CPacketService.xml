@@ -190,6 +190,7 @@
 				<parameters>
 					<string name="strjson"/>
 					<string name="datapathid"/>
+					<string name="transportid"/>
 					<messageblock name="msgblock"/>
 				</parameters>
 				<log level="100">###### CPackerserver ProcessPacket ######</log>
@@ -244,6 +245,7 @@
 					<parameters>
 						<string name="data" in="context.strjson.toString()"/>
 						<string name="datapathid" in="context.datapathid.toString()"/>
+						<string name="transportid" in="context.transportid.toString()"/>
 					</parameters>
 				</function>
 			</function>
@@ -260,12 +262,14 @@
 				<parameters>
 					<string name="data"/>
 					<string name="datapathid"/>
+					<string name="transportid"/>
 				</parameters>
 				<string name="local_mac"/>
 				<string name="local_ip"/>
 				<string name="local_vlan"/>
 				<string name="local_port"/>
 				<string name="local_ethtype"/>
+				<string name="pkoutjson" />
 				<script><![CDATA[
 					var info = JSON.parse(context.data.toString());
 					if (info.payload != null)
@@ -284,16 +288,20 @@
 					<then>
 						<script><![CDATA[
 							var info = JSON.parse(context.data.toString());
+							
 							var js_mac = info.payload.smac;
 							var js_ip = info.payload.ethernetpayload.senderprotocoladdress;
 							var js_vlan = info.payload.vlanid;
 							var js_port = info.match.matchfieldlist[0].inport;
 							if (js_vlan == 65535)
 								js_vlan = 0;
+							var pay_load = info.payload;
+							var strjson=JSON.stringify(pay_load);
 							context.local_mac.setValue(js_mac);
 							context.local_ip.setValue(js_ip);
 							context.local_vlan.setValue(js_vlan);
-							context.local_port.setValue(js_port);
+							context.local_port.setValue(js_port);	
+							context.pkoutjson.setValue(strjson);						
 						]]></script>
 						<function name="addHost" class="HostManager">
 							<parameters>
@@ -301,7 +309,9 @@
 								<string name="ip" in="context.local_ip.toString()"/>
 								<string name="vlan" in="context.local_vlan.toString()"/>
 								<string name="deviceid" in="'of:'+context.datapathid.toString()"/>
+								<string name="transportid" in="context.transportid.toString()"/>
 								<string name="port" in="context.local_port.toString()"/>
+								<string name="payload" in="context.pkoutjson.toString()"/>
 							</parameters>
 						</function>
 					</then>

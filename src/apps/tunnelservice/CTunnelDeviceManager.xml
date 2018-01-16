@@ -361,12 +361,12 @@
 			-->
 			<function name="PrintTunnerDevice">
 				<object name="onetunnel"/>
-				<object name="tunnel"/>
+				<object name="tunneldeviceobj"/>
 				<for var="onetunnel" in="context.tunneldeviceContainer">
-					<set name="tunnel" value="context.onetunnel"/>
-					<if cond="context.tunnel!=null">
+					<set name="context.tunneldeviceobj" value="context.onetunnel"/>
+					<if cond="context.tunneldeviceobj!=null">
 						<then>
-							<function name="Printtunnel" class="tunnel"/>
+							<function name="Printtunnel" class="context.tunneldeviceobj"/>
 						</then>
 					</if>
 				</for>
@@ -405,6 +405,32 @@
 							<set name="context.ischanage" value="true"/>
 						</then>
 					</if>
+				</for>
+			</function>
+
+			<!--
+				@brief		uninstall arp flow
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2018/01/15
+			-->
+			<function name="UninstallarpFlow">
+				<syslog level="INFO">###### CTunnelDeviceManager UninstallarpFlow ######</syslog>
+				<object name="onetunneldevice"/>
+				<string name="deviceid"/>
+				<syslog level="INFO"><![CDATA[UninstallarpFlow tunneldeviceContainer.size = <%=context.tunneldeviceContainer.size().toString()%>]]></syslog>
+				<for var="onetunneldevice" in="thisclass.tunneldeviceContainer">
+					<syslog level="INFO">UninstallarpFlow for </syslog>
+					<function name="GetTunnelDeviceId" class="onetunneldevice">
+						<parameters>
+							<string name="outtunneldeviceid" out="context.deviceid"/>
+						</parameters>
+					</function>
+					<syslog level="INFO"><![CDATA[UninstallarpFlow deviceid= <%=context.deviceid.toString()%>]]></syslog>
+					<function name="UninstallArpFlow" class="FlowService">
+						<parameters>
+							<string name="datapathid" in="context.deviceid"/>
+						</parameters>
+					</function>
 				</for>
 			</function>
 		</public>

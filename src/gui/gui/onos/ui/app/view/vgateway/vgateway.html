@@ -1,0 +1,46 @@
+<!-- vgateway partial HTML -->
+<div id="ov-vgateway">
+    <div class="tabular-header">
+        <h2>Component Vgateway ({{tableData.length}} total)</h2>
+        <div class="ctrl-btns">
+            <div class="refresh" ng-class="{active: autoRefresh}"
+                 icon icon-size="42" icon-id="refresh"
+                 tooltip tt-msg="autoRefreshTip"
+                 ng-click="toggleRefresh()"></div>
+        </div>
+    </div>
+
+    <div class="summary-list" onos-table-resize>
+        <div class="table-header" onos-sortable-header>
+            <table>
+                <tr>
+                    <td colId="ip" sortable col-width="260px">IP地址 </td>
+                    <td colId="netmask" sortable col-width="260px">IP掩码 </td>
+                    <td colId="vmac" sortable col-width="100px">MAC地址 </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="table-body">
+            <table onos-flash-changes id-prop="id">
+                <tr ng-if="!tableData.length" class="no-data">
+                    <td colspan="6">
+                        {{annots.no_rows_msg}}
+                    </td>
+                </tr>
+
+                <tr ng-repeat="prop in tableData track by $index"
+                    ng-click="selectCallback($event, prop)"
+                    ng-class="{selected: prop.ip === selId}"
+                    ng-repeat-complete row-id="{{prop.ip}}">
+                    <td>{{prop.ip}}</td>
+                    <td>{{prop.netmask}}</td>
+                    <td>{{prop.vmac}}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <vgateway-details-panel></vgateway-details-panel>
+
+</div>

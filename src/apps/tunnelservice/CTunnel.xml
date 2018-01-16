@@ -63,6 +63,8 @@
 			<long name="m_bandwidth"/>
 			<!--  策略id -->
 			<string name="m_policyid"/>
+			<!-- 转发类型 -->
+			<string name="m_sendtype"/>
 
 			<object name="m_tunneldevicemgr"/>
 			<boolean name="m_bisActive" value="false"/>
@@ -106,6 +108,7 @@
 					<string name="outputvxlanport"/>	
 					<long name="bandwidth"/>
 					<string name="policyid"/>
+					<string name="sendtype"/>
 				</parameters>
 				<set name="thisclass.m_id" value="context.id.toLong()"/>
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -124,6 +127,7 @@
 				<set name="thisclass.m_vxlantunnelid" value="context.vxlantunnelid.toLong()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>
 				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
+				<set name="thisclass.m_sendtype" value="context.sendtype.toString()"/>
 				<new name="m_tunneldevicemgr" class="CTunnelDeviceManager"/>
 				<script><![CDATA[
 					var inputdevice = thisclass.m_inputPort.toString();	
@@ -289,6 +293,13 @@
 				</parameters>
 				<set name="t_policyid" value="thisclass.m_policyid.toString()"/>
 			</function>
+
+			<function name="GetTunnel_sendtype">
+				<parameters>
+					<string name="t_sendtype"/>
+				</parameters>
+				<set name="t_sendtype" value="thisclass.m_sendtype.toString()"/>
+			</function>
 			
 			<!--
 				@brief		tunnel对象的json信息
@@ -325,7 +336,8 @@
 							"inputvxlanPort":"<%=thisclass.m_inputvxlanport.toString()%>",
 							"outputvxlanPort":"<%=thisclass.m_outputvxlanport.toString()%>",
 							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>",
-							"policyid":"<%=thisclass.m_policyid.toString()%>"
+							"policyid":"<%=thisclass.m_policyid.toString()%>",
+							"sendtype":"<%=thisclass.m_sendtype.toString()%>"
 						}
 					]]></jsonbody>
 				</reference>
@@ -362,6 +374,7 @@
 					<string name="outputvxlanport"/>						
 					<long name="bandwidth"/>
 					<string name="policyid"/>
+					<string name="sendtype"/>
 				</parameters>
 				<syslog level="INFO">##############3UPdate Start##########</syslog>	
 				<set name="thisclass.m_username" value="context.username.toString()"/>
@@ -379,6 +392,40 @@
 				<set name="thisclass.m_outputvxlanport" value="context.outputvxlanport.toString()"/>	
 				<set name="thisclass.m_bandwidth" value="context.bandwidth.toLong()"/>	
 				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
+				<set name="thisclass.m_sendtype" value="context.sendtype.toString()"/>
+
+				<!-- wangkang 2018/01/15 -->
+				<string name="oneipproto"/>
+				<function name="GetPolicyDetailInfo" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.policyid"/>
+						<string name="srcIp" out="thisclass.m_srcip"/>
+						<string name="dstIp" out="thisclass.m_dstip"/>
+						<string name="content" out="context.oneipproto"/>
+						<boolean name="result" out="thisclass.m_ispolicy"/>
+					</parameters>
+				</function>
+				<syslog level="INFO"><![CDATA[CTunnel policyid = <%=context.policyid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel srcIp = <%=thisclass.m_srcip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel dstIp = <%=thisclass.m_dstip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel ipproto = <%=context.oneipproto.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnel result = <%=thisclass.m_ispolicy.toBoolean()%>]]></syslog>
+				<if cond="context.oneipproto.toString() == 'TCP' ">
+					<then>
+						<syslog level="INFO">CTunnel transport protocol is TCP</syslog>
+						<set name="thisclass.m_ipproto" value="'6'"/>
+					</then>
+					<elseif cond="context.oneipproto.toString() == 'UDP' ">
+						<syslog level="INFO">CTunnel transport protocol is UDP</syslog>
+						<set name="thisclass.m_ipproto" value="'17'"/>
+					</elseif>
+					<else>
+						<syslog level="INFO">CTunnel transport protocol is ICMP</syslog>
+						<set name="thisclass.m_ipproto" value="'1'"/>
+					</else>
+				</if>
+				<syslog level="INFO"><![CDATA[CTunnel ipproto = <%=thisclass.m_ipproto.toString()%>]]></syslog>
+				
 				<function name="DeactiveTunnel"/>
 				<syslog level="INFO">###DeactiveTunnel end ###</syslog>
 				<function name="ActiveTunnel"/>
@@ -400,6 +447,7 @@
 						</function>
 					</then>
 				</if>
+
 				<if cond="thisclass.m_type.toString() == 'vxlan'">
 					<then>
 						<function name="VxlanActiveTunnel"/>
@@ -446,6 +494,8 @@
 				<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 					<then>
 						<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
+						<!-- wangkang 2018/01/15 -->
+						<!--function name="UninstallarpFlow" class="thisclass.m_tunneldevicemgr"/-->
 						<log>##### m_tunneldevicemgr is not null #####</log>
 						<function name="GetFirstDevice" class="m_tunneldevicemgr">
 							<parameters>
@@ -638,24 +688,32 @@
 						<boolean name="result" out="context.getpathresult"/>
 					</parameters>
 				</function>
-		
-				<if cond="context.getpathresult.toBoolean()==false">
+
+				<if cond="thisclass.m_sendtype.toString() == '2'">
 					<then>
-						<log level="101">getpathresult is false</log>
-						<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
-							<parameters>
-								<string name="deviceid" in="thisclass.m_fromdevice.toString()"/>
-							</parameters>
-						</function>
-						<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
-							<parameters>
-								<string name="deviceid" in="thisclass.m_todevice.toString()"/>
-							</parameters>
-						</function>
+						<syslog level="INFO">transmit type is tunnel</syslog>
+						<if cond="context.getpathresult.toBoolean()==false">
+							<then>
+								<syslog level="INFO">###### 2 ####### getpathresult is false</syslog>
+								<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
+									<parameters>
+										<string name="deviceid" in="thisclass.m_fromdevice.toString()"/>
+									</parameters>
+								</function>
+								<function name="CreateTunnelDevice" class="thisclass.m_tunneldevicemgr">
+									<parameters>
+										<string name="deviceid" in="thisclass.m_todevice.toString()"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
 						<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
 							<then>
 								<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
-								<log level="101">##### m_tunneldevicemgr is not null #####</log>
+								<syslog level="INFO">##### m_tunneldevicemgr is not null #####</syslog>
+								<!-- wangkang 2018/01/15 -->
+								<!--function name="UninstallarpFlow" class="thisclass.m_tunneldevicemgr"/-->
+
 								<function name="GetFirstDevice" class="m_tunneldevicemgr">
 									<parameters>
 										<object name="firstdevice" out="context.firstdevice"/>
@@ -729,81 +787,87 @@
 						</if>
 						<set name="m_bisActive" value="true"/>
 					</then>
-					<elseif cond="context.getpathresult.toBoolean()==true">
-						<then>
-							<log level="101">getpathresult is true</log>
-							<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
-								<then>
-									<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
-									<log level="101">##### m_tunneldevicemgr is not null #####</log>
-									<function name="GetFirstDevice" class="m_tunneldevicemgr">
-										<parameters>
-											<object name="firstdevice" out="context.firstdevice"/>
-										</parameters>
-									</function>
-									
-									<function name="GetLastDevice" class="m_tunneldevicemgr">
-										<parameters>
-											<object name="lastdevice" out="context.lastdevice"/>
-										</parameters>
-									</function>
-								</then>
-							</if>
+					<elseif cond="thisclass.m_sendtype.toString() == '3'">
+						<syslog level="INFO"><![CDATA[getpathresult = <%=context.getpathresult.toString()%>]]></syslog>
+						<if cond="context.getpathresult.toBoolean()==false">
+							<then>
+								<syslog level="INFO">###### 3  ####### getpathresult is false</syslog>
+								<exit/>
+							</then>
+						</if>
+						<if cond="thisclass.m_tunneldevicemgr.ptr!= null">
+							<then>
+								<function name="PrintTunnerDevice" class="m_tunneldevicemgr"/>
+								<syslog level="INFO">##### m_tunneldevicemgr is not null #####</syslog>
+								<!-- wangkang 2018/01/15 -->
+								<!--function name="UninstallarpFlow" class="thisclass.m_tunneldevicemgr"/-->
 
-							<if cond="context.firstdevice.ptr != null">
-								<then>
-									<log level="101">firstdevice is not null</log>
-									<if cond="thisclass.m_ispolicy.toBoolean() == true">
-										<then>
-											<function name="installVxlanZhuanXianStartpolicy" class="firstdevice">
-												<parameters>
-													<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-													<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
-													<string name="srcip" in="thisclass.m_srcip.toString()"/>
-													<string name="dstip" in="thisclass.m_dstip.toString()"/>
-													<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
-												</parameters>
-											</function>
-										</then>
-										<else>
-											<function name="installVxlanZhuanXianStart" class="firstdevice">
-												<parameters>
-													<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
-													<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
-												</parameters>
-											</function>
-										</else>
-									</if>
-								</then>
-							</if>
-							<if cond="context.lastdevice.ptr != null">
-								<then>
-									<log level="101">lastdevice is not null</log>
-									<if cond="thisclass.m_ispolicy.toBoolean() == true">
-										<then>
-											<function name="installVxlanZhuanXianEndpolicy" class="lastdevice">
-												<parameters>
-													<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-													<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
-													<string name="srcip" in="thisclass.m_srcip.toString()"/>
-													<string name="dstip" in="thisclass.m_dstip.toString()"/>
-													<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
-												</parameters>
-											</function>
-										</then>
-										<else>
-											<function name="installVxlanZhuanXianEnd" class="lastdevice">
-												<parameters>
-													<string name="outport" in="thisclass.m_todeviceport.toString()"/>
-													<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
-												</parameters>
-											</function>
-										</else>
-									</if>
-								</then>
-							</if>
-							<set name="m_bisActive" value="true"/>
-						</then>
+								<function name="GetFirstDevice" class="m_tunneldevicemgr">
+									<parameters>
+										<object name="firstdevice" out="context.firstdevice"/>
+									</parameters>
+								</function>
+								
+								<function name="GetLastDevice" class="m_tunneldevicemgr">
+									<parameters>
+										<object name="lastdevice" out="context.lastdevice"/>
+									</parameters>
+								</function>
+							</then>
+						</if>
+						<if cond="context.firstdevice.ptr != null">
+							<then>
+								<log level="101">firstdevice is not null</log>
+								<if cond="thisclass.m_ispolicy.toBoolean() == true">
+									<then>
+										<function name="installVxlanZhuanXianStartpolicy" class="firstdevice">
+											<parameters>
+												<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+												<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+												<string name="srcip" in="thisclass.m_srcip.toString()"/>
+												<string name="dstip" in="thisclass.m_dstip.toString()"/>
+												<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+											</parameters>
+										</function>
+									</then>
+									<else>
+										<function name="installVxlanZhuanXianStart" class="firstdevice">
+											<parameters>
+												<string name="inport" in="thisclass.m_fromdeviceport.toString()"/>
+												<string name="inputport" in="thisclass.m_fromvxlanport.toString()"/>
+											</parameters>
+										</function>
+									</else>
+								</if>
+							</then>
+						</if>
+						<if cond="context.lastdevice.ptr != null">
+							<then>
+								<log level="101">lastdevice is not null</log>
+								<if cond="thisclass.m_ispolicy.toBoolean() == true">
+									<then>
+										<function name="installVxlanZhuanXianEndpolicy" class="lastdevice">
+											<parameters>
+												<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+												<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+												<string name="srcip" in="thisclass.m_srcip.toString()"/>
+												<string name="dstip" in="thisclass.m_dstip.toString()"/>
+												<string name="ipproto" in="thisclass.m_ipproto.toString()"/>
+											</parameters>
+										</function>
+									</then>
+									<else>
+										<function name="installVxlanZhuanXianEnd" class="lastdevice">
+											<parameters>
+												<string name="outport" in="thisclass.m_todeviceport.toString()"/>
+												<string name="outputport" in="thisclass.m_tovxlanport.toString()"/>
+											</parameters>
+										</function>
+									</else>
+								</if>
+							</then>
+						</if>
+						<set name="m_bisActive" value="true"/>
 					</elseif>
 				</if>
 			</function>

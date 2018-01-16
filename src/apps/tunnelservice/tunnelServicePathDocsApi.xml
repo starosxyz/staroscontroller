@@ -52,6 +52,12 @@
 				<string name="pathname" in="'/tunnelservice/tunnel/{resourceid}'"/>			
 			</parameters>
 		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/tunnelservice/tunnels/active'"/>
+			</parameters>
+		</function>
+
 	</function>
 	<!--
 		@brief		获取所有tunnelsUIjson格式

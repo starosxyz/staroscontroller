@@ -30,6 +30,8 @@
 			<string name="m_deviceid" />	
 			<string name="m_port" />
 			<long name="m_starttime"/>
+			<string name="m_payload" />
+			<string name="m_transportid"/>
 		</private>
 		<public>
 			<function name="CHost">
@@ -38,7 +40,9 @@
 					<string name="ip" />	
 					<string name="vlan" />
 					<string name="deviceid" />	
-					<string name="port" />				
+					<string name="port" />		
+					<string name="payload" />	
+					<string name="transportid"/>		
 				</parameters>
 					<set name="thisclass.m_mac" value="context.mac.toString()"/>
 					<set name="thisclass.m_ip" value="context.ip.toString()"/>
@@ -47,6 +51,8 @@
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
 					<set name="thisclass.m_starttime" value="context.currentms()"/>
+					<set name="thisclass.m_payload" value="context.payload.toString()"/>
+					<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			</function>
 			
 			<function name="Setcurrenttime">
@@ -335,9 +341,10 @@ if(a-f>=b):
 else:
     libstarlang.setValueBool("context.isTimeout",False);
 				]]></python>
-				<log><![CDATA[CheckTimeout timeoutvalue = <%=context.timeoutvalue.toString()%>]]></log>
-				<log><![CDATA[CheckTimeout startime = <%=context.startime.toString()%>]]></log>
-				<log><![CDATA[CheckTimeout m_starttime = <%=thisclass.m_starttime.toString()%>]]></log>
+				<syslog level="INFO"><![CDATA[ timeout = <%=context.timeoutvalue.toLong()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[a = <%=context.startime.toLong()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[f = <%=thisclass.m_starttime.toLong()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[b = <%=context.startime.toLong() - thisclass.m_starttime.toLong()%>]]></syslog>
 			</function>
 			<!--
 			/**********************************************************************
@@ -359,6 +366,46 @@ else:
 					<string name="hostid"/>
 				</parameters>
 				<set name="hostid" value="thisclass.m_mac.toString()+'/'+thisclass.m_vlan.toString()"/>
+			</function>
+			
+			<function name="GetHostIP">
+				<parameters>
+					<string name="hostid"/>
+				</parameters>
+				<set name="hostid" value="thisclass.m_ip.toString()"/>
+			</function>
+			
+			<function name="GetHostMac">
+				<parameters>
+					<string name="hostmac"/>
+				</parameters>
+				<set name="hostmac" value="thisclass.m_mac.toString()"/>
+			</function>
+			
+			<function name="GetHostPKjson">
+				<parameters>
+					<string name="payloadjson"/>
+				</parameters>
+				<set name="payloadjson" value="thisclass.m_payload.toString()"/>
+			</function>
+			
+			<function name="GetTransPortId">
+				<parameters>
+					<string name="transportid"/>
+				</parameters>
+				<set name="transportid" value="thisclass.m_transportid.toString()"/>
+			</function>
+			<function name="Getdpid">
+				<parameters>
+					<string name="dpid"/>
+				</parameters>
+				<set name="dpid" value="thisclass.m_deviceid.toString()"/>
+			</function>
+			<function name="GetHostInPort">
+				<parameters>
+					<string name="port"/>
+				</parameters>
+				<set name="port" value="thisclass.m_port.toString()"/>
 			</function>
 		</public>
 	</class>
@@ -389,10 +436,12 @@ else:
 					<string name="ip" />	
 					<string name="vlan"/>
 					<string name="deviceid" />	
-					<string name="port"/>				
+					<string name="port"/>	
+					<string name="payload" />	
+					<string name="transportid"/>		
 				</parameters>
 
-				<log level="100">###### CHostManager addHost #######</log>
+				<syslog level="INFO">###### CHostManager addHost #######</syslog>
 				<object name="hostobj"/>	
 				<object name="host"/>
 				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
@@ -408,7 +457,9 @@ else:
 						<string name="ip" in="context.ip.toString()"/>	
 						<string name="vlan"  in="context.vlan.toString()"/>
 						<string name="deviceid"  in="context.deviceid.toString()"/>	
-						<string name="port"  in="context.port.toString()"/>				
+						<string name="port"  in="context.port.toString()"/>	
+						<string name="payload" in="context.payload.toString()"/>	
+						<string name="transportid" in="context.transportid.toString()"/>		
 					</parameters>
 				</new>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
@@ -741,7 +792,7 @@ else:
 				</parameters>
 				<object name="hostobj"/>
 				<string name="stringdetail"/>
-				<set name="hostobj" value="thisclass.hostContainer.getValue('hostid').toString()"/>
+				<set name="hostobj" value="thisclass.hostContainer.getValue(context.hostid.toString())"/>
 				<if cond="context.hostobj.ptr ==null">
 					<then>
 						<exit/>
@@ -798,7 +849,7 @@ else:
 						</then>
 					</if>
 				</for>
-				<log><![CDATA[CheckHostTimeout removelist= <%=context.removelist.size().toString()%>]]></log>
+				<syslog level="INFO"><![CDATA[CheckHostTimeout removelist= <%=context.removelist.size().toString()%>]]></syslog>
 				<for var="toremoveobj" in="context.removelist">
 					<function>
 						<for var="context.functionname" in="context.listernellist">
@@ -817,6 +868,39 @@ else:
 						<remove name="thisclass.hostContainer" key="context.hostid.toString()"/>
 					</function>
 				</for>
+			</function>
+			<function name="Gethashmap">
+				<parameters>
+					<hashmap name="hhashmap"/>
+				</parameters>
+				<set name="hhashmap" value="thisclass.hostContainer" />
+			</function>
+			<function name="Container_Is_Have">
+				<parameters>
+					<boolean name="is_null"/>
+				</parameters>
+				<if cond="thisclass.hostContainer.size()==0">
+					<then>
+						<set name="is_null" value="false" />
+					</then>
+				</if>
+			</function>
+			<function name="SendArp">
+				<parameters>
+					<string name="outputport"/>
+					<string name="payloadjson"/>
+					<string name="transportid"/>
+					<messageblock name="msgblock"/>
+				</parameters>
+					<syslog level="INFO">##SendArp##</syslog>
+					<function name="SendOpenFlowPacketOut">
+						<parameters>
+							<string name="outputport" in="context.outputport.toString()"/>
+							<string name="payloadjson" in="context.payloadjson.toString()"/>
+							<string name="transportid" in="context.transportid.toString()"/>
+							<messageblock name="msgblock" in="context.msgblock"/>
+						</parameters>
+					</function>
 			</function>
 		</public>
 	</class>

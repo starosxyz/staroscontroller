@@ -30,79 +30,150 @@
 	<object name="toposervice" value="global.TopoService" reference="true"/>
 	<object name="deviceservice" value="global.DeviceService" reference="true"/>
 	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>
-	<object name="globaltimer"/>
-	<hashmap name="hosthashmap" keytype="string" valuetype="string"/>
-	<hashmap name="timehashmap" keytype="string" valuetype="long"/>
-	
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<object name="tunnelmanager" value="global.TunnelManager" reference="true"/>
+	<object name="globaltimer"/>	
+	<hashmap name="hosthashmap" keytype="string" valuetype="object"/>
+	<hashmap name="vgwhashmap" keytype="string" valuetype="object"/>
+	<!--
+		@brief		定时发送Arp至host
+		@auth 		YangXR
+		@date		2018/1/15
+	-->
 	<function name="SendARPtoHost">
-		<!--<syslog level="INFO">##SendARPtoHost##</syslog>-->
-		<long name="time"/>
-		<long name="currentm"/>
-		<set name="context.currentm" value="context.currentms()"/>
-		<pair name="onetime" keytype="string" valuetype="long"/>
-		<long name="timeoutvalue" value="global.GlobalSetting.getParam('hosttimeout').toLong()"/>
-		<boolean name="isTimeout"/>
-		<string name="sip" />
-		<for var="context.onetime" in="context.timehashmap">
-			<set name="context.time" value="context.onetime.second().toLong()"/>
-			<set name="context.sip" value="context.onetime.first().toString()"/>
-			<python><![CDATA[
-import os;
-import libstarlang;
-f=libstarlang.getValueLong("context.time");
-print("f=");
-print(f);
-a=libstarlang.getValueLong("context.currentm");
-print("a=");
-print(a);
-b=libstarlang.getValueLong("context.timeoutvalue");
-if(a-f>=b):
-    libstarlang.setValueBool("context.isTimeout",True);
-else:
-    libstarlang.setValueBool("context.isTimeout",False);
-			]]></python>	
-			<!--<syslog level="INFO"><![CDATA[isTimeout = <%=context.isTimeout.toBoolean()%>]]></syslog>-->
-			<if cond="context.isTimeout.toBoolean() == true">	
-				<then>
-					<remove name="timehashmap" key="context.sip.toString()"/>
-					<remove name="hosthashmap" key="context.sip.toString()"/>
-				</then>
-			</if>
-		</for>
+		<boolean name="is_have" value="true" />				
+		<object name="hostobj"/>
+		<string name="hostip" />
+		<string name="hostmac"/>
+		<string name="payloadjson" />		
+		<string name="hostport" />
 		
-		<if cond="context.hosthashmap.size() == 0">
+		<object name="vgwobj" />
+		<string name="vgwip"/>
+		<string name="vgwmac" />
+		
+		<boolean name="is_true" value="false" />
+		<string name="deviceid"/>
+		<string name="transportid"/>
+		<messageblock name="msgblock"/>
+		
+		<function name="Container_Is_Have" class="context.hostmanager">
+			<parameters>
+				<boolean name="is_null" out="context.is_have"/>
+			</parameters>
+		</function>
+		<function name="Container_Is_Have" class="context.vgatewaymanager">
+			<parameters>
+				<boolean name="is_null" out="context.is_have"/>
+			</parameters>
+		</function>
+		<if cond="context.is_have.toBoolean()==false">
 			<then>
-				<syslog level="INFO">##hosthashmap.size() == 0##</syslog>
 				<exit/>
 			</then>
 		</if>
-		<string name="sendjson"/>
-		<string name="outputport" />
-		<string name="payloadjson"/>
-		<string name="transportid"/>
-		<messageblock name="msgblock" value="0"/>
-		
-		<pair name="onehost" keytype="string" valuetype="string"/>
+		<function name="Gethashmap" class="context.hostmanager">
+			<parameters>
+				<hashmap name="hhashmap" out="context.hosthashmap"/>
+			</parameters>
+		</function>
+		<function name="Gethashmap" class="context.vgatewaymanager">
+			<parameters>
+				<hashmap name="vhashmap" out="context.vgwhashmap"/>
+			</parameters>
+		</function>
+		<pair name="onehost" keytype="string" valuetype="object"/>
+		<pair name="onevgw" keytype="string" valuetype="object"/>
 		<for var="context.onehost" in="context.hosthashmap">
-			<set name="context.sendjson" value="context.onehost.second().toString()"/>
-			<script><![CDATA[
-				var json = JSON.parse(context.sendjson.toString());
-				context.outputport.setValue(json.outputport);
-				context.payloadjson.setValue(json.payloadjson);
-				context.transportid.setValue(json.transportid);
-			]]></script>
-			<syslog level="INFO"><![CDATA[outputport = <%=context.outputport.toString%>]]></syslog>
-			<syslog level="INFO"><![CDATA[payloadjson = <%=context.payloadjson.toString%>]]></syslog>
-			<syslog level="INFO"><![CDATA[transportid = <%=context.transportid.toString%>]]></syslog>
-			<syslog level="INFO"><![CDATA[msgblock = <%=context.msgblock.toString%>]]></syslog>
-			<function name="SendOpenFlowPacketOut">
+			<set name="context.hostobj" value="context.onehost.second()"/>
+			<function name="GetHostIP" class="context.hostobj">
 				<parameters>
-					<string name="outputport"  in="context.outputport.toString()"/>
-					<string name="payloadjson"  in="context.payloadjson.toString()"/>
-					<string name="transportid"  in="context.transportid.toString()"/>
-					<messageblock name="msgblock" in="context.msgblock"/>
+					<string name="hostid" out="context.hostip"/>
 				</parameters>
 			</function>
+			<for var="context.onevgw" in="context.vgwhashmap">
+				<set name="context.vgwobj" value="context.onevgw.second()"/>
+				<function name="Is_HaveGateway" class="context.vgatewaymanager">
+					<parameters>
+						<string name="ip" in="context.hostip.toString()"/>
+						<boolean name="is_have" out="context.is_true"/>
+						<string name="outvmac" out="context.vgwmac"/>
+						<string name="outip" out="context.vgwip"/>
+					</parameters>
+				</function>
+				<if cond="context.is_true.toBoolean()==true">
+					<then>
+						<syslog level="INFO">^^^^join in true path^^^^^</syslog>
+						<function name="GetHostPKjson" class="context.hostobj">
+							<parameters>
+								<string name="payloadjson" out="context.payloadjson"/>
+							</parameters>
+						</function>
+						<function name="GetHostMac" class="context.hostobj">
+							<parameters>
+								<string name="hostmac" out="context.hostmac"/>
+							</parameters>
+						</function>
+						<function name="GetHostInPort" class="context.hostobj">
+							<parameters>
+								<string name="port" out="context.hostport"/>
+							</parameters>
+						</function>
+						<function name="Getdpid" class="context.hostobj">
+							<parameters>
+								<string name="dpid" out="context.deviceid"/>
+							</parameters>
+						</function>
+						<function name="GetTransPortId" class="context.hostobj">
+							<parameters>
+								<string name="transportid" out="context.transportid"/>
+							</parameters>
+						</function>
+						<script><![CDATA[
+							var dpid = context.deviceid.toString();
+							dpid = dpid.split(":")[1];
+							var pljson = JSON.parse(context.payloadjson.toString());
+							pljson.dmac = "ff:ff:ff:ff:ff:ff";
+							pljson.smac = context.vgwmac.toString();
+							pljson.ethernetpayload.senderhardwareaddress = context.vgwmac.toString();
+							pljson.ethernetpayload.targethardwareaddress = "00:00:00:00:00:00";					
+							pljson.ethernetpayload.senderprotocoladdress = context.vgwip.toString();
+							pljson.ethernetpayload.targetprotocoladdress = context.hostip.toString();
+							pljson.ethernetpayload.opcode = "1";
+							var strjson=JSON.stringify(pljson);
+							context.payloadjson.setValue(strjson);
+							context.deviceid.setValue(dpid);
+						]]></script>	
+						<syslog level="INFO"><![CDATA[json = <%=context.payloadjson.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[outputport = <%=context.hostport.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[datapathid = <%=context.deviceid.toString()%>]]></syslog>
+						
+						<!--
+						<function name="PacketOutToPort" class="context.devicemgr">
+							<parameters>
+								<string name="outputport" in="context.hostport.toString()"/>
+								<string name="pkoutjson" in="context.payloadjson.toString()"/>
+								<messageblock name="msgblock" in="context.msgblock"/>
+								<string name="inportid" in="''"/>
+								<string name="datapathid" in="context.deviceid.toString()"/>
+							</parameters>
+						</function>
+						-->
+						<function name="SendArp" class="context.hostmanager">
+							<parameters>
+								<string name="outputport" in="context.hostport.toString()"/>
+								<string name="payloadjson" in="context.payloadjson.toString()"/>
+								<string name="transportid" in="context.transportid.toString()"/>
+								<messageblock name="msgblock" in="context.msgblock"/>
+							</parameters>
+						</function>
+						<syslog level="INFO">###############PK end</syslog>
+					</then>		
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</for>	
 		</for>
 	</function>
 	<events>
@@ -121,19 +192,27 @@ else:
 			</function>			
 
 			<syslog level="INFO">vgatway app startup</syslog>	
-			<string name="eventname"/>
-			<set name="eventname"  value="'TimeOutEvent'"/>
-			<!--启动SendARP定时器-->
-			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>		
+					
 			
 		</onevent>	
 		
 		<onevent event="TimeOutEvent">
-			<!--<syslog level="INFO">##TimeOutEvent##</syslog>-->
 			<function name="SendARPtoHost"/>
 		</onevent>
 		
 		<onevent event="bundleapp.active">
+			<long name="tunnelsize"/>
+			<!--
+			<function name="getTunnelNum" class="context.tunnelmanager">
+				<parameters>
+					<long name="size" out="context.tunnelsize"/>
+				</parameters>
+			</function>
+			
+			<if cond="context.tunnelsize.toLong()==0">
+				<exit/>
+			</if>
+			-->
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
 					<string name="app_name" in="'hostservice'"/>
@@ -141,6 +220,10 @@ else:
 					<string name="eth_type" in="'0x0800'"/>					
 				</parameters>
 			</function>
+			<string name="eventname"/>
+			<set name="eventname"  value="'TimeOutEvent'"/>
+			<!--启动SendARP定时器-->
+			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
@@ -149,101 +232,14 @@ else:
 					<string name="app_name" in="'hostservice'"/>									
 				</parameters>
 			</function>
+			<!--关闭SendARP定时器-->
+			<timer name="context.globaltimer" method="StopTimer"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
 
 		</onevent>
-		
-		<onevent event="PacketInEvent">
-			<syslog level="INFO">###hostservice PacketInEvent####</syslog>
-			<messageblock name="packetmsgblock"/>
-			<string name="inportid"/>
-			<string name="pkoutjson"/>
-			<string name="transportid"/>
-			<string name="dpid" value="event.getParam('datapathid').toString()"/>
-			<string name="srcip"/>
-			<string name="srcmac"/>
-			<boolean name="is_Have" value="false"/>
-			<string name="jsonstring"/>
-			<string name="vmac"/>
-			<string name="vgw"/>
-			<!--<syslog level="INFO"><![CDATA[PacketInEvent = <%=event.getParam('eventdata').toString()%>]]></syslog>-->
-			<script><![CDATA[
-				var info = JSON.parse(event.getParam('eventdata').toString());
-				if (info.match != null) {
-					var inport_id = info.match.matchfieldlist[0].inport;					
-					context.inportid.setValue(inport_id);
-				}
-				if (info.payload != null) {
-					var pay_load = info.payload;
-					var strjson=JSON.stringify(pay_load);
-					var sip = info.payload.ethernetpayload.senderprotocoladdress;
-					var src_mac = info.payload.smac;
-					context.pkoutjson.setValue(strjson);	
-					context.srcip.setValue(sip);	
-					context.srcmac.setValue(src_mac);					
-				}
-			]]></script>
-			
-			<function name="Is_HaveGeteway" class="context.vgatewaymanager">
-				<parameters>
-					<string name="ip" in="context.srcip.toString()"/>
-					<boolean name="is_have" out="context.is_Have"/>
-					<string name="outvmac" out="context.vmac"/>
-					<string name="outip" out="context.vgw"/>
-				</parameters>
-			</function>
 
-			<if cond="context.is_Have.toBoolean() == false">
-				<then>
-					<exit/>
-				</then>
-				<elseif cond="context.hosthashmap.hasValue(context.srcip.toString())==true">
-					<string name="iptemp" />
-					<string name="jsonstr" />
-					<long name="currentm" />
-					<set name="context.currentm" value="context.currentms()"/>
-					<remove name="timehashmap" key="context.srcip.toString()"/>
-					<insert name="timehashmap" key="context.srcip.toString()" value="context.currentm.toLong()"/>
-				</elseif>
-				<else>
-					<syslog level="INFO">##insert start##</syslog>
-					<function name="GetTransportIdFromDevice" class="context.devicemgr">
-						<parameters>
-							<string name="datapathid" in="context.dpid.toString()"/>
-							<string name="transportid" out="context.transportid"/>
-						</parameters>
-					</function>
-					<script><![CDATA[
-						var pljson = JSON.parse(context.pkoutjson.toString());
-						pljson.dmac = context.srcmac.toString();
-						pljson.smac = context.vmac.toString();
-						pljson.ethernetpayload.senderhardwareaddress = context.vmac.toString();
-						pljson.ethernetpayload.targethardwareaddress = context.srcmac.toString();					
-						pljson.ethernetpayload.senderprotocoladdress = context.vgw.toString();
-						pljson.ethernetpayload.targetprotocoladdress = context.srcip.toString();
-						var strjson=JSON.stringify(pljson);
-						
-						var json = new Object();
-						json['outputport']=context.inportid.toString();
-						json['transportid']=context.transportid.toString();
-						json['payloadjson']=strjson;
-						var payload=JSON.stringify(json);
-						context.jsonstring.setValue(payload);
-					]]></script>
-					<insert name="hosthashmap" key="context.srcip.toString()" value="context.jsonstring.toString()"/>
-					<syslog level="INFO"><![CDATA[JSONstr = <%= context.jsonstring.toString()%>]]></syslog>
-					
-					<long name="inserttime" />
-					<set name="context.inserttime" value="context.currentms()"/>
-					<syslog level="INFO"><![CDATA[inserttime = <%= context.inserttime.toLong()%>]]></syslog>
-					<insert name="timehashmap" key="context.srcip.toString()" value="context.inserttime.toLong()"/>
-					<syslog level="INFO">##insert end##</syslog>
-				</else>
-			</if>
-		</onevent>
-		
 		<onevent event="*">
 			<function>
 			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>

@@ -55,6 +55,8 @@
         'host' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'intent' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
         'tunnel' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
+        'policy' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
+        'vgateway' : 'https://wiki.onosproject.org/display/ONOS/The+ONOS+Web+GUI',
     },
     viewIds = [];
 

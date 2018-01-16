@@ -114,7 +114,7 @@
 		<new name="SwaggerFile" class="CswaggerFile"/>
 		<new name="TopoManager" class="CTopoManager"/>
 		<new name="ListenerBase" class="CListenerBase"/>
-		<!--new name="FlowManager" class="CFlowManager"/-->
+		<!--<new name="FlowManager" class="CFlowManager"/>-->
 		<new name="ApplicationManager" class="CApplicationManager"/>
 		<new name="traffic" class="CTrafficMonitor"/>
 		<new name="uiExtension" class="CUiExtensionManager"/>

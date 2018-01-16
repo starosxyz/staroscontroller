@@ -66,7 +66,7 @@
 				Input:
 				Output: 
 			-->
-			<function name="Setallinfo" class="oneapp">
+			<function name="Setallinfo">
 				<parameters>
 					<string name="appversion"/>
 					<string name="appcategory" />
@@ -94,7 +94,7 @@
 				-->
 				<if cond="thisclass.state.toString()=='ACTIVE'">
 					<then>
-						<log>ACTIVE!!!!!!!!!!!!!!</log>
+						<syslog level="INFO">ACTIVE!!!!!!!!!!!!!!</syslog>
 						<function name="ActiveApplication"/>
 					</then>
 					<else>
@@ -161,6 +161,7 @@
 						<exit/>
 					</then>
 					<else>
+						<syslog level="INFO">##activebundle##</syslog>
 						<activebundle bundleid="thisclass.bundleid"/>
 						<set name="thisclass.state" value="'ACTIVE'"/>
 						<set name="thisclass._iconid_state" value="'active'"/>
@@ -188,6 +189,7 @@
 						<exit/>
 					</then>
 					<else>
+						<syslog level="INFO">##deactivebundle##</syslog>
 						<string name="filecontent" value="'0'"/>
 						<deactivebundle bundleid="thisclass.bundleid"/>
 						<set name="thisclass.state" value="'INSTALLED'"/>
@@ -367,7 +369,8 @@
 								</then>
 							</if>
 							<log>bundleid</log>	
-							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>				
+							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>	
+							<activebundle bundleid="context.bundleid"/>			
 						</then>
 					</if>
 				</for>
@@ -393,7 +396,7 @@
 				<for var="oneapppair" in="context.appsContainer">
 					<function>
 						<set name="jsononeapp" value="context.oneapppair.second()"/>
-						<if cond="context.jsononeapp != null">
+						<if cond="context.jsononeapp.ptr!= null">
 							<then>
 								<function name="ToJsonString" class="context.jsononeapp">
 									<parameters>
@@ -444,7 +447,7 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.app_id.toString()" output="context.oneapp"/>
-							<if cond="context.oneapp != null">
+							<if cond="context.oneapp.ptr!= null">
 								<then>
 									<function name="ToJsonString" class="oneapp">
 										<parameters>
@@ -489,7 +492,7 @@
 				<object name="oneapp"/>
 				<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
 				<string name="appidout" />
-				<if cond="context.oneapp != null">
+				<if cond="context.oneapp.ptr != null">
 					<then>
 						<function name="Setallinfo" class="oneapp">
 							<parameters>
@@ -521,7 +524,7 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-							<if cond="context.oneapp!=null">
+							<if cond="context.oneapp.ptr!=null">
 								<then>
 									<function name="DeactiveApplication" class="oneapp"/>
 								</then>
@@ -553,7 +556,7 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-							<if cond="context.oneapp != null">
+							<if cond="context.oneapp.ptr!= null">
 								<then>
 									<function name="ActiveApplication" class="oneapp"/>
 								</then>
@@ -576,7 +579,7 @@
 				<string name="apppath" />
 				<object name="oneapp" />
 				<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
-				<if cond="context.oneapp != null">
+				<if cond="context.oneapp.ptr!= null">
 					<then>
 						<function name="Getpath" class="oneapp">
 							<parameters>
@@ -611,7 +614,7 @@
 					<then>
 						<function>
 							<lookup name="appsContainer" key="context.appid.toString()" output="context.oneapp"/>
-							<if cond="context.oneapp != null">
+							<if cond="context.oneapp.ptr!= null">
 								<then>
 									<function name="GetBundleID" class="oneapp">
 										<parameters>

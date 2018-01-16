@@ -56,35 +56,35 @@
 
 		</onevent>
 		<onevent event="AppDeactiveEvent">
-		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
-		<string name="keys"/>
-		<string name="values"/>
-		<set name="keys" value="event.getParam('processname').toString()"/>
-		<reference variable="values">
-			<jsonbody><![CDATA[ 
-					{
-						"state":"INSTALLED",
-						"_iconid_state":"appInactive",
-						"id":"<%=event.getParam('processname').toString()%>",
-						"icon":"org.onosproject.drivers",
-						"version":"<%=event.getParam('Version').toString()%>",
-						"category":"<%=event.getParam('Category').toString()%>",
-						"origin":"<%=event.getParam('Origin').toString()%>",
-						"title":"<%=event.getParam('Title').toString()%>",
-						"desc":"<%=event.getParam('Desc').toString()%>",
-						"url":"<%=event.getParam('URL').toString()%>",
-						"readme":"",
-						"role":"",
-						"required_apps":[],
-						"features":[],
-						"permissions":[]
-					}
-			]]></jsonbody>
-		</reference>
-		<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
-		  <function>
-			<log>AppDeactiveEvent</log>
-		  </function>
+			<remove name="appsmanager" key="event.getParam('processname').toString()"/>
+			<string name="keys"/>
+			<string name="values"/>
+			<set name="keys" value="event.getParam('processname').toString()"/>
+			<reference variable="values">
+				<jsonbody><![CDATA[ 
+						{
+							"state":"INSTALLED",
+							"_iconid_state":"appInactive",
+							"id":"<%=event.getParam('processname').toString()%>",
+							"icon":"org.onosproject.drivers",
+							"version":"<%=event.getParam('Version').toString()%>",
+							"category":"<%=event.getParam('Category').toString()%>",
+							"origin":"<%=event.getParam('Origin').toString()%>",
+							"title":"<%=event.getParam('Title').toString()%>",
+							"desc":"<%=event.getParam('Desc').toString()%>",
+							"url":"<%=event.getParam('URL').toString()%>",
+							"readme":"",
+							"role":"",
+							"required_apps":[],
+							"features":[],
+							"permissions":[]
+						}
+				]]></jsonbody>
+			</reference>
+			<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+			  <function>
+				<log>AppDeactiveEvent</log>
+			  </function>
 		</onevent>
 		<!--Session Shutdown-->
 		<onevent event="AppActiveEvent">

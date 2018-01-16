@@ -406,6 +406,7 @@
 			<function name="ProcessPacket" class="PacketService">
 				<parameters>
 					<string name="strjson" in="event.getParam('eventdata').toString()"/>
+					<string name="transportid" in="event.getParam('transportid').toString()"/>
 					<string name="datapathid" in="context.datapathid.toString()"/>	
 					<messageblock name="msgblock" in="event.getMessageBlock()"/>						
 				</parameters>

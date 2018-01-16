@@ -3,7 +3,7 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		specialLine.xml
+	@file 		CPolicyManager.xml
 	@brief 		Policy类,PolicyManager类
 	@version 	1.1.0
 	@auth 		hupeng
@@ -179,7 +179,7 @@
 				<parameters>
 					<string name="policystr"/>
 				</parameters>
-				<log level="100"> 182 in GetAllPolicy</log>
+				<log level="100"> 182 in GetAllPolicy  ----CPolicyManager.xml</log>
 				<log level="101"><![CDATA[policyContainer size=<%=thisclass.policyContainer.size().toString()%> ----216]]></log>
 				<object name="policyobj"/>
 				<string name="onepolicyjson"/>
@@ -211,6 +211,7 @@
 					context.strjson.setValue(strjson);
 				]]></script>
 				<set name="policystr" value="context.strjson.toString()"/>
+				<log level="100"> 214 execute GetAllPolicy over ----CPolicyManager.xml</log>
 			</function>
 			<function name="GetPolicybyid">
 				<parameters>
@@ -332,6 +333,43 @@
 					<syslog level="INFO"><![CDATA[CPolicyManager dstIp = <%=context.dstIp.toString()%>]]></syslog>
 					<syslog level="INFO"><![CDATA[CPolicyManager content = <%=context.content.toString()%>]]></syslog>
 				</for>			
+			</function>
+			
+			<function name="GetAllPolicys">
+				<parameters>
+					<string name="policystr"/>
+				</parameters>
+				<log level="100"> 342 in GetAllPolicys  ----CPolicyManager.xml</log>
+				<log level="101"><![CDATA[policyContainer size=<%=thisclass.policyContainer.size().toString()%> ----216]]></log>
+				<object name="policyobj"/>
+				<string name="onepolicyjson"/>
+				<string name="strjson"/>
+				<list name="policylist" valuetype="string"/>
+				<pair name="onepolicyptr" keytype="string" valuetype="object"/>
+				<for var="onepolicyptr" in="thisclass.policyContainer">
+					<set name="context.policyobj" value="context.onepolicyptr.second()"/>
+					<function name="OnePolicyObjectToJsonString" class="policyobj">
+						<parameters>
+							<string name="policyObjectToJson" out="context.onepolicyjson"/>
+						</parameters>
+					</function>
+					<insert name="policylist" value="context.onepolicyjson.toString()"/>
+				</for>
+				
+				<script><![CDATA[
+					var myArray=new Array();
+						
+					var firstpolicyString = context.policylist.getFirst();
+					while(firstpolicyString != null){
+						var jsoninfo = JSON.parse(firstpolicyString);
+							myArray.push(jsoninfo);
+							firstpolicyString = context.policylist.getNext();
+					}
+					var strjson=JSON.stringify(myArray);
+					context.strjson.setValue(strjson);
+				]]></script>
+				<set name="policystr" value="context.strjson.toString()"/>
+				<log level="100"> 372 execute GetAllPolicys  ----CPolicyManager.xml</log>
 			</function>
 		</public>
 	</class>

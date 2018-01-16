@@ -194,7 +194,7 @@
 				</if>
 			</function>
 			
-			<function name="Is_HaveGeteway">
+			<function name="Is_HaveGateway">
 				<parameters>
 					<string name="ip" />
 					<boolean name="is_have" />
@@ -218,40 +218,27 @@
 							<string name="netmask" out="context.netmask"/>
 						</parameters>
 					</function>
-					<syslog level="INFO"><![CDATA[ip = <%=context.ip.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[VGW = <%=context.VGW.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[netmask = <%=context.netmask.toString()%>]]></syslog>
-					<script><![CDATA[
-						var addr1=context.ip.toString();
-						var addr2=context.VGW.toString();
-						var mask=context.netmask.toString();
-						
-						var res1 = new Array();
-						var res2 = new Array(); 
-						
-						addr1 = addr1.split("."); 
-						addr2 = addr2.split("."); 
-						mask = mask.split("."); 
-						var ilen = addr1.length;
-						
-						for(var i = 0 ; i < ilen ; i++)
-						{ 
-							res1[i] = (parseInt(addr1[i]) & parseInt(mask[i])); 
-							//context.print(parseInt(addr1[i]) & parseInt(mask[i]));
-							res2[i] = (parseInt(addr2[i]) & parseInt(mask[i])); 
-							//context.print(parseInt(addr2[i]) & parseInt(mask[i]));
-						} 
-						
-						if(res1.join(".") == res2.join(".")){ 
-							context.print('true true true true');
-							context.is_have.setValue("true");
-						}else{ 
-							context.print('false false false false');
-							context.is_have.setValue("true");
-						}
-						
-					]]></script>
-					<set name="context.is_have" value="true"/>
+					<python><![CDATA[
+addr1=libstarlang.getValueString("context.ip");
+addr2=libstarlang.getValueString("context.VGW");
+mask=libstarlang.getValueString("context.netmask");
+
+addr1=addr1.split('.');
+addr2=addr2.split('.');
+mask=mask.split('.');
+
+res1 = [];
+res2 = [];
+
+ilen = len(addr1);
+for i in range(len(addr1)):
+	res1.append(int(addr1[i]) & int(mask[i]));
+	res2.append(int(addr2[i]) & int(mask[i])); 
+
+if res1 == res2:
+	libstarlang.setValueBool("context.is_have",True);				
+					]]></python>
+					<syslog level="INFO"><![CDATA[is_have = <%=context.is_have.toBoolean()%>]]></syslog>
 					<if cond="context.is_have.toBoolean() == true">
 						<then>
 							<syslog level="INFO">##context.is_have.toBoolean() == true##</syslog>
@@ -307,11 +294,7 @@
 						firststr=context.vgwlist.getNext();
 					}
 
-					
-					json['event']='vgwDataResponse';	
-					var payload = new Object();
-					payload['vgws']=myArray;
-					json['payload']=payload;
+					json['vgateways']=myArray;
 										
 					var strjson=JSON.stringify(json);
 					context.jsonstring.setValue(strjson);
@@ -353,6 +336,63 @@
 					<string name="vGatewayCounts"/>
 				</parameters>
 				<set name="vGatewayCounts" value="context.vGatewayContainer.size()"/>	
+			</function>
+			<function name="Gethashmap">
+				<parameters>
+					<hashmap name="vhashmap"/>
+				</parameters>
+				<set name="vhashmap" value="thisclass.vGatewayContainer" />
+			</function>
+						<!--qiulei 20180113-->
+			<function name="GetAllVGatewaysStr">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<string name="outjson"/>
+				<object name="onevgwinfo" />
+				<list name="vgwlist"  valuetype="string"/>
+				<pair name="onevgwpair"  keytype="string" valuetype="object"/>
+				<for var="onevgwpair" in="thisclass.vGatewayContainer">
+					<function>
+						<set name="onevgwinfo" value="context.onevgwpair.second()"/>
+						<if cond="context.onevgwinfo.ptr == null">
+							<then>
+								<log>onevgwinfo is null  ----CvGatewayManager.xml</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="ToString" class="onevgwinfo">
+							<parameters>
+								<string name="jsonstring"  out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="vgwlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var myArray=new Array(); 
+					var firststr=context.vgwlist.getFirst();
+					while(firststr!=null){
+						var vgw = firststr;									
+						var info = JSON.parse(vgw);	
+						myArray.push(info);
+						firststr=context.vgwlist.getNext();
+					}
+					
+					var strjson=JSON.stringify(myArray);
+					context.jsonstring.setValue(strjson);
+				]]></script>
+			</function>
+
+			<function name="Container_Is_Have">
+				<parameters>
+					<boolean name="is_null"/>
+				</parameters>
+				<if cond="thisclass.vGatewayContainer.size()==0">
+					<then>
+						<set name="is_null" value="false" />
+					</then>
+				</if>
 			</function>
 		</public>
 	</class>

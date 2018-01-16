@@ -50,9 +50,9 @@
 				<set name="thisclass.m_outputPort" value="context.outputPort.toString()"/>
 			</function>
 			<function name="Printtunnel">
-				<log><![CDATA[Ctunnel m_deviceid=<%=context.m_deviceid.toString()%>]]></log>
-				<log><![CDATA[Ctunnel m_inputPort=<%=context.m_inputPort.toString()%>]]></log>
-				<log><![CDATA[Ctunnel m_outputPort=<%=context.m_outputPort.toString()%>]]></log>
+				<syslog level="INFO"><![CDATA[CTunnelDevice m_deviceid=<%=context.m_deviceid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnelDevice m_inputPort=<%=context.m_inputPort.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CTunnelDevice m_outputPort=<%=context.m_outputPort.toString()%>]]></syslog>
 			</function>
 			<function name="GetTunnelDeviceId">
 				<parameters>
@@ -282,6 +282,48 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
+				<function name="InstallRuleAtSameDevicepolicy">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleAtSameDevice">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleAtSameDevicepolicy">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<string name="jsonout2in"/>
 				<string name="jsonin2out"/>
 				<syslog level="INFO"> InstallRuleAtSameDevice policy</syslog>
@@ -328,15 +370,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
+												"vlanid":"<%=context.invlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -346,10 +394,10 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.invlan.toString()%>"
-											}
+												"srcip":"<%=context.srcip.toString()%>"
+											}	
 										]
 									},
 								"instructionlist":[
@@ -393,15 +441,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
+												"vlanid":"<%=context.outvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -411,10 +465,10 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.outvlan.toString()%>"
-											}
+												"srcip":"<%=context.dstip.toString()%>"
+											}	
 										]
 									},
 								"instructionlist":[
@@ -434,7 +488,7 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -442,7 +496,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -783,6 +837,48 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
+				<function name="InstallRuleStartpolicy">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="invlan" in="context.invlan.toString()"/>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleStartpolicy">
+				<parameters>
+					<string name="inport"/>
+					<string name="invlan"/>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<syslog level="INFO">########## InstallRuleStart policy ############</syslog>
 				<syslog level="INFO"> <![CDATA[installRuleStart inport = <%= context.inport.toString()%>]]></syslog>
 				<syslog level="INFO"> <![CDATA[installRuleStart invlan = <%= context.invlan.toString()%>]]></syslog>
@@ -831,22 +927,28 @@
 													},
 													{
 														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
 														"oxmfield":"10",
 														"hasmask":"false",
 														"ipproto":"<%=context.ipproto.toString()%>"
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"11",
-														"hasmask":"false",
-														"srcip":"<%=context.srcip.toString()%>"
-													},
-													{
-														"oxmclass":"0x8000",
 														"oxmfield":"12",
 														"hasmask":"false",
 														"dstip":"<%=context.dstip.toString()%>"
-													}
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.srcip.toString()%>"
+													}	
 												]
 											},
 										"instructionlist":[
@@ -902,17 +1004,23 @@
 														"hasmask":"false",
 														"inport":"<%=context.inport.toString()%>"
 													},
+												    {
+														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"6",
+														"hasmask":"false",
+														"vlanid":"<%=context.invlan.toString()%>"
+													},
 													{
 														"oxmclass":"0x8000",
 														"oxmfield":"10",
 														"hasmask":"false",
 														"ipproto":"<%=context.ipproto.toString()%>"
-													},
-													{
-														"oxmclass":"0x8000",
-														"oxmfield":"11",
-														"hasmask":"false",
-														"srcip":"<%=context.srcip.toString()%>"
 													},
 													{
 														"oxmclass":"0x8000",
@@ -922,10 +1030,10 @@
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"6",
+														"oxmfield":"11",
 														"hasmask":"false",
-														"vlanid":"<%=context.invlan.toString()%>"
-													}
+														"srcip":"<%=context.srcip.toString()%>"
+													}	
 												]
 											},
 										"instructionlist":[
@@ -984,15 +1092,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -1002,9 +1116,9 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+												"srcip":"<%=context.dstip.toString()%>"
 											}
 										]
 									},
@@ -1029,7 +1143,7 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1037,7 +1151,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1220,7 +1334,39 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
-
+				<function name="InstallRuleMidpolicy">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleMid">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallRuleMidpolicy">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
 				<syslog level="INFO">######## InstallRuleMid policy ########</syslog>
@@ -1257,15 +1403,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -1275,9 +1427,9 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceinvlan.toString()%>"
+												"srcip":"<%=context.srcip.toString()%>"
 											}
 										]
 									},
@@ -1322,15 +1474,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
+												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -1340,9 +1498,9 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceoutvlan.toString()%>"
+												"srcip":"<%=context.dstip.toString()%>"
 											}
 										]
 									},
@@ -1363,7 +1521,7 @@
 				</reference>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1371,7 +1529,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1660,7 +1818,49 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
+				<function name="InstallRuleEndpolicy">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallRuleEnd">
+					<parameters>
+						<string name="serviceinvlan" in="context.serviceinvlan.toString()"/>
+						<string name="serviceoutvlan" in="context.serviceoutvlan.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outvlan" in="context.outvlan.toString()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
 
+			<function name="InstallRuleEndpolicy">
+				<parameters>
+					<string name="serviceinvlan"/>
+					<string name="serviceoutvlan"/>
+					<string name="outport"/>
+					<string name="outvlan"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
 				<syslog level="INFO">######## InstallRuleEnd policy #########</syslog>
@@ -1707,15 +1907,21 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"6",
 												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
+												"vlanid":"<%=context.serviceinvlan.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -1725,10 +1931,10 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"6",
+												"oxmfield":"11",
 												"hasmask":"false",
-												"vlanid":"<%=context.serviceinvlan.toString()%>"
-											}
+												"srcip":"<%=context.srcip.toString()%>"
+											}	
 										]
 									},
 								"instructionlist":[
@@ -1779,22 +1985,29 @@
 													},
 													{
 														"oxmclass":"0x8000",
+														"oxmfield":"5",
+														"hasmask":"false",
+														"ethtype":"<%=context.ethtype.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
 														"oxmfield":"10",
 														"hasmask":"false",
 														"ipproto":"<%=context.ipproto.toString()%>"
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"11",
-														"hasmask":"false",
-														"srcip":"<%=context.dstip.toString()%>"
-													},
-													{
-														"oxmclass":"0x8000",
 														"oxmfield":"12",
 														"hasmask":"false",
 														"dstip":"<%=context.srcip.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"11",
+														"hasmask":"false",
+														"srcip":"<%=context.dstip.toString()%>"
 													}
+													
 												]
 											},
 										"instructionlist":[
@@ -1852,15 +2065,21 @@
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"10",
+														"oxmfield":"5",
 														"hasmask":"false",
-														"ipproto":"<%=context.ipproto.toString()%>"
+														"ethtype":"<%=context.ethtype.toString()%>"
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"11",
+														"oxmfield":"6",
 														"hasmask":"false",
-														"srcip":"<%=context.dstip.toString()%>"
+														"vlanid":"<%=context.outvlan.toString()%>"
+													},
+													{
+														"oxmclass":"0x8000",
+														"oxmfield":"10",
+														"hasmask":"false",
+														"ipproto":"<%=context.ipproto.toString()%>"
 													},
 													{
 														"oxmclass":"0x8000",
@@ -1870,9 +2089,9 @@
 													},
 													{
 														"oxmclass":"0x8000",
-														"oxmfield":"6",
+														"oxmfield":"11",
 														"hasmask":"false",
-														"vlanid":"<%=context.outvlan.toString()%>"
+														"srcip":"<%=context.dstip.toString()%>"
 													}
 												]
 											},
@@ -1908,7 +2127,7 @@
 				
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -1916,7 +2135,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -2132,7 +2351,45 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
-
+				<function name="InstallVxlanTunnelStartpolicy">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanTunnelStartpolicy">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
 				
@@ -2173,21 +2430,27 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
 											}
 										]
 									},
@@ -2238,15 +2501,15 @@
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"10",
+												"oxmfield":"5",
 												"hasmask":"false",
-												"ipproto":"<%=context.ipproto.toString()%>"
+												"ethtype":"<%=context.ethtype.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
+												"oxmfield":"10",
 												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
+												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -2256,10 +2519,16 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"38",
 												"hasmask":"false",
 												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
-											}
+											}	
 										]
 									},
 								"instructionlist":[
@@ -2280,7 +2549,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -2288,7 +2557,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -2517,7 +2786,45 @@
 					<string name="dstip"/>
 					<string name="ipproto"/>
 				</parameters>
-
+				<function name="InstallVxlanTunnelEndpolicy">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+					</parameters>
+				</function>
+				<function name="InstallVxlanTunnelEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<long name="bandwith" in="context.bandwith.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallVxlanTunnelEndpolicy">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<long name="bandwith"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+				</parameters>
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
 				
@@ -2557,22 +2864,28 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.dstip.toString()%>"
-											}
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											}	
 										]
 									},
 								"instructionlist":[
@@ -2622,21 +2935,27 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
@@ -2664,7 +2983,7 @@
 
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid"/>
+						<string name="outflowid" out="context.flowid1"/>
 						<string name="strjson" in="context.jsonin2out.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -2672,7 +2991,7 @@
 				</function>
 				<function name="InstallFlow" class="flowservice">
 					<parameters>
-						<string name="outflowid" out="thisclass.m_flowid2"/>
+						<string name="outflowid" out="context.flowid2"/>
 						<string name="strjson" in="context.jsonout2in.toString()"/>
 						<string name="appId" in="'tunnelservice'"/>
 						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
@@ -2906,13 +3225,10 @@
 						<string name="dropid" out="thisclass.m_dropid"/>
 					</parameters>
 				</function>
-				<function name="InstallVxlanZhuanXianStartpolicy">
+				<function name="InstallVxlanZhuanXianStart">
 					<parameters>
 						<string name="inport" in="context.inport.toString()"/>
 						<string name="inputport" in="context.inputport.toString()"/>
-						<string name="srcip" in="context.srcip.toString()"/>
-						<string name="dstip" in="context.dstip.toString()"/>
-						<string name="ipproto" in="context.ipproto.toString()"/>
 						<string name="ethtype" in="'0x0806'"/>
 						<string name="flowid1" out="thisclass.m_flowid3"/>
 						<string name="flowid2" out="thisclass.m_flowid4"/>
@@ -2932,7 +3248,6 @@
 					<string name="flowid2"/>
 					<string name="dropid"/>
 				</parameters>
-
 				<string name="jsonin2out"/>
 				<string name="jsonout2in"/>
 				
@@ -2969,22 +3284,28 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.dstip.toString()%>"
-											}
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											}	
 										]
 									},
 									"instructionlist":[
@@ -3028,21 +3349,27 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
 											}
 										]
 									},
@@ -3320,13 +3647,10 @@
 						<string name="dropid" out="thisclass.m_dropid"/>
 					</parameters>
 				</function>
-				<function name="InstallVxlanZhuanXianEndpolicy">
+				<function name="InstallVxlanZhuanXianEnd">
 					<parameters>
 						<string name="outport" in="context.outport.toString()"/>
 						<string name="outputport" in="context.outputport.toString()"/>
-						<string name="srcip" in="context.srcip.toString()"/>
-						<string name="dstip" in="context.dstip.toString()"/>
-						<string name="ipproto" in="context.ipproto.toString()"/>
 						<string name="ethtype" in="'0x0806'"/>
 						<string name="flowid1" out="thisclass.m_flowid3"/>
 						<string name="flowid2" out="thisclass.m_flowid4"/>
@@ -3382,21 +3706,27 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.srcip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
 											}
 										]
 									},
@@ -3441,21 +3771,27 @@
 											},
 											{
 												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
 												"oxmfield":"10",
 												"hasmask":"false",
 												"ipproto":"<%=context.ipproto.toString()%>"
 											},
 											{
 												"oxmclass":"0x8000",
-												"oxmfield":"11",
-												"hasmask":"false",
-												"srcip":"<%=context.dstip.toString()%>"
-											},
-											{
-												"oxmclass":"0x8000",
 												"oxmfield":"12",
 												"hasmask":"false",
 												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
 											}
 										]
 									},

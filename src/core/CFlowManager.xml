@@ -1273,7 +1273,7 @@
 				<pair name="onedeviceflowinfopair" keytype="string" valuetype="hashmap"/>
 				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
 				
-				<log level="100"> #####Send OpenFlowMultiPartFlowRequest#####</log>
+				<syslog level="INFO"> #####Send OpenFlowMultiPartFlowRequest#####</syslog>
 				<function name="OpenFlowMultiPartFlowRequest">
 					<parameters>						
 						<long name="xid"  in="context.xid.toLong()"/>
@@ -1285,7 +1285,7 @@
 				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
 					<log level="100"> #####wait is success#####</log>
 					<set name="replyjson" value="event.getParam('eventdata').toString()"/>
-					<log level="101"><![CDATA[replyjson = <%=context.replyjson.toString()%>]]></log>
+					
 					<script><![CDATA[							
 						var info = JSON.parse(context.replyjson.toString());
 						if (info.statslist!=null)
@@ -1341,7 +1341,7 @@
 							var strjson=JSON.stringify(flowsinfo);
 							context.modstrjson.setValue(strjson);
 						]]></script>			
-						<log level="101"><![CDATA[modstrjson = <%=context.modstrjson.toString()%>]]></log>
+						
 						<log level="100"> #####Send_OFPT13_FLOW_MOD start#####</log>
 						<function name="Send_OFPT13_FLOW_MOD">
 							<parameters>
@@ -1353,6 +1353,86 @@
 					</for>
 				</wait>
 			</function>
+			<!--
+				@brief		Uninstall ARP Flow
+				@auth 		YangXiangRui
+				@date		2018/01/15
+			-->
+			<function name="UninstallArpFlow">
+				<syslog level="INFO">CFlowManager UninstallArpFlow</syslog>
+				<string name="replyjson"/>
+				<string name="modstrjson"/>
+				<long name="xid"/>
+				<string name="ethtype" />
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>			
+					</parameters>
+				</function>
+							
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
+					<syslog level="INFO">CFlowManager UninstallArpFlow wait is sucess</syslog>
+
+					<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+					<syslog level="INFO"><![CDATA[replyjson = <%=context.replyjson.toString()%>]]></syslog>
+					<script><![CDATA[		
+						var info = JSON.parse(context.replyjson.toString());
+						if (info.statslist!=null)
+						{
+							for(var i=0;i<info.statslist.length;i++)
+							{
+								for(var j=0;j<info.statslist[i].match.matchfieldlist.length;j++)
+								{
+									if (info.statslist[i].match.matchfieldlist[j].ethtype == "2054")	
+									{
+										var matchinfo = new Object();
+										matchinfo['matchfieldlist'] = JSON.stringify(info.statslist[i].match.matchfieldlist);
+										matchinfo['type'] = info.statslist[i].match.type.toString();
+									
+										var flowsinfo=new Object();
+											flowsinfo['cookie'] =  info.statslist[i].cookie.toString();
+											flowsinfo['cookiemask'] = "0";
+											flowsinfo['tableid'] =  info.statslist[i].tableid.toString();
+											flowsinfo['command'] = "3";
+											flowsinfo['idletimeout'] =  info.statslist[i].idletimeout.toString();
+											flowsinfo['hardtimeout'] =  info.statslist[i].hardtimeout.toString();
+											flowsinfo['priority'] =  info.statslist[i].priority.toString();
+											flowsinfo['bufferid'] = "0xffffffff";
+											flowsinfo['outport'] = "0xffffffff";
+											flowsinfo['outgroup'] = "0xffffffff";
+											flowsinfo['flags'] =  info.statslist[i].flags.toString();
+													
+											flowsinfo['match']= matchinfo;
+					
+										var strjson=JSON.stringify(flowsinfo);
+										context.modstrjson.setValue(strjson);
+									}								
+								}
+							}
+						}
+					]]></script>
+					<syslog level="INFO"><![CDATA[modstrjson = <%=context.modstrjson.toString()%>]]></syslog>
+					<if cond="context.modstrjson.toString()==''">
+						<then>
+							<syslog level="INFO">CFlowManager UninstallArpFlow modstrjson is null</syslog>
+							<exit/>
+						</then>
+					</if>
+					<function name="Send_OFPT13_FLOW_MOD">
+						<parameters>
+							<string name="transportid" in="context.m_transportid.toString()"/>
+							<string name="strjson" in="context.modstrjson.toString()"/>
+						</parameters>
+					</function>
+				</wait>
+				<function name="removeProcessor" class="PacketService">				
+					<parameters>
+						<string name="app_name" in="'hostservice'"/>									
+					</parameters>
+				</function>
+			</function>	
 		</public>
 	</class>
 </starlang>

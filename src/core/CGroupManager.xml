@@ -175,7 +175,7 @@
 						<set name="strbucket" value="context.strbucketlists.toString()"/>
 						 <new name="bucketobj" class="CGroupBucket">
 							<parameters>
-									<string name="bucketjson"  in="context.strbucket.toString()"/>
+								<string name="bucketjson" in="context.strbucket.toString()"/>
 							</parameters>
 						</new>
 						<insert name="m_buckets" value="context.bucketobj"/>
@@ -199,21 +199,19 @@
 				<object name="i" />
 			
 				<for var="i" in="context.m_buckets">
-					<function>
-						<set name="bucketsobj" value="context.i"/>
-						<if cond="context.bucketsobj.ptr==null">
-							<then>
-								<log>bucketsobj is null</log>
-								<exit/>
-							</then>
-						</if>
-						<function name="ToJsonString" class="bucketsobj">
-							<parameters>
-								<string name="jsonstring"  out="context.outjson"/>
-							</parameters>
-						</function>
-						<insert name="bucketjsonlist" value="context.outjson.toString()"/>
+					<set name="bucketsobj" value="context.i"/>
+					<if cond="context.bucketsobj.ptr==null">
+						<then>
+							<log>bucketsobj is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="ToJsonString" class="bucketsobj">
+						<parameters>
+							<string name="jsonstring"  out="context.outjson"/>
+						</parameters>
 					</function>
+					<insert name="bucketjsonlist" value="context.outjson.toString()"/>
 				</for>
 				<script><![CDATA[
 					var flow = new Object();
@@ -247,7 +245,7 @@
 				<parameters>
 					<string name="groupjson"/>
 				</parameters>
-				<vector name="bucketjsonlist"  valuetype="string"/>
+				<list name="bucketjsonlist"  valuetype="string"/>
 				<object name="bucketsobj" />
 				<string name="bucketstring" />
 				<long name="i"  value="0"/>
@@ -342,13 +340,7 @@
 						var str_json=JSON.stringify(info);
 						context.outjson.setValue(str_json);
 				]]></script>
-				<!--qiulei modify 20170807-->
-				<function name="Send_OFPT13_GROUP_MOD">
-					<parameters>
-						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
-						<string name="strjson"  in="context.outjson.toString()"/>
-					</parameters>
-				</function>
+				
 				<new name="groupobj" class="CGroup">
 					<parameters>
 						<string name="id"  in="context.in_groupid.toString()"/>
@@ -358,6 +350,13 @@
 				</new>
 				<insert name="groupContainer" key="context.in_groupid.toString()" value="context.groupobj"/>
 				<set name="thisclass.m_groupid" value="thisclass.m_groupid.toLong()+1"/>
+				<!--qiulei modify 20170807-->
+				<function name="Send_OFPT13_GROUP_MOD">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.outjson.toString()"/>
+					</parameters>
+				</function>
 			</function>
 			<!--
 				@brief		通过groupid卸载包请求
@@ -386,7 +385,7 @@
 						</function>
 					</else>
 				</if>
-				<if cond="context.jsongroup != null">
+				<if cond="context.jsongroup.ptr != null">
 					<then>
 						<function name="GetGroupString" class="context.jsongroup">
 							<parameters>

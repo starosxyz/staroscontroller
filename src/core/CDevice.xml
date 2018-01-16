@@ -794,6 +794,7 @@
 					<string name="inportid" />
 				</parameters>
 				<log>insert CDevice's PacketOutToPort</log>
+				<syslog level="NIFO">#2#</syslog>
 				<function name="PacketOutToPort" class="thisclass.m_ports">
 					<parameters>
 						<string name="outputport"  in="context.outputport.toString()"/>

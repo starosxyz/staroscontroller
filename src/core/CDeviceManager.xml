@@ -1141,11 +1141,13 @@
 				</parameters>
 				<object name="device"/>
 				<log>PacketOutToPort !!!!!!!!!!!!!!</log>
+				<syslog level="NIFO">#0#</syslog>
 				<if cond="context.deviceContainer.hasValue(context.datapathid.toString())">
 					<then>
 						<set name="device" value="context.deviceContainer.getValue(context.datapathid.toString())"/>
 						<if cond="context.device != null">
 							<then>
+								<syslog level="NIFO">#1#</syslog>
 								<function name="PacketOutToPort" class="context.device">
 									<parameters>
 										<string name="outputport" in="context.outputport.toString()"/>

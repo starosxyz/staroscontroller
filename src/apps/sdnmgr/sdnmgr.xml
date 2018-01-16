@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		sdnmgr.xml
+	@brief 		tunnelapp
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180116
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/sdnmgrapi.xml"/>
+	<!--qiulei 20180116 Tuesday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/sdnmgrDocsApi.xml"/>
+
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="RegistApplication" class="context.applicationmgr">
+				<parameters>
+					<string name="id" in="'sdnmgr'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'staros application'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'app for sdnmgr'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.80.10'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
+				</parameters>
+			</function>
+	
+			<log>sdnmgr app startup</log>
+		</onevent>	
+		
+		<onevent event="bundleapp.active">
+			<log>sdnmgr bundleapp.active     ----sdnmgr.xml</log>
+			<function name="AddDocsAPI_sdnmgr"/>
+		</onevent>
+		
+		<onevent event="~bundleapp.deactive">
+			<log>sdnmgr bundleapp.deactive    ----sdnmgr.xml</log>
+			<function name="RemoveDocsAPI_sdnmgr"/>
+			
+		</onevent>
+		
+		<onevent event="*">
+			<function>
+				<log level="1"><![CDATA[----sdnmgr.xml invalid event <%=event.getName().toString()%>]]> </log>
+				<log level="1"><![CDATA[----sdnmgr.xml invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

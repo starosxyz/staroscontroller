@@ -508,6 +508,7 @@
 				<boolean name="isvalidataport"/>
 				<if cond="context.portContainer.hasValue(context.outputport.toString())">
 					<then>
+						<syslog level="NIFO">#3#</syslog>
 						<set name="portobj" value="context.portContainer.getValue(context.outputport.toString())"/>
 						<if cond="context.portobj.ptr == null">
 							<then>
@@ -522,6 +523,7 @@
 						</function>
 						<if cond="context.isvalidataport.toBoolean()==true">
 							<then>
+								<syslog level="NIFO">#4#</syslog>
 								<function name="SendOpenFlowPacketOut">
 									<parameters>
 										<string name="outputport" in="context.outputport.toString()"/>

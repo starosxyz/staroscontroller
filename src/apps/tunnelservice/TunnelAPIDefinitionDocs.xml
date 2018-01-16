@@ -70,6 +70,7 @@
 									
 									"inputvxlanport",
 									"outputvxlanport",
+									"sendtype",
 									
 									
 									"bandwidth",
@@ -121,6 +122,12 @@
 									"outputvxlanport": {
 										"type": "string",
 										"example": "of:1234/33"
+									},
+									
+									
+									"sendtype": {
+										"type": "string",
+										"example": "asdf"
 									},
 									
 									
@@ -282,6 +289,7 @@
 						"inputvxlanport",
 						"outputvxlanport",
 						
+						"sendtype",
 						
 						"inputvlanid",
 						"outputvlanid",
@@ -311,6 +319,10 @@
 						"outputtunnelport": {
 							"type": "string",
 							"example": "of:1234/33"
+						},
+						"sendtype": {
+							"type": "string",
+							"example": "asdf"
 						},
 						
 						

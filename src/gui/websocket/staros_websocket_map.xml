@@ -51,6 +51,17 @@
 		<set name="WebSocketHandlerMap" paramname="hostDataRequest" value="'HandlehostDataRequest'"/>
 		<!--yijian 20170823-->
 		<set name="WebSocketHandlerMap" paramname="settingDataRequest" value="'HandleSettingsRequest'"/>
+		
+		<!--qiulei <20180113-->
+		<set name="WebSocketHandlerMap" paramname="policyDataRequest" value="'HandlePolicysRequest'"/>
+		<!--qiulei 20180113-->
+		<set name="WebSocketHandlerMap" paramname="vgatewayDataRequest" value="'HandleVgatewaysRequest'"/>
+		<!--qiulei 20180113-->
+		<set name="WebSocketHandlerMap" paramname="policyDetailsDataRequest" value="'HandlePolicyDetailsRequest'"/>
+		<!--qiulei 20180113-->
+		<set name="WebSocketHandlerMap" paramname="vgatewayDetailsDataRequest" value="'HandleVgatewayDetailsRequest'"/>
+		
+		
 		<set name="WebSocketHandlerMap" paramname="flowDataRequest" value="'HandleFlowDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="portDataRequest" value="'HandlePortDataRequest'"/>
 		<set name="WebSocketHandlerMap" paramname="meterDataRequest" value="'HandleMeterDataRequest'"/>

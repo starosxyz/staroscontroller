@@ -226,6 +226,53 @@
 				</parameters>
 			</function>
 		</function>
+
+		<!--
+			@brief		卸载Arp流表
+			@auth 		wangkang 
+			@date		2018/01/15
+			Input:				
+				@param datapathid 	流表设备id
+			Output:
+		-->
+		<function name="UninstallArpFlow">
+			<parameters>
+				<string name="datapathid"/>			
+			</parameters>
+			<object name="deviceobj"/>
+			<object name="flowmgrobj"/>
+			<syslog level="INFO">##### CFlowServer UninstallArpFlow #####</syslog>
+			<log level="100"><![CDATA[CFlowService UninstallArpFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+
+			<function name="findDevice" class="DeviceManager">
+				<parameters>
+					<string name="datapathid" in="context.datapathid.toString()"/>
+					<object name="deviceobject" out="context.deviceobj"/>
+				</parameters>				
+			</function>
+			
+			<if cond="context.deviceobj.ptr==null">
+				<then>
+					<log>deviceobj is null</log>
+					<exit/>
+				</then>
+			</if>
+
+			<function name="GetFlowManager" class="context.deviceobj">
+				<parameters>
+					<object name="outflowmgr" out="context.flowmgrobj"/>
+				</parameters>			
+			</function>
+
+			<if cond="context.flowmgrobj.ptr==null">
+				<then>
+					<log>flowmgrobj is null</log>
+					<exit/>
+				</then>
+			</if>
+			
+			<function name="UninstallArpFlow" class="context.flowmgrobj"/>
+		</function>
 	</public>
 	</class>
 </starlang>
