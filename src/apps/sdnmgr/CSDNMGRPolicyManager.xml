@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSDNMGRPolicyManager.xml
+	@brief 		Policy类,PolicyManager类
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180118
+	
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	
+	CSDNMGRTypeManager sdnmgrTypeMgr
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CSDNMGRPolicy">
+
+		<private>
+			<string name="m_policyid"/>
+			<object name="m_sdnmgrTypeMgr"/>
+		</private>
+		
+		<public>
+		
+			<function name="CSDNMGRPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				
+				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
+				<set name="thisclass.m_sdnmgrTypeMgr" value="context.sdnmgrTypeMgr"/>
+				
+			</function>
+
+			<function name="GetsdnmgrTypeMgr">
+				<parameters>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				<set name="context.sdnmgrTypeMgr" value="thisclass.m_sdnmgrTypeMgr"/>
+			</function>
+			
+			<function name="GetOnePolicyObjToJsonStr">
+				<parameters>
+					<string name="policyObjJsonStr"/>
+				</parameters>
+				
+				<log level="100">----CSDNMGRPolicyManager.xml  enter GetOnePolicyObjToJsonStr 53</log>
+				
+				<function name="test123" class="thisclass.m_sdnmgrTypeMgr"/>
+				<string name="allTypeJsonStr"/>
+				<function name="GetAllTypeJsonStr" class="thisclass.m_sdnmgrTypeMgr">
+					<parameters>
+						<string name="allTypeJsonStr" out="context.allTypeJsonStr"/>
+					</parameters>
+				</function>
+				<log level="100">----CSDNMGRPolicyManager.xml  enter GetOnePolicyObjToJsonStr 60</log>
+				<log level="100"><![CDATA[63 allTypeJsonStr=<%=context.allTypeJsonStr.toString()%>]]></log>
+				<script><![CDATA[
+					var typeArr=JSON.parse(context.allTypeJsonStr.toString());
+					context.print("解析完毕");
+					context.print("typeArr.length="+typeArr.length);
+					
+					var root = new Object();
+						root['policyid']=thisclass.m_policyid.toString();
+						root['type']=typeArr;
+				
+					var strjson = JSON.stringify(root);
+					context.print("78 strjson="+strjson);
+					context.policyObjJsonStr.setValue(strjson);
+					context.print("js执行结束");
+					
+				]]></script>
+				
+			</function>
+
+		</public>
+	</class>
+	
+	<class name="CSDNMGRPolicyManager">
+		<private>
+			<hashmap name="sdnmgrPolicyManager" keytype="string" valuetype="object"/>
+		</private>
+		
+		<public>
+			<function name="CSDNMGRPolicyManager">
+			</function>
+			
+			<!--qiulei 20180118 pm-->
+			<function name="getPolicyContainer">
+				<parameters>
+					<hashmap name="sdnmgrPolicyManager" keytype="string" valuetype="object"/>
+				</parameters>
+				<set name="sdnmgrPolicyManager" value="thisclass.sdnmgrPolicyManager"/>
+			</function>
+			
+			<!--qiulei 20180118 pm-->
+			<function name="AddPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				<object name="policyobj"/>
+				<new name="policyobj" class="CSDNMGRPolicy">
+					<parameters>
+						<string name="policyid" in="context.policyid"/>
+						<object name="sdnmgrTypeMgr" in="context.sdnmgrTypeMgr"/>
+					</parameters>
+				</new>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())==false">
+					<then>
+						<insert name="thisclass.sdnmgrPolicyManager" key="context.policyid.toString()" value="context.policyobj"/>
+						<log level="101"><![CDATA[context.sdnmgrPolicyManager.size=<%=context.sdnmgrPolicyManager.size().toString()%> ----142]]></log>
+						
+						<log level="101">add over</log>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>															
+			
+			<!--查询容器中元素的个数-->
+			<function name="GetPolicyCounts">
+				<parameters>
+					<string name="policyCounts"/>
+				</parameters>
+				<set name="policyCounts" value="context.sdnmgrPolicyManager.size()"/>	
+			</function>
+			
+			<function name="getPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="onepolicy"/>
+				</parameters>
+				<set name="onepolicy" value="thisclass.sdnmgrPolicyManager.getValue(context.policyid.toString())"/>
+			</function>
+			
+			<function name="DeletePolicyByid">
+				<parameters>
+					<string name="policyid"/>
+					<boolean name="deleteResult" value="false"/>
+				</parameters>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())">
+					<then>
+						<remove name="sdnmgrPolicyManager" key="context.policyid.toString()"/>
+						<set name="deleteResult" value="true"/>
+					</then>
+					<else>
+						<set name="deleteResult" value="false"/>
+					</else>
+				</if>
+				<log level="101"><![CDATA[----CSDNMGRPolicyManager.xml  deleteResult=<%=context.deleteResult.toString()%> ----155]]></log>
+				
+			</function>
+			
+			<function name="GetAllPolicy">
+				<parameters>
+					<string name="policystr"/>
+				</parameters>
+				
+				<log level="100"> 182 in GetAllPolicy  ----CSDNMGRPolicyManager.xml</log>
+				<log level="101"><![CDATA[sdnmgrPolicyManager size=<%=thisclass.sdnmgrPolicyManager.size().toString()%> ----216]]></log>
+				
+				<object name="policyobj"/>
+				<string name="onepolicyjson"/>
+				<string name="strjson"/>
+				<list name="policylist" valuetype="string"/>
+				<pair name="onepolicyptr" keytype="string" valuetype="object"/>
+				<log level="100">----CSDNMGRPolicyManager.xml  163</log>
+				<for var="onepolicyptr" in="thisclass.sdnmgrPolicyManager">
+					<set name="context.policyobj" value="context.onepolicyptr.second()"/>
+					
+					<log level="100">----CSDNMGRPolicyManager.xml  167</log>
+					<function name="GetOnePolicyObjToJsonStr" class="context.policyobj">
+						<parameters>
+							<string name="policyObjJsonStr" out="context.onepolicyjson"/>
+						</parameters>
+					</function>
+
+					<log level="100">----CSDNMGRPolicyManager.xml  167</log>
+					<insert name="policylist" value="context.onepolicyjson.toString()"/>
+				</for>
+				
+				<script><![CDATA[	
+						var json = new Object();
+						var myArray=new Array();
+						
+					var firstpolicyString = context.policylist.getFirst();
+					while(firstpolicyString != null){
+						var objlist = JSON.parse(firstpolicyString);
+							myArray.push(objlist);
+							firstpolicyString = context.policylist.getNext();
+					}
+					json['policys']=myArray;
+					var strjson=JSON.stringify(json);
+					context.strjson.setValue(strjson);
+				]]></script>
+				<set name="policystr" value="context.strjson.toString()"/>
+				<log level="100"> 214 execute GetAllPolicy over ----CSDNMGRPolicyManager.xml</log>
+			</function>
+			
+			<function name="GetOnePolicyJsonStrbyid">
+				<parameters>
+					<string name="policyid"/>
+					<string name="onepolicystr"/>
+				</parameters>
+				
+				<log level="101"><![CDATA[context.policyid=<%=context.policyid.toString()%> ----216]]></log>
+
+				<object name="policyobj"/>
+				<string name="policystr"/>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())">
+					<then>
+						<lookup name="sdnmgrPolicyManager" key="context.policyid.toString()" output="context.policyobj"/>
+
+						<log level="101">enter 226</log>
+
+						<function name="GetOnePolicyObjToJsonStr" class="policyobj">
+							<parameters>
+								<string name="policyObjJsonStr" out="context.policystr"/>
+							</parameters>
+						</function>
+
+						<set name="onepolicystr" value="context.policystr.toString()"/>
+					</then>	
+				</if>
+			</function>
+
+			<function name="DeleteAllPolicy">
+				<object name="policymgr"/>
+				<object name="onepolicy"/>
+				<object name="typemgr"/>
+				<for var="context.policymgr" in="thisclass.sdnmgrPolicyManager">
+					<set name="context.onepolicy" value="context.policymgr.second()"/>
+					<if cond="context.onepolicy.ptr == null">
+						<then>
+							<log>context.onepolicy is null </log>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetsdnmgrTypeMgr" class="context.onepolicy">
+						<parameters>
+							<object name="sdnmgrTypeMgr" out="context.typemgr"/>
+						</parameters>
+					</function>
+					<if cond="context.typemgr.ptr == null">
+						<then>
+							<log>context.typemgr is null </log>
+							<exit/>
+						</then>
+					</if>
+					<function name="DeleteAllPolicyType" class="context.typemgr"/>
+				</for>
+				<script><![CDATA[				
+					context.sdnmgrPolicyManager.clear();
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

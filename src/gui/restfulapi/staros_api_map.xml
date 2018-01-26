@@ -22,7 +22,9 @@
 	limitations under the License.
 -->
 <starlang>
+	<function name="createIntentDatabase"/>
 	<params name="APIV1MapFunction" global="true"/>
+
 	<function name="InitAPIMapFunction">
 		<log level="11">Init API Map Function</log>
 		<set name="APIV1MapFunction" paramname="/onos/v1/devices/{id}" value="'HandleDeleteAndFindOneDeviceRequest'"/>
@@ -36,6 +38,11 @@
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows" value="'Handflowsrequest'"/>
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}/{flowId}" value="'HandflowsDFrequest'"/>
 		<set name="APIV1MapFunction" paramname="/onos/v1/flows/{deviceId}" value="'HandflowsDrequest'"/>
+
+		<set name="APIV1MapFunction" paramname="/onos/v1/intents/{appid}/{key}" value="'Handprocessintent'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/intents/relatedflows/{appid}/{key}" value="'Handprocessgetrelatedflows'"/>
+		<set name="APIV1MapFunction" paramname="/onos/v1/intents" value="'Handprocessallintents'"/>
+
 
 	</function>
 </starlang>

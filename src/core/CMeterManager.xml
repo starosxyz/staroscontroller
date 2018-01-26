@@ -425,7 +425,7 @@
 				</function>
 				<script><![CDATA[
 						var info = JSON.parse(context.flowmodjson.toString());
-						info.command='2';
+						info.command='3';
 						var strjson=JSON.stringify(info);
 						context.sendflowmodjson.setValue(strjson);
 				]]></script>

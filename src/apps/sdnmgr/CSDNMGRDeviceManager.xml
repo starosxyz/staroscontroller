@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSDNMGRDeviceManager.xml
+	@brief 		device类
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180117
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CSDNMGRDevice">
+		<private>
+			<string name="m_resourceid" />
+			<string name="m_ip" />
+			<string name="m_mac" />
+			<string name="m_location" />
+			<string name="m_devicetype" />
+			<string name="m_devicerole" />
+			<string name="m_bandwidth" />
+			<object name="portmgr"/>
+		</private>
+		<public>
+			<function name="CSDNMGRDevice">
+				<parameters>
+					<string name="resourceid" />
+					<string name="ip" />
+					<string name="mac" />
+					<string name="location" />
+					<string name="devicetype" />
+					<string name="devicerole" />
+					<string name="bandwidth" />
+				</parameters>
+				<set name="thisclass.m_resourceid" value="context.resourceid.toString()"/>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+				<set name="thisclass.m_mac" value="context.mac.toString()"/>
+				<set name="thisclass.m_location" value="context.location.toString()"/>
+				<set name="thisclass.m_devicetype" value="context.devicetype.toString()"/>
+				<set name="thisclass.m_devicerole" value="context.devicerole.toString()"/>
+				<set name="thisclass.m_bandwidth" value="context.bandwidth.toString()"/>
+				<new name="context.portmgr" class="CSDNMGRPortManager"/>			
+			</function>
+
+			<!--
+				@brief		调用 GetDeviceInfoJson 函数,返回单个 SDNMGRDeviceObj 的详细信息（类的属性）
+				@auth 		qiulei
+				@date		20180117 pm
+				Input:
+				Output: 	strjson
+		
+			-->
+		
+			<function name="OneSDNMGRDeviceObjToJsonStr">
+				<parameters>
+					<string name="SDNMGRDeviceJsonStr"/>
+				</parameters>
+				<string name="jsonstr"/>
+				<reference variable="jsonstr">
+					<jsonbody><![CDATA[ 
+						{	
+							"resourceid":"<%=thisclass.m_resourceid.toString()%>",
+							"ip":"<%=thisclass.m_ip.toString()%>",
+							"mac":"<%=thisclass.m_mac.toString()%>",
+							"inlocation":"<%=thisclass.m_location.toString()%>",
+							"devicetype":"<%=thisclass.m_devicetype.toString()%>",
+							"devicerole":"<%=thisclass.m_devicerole.toString()%>"
+							"bandwidth":"<%=thisclass.m_bandwidth.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="SDNMGRDeviceJsonStr" value="context.jsonstr.toString()"/>
+			</function>
+			
+			<function name="getResourceid">
+				<parameters>
+					<object name="resourceid"/>
+				</parameters>
+				<set name="context.resourceid" value="thisclass.m_resourceid"/>
+			</function>
+			
+			<function name="GetIP">
+				<parameters>
+					<string name="ip"/>
+				</parameters>
+				<set name="context.ip" value="thisclass.m_ip"/>
+			</function>
+			
+			<function name="GetMac">
+				<parameters>
+					<string name="mac"/>
+				</parameters>
+				<set name="context.mac" value="thisclass.m_mac"/>
+			</function>
+			
+			<function name="GetLocation">
+				<parameters>
+					<string name="location"/>
+				</parameters>
+				<set name="context.location" value="thisclass.m_location"/>
+			</function>
+			
+			<function name="GetDeviceType">
+				<parameters>
+					<string name="devicetype"/>
+				</parameters>
+				<set name="context.devicetype" value="thisclass.m_devicetype"/>
+			</function>
+				
+			<function name="GetDeviceRole">
+				<parameters>
+					<string name="devicerole"/>
+				</parameters>
+				<set name="context.devicerole" value="thisclass.m_devicerole"/>
+			</function>
+				
+			<function name="GetBandwidth">
+				<parameters>
+					<string name="bandwidth"/>
+				</parameters>
+				<set name="context.bandwidth" value="thisclass.m_bandwidth"/>
+			</function>
+			
+			<function name="getPortmgr">
+				<parameters>
+					<object name="portmgr"/>
+				</parameters>
+				<set name="context.portmgr" value="thisclass.portmgr"/>
+			</function>
+		</public>
+	</class>
+	
+	<class name="CSDNMGRDeviceManager">
+		<private>
+			<hashmap name="sdnmgrdeviceManager" keytype="string" valuetype="object"/>
+			<long name="resourceid"/>
+		</private>
+		<public>
+			<function name="CSDNMGRDeviceManager">
+				<set name="thisclass.resourceid" value="0"/>
+				<function name="getResourceIdByDatabase"/>
+				<function name="getDevicesDataByDatabase"/>
+				<log level="100">enter CSDNMGRDeviceManager</log>
+			</function>
+			
+			<function name="getResourceIdByDatabase">
+			
+				<log level="100">enter getResourceIdByDatabase</log>
+				<syslog level="INFO">enter getResourceIdByDatabase</syslog>
+				<string name="data"/>
+				<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+					<sql><![CDATA[
+						SELECT * from COMPANY ORDER BY RESOURCEID DESC LIMIT 0,1
+					]]></sql>
+				</database>
+				
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+					<set name="context.data" value="event.getParam('eventdata').toString()"/>
+				</wait>
+				<syslog level="INFO"><![CDATA[data = <%=context.data.toString()%>]]></syslog>
+				<if cond="context.data.toString() != ''">
+					<then>
+						<script><![CDATA[
+							context.print("176 data="+context.data.toString());
+							if(context.data){
+								var json = JSON.parse(context.data.toString());
+							
+								var deviceArr=json.data;
+								if(deviceArr){
+									var deviceobj= JSON.parse(deviceArr[0]);
+									var resourceid=deviceobj.resourceid;
+									thisclass.resourceid.setValue(resourceid);
+									
+									context.print("184 deviceArr="+typeof(deviceArr));
+								}
+							}
+						]]></script>
+					</then>
+
+				</if>
+			</function>
+			<!--qiulei 20180124pm-->
+			<function name="getDevicesDataByDatabase">
+						
+				<log level="100">201 enter getDevicesDataByDatabase </log>
+				<string name="onedevicestr"/>
+				<string name="resourceid"/>
+				<string name="ip"/>
+				<string name="mac"/>
+				<string name="location"/>
+				<string name="devicetype"/>
+				<string name="devicerole"/>
+				<string name="bandwidth"/>
+				<boolean name="addResult2"/>
+				
+				<list name="devicelist" valuetype="string"/>
+				<string name="data"/>
+				<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+					<sql><![CDATA[
+						SELECT * from COMPANY
+					]]></sql>
+				</database>
+				
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+					<set name="context.data" value="event.getParam('eventdata').toString()"/>
+				</wait>
+				<syslog level="INFO"><![CDATA[data = <%=context.data.toString()%>]]></syslog>
+				<if cond="context.data.toString() != ''">
+					<then>
+						<script><![CDATA[
+							context.print("231 data="+context.data.toString());
+							
+							if(context.data){
+								var json = JSON.parse(context.data.toString());
+							
+								var deviceArr=json.data;
+								if(deviceArr){
+									context.print("238 deviceArr="+deviceArr.length);
+									
+									for(var i=0;i<deviceArr.length;i++){
+										context.print("242 type="+typeof(deviceArr[i]));
+										context.devicelist.addValue(deviceArr[i]);
+									}
+								}
+							}
+						]]></script>
+					</then>
+				</if>
+				
+
+				<for var="onedevicestr" in="context.devicelist">
+					<log level="101"><![CDATA[560 onedevicestr=<%=context.onedevicestr.toString()%>]]></log>
+					<script><![CDATA[
+						context.print("365 onedevicestr="+context.onedevicestr);
+						var oneDeviceObj = JSON.parse(context.onedevicestr);
+						context.print("256");
+
+						var resourceid = oneDeviceObj.resourceid;
+						var ip = oneDeviceObj.ip;
+						var mac = oneDeviceObj.mac;
+						var location = oneDeviceObj.location;
+						var devicetype = oneDeviceObj.devicetype;
+						var devicerole = oneDeviceObj.devicerole;
+						var bandwidth = oneDeviceObj.bandwidth;
+						
+						context.print("266");
+						
+						context.print("resourceid="+resourceid);
+						context.print("ip="+ip);
+						context.print("mac="+mac);
+						context.print("location="+location);
+						context.print("devicetype="+devicetype);
+						context.print("devicerole="+devicerole);
+						context.print("bandwidth="+bandwidth);
+						
+						context.resourceid.setValue(resourceid);
+						context.ip.setValue(ip);
+						context.mac.setValue(mac);
+						context.location.setValue(location);
+						context.devicetype.setValue(devicetype);
+						context.devicerole.setValue(devicerole);
+						context.bandwidth.setValue(bandwidth);
+						
+						context.print("283");
+					]]></script>
+					
+					<log level="101">286 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</log>
+					<function name="AddSDNMGRDevice2">
+						<parameters>
+							<string name="resourceid" in="context.resourceid.toString()"/>
+							<string name="ip" in="context.ip.toString()"/>
+							<string name="mac" in="context.mac.toString()"/>
+							<string name="location" in="context.location.toString()"/>
+							<string name="devicetype" in="context.devicetype.toString()"/>
+							<string name="devicerole" in="context.devicerole.toString()"/>
+							<string name="bandwidth" in="context.bandwidth.toString()"/>
+						</parameters>
+					</function>
+					<log level="101">298 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</log>
+					<function name="addMonitor" class="MonitorManager">
+						<parameters>
+							<string name="ip" in="context.ip.toString()"/>
+							<boolean name="result" out="context.addResult2"/>
+						</parameters>
+					</function>
+					<log level="101">305 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</log>
+				</for>
+				<log level="100">308 enter getDevicesDataByDatabase over</log>
+			</function>
+
+
+			<!--qiulei 20180124pm-->
+			<function name="AddSDNMGRDevice2">
+				<parameters>
+					<string name="resourceid"/>
+					<string name="ip" />
+					<string name="mac" />
+					<string name="location" />
+					<string name="devicetype" />
+					<string name="devicerole" />
+					<string name="bandwidth" />
+				</parameters>
+				<log level="100">314 enter AddSDNMGRDevice2 over</log>
+				
+				<boolean name="ishas" value="false"/>
+				
+				<function name="isHasSDNMGRDeviceObj">
+					<parameters>
+						<string name="devicetype" in="context.devicetype.toString()"/>
+						<string name="ip" in="context.ip.toString()"/>
+						<string name="location" in="context.location.toString()"/>
+						<boolean name="ishas" out="context.ishas"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.ishas.toBoolean()==false">
+					<then>
+						<object name="sdnmgrdeviceobj"/>
+						
+						<new name="sdnmgrdeviceobj" class="CSDNMGRDevice">
+							<parameters>
+								<string name="resourceid" in="context.resourceid.toString()"/>
+								<string name="ip" in="context.ip.toString()"/>
+								<string name="mac" in="context.mac.toString()"/>
+								<string name="location" in="context.location.toString()"/>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="devicerole" in="context.devicerole.toString()"/>
+								<string name="bandwidth" in="context.bandwidth.toString()"/>
+							</parameters>
+						</new>
+						<insert name="thisclass.sdnmgrdeviceManager" key="context.resourceid.toString()" value="context.sdnmgrdeviceobj"/>
+						<log level="101"><![CDATA[343 sdnmgrdeviceManager size=<%=thisclass.sdnmgrdeviceManager.size().toString()%>  ----CSDNMGRDeviceManager.xml]]></log>
+						<log level="101">addSDNMGRDevice2 over  ----CSDNMGRDeviceManager.xml</log>
+					</then>
+				</if>
+				<log level="100">346 enter AddSDNMGRDevice2 over</log>
+			</function>
+			
+			
+			
+			
+			<!--qiulei 20171108 am-->
+			<function name="getSDNMGRDeviceContainer">
+				<parameters>
+					<hashmap name="sdnmgrdeviceManager" keytype="string" valuetype="object"/>
+				</parameters>
+				<set name="sdnmgrdeviceManager" value="thisclass.sdnmgrdeviceManager"/>
+			</function>
+			
+			<function name="isHasSDNMGRDeviceObj">
+				<parameters>
+					<string name="devicetype" />
+					<string name="ip" />
+					<string name="location" />
+					<boolean name="ishas" value="false"/>
+				</parameters>
+				
+				<object name="sdnmgrdeviceobj"/>
+				<string name="outip"/>
+				<string name="outLocation"/>
+				<pair name="onesdnmgrdeviceptr" keytype="string" valuetype="object"/>
+				
+				<if cond="context.devicetype.toString()=='wireless'">
+					<then>
+						<for var="onesdnmgrdeviceptr" in="thisclass.sdnmgrdeviceManager">
+							<set name="context.sdnmgrdeviceobj" value="context.onesdnmgrdeviceptr.second()"/>
+
+							<function name="GetIP" class="sdnmgrdeviceobj">
+								<parameters>
+									<string name="ip" out="context.outip"/>
+								</parameters>
+							</function>
+							
+							<if cond="context.outip.toString()==context.ip.toString()">
+								<then>
+									<set name="context.ishas" value="true"/>
+								</then>
+							</if>
+						</for>
+					</then>
+					<else>
+						<for var="onesdnmgrdeviceptr" in="thisclass.sdnmgrdeviceManager">
+							<set name="context.sdnmgrdeviceobj" value="context.onesdnmgrdeviceptr.second()"/>
+
+							<function name="GetLocation" class="sdnmgrdeviceobj">
+								<parameters>
+									<string name="location" out="context.outLocation"/>
+								</parameters>
+							</function>
+							
+							<if cond="context.outLocation.toString()==context.location.toString()">
+								<then>
+									<set name="context.ishas" value="true"/>
+								</then>
+							</if>
+						</for>
+					</else>
+				</if>
+			</function>
+			
+			
+			<!--qiulei-->
+			<function name="AddSDNMGRDevice">
+				<parameters>
+					<string name="ip" />
+					<string name="mac" />
+					<string name="location" />
+					<string name="devicetype" />
+					<string name="devicerole" />
+					<string name="bandwidth" />
+					<string name="outresourceid" />
+					<boolean name="addResult" />
+				</parameters>
+				
+				<boolean name="ishas" value="false"/>
+				
+				<function name="isHasSDNMGRDeviceObj">
+					<parameters>
+						<string name="devicetype" in="context.devicetype.toString()"/>
+						<string name="ip" in="context.ip.toString()"/>
+						<string name="location" in="context.location.toString()"/>
+						<boolean name="ishas" out="context.ishas"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.ishas.toBoolean()==false">
+					<then>
+						<set name="thisclass.resourceid" value="thisclass.resourceid.toLong()+1"/>
+						<string name="resourceid2" value="thisclass.resourceid.toString()"/>
+						
+						<object name="sdnmgrdeviceobj"/>
+						
+						<new name="sdnmgrdeviceobj" class="CSDNMGRDevice">
+							<parameters>
+								<string name="resourceid" in="context.resourceid2.toString()"/>
+								<string name="ip" in="context.ip.toString()"/>
+								<string name="mac" in="context.mac.toString()"/>
+								<string name="location" in="context.location.toString()"/>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="devicerole" in="context.devicerole.toString()"/>
+								<string name="bandwidth" in="context.bandwidth.toString()"/>
+							</parameters>
+						</new>
+						<insert name="thisclass.sdnmgrdeviceManager" key="context.resourceid2.toString()" value="context.sdnmgrdeviceobj"/>
+						
+						<set name="context.outresourceid" value="context.resourceid2.toString()"/>
+						<set name="context.addResult" value="true"/>
+						<log level="101">addSDNMGRDevice over  ----CSDNMGRDeviceManager.xml</log>
+					</then>
+				</if>
+			</function>
+			
+			<!--查询容器中元素的个数-->
+			<function name="GetSDNMGRDeviceCounts">
+				<parameters>
+					<string name="sdnmgrdeviceCounts"/>
+				</parameters>
+				<set name="sdnmgrdeviceCounts" value="context.sdnmgrdeviceManager.size().toString()"/>	
+			</function>
+			
+			<function name="getSDNMGRDeviceObjByid">
+				<parameters>
+					<string name="resourceid"/>
+					<object name="onesdnmgrdevice"/>
+				</parameters>
+				<set name="onesdnmgrdevice" value="thisclass.sdnmgrdeviceManager.getValue(context.resourceid.toString())"/>
+			</function>
+			
+			<function name="DeleteSDNMGRDeviceByid">
+				<parameters>
+					<string name="resourceid"/>
+				</parameters>
+				<if cond="thisclass.sdnmgrdeviceManager.hasValue(context.resourceid.toString())">
+					<then>
+						<remove name="sdnmgrdeviceManager" key="context.resourceid.toString()"/>
+					</then>
+				</if>
+			</function>
+			
+			<function name="GetAllSDNMGRDevices">
+				<parameters>
+					<string name="allSdnmgrdeviceJsonStr"/>
+				</parameters>
+				<log level="100"> 182 in GetAllSDNMGRDevices  ----CSDNMGRDeviceManager.xml</log>
+				<log level="101"><![CDATA[sdnmgrdeviceManager size=<%=thisclass.sdnmgrdeviceManager.size().toString()%>  ----CSDNMGRDeviceManager.xml  ----216]]></log>
+				<object name="sdnmgrdeviceobj"/>
+				<string name="onesdnmgrdevicejson"/>
+				<string name="strjson"/>
+				<list name="sdnmgrdevicelist" valuetype="string"/>
+				<pair name="onesdnmgrdeviceptr" keytype="string" valuetype="object"/>
+				
+				<for var="onesdnmgrdeviceptr" in="thisclass.sdnmgrdeviceManager">
+					<set name="context.sdnmgrdeviceobj" value="context.onesdnmgrdeviceptr.second()"/>
+					<function name="OneSDNMGRDeviceObjToJsonStr" class="sdnmgrdeviceobj">
+						<parameters>
+							<string name="SDNMGRDeviceJsonStr" out="context.onesdnmgrdevicejson"/>
+						</parameters>
+					</function>
+					<insert name="sdnmgrdevicelist" value="context.onesdnmgrdevicejson.toString()"/>
+				</for>
+				
+				<script><![CDATA[	
+						var json = new Object();
+						var myArray=new Array();
+						
+						var firstsdnmgrdeviceString = context.sdnmgrdevicelist.getFirst();
+						while(firstsdnmgrdeviceString != null){
+							var sdnmgrdeviceobj = JSON.parse(firstsdnmgrdeviceString);
+								myArray.push(sdnmgrdeviceobj);
+								firstsdnmgrdeviceString = context.sdnmgrdevicelist.getNext();
+						}
+					json['sdnmgrdevices']=myArray;
+					var strjson=JSON.stringify(json);
+					context.strjson.setValue(strjson);
+				]]></script>
+				<set name="allSdnmgrdeviceJsonStr" value="context.strjson.toString()"/>
+				<log level="100"> 214 execute GetAllSDNMGRDevices over ----CSDNMGRDeviceManager.xml</log>
+			</function>
+			
+			<function name="GetSDNMGRDeviceJsonStrbyId">
+				<parameters>
+					<string name="resourceid"/>
+					<string name="oneSdnmgrDeviceJsonStr"/>
+				</parameters>
+				
+				<log level="101"><![CDATA[context.resourceid=<%=context.resourceid.toString()%> ----216 CSDNMGRDeviceManager.xml]]></log>
+						
+				
+				<object name="sdnmgrdeviceobj"/>
+				<string name="sdnmgrdevicestr"/>
+				<if cond="thisclass.sdnmgrdeviceManager.hasValue(context.resourceid.toString())">
+					<then>
+						<lookup name="sdnmgrdeviceManager" key="context.resourceid.toString()" output="context.sdnmgrdeviceobj"/>
+						
+						
+						<log level="101">enter 226</log>
+						
+						<function name="OneSDNMGRDeviceObjToJsonStr" class="sdnmgrdeviceobj">
+							<parameters>
+								<string name="SDNMGRDeviceJsonStr" out="context.sdnmgrdevicestr"/>
+							</parameters>
+						</function>
+						<set name="oneSdnmgrDeviceJsonStr" value="context.sdnmgrdevicestr.toString()"/>
+					</then>	
+				</if>
+			</function>
+			<!--更新 SDNMGRDevice qiulei-->
+			<function name="UpdateSDNMGRDevice">
+				<parameters>
+					<string name="resourceid" />
+					<string name="ip" />
+					<string name="mac" />
+					<string name="location"/>
+					<string name="devicetype" />
+					<string name="devicerole" />
+					<string name="bandwidth" />
+					<string name="updateResult" value="false"/>
+				</parameters>
+				
+				<object name="sdnmgrdeviceobj"/>
+				<if cond="thisclass.sdnmgrdeviceManager.hasValue(context.resourceid.toString())">
+					<then>
+						<remove name="sdnmgrdeviceManager" key="context.resourceid.toString()"/>
+						
+						<new name="sdnmgrdeviceobj" class="CSDNMGRDevice">
+							<parameters>
+								<string name="resourceid" in="context.resourceid.toString()"/>
+								<string name="ip" in="context.ip.toString()"/>
+								<string name="mac" in="context.mac.toString()"/>
+								<string name="location" in="context.location.toString()"/>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="devicerole" in="context.devicerole.toString()"/>
+								<string name="bandwidth" in="context.bandwidth.toString()"/>
+							</parameters>
+						</new>
+						<insert name="thisclass.sdnmgrdeviceManager" key="context.resourceid.toString()" value="context.sdnmgrdeviceobj"/>
+						<set name="context.updateResult" value="true"/>
+					</then>
+				</if>
+			</function>
+			<!--YangXR-->
+			<function name="GetIPMACByTR">
+				<parameters>
+					<string name="ip" value="''"/>
+					<string name="mac" value="''"/>
+					<string name="devicetype"/>
+					<string name="devicerole"/>
+				</parameters>	
+				<string name="dtype"/>
+				<string name="drole"/>
+				<object name="deviceobj"/>
+				<pair name="onedevice" keytype="string" valuetype="object"/>
+				<for var="context.onedevice" in="thisclass.sdnmgrdeviceManager">
+					<set name="deviceobj" value="context.onedevice.second()"/>
+					<function name="GetDeviceType" class="context.deviceobj">
+						<parameters>
+							<string name="devicetype" out="context.dtype"/>
+						</parameters>
+					</function>
+					<function name="GetDeviceRole" class="context.deviceobj">
+						<parameters>
+							<string name="devicerole" out="context.drole"/>
+						</parameters>
+					</function>
+					<if cond="context.dtype.toString() == context.devicetype.toString()">
+						<then>
+							<if cond="context.drole.toString() == context.devicerole.toString()">
+								<then>
+									<function name="GetIP" class="context.deviceobj">
+										<parameters>
+											<string name="ip" out="context.ip"/>
+										</parameters>
+									</function>
+									<function name="GetMac" class="context.deviceobj">
+										<parameters>
+											<string name="mac" out="context.mac"/>
+										</parameters>
+									</function>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>		
+			</function>
+			
+			<function name="GetLocationByTR">
+				<parameters>
+					<string name="location" value="''"/>
+					<string name="devicetype"/>
+					<string name="devicerole"/>
+				</parameters>	
+				<string name="dtype"/>
+				<string name="drole"/>
+				<object name="deviceobj"/>
+				<pair name="onedevice" keytype="string" valuetype="object"/>
+				<for var="context.onedevice" in="thisclass.sdnmgrdeviceManager">
+					<set name="deviceobj" value="context.onedevice.second()"/>
+					<function name="GetDeviceType" class="context.deviceobj">
+						<parameters>
+							<string name="devicetype" out="context.dtype"/>
+						</parameters>
+					</function>
+					<function name="GetDeviceRole" class="context.deviceobj">
+						<parameters>
+							<string name="devicerole" out="context.drole"/>
+						</parameters>
+					</function>
+					<if cond="context.dtype.toString() == context.devicetype.toString()">
+						<then>
+							<if cond="context.drole.toString() == context.devicerole.toString()">
+								<then>
+									<function name="GetLocation" class="context.deviceobj">
+										<parameters>
+											<string name="location" out="context.location"/>
+										</parameters>
+									</function>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>		
+			</function>
+		</public>
+	</class>
+</starlang>

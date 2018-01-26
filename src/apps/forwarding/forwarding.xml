@@ -6,8 +6,8 @@
 	@file 		forwarding.xml
 	@brief 		forwarding
 	@version 	1.1.0
-	@auth 		YY
-	@date		2017/08/11
+	@auth 		YangXR
+	@date		2018/01/22
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -22,76 +22,163 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
-<!--
-	Author:
-			YY
-	Date:
-			2017-08-11
-	Copyright: 
-			Nanjing StarOS Inc. All rights reserved.
--->
-	
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
 	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
 	<object name="flowservice" value="global.FlowService" reference="true"/>
 	<object name="meterservice" value="global.MeterService" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="toposervice" value="global.TopoService" reference="true"/>
-
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<hashmap name="resourceid_hash" keytype="string" valuetype="string"/>
+	<hashmap name="hosthashmap" keytype="string" valuetype="object"/>
+	<!--YangXR mac配对表 已存在的配对 将不下发流表-->
+	<hashmap name="macpair" keytype="string" valuetype="string"/>
+	<function name="installflow">
+		<parameters>
+			<string name="dpid"/>
+			<string name="outport"/>
+			<string name="inport"/>
+		</parameters>
+		<string name="modstrjson"/>
+		<reference variable="modstrjson">
+			<jsonbody><![CDATA[ 
+					{
+						"deviceid":"of:<%=context.dpid.toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"<%=context.inport.toString()%>"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"<%=context.outport.toString()%>",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+				    }
+			]]></jsonbody>
+		</reference>
+		<string name="resourceid"/>
+		<if cond="context.flowservice==null">
+			<then>
+				<log>flowservice is null</log>
+			</then>
+		</if>
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<string name="outflowid" out="context.resourceid"/>
+				<string name="strjson" in="context.modstrjson.toString()"/>
+				<string name="appId" in="'forwarding'"/>
+				<string name="datapathid" in="context.dpid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+	</function>
+	
 	<events>
 		<onevent event="bundleapp.startup">
-			<log level="101">----enter bundleapp.startup START----41</log>
-			<!-- YY 2017-08-21 -->
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'forwarding'"/>
 					<string name="version" in="'1.0.0'"/>
-					<string name="category" in="'starosapp'"/>
-					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="category" in="'Traffic'"/>
+					<string name="origin" in="'StarOS Inc.'"/>
 					<string name="title" in="'app for forwarding'"/>
 					<string name="desc" in="'2.10.10.0'"/>		
-					<string name="url" in="'192.168.137.128'"/>
+					<string name="url" in="'192.168.80.10'"/>
 					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
 			</function>			
-			
-			<log>forwarding app startup</log>
-			<log level="101">----enter bundleapp.startup END----59</log>
-		</onevent>
+				
+			<syslog level="INFO">forwarding app startup</syslog>
+		</onevent>	
 		
 		<onevent event="bundleapp.active">
-			<log level="101">----enter bundleapp.active start----61</log>
 			<function name="addProcessor" class="PacketService">				
 				<parameters>
 					<string name="app_name" in="'forwarding'"/>
-					<string name="event_name" in="'PacketInEvent'"/>
-					<string name="eth_type" in="'0x0806'"/>
+					<string name="event_name" in="'PacketInEvent'"/>					
+					<string name="eth_type" in="'0x0800'"/>					
 				</parameters>
-			</function>
-			<log level="101">----enter bundleapp.active end----71</log>
+			</function>	
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
-			<log level="101">----enter ~bundleapp.deactive start----75</log>
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>
-					<string name="app_name" in="'nullapp'"/>									
+					<string name="app_name" in="'forwarding'"/>									
 				</parameters>
 			</function>
-			<log level="101">----enter ~bundleapp.deactive end----79</log>
+			<pair name="oneflowid" keytype="string" valuetype="string"/>
+			<for var="context.oneflowid" in="context.resourceid_hash">				
+				<function name="UnInstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="flowid" in="context.oneflowid.first().toString()"/>			
+						<string name="datapathid" in="context.oneflowid.second().toString()"/>
+					</parameters>
+				</function>
+			</for>
 		</onevent>
 		
+
+		
 		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
-			<log level="101">----enter ~bundleapp.shutdown ----84</log>
+			<log>forwarding is shutdown</log>
 		</onevent>
 		
 		<onevent event="PacketInEvent">
-			<log level="101">----enter PacketInEvent method start----87</log>
-			<!-- YY 2017-08-21 -->		
 			<messageblock name="packetmsgblock"/>
 			<string name="inportid"/>
 			<string name="pkoutjson"/>
+			<string name="srcmac"/>
+			<string name="dstmac"/>
+			<string name="hostmac"/>
+			<string name="deviceid"/>
+			<string name="ethtype"/>
+			<string name="outport"/>
+			<string name="datapathid"/>
+			<string name="transport"/>		
+			<string name="local_vlan"/>	
+			<boolean name="is_havehost" value="false"/>
+			<object name="hostobj"/>
+			<object name="openflowdevice"/>
+			<string name="stempmac"/>
+			<string name="dtempmac"/>
+			<boolean name="is_havepair" value="false"/>
+			<set name="datapathid" value="event.getParam('datapathid').toString()"/>		
+			<syslog level="INFO"><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></syslog>
+			<function name="GetTransportIdFromDevice" class="context.devicemgr">
+				<parameters>
+					<string name="datapathid" in="context.datapathid.toString()"/>
+					<string name="transportid" out="context.transport"/>
+				</parameters>
+			</function>
+			<set name="openflowdevice" value="context.openflowserverobj.getValue().getDevice(context.transport.toString())"/>
+			<syslog level="INFO"><![CDATA[PacketInEvent = <%=event.getParam('eventdata').toString()%>]]></syslog>
 			<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if (info.match != null) {
@@ -100,31 +187,138 @@
 				}
 				if (info.payload != null) {
 					var pay_load = info.payload;
+					var js_vlan = info.payload.vlanid;
+					if (js_vlan == 65535)
+						js_vlan = 0;
 					var strjson=JSON.stringify(pay_load);
+					var src_mac = info.payload.smac;
+					var dst_mac = info.payload.dmac;
+					var eth = info.payload.ethtype;
 					context.pkoutjson.setValue(strjson);
+					context.srcmac.setValue(src_mac);
+					context.dstmac.setValue(dst_mac);
+					context.ethtype.setValue(eth);	
+					context.local_vlan.setValue(js_vlan);									
 				}
 			]]></script>
-			<set name="packetmsgblock" value="event.getMessageBlock()"/>
-			<log><![CDATA[packetmsgblock size=<%=context.packetmsgblock.getChainedLength().toString()%>]]></log>
-			
-			<function name="PacketOutToAllPort" class="context.devicemgr">
-				<parameters>	
-					<string name="datapathid" in="event.getParam('datapathid').toString()"/>
-					<string name="inportid" in="context.inportid.toString()"/>	
-					<string name="pkoutjson" in="context.pkoutjson.toString()"/>	
-					<messageblock name="msgblock" in="context.packetmsgblock"/>	
-				</parameters>
-			</function>
-			
-			<log level="101">----enter PacketInEvent method end----115</log>
+			<set name="packetmsgblock" value="event.getMessageBlock()"/>	
+			<syslog level="INFO"><![CDATA[ethtype = <%=context.ethtype.toString()%>]]></syslog>
+			<if cond="context.ethtype.toString()=='2054'">
+				<then>
+					<syslog level="INFO">####forwarding ethtype is APR####</syslog>
+					<if cond="context.dstmac.toString()=='ff:ff:ff:ff:ff:ff'">
+						<then>
+							<if cond="context.openflowserverobj.ptr==null">
+								<then>
+									<log level="100">#openflowserverobj.ptr==null#</log>
+									<exit/>
+								</then>
+							</if>
+							<flood name="global.openflowserverobj" strjson="context.pkoutjson.toString()" inlocation="context.datapathid.toString()+'/'+context.inportid.toString()"/>
+							<script><![CDATA[
+								context.openflowserverobj.ptr.flood(context.packetmsgblock);
+								context.print("forwarding msg Broadcast");
+							]]></script>
+						</then>					
+						<else>		
+							<if cond="context.macpair.size()==0">
+								<then>
+									<set name="context.is_havepair" value="false"/>
+								</then>
+								<else>
+									<pair name="onemacpair" keytype="string" valuetype="string"/>	
+									<for var="context.onemacpair" in="context.macpair">	
+										<set name="context.stempmac" value="context.onemacpair.first().toString()"/>
+										<set name="context.dtempmac" value="context.onemacpair.second().toString()"/>
+										<if cond="context.srcmac.toString()==context.stempmac.toString()">
+											<then>
+												<if cond="context.dstmac.toString()==context.dtempmac.toString()">
+													<then>
+														<set name="context.is_havepair" value="true"/>
+													</then>
+												</if>
+											</then>
+										</if>
+									</for>
+								</else>
+							</if>
+							<syslog level="INFO"><![CDATA[is_havepair1 = <%=context.is_havepair.toString()%>]]></syslog>		
+							<function name="is_HaveKey" class="context.hostmanager">
+								<parameters>
+									<string name="keyvalue" in="context.dstmac.toString()+'/'+context.local_vlan.toString()"/>
+									<boolean name="is_have" out="context.is_havehost"/>
+									<object name="host" out="context.hostobj"/>
+								</parameters>
+							</function>
+							<if cond="context.is_havehost.toBoolean()==true">
+								<then>								
+									<function name="Getdpid" class="context.hostobj">
+										<parameters>
+											<string name="dpid" out="deviceid"/>
+										</parameters>
+									</function>
+									<script><![CDATA[
+										var dpid = context.deviceid.toString();
+										context.deviceid.setValue(dpid.split(":")[1]);
+									]]></script>
+									<if cond="context.datapathid.toString() != context.deviceid.toString()">
+										<then>
+											<set name="context.outport" value="context.openflowdevice.ptr.getOutPort(context.deviceid.toString())"/>
+											<syslog level="INFO"><![CDATA[outport = <%=context.outport.toString()%>]]></syslog>
+											<if cond="context.is_havepair.toBoolean()==true">
+												<then>
+													<syslog level="INFO"><![CDATA[is_havepair 2 = <%=context.is_havepair.toString()%>]]></syslog>
+													<exit/>
+												</then>	
+												<else>										
+													<function name="installflow">
+														<parameters>
+															<string name="dpid" in="context.datapathid.toString()"/>
+															<string name="outport" in="context.outport.toString()"/>
+															<string name="inport" in="context.inportid.toString()"/>
+														</parameters>
+													</function>
+													<insert name="context.macpair" key="context.srcmac.toString()" value="context.dstmac.toString()"/>
+												</else>
+											</if>
+										</then>
+										<else>											
+											<if cond="context.is_havepair.toBoolean()==true">
+												<then>
+													<syslog level="INFO"><![CDATA[is_havepair 3 = <%=context.is_havepair.toString()%>]]></syslog>	
+													<exit/>
+												</then>	
+												<else>	
+													<function name="GetHostInPort" class="context.hostobj">
+														<parameters>
+															<string name="port" out="context.outport"/>
+														</parameters>
+													</function>	
+													<function name="installflow">
+														<parameters>
+															<string name="dpid" in="context.datapathid.toString()"/>
+															<string name="outport" in="context.outport.toString()"/>
+															<string name="inport" in="context.inportid.toString()"/>
+														</parameters>
+													</function>
+													<insert name="context.macpair" key="context.srcmac.toString()" value="context.dstmac.toString()"/>
+												</else>
+											</if>
+										</else>
+									</if>										
+								</then>
+							</if>					
+						</else>
+					</if>
+				</then>
+			</if>
 		</onevent>
 		
 		<onevent event="*">
 			<function>
-				<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
-				<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>
-		
 	</events>
 </starlang>

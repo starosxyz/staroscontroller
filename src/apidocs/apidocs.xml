@@ -27,6 +27,10 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/policy/PolicyServiceDocsApi.xml"/>
 	<!--20180110-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/vGateway/VGatewayServiceDocsApi.xml"/>
+	<!--20180117-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/keepalive/keepaliveDocsApi.xml"/>
+	<!--20180124-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/monitor/monitorDocsApi.xml"/>
 	<!--
 		@brief		注册Topology
 		@auth 		qiulei
@@ -40,6 +44,10 @@
 		<function name="AddDocsAPIPolicy"/>
 		<!--staros-controller-1.1.0\src\apidocs\vGateway\VGatewayServiceDocsApi.xml qiulei20180108-->
 		<function name="AddDocsAPIVGateway"/>
+
+		<!--staros-controller-1.1.0\src\apidocs\keepalive\keepaliveDocsApi.xml qiulei 20180117-->
+		<function name="AddDocsAPI_keepalive"/>
+		<function name="AddDocsAPI_monitor"/>
 	</function>
 	
 	<!--
@@ -55,6 +63,8 @@
 		<function name="RemoveDocsAPIPolicy"/>
 		<!--staros-controller-1.1.0\src\apidocs\vGateway\VGatewayServiceDocsApi.xml qiulei20180108-->
 		<function name="RemoveDocsAPIVGateway"/>
-		
+		<!--staros-controller-1.1.0\src\apidocs\keepalive\keepaliveDocsApi.xml qiulei 20180117-->
+		<function name="RemoveDocsAPI_keepalive"/>
+		<function name="RemoveDocsAPI_monitor"/>
 	</function>
 </starlang>

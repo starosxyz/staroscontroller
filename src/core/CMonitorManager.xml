@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CMonitorManager.xml
+	@brief 		monitormanager
+	@version 	1.1.0
+	@auth 		wangkang 
+	@date		2018/01/24
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<class name="CMonitorManager">
+		<private>
+			<hashmap name="monitormap" keytype="string" valuetype="string"/>
+		</private>
+		<public>
+			
+			<function name="CMonitorManager">
+				<log>CMonitorManager is create</log>				
+			</function>
+			<!--
+				@brief		add monitor
+				@auth 		wangkang 
+				@date		2018/01/24
+				Input:
+					@param ip 	host的ip信息				
+			-->	
+			<function name="addMonitor">
+				<parameters>		
+					<string name="ip"/>
+					<boolean name="result" value="false"/>
+				</parameters>
+				<if cond="thisclass.monitormap.hasValue(context.ip.toString())==false">
+					<then>
+						<insert name="monitormap" key="context.ip.toString()" value="context.ip.toString()"/>
+						<set name="context.result" value="true"/>
+						<log level="101"><![CDATA[context.monitormap.size=<%=thisclass.monitormap.size().toString()%> ----67]]></log>
+						
+						<log level="101">add over</log>
+						<exit/>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+				
+			</function>
+			<!--
+				@brief		删除一个host
+				@auth 		wangkang
+				@date		2018/01/24
+				Input:
+					@param ip 	    host的ip信息
+				Output:	
+				F:\staros-controller-1.1.0\src\gui\restfulapi\onos\v1\docs\apis\onos\v1				
+			-->	
+			<function name="RemoveMonitor"> 
+				<parameters>
+					<string name="ip"/>
+					<boolean name="result" value="false"/>
+				</parameters>
+				<log level="100">###### CMonitorManager RemoveHost #######</log>
+				<if cond="thisclass.monitormap.hasValue(context.ip.toString())==true">
+					<then>
+						<remove name="monitormap" value="context.ip.toString()"/>
+						<set name="context.result" value="true"/>
+						<log level="101"><![CDATA[context.monitormap.size=<%=thisclass.monitormap.size().toString()%> ----67]]></log>
+						
+						<log level="101">delete over</log>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>
+			
+			<function name="Gethashmap">
+				<parameters>
+					<hashmap name="monitorhash"/>
+				</parameters>
+				<set name="monitorhash" value="thisclass.monitormap"/>
+			</function>
+
+			<function name="Container_Is_Have">
+				<parameters>
+					<boolean name="is_null"/>
+				</parameters>
+				<if cond="thisclass.monitormap.size()==0">
+					<then>
+						<set name="is_null" value="false" />
+					</then>
+				</if>
+			</function>
+
+			<function name="GetALLHostJsonData">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<string name="ip" />
+				<list name="hostlist"  valuetype="string"/>
+				<pair name="onehostpair"  keytype="string" valuetype="string"/>
+				<for var="onehostpair" in="thisclass.monitormap">
+					<set name="context.ip" value="context.onehostpair.second().toString()"/>						
+					<insert name="hostlist" value="context.ip.toString()"/>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array(); 
+					var firststr=context.hostlist.getFirst();
+					context.print("124 firststr="+firststr);
+					while(firststr!=null){
+						var oneMonitorObj = new Object();
+							oneMonitorObj['ip']=firststr.toString();
+						myArray.push(oneMonitorObj);
+						
+						firststr=context.hostlist.getNext();
+					}
+					json['monitors']=myArray;
+					var strjson=JSON.stringify(json);
+					context.print("124 strjson="+strjson);
+					context.jsonstring.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

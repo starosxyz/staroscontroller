@@ -396,13 +396,22 @@
 			<log>Get a PacketIn Message</log>
 			<!--<log level="100"><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>-->
 			<!--<log level="100"><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>-->
+			<messageblock name="packetmsgblock"/>
 			<string name="datapathid"/>
 			<function name="GetDatapathIdByTransportid" class="DeviceManager">
 				<parameters>
 					<string name="transportid" in="event.getParam('transportid').toString()"/>
 					<string name="datapathid" out="context.datapathid"/>
 				</parameters>
-			</function>	
+			</function>
+			
+			<!--
+			<script><![CDATA[
+				var dpid = context.datapathid.toString();
+				context.datapathid.setValue(dpid.split(":")[1]);
+			]]></script>
+			-->
+			
 			<function name="ProcessPacket" class="PacketService">
 				<parameters>
 					<string name="strjson" in="event.getParam('eventdata').toString()"/>
@@ -666,15 +675,15 @@
 			</parameters>
 		  </function>
 		<if cond="context.deviceobj.ptr != null">
-		<then>
-		  <function>
-			<function name="HandleGroupStateResponse" class="context.deviceobj">
-				<parameters>
-					<string name="groupjson" in="event.getParam('eventdata').toString()"/>
-				</parameters>
-		  	</function>
-		</function>
-		</then>
+			<then>
+				  <function>
+					<function name="HandleGroupStateResponse" class="context.deviceobj">
+						<parameters>
+							<string name="groupjson" in="event.getParam('eventdata').toString()"/>
+						</parameters>
+				  	</function>
+				</function>
+			</then>
 		</if>
 		  </function>
 		</onevent>

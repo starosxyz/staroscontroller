@@ -32,9 +32,7 @@
 	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>
 	<object name="hostmanager" value="global.HostManager" reference="true"/>
 	<object name="tunnelmanager" value="global.TunnelManager" reference="true"/>
-	<object name="globaltimer"/>	
-	<hashmap name="hosthashmap" keytype="string" valuetype="object"/>
-	<hashmap name="vgwhashmap" keytype="string" valuetype="object"/>
+	<object name="globaltimer"/>
 	<!--
 		@brief		定时发送Arp至host
 		@auth 		YangXR
@@ -55,7 +53,9 @@
 		<boolean name="is_true" value="false" />
 		<string name="deviceid"/>
 		<string name="transportid"/>
-		<messageblock name="msgblock"/>
+		<messageblock name="msgblock"/>		
+		<hashmap name="hosthashmap" keytype="string" valuetype="object"/>
+		<hashmap name="vgwhashmap" keytype="string" valuetype="object"/>
 		
 		<function name="Container_Is_Have" class="context.hostmanager">
 			<parameters>
@@ -74,12 +74,12 @@
 		</if>
 		<function name="Gethashmap" class="context.hostmanager">
 			<parameters>
-				<hashmap name="hhashmap" out="context.hosthashmap"/>
+				<hashmap name="hhashmap" out="context.hosthashmap" reference="true"/>
 			</parameters>
 		</function>
 		<function name="Gethashmap" class="context.vgatewaymanager">
 			<parameters>
-				<hashmap name="vhashmap" out="context.vgwhashmap"/>
+				<hashmap name="vhashmap" out="context.vgwhashmap" reference="true"/>
 			</parameters>
 		</function>
 		<pair name="onehost" keytype="string" valuetype="object"/>
@@ -143,10 +143,7 @@
 							var strjson=JSON.stringify(pljson);
 							context.payloadjson.setValue(strjson);
 							context.deviceid.setValue(dpid);
-						]]></script>	
-						<syslog level="INFO"><![CDATA[json = <%=context.payloadjson.toString()%>]]></syslog>
-						<syslog level="INFO"><![CDATA[outputport = <%=context.hostport.toString()%>]]></syslog>
-						<syslog level="INFO"><![CDATA[datapathid = <%=context.deviceid.toString()%>]]></syslog>
+						]]></script>
 						
 						<!--
 						<function name="PacketOutToPort" class="context.devicemgr">
@@ -191,7 +188,7 @@
 				</parameters>
 			</function>			
 
-			<syslog level="INFO">vgatway app startup</syslog>	
+			<syslog level="INFO">hostservice app startup</syslog>	
 					
 			
 		</onevent>	

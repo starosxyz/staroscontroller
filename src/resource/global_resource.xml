@@ -55,8 +55,11 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CDeviceService.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CTrafficMonitor.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CPolicyManager.xml"/>	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CMonitorManager.xml"/>	
 
-<include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/intent/CIntentManager.xml"/>
 	<object name="ApplicationManager" global="true"/>
 	<!--qiulei 20170811-->
 	<object name="ClusterManager" global="true"/>
@@ -84,8 +87,11 @@
 	<object name="traffic" global="true"/>
 	<object name="uiExtension" global="true"/>
 	<object name="PolicyManager" global="true"/>
+	<!-- wangkang 2018/01/24 -->
+	<object name="MonitorManager" global="true"/>
 	<!--YXR-->
 	<object name="vGatewayManager" global="true"/>
+	<object name="IntentManager" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -119,8 +125,11 @@
 		<new name="traffic" class="CTrafficMonitor"/>
 		<new name="uiExtension" class="CUiExtensionManager"/>
 		<new name="PolicyManager" class="CPolicyManager"/>
-
+		<!-- wangkang 2018/01/24 -->
+		<new name="MonitorManager" class="CMonitorManager"/>
 		<!--yxr-->
 		<new name="vGatewayManager" class="CvGatewayManager"/>
+		<new name="IntentManager" class="CIntentManager"/>
+		
 	</function>
 </starlang>

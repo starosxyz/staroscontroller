@@ -78,12 +78,15 @@
 				<log>CFlowService InstallFlow end</log>
 			</function>
 			<!--
-				@brief		文件操作
-				@auth 		Yi Jian (yijian@staros.xyz)
+				@brief		Install Drop Flow
+				@auth 		YangXR
 				@date		2017/11/24
 				Input:
-				   @param filename 	文件路径
-				   @param xmldata   写入文件的数据
+				   @param outflowid   传出的流表id
+				   @param appId       app名
+				   @param datapathid  设备id
+				   @param inputport   inputport
+				   @param ethtype     以太类型
 				Output:
 			-->
 			<function name="InstallDropFlow">
@@ -171,108 +174,279 @@
 				</function>
 				<log>CFlowService InstallFlow end</log>
 			</function>
-		<!--
-			@brief		卸载流表
-			@auth 		YY
-			@date		2017/09/01
-			Input:		
-				@param flowid 	流表id			
-				@param datapathid 	流表设备id
-			Output:
-		-->
-		<function name="UnInstallFlow">
-			<parameters>
-				<string name="datapathid"/>			
-				<string name="flowid"/>
-			</parameters>
-			<object name="deviceobj"/>
-			<object name="flowmgrobj"/>
-			<log>CFlowService UnInstallFlow</log>
-			<log level="100"><![CDATA[CFlowService UnInstallFlow datapathid= <%=context.datapathid.toString()%>]]></log>
-			<log>##### CFlowServer UnInstallFlow #####</log>
-			<if cond="context.flowid == ''">
-				<then>
-					<log>flowid is null</log>
-				</then>
-			</if>
-			<function name="findDevice" class="DeviceManager">
+			<!--
+				@brief		卸载流表
+				@auth 		YY
+				@date		2017/09/01
+				Input:		
+					@param flowid 	流表id			
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UnInstallFlow">
 				<parameters>
-					<string name="datapathid" in="context.datapathid.toString()"/>
-					<object name="deviceobject" out="context.deviceobj"/>
-				</parameters>				
-			</function>
-			
-			<if cond="context.deviceobj.ptr==null">
-				<then>
-					<log>deviceobj is null</log>
-				</then>
-			</if>
-
-			<function name="GetFlowManager" class="context.deviceobj">
-				<parameters>
-					<object name="outflowmgr" out="context.flowmgrobj"/>
-				</parameters>			
-			</function>
-
-			<if cond="context.flowmgrobj.ptr==null">
-				<then>
-					<log>flowmgrobj is null</log>
-				</then>
-			</if>
-			
-			<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
-				<parameters>
-					<string name="flowid" in="context.flowid.toString()"/>
+					<string name="datapathid"/>			
+					<string name="flowid"/>
 				</parameters>
+				<object name="deviceobj"/>
+				<object name="flowmgrobj"/>
+				<log>CFlowService UnInstallFlow</log>
+				<log level="100"><![CDATA[CFlowService UnInstallFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+				<log>##### CFlowServer UnInstallFlow #####</log>
+				<if cond="context.flowid == ''">
+					<then>
+						<log>flowid is null</log>
+					</then>
+				</if>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
+
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>flowmgrobj is null</log>
+					</then>
+				</if>
+				
+				<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<string name="flowid" in="context.flowid.toString()"/>
+					</parameters>
+				</function>
 			</function>
-		</function>
 
-		<!--
-			@brief		卸载Arp流表
-			@auth 		wangkang 
-			@date		2018/01/15
-			Input:				
-				@param datapathid 	流表设备id
-			Output:
-		-->
-		<function name="UninstallArpFlow">
-			<parameters>
-				<string name="datapathid"/>			
-			</parameters>
-			<object name="deviceobj"/>
-			<object name="flowmgrobj"/>
-			<syslog level="INFO">##### CFlowServer UninstallArpFlow #####</syslog>
-			<log level="100"><![CDATA[CFlowService UninstallArpFlow datapathid= <%=context.datapathid.toString()%>]]></log>
-
-			<function name="findDevice" class="DeviceManager">
+			<!--
+				@brief		卸载Arp流表
+				@auth 		wangkang 
+				@date		2018/01/15
+				Input:				
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UninstallArpFlow">
 				<parameters>
-					<string name="datapathid" in="context.datapathid.toString()"/>
-					<object name="deviceobject" out="context.deviceobj"/>
-				</parameters>				
-			</function>
-			
-			<if cond="context.deviceobj.ptr==null">
-				<then>
-					<log>deviceobj is null</log>
-					<exit/>
-				</then>
-			</if>
+					<string name="datapathid"/>			
+				</parameters>
+				<object name="deviceobj"/>
+				<object name="flowmgrobj"/>
+				<syslog level="INFO">##### CFlowServer UninstallArpFlow #####</syslog>
+				<log level="100"><![CDATA[CFlowService UninstallArpFlow datapathid= <%=context.datapathid.toString()%>]]></log>
 
-			<function name="GetFlowManager" class="context.deviceobj">
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>flowmgrobj is null</log>
+						<exit/>
+					</then>
+				</if>
+				
+				<function name="UninstallArpFlow" class="context.flowmgrobj"/>
+			</function>
+
+			<!--
+				@brief		install group table
+				@auth 		wangkang
+				@date		2018/01/17
+				Input:	
+					@param strjson 	流表json	
+					@param appId 	流表appId			
+					@param datapathid 	流表设备id
+				Output:
+					@param outgroupid 	出口group id
+			-->
+			<function name="InstallGroupFlow">
 				<parameters>
-					<object name="outflowmgr" out="context.flowmgrobj"/>
-				</parameters>			
+					<string name="outgroupid"/>
+					<string name="strjson"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
+				</parameters>
+				<syslog level="INFO">### CFlowService InstallGroupFlow###</syslog>
+				
+				<object name="groupmgr"/>
+				<object name="deviceobj"/>
+				<string name="vxlanport"/>
+				<string name="tunnelport"/>
+				<long name="tunnelid"/>
+				<string name="jsongroup"/>
+				<script><![CDATA[
+					var info = JSON.parse(context.strjson.toString());                              
+					context.vxlanport.setValue(info.vxlanport);
+					context.tunnelport.setValue(info.tunnelport);
+					context.tunnelid.setValue(info.tunnelid);
+				]]></script>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+							"command":"0",
+							"grouptype":"1",
+							"groupid":"0",
+							"bucketlist":[
+								{
+									"weight":"1",
+									"watchport":"<%=context.vxlanport.toString()%>",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"0",
+											"outport":"<%=context.vxlanport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								},
+								{
+									"weight":"2",
+									"watchport":"<%=context.tunnelport.toString()%>",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"25",
+											"oxmfield":"38",
+											"tunnelid":"<%=context.tunnelid.toString()%>",
+											"maxlen":"0xffff"
+										},
+										{
+											"type":"0",
+											"outport":"<%=context.tunnelport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="outdevice" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgr"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.groupmgr.ptr==null">
+					<then>
+						<log>groupmgr is null</log>
+						<exit/>
+					</then>
+				</if>								
+
+				<function name="InstallGroupRequest" class="context.groupmgr">
+					<parameters>
+						<string name="in_strjson" in="context.jsongroup.toString()"/>
+						<string name="in_appid"  in="context.appId.toString()"/>
+						<string name="in_groupid" out="context.outgroupid"/>
+					</parameters>
+				</function>
+
+				<log>CFlowService InstallGroupFlow end</log>
 			</function>
 
-			<if cond="context.flowmgrobj.ptr==null">
-				<then>
-					<log>flowmgrobj is null</log>
-					<exit/>
-				</then>
-			</if>
-			
-			<function name="UninstallArpFlow" class="context.flowmgrobj"/>
-		</function>
-	</public>
+			<!--
+				@brief		uninstall group table
+				@auth 		wangkang
+				@date		2018/01/17
+				Input:		
+					@param flowid 	流表id			
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UnInstallGroupFlow">
+				<parameters>
+					<string name="groupid"/>
+					<string name="datapathid"/>			
+				</parameters>
+				<object name="deviceobj"/>
+				<object name="groupmgr"/>
+				<log level="100"><![CDATA[CFlowService UnInstallGroupFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+				<log>##### CFlowServer UnInstallGroupFlow #####</log>
+				<if cond="context.groupid == ''">
+					<then>
+						<log>flowid is null</log>
+						<exit/>
+					</then>
+				</if>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgr"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.groupmgr.ptr==null">
+					<then>
+						<log>groupmgr is null</log>
+						<exit/>
+					</then>
+				</if>
+				
+				<function name="UnInstallGroupRequest" class="context.groupmgr">
+					<parameters>
+						<string name="groupid" in="context.groupid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+		</public>
 	</class>
 </starlang>

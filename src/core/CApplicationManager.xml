@@ -312,7 +312,8 @@
 							<set name="appparam" paramname="pathname" value="context.appdir.toString()"/>
 						
 							<set name="activitefile" value="'/opt/staros.xyz/staroscontroller/starlang/apps/'+context.appname.toString()+'/active'"/>
-							<set name="isfile" value="context.isFile(context.activitefile.toString())"/>
+							<set name="isfile" value="context.isFile(context.activitefile.toString())"/>						
+							
 							<if cond="context.isfile.toBoolean()==false">
 								<then>	
 									<set name="filecontent" value="'0'"/>
@@ -333,9 +334,10 @@
 									<log>readfile is success</log>		
 									<if cond="context.filecontentss.toString()!='0'">	
 										<then>
-												<log>filecontentss is not 0</log>	
+											<log>filecontentss is not 0</log>	
 											<set name="appstate" value="'ACTIVE'"/>
-											<set name="appiconstate" value="'active'"/>	
+											<set name="appiconstate" value="'active'"/>													
+											<activebundle bundleid="context.bundleid"/>
 										</then>
 										<else>
 											<log>filecontentss is  0</log>	
@@ -368,9 +370,13 @@
 									<log><![CDATA[LoadApplication appstring <%=context.appstring.toString()%>]]></log>
 								</then>
 							</if>
-							<log>bundleid</log>	
-							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>	
-							<activebundle bundleid="context.bundleid"/>			
+							<log>bundleid</log>			
+							<createbundle bundleid="bundleid" src="context.pathname.toString()"/>
+							<if cond="context.appstate.toString()=='ACTIVE'">
+								<then>
+									<activebundle bundleid="context.bundleid"/>
+								</then>
+							</if>
 						</then>
 					</if>
 				</for>
@@ -490,7 +496,7 @@
 					<long name="bundleid" />
 				</parameters>
 				<object name="oneapp"/>
-				<lookup name="appsContainer" key="context.id.toString()" output="context.oneapp"/>
+				<set name="oneapp" value="thisclass.appsContainer.getValue(context.id.toString())"/>
 				<string name="appidout" />
 				<if cond="context.oneapp.ptr != null">
 					<then>

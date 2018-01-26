@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		monitor.xml
+	@brief 		monitor
+	@version 	1.1.0
+	@auth 		wangkang
+	@date		2018/1/8
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>
+	<object name="monitormanager" value="global.MonitorManager" reference="true"/>
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<object name="globaltimer"/>
+	<!--
+		@brief		定时发送Arp至host
+		@auth 		wangkang
+		@date		2018/1/15
+	-->
+	<function name="SendARPtoHost">
+		<syslog level="INFO">SendARPtoHost</syslog>
+		<boolean name="is_have" value="true" />		
+		<string name="monitorip"/>
+		<string name="hostmac"/>
+		<string name="payloadjson" />		
+		<string name="hostport" />
+		
+		<object name="vgwobj" />
+		<string name="vgwip"/>
+		<string name="vgwmac" />		
+		<hashmap name="hosthashmap" keytype="string" valuetype="string"/>
+		<hashmap name="vgwhashmap" keytype="string" valuetype="object"/>
+		
+		<boolean name="is_true" value="false" />
+		<string name="deviceid"/>
+		<string name="transportid"/>
+		<messageblock name="msgblock"/>		
+		<syslog level="INFO">1</syslog>
+		
+		<function name="Container_Is_Have" class="context.vgatewaymanager">
+			<parameters>
+				<boolean name="is_null" out="context.is_have"/>
+			</parameters>
+		</function>
+		<syslog level="INFO">1-5</syslog>
+		<syslog level="INFO"><![CDATA[is_have= <%=context.is_have.toString()%>]]></syslog>
+		
+		<syslog level="INFO">2</syslog>
+		<function name="Container_Is_Have" class="context.monitormanager">
+			<parameters>
+				<boolean name="is_null" out="context.is_have"/>
+			</parameters>
+		</function>
+		<syslog level="INFO">2-5</syslog>
+		<syslog level="INFO"><![CDATA[is_have= <%=context.is_have.toString()%>]]></syslog>
+		<if cond="context.is_have.toBoolean()==false">
+			<then>
+				<exit/>
+			</then>
+		</if>
+		<syslog level="INFO">3</syslog>
+		<function name="Gethashmap" class="context.monitormanager">
+			<parameters>
+				<hashmap name="monitorhash" out="context.hosthashmap" reference="true"/>
+			</parameters>
+		</function>
+		<syslog level="INFO">4</syslog>
+		<syslog level="INFO"><![CDATA[hosthashmap.size = <%=context.hosthashmap.size()%>]]></syslog>
+		<function name="Gethashmap" class="context.vgatewaymanager">
+			<parameters>
+				<hashmap name="vhashmap" out="context.vgwhashmap" reference="true"/>
+			</parameters>
+		</function>
+		<pair name="onehost" keytype="string" valuetype="string"/>
+		<pair name="onevgw" keytype="string" valuetype="object"/>
+		<for var="context.onehost" in="context.hosthashmap">
+			<set name="context.monitorip" value="context.onehost.second().toString()"/>
+			<for var="context.onevgw" in="context.vgwhashmap">
+				<set name="context.vgwobj" value="context.onevgw.second()"/>
+				<function name="Is_HaveGateway" class="context.vgatewaymanager">
+					<parameters>
+						<string name="ip" in="context.monitorip.toString()"/>
+						<boolean name="is_have" out="context.is_true"/>
+						<string name="outvmac" out="context.vgwmac"/>
+						<string name="outip" out="context.vgwip"/>
+					</parameters>
+				</function>
+				<if cond="context.is_true.toBoolean()==true">
+					<then>
+						<syslog level="INFO">^^^^join in true path^^^^^</syslog>						
+						<script><![CDATA[						
+							var pljson = new Object();
+							var ethpayload = new Object();
+							pljson['dmac'] = "ff:ff:ff:ff:ff:ff";
+							pljson['ethtype'] = "2054";
+							pljson['priority'] =  "0";
+							pljson['qinqpriority'] =  "0";
+							pljson['qinqtpid'] =  "0";
+							pljson['qinqvid'] =  "65535";
+							pljson['smac'] = context.vgwmac.toString();
+							pljson['vlanid'] = "65535";
+							
+							ethpayload['hardwareType'] = "1";
+							ethpayload['hardwareaddresslength'] = "6";
+							ethpayload['opcode'] = "1";
+							ethpayload['protocolType'] = "2048";
+							ethpayload['protocoladdresslength'] = "4";
+							ethpayload['senderhardwareaddress'] = context.vgwmac.toString();
+							ethpayload['senderprotocoladdress'] = context.vgwip.toString();
+							ethpayload['targethardwareaddress'] = "00:00:00:00:00:00";
+							ethpayload['targetprotocoladdress'] = context.monitorip.toString();
+
+							pljson['ethernetpayload'] = ethpayload;
+							
+							var strjson=JSON.stringify(pljson);
+							context.payloadjson.setValue(strjson);
+						]]></script>	
+						<syslog level="INFO"><![CDATA[json = <%=context.payloadjson.toString()%>]]></syslog>			
+						<flood name="global.openflowserverobj" strjson="context.payloadjson.toString()"/>
+					</then>		
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</for>	
+		</for>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">			
+			<function name="RegistApplication" class="context.applicationmgr">
+				<parameters>
+					<string name="id" in="'monitor'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'starosapp'"/>
+					<string name="origin" in="'Nanjing StarOS Inc.'"/>
+					<string name="title" in="'app for monitor'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.80.10'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
+				</parameters>
+			</function>			
+
+			<syslog level="INFO">hostservice app startup</syslog>	
+					
+			
+		</onevent>	
+		
+		<onevent event="TimeOutEvent">
+			<syslog level="INFO">TimeOutEvent</syslog>
+			<function name="SendARPtoHost"/>
+		</onevent>
+		
+		<onevent event="bundleapp.active">
+			<long name="tunnelsize"/>
+			
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'monitor'"/>
+					<string name="event_name" in="'PacketInEvent'"/>					
+					<string name="eth_type" in="'0x0800'"/>					
+				</parameters>
+			</function>
+			<string name="eventname"/>
+			<set name="eventname"  value="'TimeOutEvent'"/>
+			<!--启动SendARP定时器-->
+			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
+		</onevent>
+		
+		<onevent event="~bundleapp.deactive">
+			<function name="removeProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'monitor'"/>									
+				</parameters>
+			</function>
+			<!--关闭SendARP定时器-->
+			<timer name="context.globaltimer" method="StopTimer"/>
+		</onevent>
+		
+		<onevent event="~bundleapp.shutdown">
+
+		</onevent>
+
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

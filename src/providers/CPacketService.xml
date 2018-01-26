@@ -193,7 +193,7 @@
 					<string name="transportid"/>
 					<messageblock name="msgblock"/>
 				</parameters>
-				<log level="100">###### CPackerserver ProcessPacket ######</log>
+				
 				<string name="appname"/>		
 				<string name="eventname"/>		
 				<object name="packetobj"/>	
@@ -283,7 +283,7 @@
 						<exit/>
 					</then>
 				</if>
-				<log level="100">###### CPacketserver HOSTDATA #######</log>
+				
 				<if cond="context.local_ethtype.toString()=='2054'">
 					<then>
 						<script><![CDATA[

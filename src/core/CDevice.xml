@@ -56,6 +56,8 @@
 			<long name="m_requestcount"/>
 			<string name="m_metaUi"/>
 			<object name="sshdevice"/>
+			<!--YangXR 2018/1/22-->
+			<object name="openflowdevice"/>
 		</private>
 		<public>
 			<function name="CDevice">
@@ -250,8 +252,7 @@
 					</parameters>
 				</function>
 			</function>
-			
-			
+
 			<function name="GetTableManager">
 				<parameters>
 					<object name="outtablemgr" />

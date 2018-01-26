@@ -32,8 +32,12 @@
 			<string name="m_flowid2"/>
 			<string name="m_flowid3"/>
 			<string name="m_flowid4"/>
+			<string name="m_flowid5"/>
+			<string name="m_flowid6"/>
 			<string name="m_dropid"/>
 			<string name="m_dropid2"/>
+			<string name="m_groupid"/>
+			<string name="m_groupid2"/>
 			<long name="m_meterid"/>
 		</private>	
 		<public>
@@ -3856,6 +3860,1268 @@
 					</then>
 				</if>
 			</function>
+
+			<!--
+			/**********************************************************************
+			* 函数名称：installLoadBalanceStart
+			* 功能描述：安装负载均衡流表
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：    inport  		: 开始端口;
+			*               inputport  		: 专线备份端口;
+			*               inputtunnelport : 专线端口;
+			*               vxlantunnelid  	: tunnelid;   
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/17    V1.1    王康        创建
+			************************************************************************/
+			-->
+			<function name="installLoadBalanceStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+				</parameters>
+				<function name="InstallLoadBalanceStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="flowid3" out="thisclass.m_flowid5"/>
+						<string name="groupid1" out="thisclass.m_groupid"/>
+					</parameters>
+				</function>
+				<function name="InstallLoadBalanceStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="flowid3" out="thisclass.m_flowid6"/>
+						<string name="groupid1" out="thisclass.m_groupid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallLoadBalanceStart">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="flowid3"/>
+					<string name="groupid1"/>
+				</parameters>
+
+				<syslog level="INFO">### CTunnelDevice installLoadBalanceStart###</syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inport= <%=context.inport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inputport= <%=context.inputport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inputtunnelport= <%=context.inputtunnelport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></syslog>
+				<syslog level="INFO">#############################################</syslog>
+
+				<string name="groupid"/>
+				<string name="jsongroup"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<string name="jsonout2in2"/>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"vxlanport":"<%=context.inputport.toString()%>",
+							"tunnelport":"<%=context.inputtunnelport.toString()%>",
+							"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallGroupFlow" class="flowservice">
+					<parameters>
+						<string name="outgroupid" out="context.groupid"/>
+						<string name="strjson" in="context.jsongroup.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<set name="groupid1" value="context.groupid.toString()"/>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"22",
+												"groupid":"<%=context.groupid.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in2">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid3"/>
+						<string name="strjson" in="context.jsonout2in2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.flowid1 == ''">
+					<then>
+						<log>context.flowid1 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid2 == ''">
+					<then>
+						<log>context.flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid3 == ''">
+					<then>
+						<log>context.flowid3 == 0</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+
+			<!--
+			/**********************************************************************
+			* 函数名称：installLoadBalanceStartpolicy
+			* 功能描述：安装负载均衡流表
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：    inport  		: 开始端口;
+			*               inputport  		: 专线备份端口;
+			*               inputtunnelport : 专线端口;
+			*               vxlantunnelid  	: tunnelid; 
+			*               srcip           : 源ip;
+			*               dstip 			: 目的ip;
+			*               ipproto   	    : 传输协议;  
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2018/01/17    V1.1    王康        创建
+			************************************************************************/
+			-->
+			<function name="installLoadBalanceStartpolicy">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallLoadBalanceStartpolicy">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="flowid3" out="thisclass.m_flowid5"/>
+						<string name="groupid1" out="thisclass.m_groupid"/>
+					</parameters>
+				</function>
+				<function name="InstallLoadBalanceStart">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="inputport" in="context.inputport.toString()"/>
+						<string name="inputtunnelport" in="context.inputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="flowid3" out="thisclass.m_flowid6"/>
+						<string name="groupid1" out="thisclass.m_groupid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallLoadBalanceStartpolicy">
+				<parameters>
+					<string name="inport"/>
+					<string name="inputport"/>
+					<string name="inputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="flowid3"/>
+					<string name="groupid1"/>
+				</parameters>
+
+				<syslog level="INFO">### CTunnelDevice installLoadBalanceStarpolicyt###</syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inport= <%=context.inport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inputport= <%=context.inputport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart inputtunnelport= <%=context.inputtunnelport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart srcip= <%=context.srcip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart dstip= <%=context.dstip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceStart ipproto= <%=context.ipproto.toString()%>]]></syslog>
+				<syslog level="INFO">#############################################</syslog>
+
+				<string name="groupid"/>
+				<string name="jsongroup"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<string name="jsonout2in2"/>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"vxlanport":"<%=context.inputport.toString()%>",
+							"tunnelport":"<%=context.inputtunnelport.toString()%>",
+							"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallGroupFlow" class="flowservice">
+					<parameters>
+						<string name="outgroupid" out="context.groupid"/>
+						<string name="strjson" in="context.jsongroup.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<set name="groupid1" value="context.groupid.toString()"/>
+
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"22",
+												"groupid":"<%=context.groupid.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in2">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid3"/>
+						<string name="strjson" in="context.jsonout2in2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.flowid1 == ''">
+					<then>
+						<log>context.flowid1 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid2 == ''">
+					<then>
+						<log>context.flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid3 == ''">
+					<then>
+						<log>context.flowid3 == 0</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+	
+			<!-- wangkang 2018/01/17 -->
+			<function name="installLoadBalanceEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+				</parameters>
+				<function name="InstallLoadBalanceEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="flowid3" out="thisclass.m_flowid5"/>
+						<string name="groupid1" out="thisclass.m_groupid"/>
+					</parameters>
+				</function>
+				<function name="InstallLoadBalanceEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="flowid3" out="thisclass.m_flowid6"/>
+						<string name="groupid1" out="thisclass.m_groupid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallLoadBalanceEnd">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="flowid3"/>
+					<string name="groupid1"/>
+				</parameters>
+
+				<syslog level="INFO">### CTunnelDevice installLoadBalanceEnd###</syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outport= <%=context.outport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outputport= <%=context.outputport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outputtunnelport= <%=context.outputtunnelport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></syslog>
+				<syslog level="INFO">#############################################</syslog>
+
+				<string name="groupid"/>
+				<string name="jsongroup"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<string name="jsonout2in2"/>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"vxlanport":"<%=context.outputport.toString()%>",
+							"tunnelport":"<%=context.outputtunnelport.toString()%>",
+							"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallGroupFlow" class="flowservice">
+					<parameters>
+						<string name="outgroupid" out="context.groupid"/>
+						<string name="strjson" in="context.jsongroup.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<set name="groupid1" value="context.groupid.toString()"/>
+
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"22",
+												"groupid":"<%=context.groupid.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in2">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid3"/>
+						<string name="strjson" in="context.jsonout2in2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.flowid1 == ''">
+					<then>
+						<log>context.flowid1 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid2 == ''">
+					<then>
+						<log>context.flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid3 == ''">
+					<then>
+						<log>context.flowid3 == 0</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+
+			<!-- wangkang 2018/01/17 -->
+			<function name="installLoadBalanceEndpolicy">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+				</parameters>
+				<function name="InstallLoadBalanceEndpolicy">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="srcip" in="context.srcip.toString()"/>
+						<string name="dstip" in="context.dstip.toString()"/>
+						<string name="ipproto" in="context.ipproto.toString()"/>
+						<string name="ethtype" in="'0x0800'"/>
+						<string name="flowid1" out="thisclass.m_flowid"/>
+						<string name="flowid2" out="thisclass.m_flowid2"/>
+						<string name="flowid3" out="thisclass.m_flowid5"/>
+						<string name="groupid1" out="thisclass.m_groupid"/>
+					</parameters>
+				</function>
+				<function name="InstallLoadBalanceEnd">
+					<parameters>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="outputport" in="context.outputport.toString()"/>
+						<string name="outputtunnelport" in="context.outputtunnelport.toString()"/>
+						<long name="vxlantunnelid" in="context.vxlantunnelid.toLong()"/>
+						<string name="ethtype" in="'0x0806'"/>
+						<string name="flowid1" out="thisclass.m_flowid3"/>
+						<string name="flowid2" out="thisclass.m_flowid4"/>
+						<string name="flowid3" out="thisclass.m_flowid6"/>
+						<string name="groupid1" out="thisclass.m_groupid2"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallLoadBalanceEndpolicy">
+				<parameters>
+					<string name="outport"/>
+					<string name="outputport"/>
+					<string name="outputtunnelport"/>
+					<long name="vxlantunnelid"/>
+					<string name="srcip"/>
+					<string name="dstip"/>
+					<string name="ipproto"/>
+					<string name="ethtype"/>
+					<string name="flowid1"/>
+					<string name="flowid2"/>
+					<string name="flowid3"/>
+					<string name="groupid1"/>
+				</parameters>
+
+				<syslog level="INFO">### CTunnelDevice installLoadBalanceEndpolicy###</syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outport= <%=context.outport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outputport= <%=context.outputport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd outputtunnelport= <%=context.outputtunnelport.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd vxlantunnelid= <%=context.vxlantunnelid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd srcip= <%=context.srcip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd dstip= <%=context.dstip.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[LoadBalanceEnd ipproto= <%=context.ipproto.toString()%>]]></syslog>
+				<syslog level="INFO">#############################################</syslog>
+
+				<string name="groupid"/>
+				<string name="jsongroup"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<string name="jsonout2in2"/>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"vxlanport":"<%=context.outputport.toString()%>",
+							"tunnelport":"<%=context.outputtunnelport.toString()%>",
+							"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallGroupFlow" class="flowservice">
+					<parameters>
+						<string name="outgroupid" out="context.groupid"/>
+						<string name="strjson" in="context.jsongroup.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<set name="groupid1" value="context.groupid.toString()"/>
+				
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"22",
+												"groupid":"<%=context.groupid.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outputtunnelport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"38",
+												"hasmask":"false",
+												"tunnelid":"<%=context.vxlantunnelid.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in2">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.ipproto.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow" class="flowservice">
+					<parameters>
+						<string name="outflowid" out="context.flowid3"/>
+						<string name="strjson" in="context.jsonout2in2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.flowid1 == ''">
+					<then>
+						<log>context.flowid1 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid2 == ''">
+					<then>
+						<log>context.flowid2 == null</log>
+						<assert/>
+					</then>
+				</if>
+				<if cond="context.flowid3 == ''">
+					<then>
+						<log>context.flowid3 == 0</log>
+						<assert/>
+					</then>
+				</if>
+			</function>
+
 			<!--
 				@brief		The controller sends the meters to the device
 				@auth 		Wang Kang (kingsalone@sina.com)
@@ -3906,6 +5172,7 @@
 				<!--删除流表-->
 				<!--删除meter-->
 				<log level="101">CTunnelDevice DeactiveTunnel</log>
+
 				<!--uninstall flow 1-->
 				<function name="UnInstallFlow" class="FlowService">
 					<parameters>
@@ -3934,6 +5201,35 @@
 						<string name="flowid" in="thisclass.m_flowid4.toString()"/>
 					</parameters>
 				</function>
+				<!--uninstall flow 5-->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid5.toString()"/>
+					</parameters>
+				</function>
+				<!--uninstall flow 6-->
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+						<string name="flowid" in="thisclass.m_flowid6.toString()"/>
+					</parameters>
+				</function>
+				<!-- wangkang 2018/01/18 uninstall group 1-->
+				<function name="UnInstallGroupFlow" class="FlowService">
+					<parameters>
+						<string name="groupid" in="thisclass.m_groupid.toString()"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+					</parameters>
+				</function>
+				<!-- uninstall group 2-->
+				<function name="UnInstallGroupFlow" class="FlowService">
+					<parameters>
+						<string name="groupid" in="thisclass.m_groupid2.toString()"/>
+						<string name="datapathid" in="thisclass.m_deviceid.toString()"/>			
+					</parameters>
+				</function>
+
 				<!-- wangkang 2017/11/16 
 					uninstall dropflow -->
 				<function name="UnInstallFlow" class="FlowService">

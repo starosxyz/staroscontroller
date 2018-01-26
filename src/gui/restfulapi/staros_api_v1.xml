@@ -26,6 +26,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/flows/staros_api_flows.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/topology/staros_api_topology.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/>
 	<!--WebGUI-->
 	<!--{"code":404,"message":"HTTP 404 Not Found"}-->
 	<function name="HandlAPIRequest">
@@ -46,6 +47,7 @@
 		<string name="authjson"/>
 		<boolean name="isAPI" value="false"/>
 		<boolean name="iseditor" value="false"/>
+		<boolean name="isswaggerjson" value="false"/>
 		<string name="injson"/>
 		<string name="outjson"/>
 		<string name="contenttype"/>
@@ -55,26 +57,36 @@
 		<string name="errorjson"/>
 		<string name="content"/>
 		<boolean name="isfile"/>
-		<string name="jsonfilepath" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/onos/v1/docs/apis/onos/v1/swagger.json'"/>
+		<string name="jsonfilepath" value="'/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi'+context.requestpath.toString()"/>
 		<messageblock name="filecontents"/>
 		<log>HandleAPI</log>
 		<log><![CDATA[HandleAPI request path <%=context.requestpath.toString()%>]]></log>
 		<log><![CDATA[Authorization !!!!! <%=event.getParam("Authorization").toString()%>]]></log>	
 
-
+		<script><![CDATA[
+			var x = context.requestpath.toString();
+			
+			if (x.indexOf("/onos/v1/docs/apis")>=0)
+			{	
+				context.isswaggerjson.setValue(true);
+			}else{
+				context.isswaggerjson.setValue(false);
+			}
+				
+		]]></script>
 
 		<if cond="context.isAPIAuth.toBoolean()==false">
 			<then>
-				<if cond="context.requestpath.toString()=='/onos/v1/docs/apisv1/swagger.json'">
+				<if cond="context.isswaggerjson.toBoolean()==true">
 					<then>
 						<set name="isfile" value="context.isFile(context.jsonfilepath.toString())"/>
-							<if cond="context.isfile.toBoolean()==true">
-								<then>
-									<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
-									
-									<set name="content" value="context.filecontents.toString()"/>
-								</then>
-							</if>
+						<if cond="context.isfile.toBoolean()==true">
+							<then>
+								<file method="readfile" name="context.jsonfilepath.toString()" data="context.filecontents"/>
+								
+								<set name="content" value="context.filecontents.toString()"/>
+							</then>
+						</if>
 						<function name="dataHandle" class="APIDocsService">
 							<parameters>
 								<string name="swaggerjsonstring" in="context.content.toString()"/>

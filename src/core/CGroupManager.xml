@@ -37,6 +37,10 @@
 				<set name="thisclass.m_bytes" value="'0'"/>
 				<set name="thisclass.m_packets" value="'0'"/>
 				<set name="thisclass.m_bucketjson" value="context.bucketjson.toString()"/>
+				<syslog level="INFO">##### CGroupBucket ######</syslog>
+				<syslog level="INFO"><![CDATA[CGroupBucket m_bytes = <%=thisclass.m_bytes.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CGroupBucket m_packets = <%=thisclass.m_packets.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CGroupBucket m_bucketjson = <%=thisclass.m_bucketjson.toString()%>]]></syslog>
 			</function>
 			<!--
 				@brief		更新数据状态
@@ -81,6 +85,7 @@
 							var key=global.actionsMap.getParam(oneaction.type).toString();
 							var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
 							var actionvalue=oneaction[key];
+
 							if (oneaction.type=='25')
 							{
 								if (global.matchfieldName.hasParam(actionvalue)==true)
@@ -93,15 +98,15 @@
 										var value_type_mask = matchvalue_type + "mask";
 										if (oneaction[value_type_mask] != null)							
 										{
-											straction += keyname + ':' +matchvalue + '/' + oneaction[value_type_mask]+', ';
+											straction += matchkeyname + ':' +matchvalue + '/' + oneaction[value_type_mask]+', ';
 										}
 									}
 									else 
 									{
-										straction+=keyname+':' +matchvalue + ', ';
+										straction+=matchkeyname+':' +matchvalue + ', ';
 									}
 								}
-								straction+=keyname+':' +matchvalue + '/' + oneaction[value_type_mask]+', '
+								//straction+=matchkeyname+':' +matchvalue + '/' + oneaction[value_type_mask]+', '
 							}
 							else 
 							{
@@ -119,9 +124,9 @@
 					<string name="groupjson"/>
 				</parameters>
 				<script><![CDATA[
-					var info = JSON.parse(thisclass.groupjson.toString());
-					thisclass.m_packets=info.packetcount;
-					thisclass.m_bytes=info.bytecount;
+					var info = JSON.parse(context.groupjson.toString());
+					thisclass.m_packets.setValue(info.packetcount);
+					thisclass.m_bytes.setValue(info.bytecount);
 				]]></script>
 			</function>
 		</public>
@@ -147,6 +152,8 @@
 					<string name="appid" />
 					<string name="groupjson" />
 				</parameters>
+				<syslog level="INFO">##### CGroup ######</syslog>
+				<syslog level="INFO"><![CDATA[CGroup id = <%=context.id.toString()%>]]></syslog>
 				<set name="thisclass.m_id" value="context.id.toString()"/>
 				<set name="thisclass.m_appid" value="context.appid.toString()"/>
 				<set name="thisclass.m_strjson" value="context.groupjson.toString()"/>
@@ -181,6 +188,14 @@
 						<insert name="m_buckets" value="context.bucketobj"/>
 					</function>
 				</for>
+			</function>
+
+			<!-- wangkang 2018/01/18 -->
+			<function name="GetGroupString">
+				<parameters>
+					<string name="outgroupstring"/>
+				</parameters>
+				<set name="outgroupstring" value="thisclass.m_strjson.toString()"/>
 			</function>
 			<!--
 				@brief		把json更改成String
@@ -245,26 +260,32 @@
 				<parameters>
 					<string name="groupjson"/>
 				</parameters>
-				<list name="bucketjsonlist"  valuetype="string"/>
+				<hashmap name="bucketjsonlist" keytype="long" valuetype="string"/>
 				<object name="bucketsobj" />
 				<string name="bucketstring" />
-				<long name="i"  value="0"/>
+				<long name="num"  value="0"/>
+				<syslog level="INFO"><![CDATA[CGroupManager FetchStateFromJson groupjson= <%=context.groupjson.toString()%>]]></syslog>
 				<script><![CDATA[
-					var info = JSON.parse(thisclass.groupjson.toString());
-					thisclass.m_ref_count=info.refcount;
-					thisclass.m_packets=info.packetcount;
-					thisclass.m_bytes=info.bytecount;
-					thisclass.m_duration_sec=info.duretionsec;
-					thisclass.m_duration_nsec=info.durationnsec;
+					var info = JSON.parse(context.groupjson.toString());
+					thisclass.m_ref_count.setValue(info.refcount);
+					thisclass.m_packets.setValue(info.packetcount);
+					thisclass.m_bytes.setValue(info.bytecount);
+					thisclass.m_duration_sec.setValue(info.duretionsec);
+					thisclass.m_duration_nsec.setValue(info.durationnsec);
 					for(var i=0;i<info.bucketcounterlist.length;i++)
 					{
 						var onebucket = info.bucketcounterlist[i];
-						context.bucketjsonlist.addValue(JSON.stringify(onebucket));
+						context.bucketjsonlist.addValue(i,JSON.stringify(onebucket));
 					}
 				]]></script>
 				<for var="bucketsobj" in="context.m_buckets">
 					<function>
-						<set name="bucketstring" value="context.bucketjsonlist.getValue(context.i.toLong())"/>
+						<if cond="context.bucketjsonlist.hasValue(context.num.toLong())">
+							<then>
+								<set name="bucketstring" value="context.bucketjsonlist.getValue(context.num.toLong())"/>
+							</then>
+						</if>
+						
 						<if cond="context.bucketsobj.ptr==null">
 							<then>
 								<log>bucketsobj is null</log>
@@ -273,10 +294,10 @@
 						</if>
 						<function name="FetchStateFromJson" class="bucketsobj">
 							<parameters>
-								<string name="jsonstring"  in="context.bucketstring.toString()"/>
+								<string name="groupjson"  in="context.bucketstring.toString()"/>
 							</parameters>
 						</function>
-						<set name="i" value="context.i.toLong()+1"/>
+						<set name="num" value="context.num.toLong()+1"/>
 					</function>
 				</for>
 			</function>
@@ -310,10 +331,9 @@
 					<string name="transportid"/>
 				</parameters>
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
-				<!--set name="thisclass.m_testgroupid" value="'2'"/-->
-				<set name="thisclass.m_groupid" value="0"/>
-				<function name="testaddgroup"/>
-				<function name="InstallErrorGroup"/>
+				<set name="thisclass.m_groupid" value="1"/>
+				<!--function name="testaddgroup"/-->
+				<!--function name="InstallErrorGroup"/-->
 			</function>
 			<!--
 				@brief		下载包请求
@@ -328,12 +348,13 @@
 					<string name="in_appid"  />
 					<string name="in_groupid"  />
 				</parameters>
+				<syslog level="INFO">##### CGroupManager InstallGroupRequest #####</syslog>
 				<long name="tmpgroupid" />
 				<set name="tmpgroupid" value="thisclass.m_groupid.toLong()"/>
 				<set name="in_groupid" value="context.tmpgroupid.toString()"/>
 				<object name="groupobj" />
 				<string name="outjson" />
-				
+
 				<script><![CDATA[
 						var info = JSON.parse(context.in_strjson.toString());
 						info.groupid=context.tmpgroupid.toString();
@@ -341,6 +362,7 @@
 						context.outjson.setValue(str_json);
 				]]></script>
 				
+				<syslog level="INFO"><![CDATA[InstallGroupRequest outjson= <%=context.outjson.toString()%>]]></syslog>
 				<new name="groupobj" class="CGroup">
 					<parameters>
 						<string name="id"  in="context.in_groupid.toString()"/>
@@ -394,7 +416,7 @@
 						</function>
 						<script><![CDATA[
 								var info = JSON.parse(context.groupstring.toString());
-								info.command='2';
+								info.command='3';
 								var strjson=JSON.stringify(info);
 								context.sendflowmodjson.setValue(strjson);
 						]]></script>
@@ -415,6 +437,7 @@
 				OFPGT_FF = 3, /* Fast failover group. */
 			-->
 			<function name="testaddgroup">
+				<syslog level="INFO">$$$$$$$$$$$$  CGroupManager testaddgroup $$$$$$$$$$$$$$$$</syslog>
 				<string name="modstrjson" />
 				<string name="returnresourceid" />
 				<reference variable="modstrjson">
@@ -427,12 +450,30 @@
 							"bucketlist":[
 								{
 									"weight":"1",
-									"watchport":"1000",
+									"watchport":"1",
+									"watchgroup":"1000",
+									"actions":[
+										{
+											"type":"25",
+											"oxmfield":"38",
+											"tunnelid":"<%=context.vxlantunnelid.toLong()%>",
+											"maxlen":"0xffff"
+										},
+										{
+											"type":"0",
+											"outport":"2203",
+											"maxlen":"0xffff"
+										}
+									]
+								},
+								{
+									"weight":"2",
+									"watchport":"2",
 									"watchgroup":"1000",
 									"actions":[
 										{
 											"type":"0",
-											"outport":"0xfffffffd",
+											"outport":"2",
 											"maxlen":"0xffff"
 										}
 									]
@@ -514,7 +555,7 @@
 				<object name="groupobj" />
 				<string name="GroupInfoJson" />
 				<pair name="onegrouppair"  keytype="string" valuetype="object"/>
-					<for var="onegrouppair" in="context.groupContainer">
+				<for var="onegrouppair" in="context.groupContainer">
 					<function>
 						<set name="groupobj" value="context.onegrouppair.second()"/>
 						<if cond="context.groupobj.ptr != null">
@@ -553,8 +594,8 @@
 					json['payload'] = payload;
 					var strjson=JSON.stringify(json);				
 					context.jsonstring.setValue(strjson);
-					
 				]]></script>
+				<syslog level="INFO"><![CDATA[GetGroupJsonData jsonstring= <%=context.jsonstring.toString()%>]]></syslog>
 			</function>	
 			<!--
 				@brief		提交包状态回应
@@ -572,17 +613,17 @@
 				<string name="groupstate" />
 				<pair name="onegrouppair"  keytype="string" valuetype="object"/>
 				<hashmap name="liststate" keytype="string" valuetype="string"/>
-																<script><![CDATA[							
+				<script><![CDATA[							
 					var info = JSON.parse(context.groupjson.toString());
-									if (info.statslist != null)
-									{
-										for(var i=0;i<info.statslist.length;i++)
-										{
-											var onestat=info.statslist[i];
-											context.liststate.addValue(onestate.groupid, JSON.stringify(onestat));
-										}
-									}
-								]]></script>							
+					if (info.statslist != null)
+					{
+						for(var i=0;i<info.statslist.length;i++)
+						{
+							var onestate=info.statslist[i];
+							context.liststate.addValue(onestate.groupid, JSON.stringify(onestate));
+						}
+					}
+				]]></script>							
 				<for var="onegrouppair" in="context.groupContainer">
 					<function>
 						<set name="groupobj" value="context.onegrouppair.second()"/>
@@ -591,9 +632,15 @@
 						<if cond="context.liststate.hasValue(context.groupid.toString())==true">
 							<then>
 								<set name="groupstate" value="context.liststate.getValue(context.groupid.toString())"/>
-								<function name="FetchStateFromJson" class="groupobj">
+								<if cond="context.groupobj.ptr == null">
+									<then>
+										<log> groupobj is null</log>
+										<exit/>
+									</then>
+								</if>
+								<function name="FetchStateFromJson" class="context.groupobj">
 									<parameters>
-										<string name="groupjson"  in="context.groupstate.toString"/>
+										<string name="groupjson"  in="context.groupstate.toString()"/>
 									</parameters>
 								</function>
 							</then>

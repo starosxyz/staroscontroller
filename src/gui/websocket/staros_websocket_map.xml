@@ -56,6 +56,8 @@
 		<set name="WebSocketHandlerMap" paramname="policyDataRequest" value="'HandlePolicysRequest'"/>
 		<!--qiulei 20180113-->
 		<set name="WebSocketHandlerMap" paramname="vgatewayDataRequest" value="'HandleVgatewaysRequest'"/>
+		
+		<set name="WebSocketHandlerMap" paramname="intentDataRequest" value="'HandleintentRequest'"/>
 		<!--qiulei 20180113-->
 		<set name="WebSocketHandlerMap" paramname="policyDetailsDataRequest" value="'HandlePolicyDetailsRequest'"/>
 		<!--qiulei 20180113-->

@@ -769,7 +769,7 @@
 				<object name="flowentry"/>
 				<string name="sendflowmodjson" />
 				<string name="flowmodjson"/>
-				<log><![CDATA[UnInstallFlowTableRequest flowid <%=context.flowid.toString()%>]]></log>
+				<syslog level="INFO"><![CDATA[UnInstallFlowTableRequest flowid <%=context.flowid.toString()%>]]></syslog>
 				<if cond="context.flowsContainer.hasValue(context.flowid.toString()) == true">
 					<then>
 						<function>
@@ -1159,7 +1159,7 @@
 				Output:
 			-->
 			<function name="InstallDefaultFlow">
-				<!--function name="InstallARPFlow"/-->
+				<function name="InstallARPFlow"/>
 				<function name="InstallDiscoveryFlow"/>
 				<!--function name="InstallErrorFlow"/-->
 			</function>

@@ -55,6 +55,19 @@
 					<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			</function>
 			
+			
+			
+			<function name="getinfo">
+				<parameters>	
+					<string name="ip" />	
+					<string name="deviceid" />	
+					<string name="port" />			
+				</parameters>
+					<set name="context.ip" value="thisclass.m_ip.toString()"/>
+					<set name="context.deviceid" value="thisclass.m_deviceid.toString()"/>
+					<set name="context.port" value="thisclass.m_port"/>
+			</function>
+			
 			<function name="Setcurrenttime">
 				<set name="thisclass.m_starttime" value="context.currentms()"/>
 			</function>
@@ -332,19 +345,15 @@
 import os;
 import libstarlang;
 f=libstarlang.getValueLong("thisclass.m_starttime");
-print(f);
+
 a=libstarlang.getValueLong("context.startime");
-print(a);
+
 b=libstarlang.getValueLong("context.timeoutvalue");
 if(a-f>=b):
     libstarlang.setValueBool("context.isTimeout",True);
 else:
     libstarlang.setValueBool("context.isTimeout",False);
 				]]></python>
-				<syslog level="INFO"><![CDATA[ timeout = <%=context.timeoutvalue.toLong()%>]]></syslog>
-				<syslog level="INFO"><![CDATA[a = <%=context.startime.toLong()%>]]></syslog>
-				<syslog level="INFO"><![CDATA[f = <%=thisclass.m_starttime.toLong()%>]]></syslog>
-				<syslog level="INFO"><![CDATA[b = <%=context.startime.toLong() - thisclass.m_starttime.toLong()%>]]></syslog>
 			</function>
 			<!--
 			/**********************************************************************
@@ -441,7 +450,6 @@ else:
 					<string name="transportid"/>		
 				</parameters>
 
-				<syslog level="INFO">###### CHostManager addHost #######</syslog>
 				<object name="hostobj"/>	
 				<object name="host"/>
 				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
@@ -462,6 +470,7 @@ else:
 						<string name="transportid" in="context.transportid.toString()"/>		
 					</parameters>
 				</new>
+				<syslog level="INFO"><![CDATA[deviceid = <%=context.deviceid.toString()%>]]></syslog>
 				<insert name="hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" value="context.hostobj"/>
 				<syslog level="INFO"><![CDATA[host container size<%=context.hostContainer.size().toString()%>]]></syslog>
 				<string name="functionname"/>
@@ -849,7 +858,7 @@ else:
 						</then>
 					</if>
 				</for>
-				<syslog level="INFO"><![CDATA[CheckHostTimeout removelist= <%=context.removelist.size().toString()%>]]></syslog>
+				
 				<for var="toremoveobj" in="context.removelist">
 					<function>
 						<for var="context.functionname" in="context.listernellist">
@@ -901,6 +910,92 @@ else:
 							<messageblock name="msgblock" in="context.msgblock"/>
 						</parameters>
 					</function>
+			</function>
+			<!--YangXR-->
+			<function name="GetTPPByIP">
+				<parameters>
+					<string name="transport" value="''"/>
+					<string name="port" value="''"/>
+					<string name="dpid" value="''"/>
+					<string name="ip"/>
+				</parameters>
+				<string name="hostip"/>
+				<string name="deviceid"/>
+				<object name="hostobj"/>
+				<pair name="onehost" keytype="string" valuetype="object"/>
+				<for var="context.onehost" in="thisclass.hostContainer">
+					<set name="hostobj" value="context.onehost.second()"/>
+					<function name="GetHostIP" class="context.hostobj">
+						<parameters>
+							<string name="hostid" out="context.hostip"/>
+						</parameters>
+					</function>
+					<if cond="context.hostip.toString() == context.ip.toString()">
+						<then>
+							<function name="GetTransPortId" class="context.hostobj">
+								<parameters>
+									<string name="transportid" out="context.transport"/>
+								</parameters>
+							</function>
+							<function name="GetHostInPort" class="context.hostobj">
+								<parameters>
+									<string name="port" out="context.port"/>
+								</parameters>
+							</function>
+							<function name="Getdpid" class="context.hostobj">
+								<parameters>
+									<string name="dpid" out="context.deviceid"/>
+								</parameters>
+							</function>
+							<script><![CDATA[
+								var datapathid = context.deviceid.toString();
+								context.dpid.setValue(datapathid.split(":")[1]);
+							]]></script>
+						</then>
+					</if>
+				</for>
+			</function>
+			<function name="is_HaveKey">
+				<parameters>
+					<string name="keyvalue"/>
+					<boolean name="is_have" value="false"/>
+					<object name="host"/>
+				</parameters>
+				<if cond="thisclass.hostContainer.hasValue(context.keyvalue.toString())">
+					<then>
+						<set name="host" value="thisclass.hostContainer.getValue(context.keyvalue.toString())"/>
+						<set name="is_have" value="true"/>
+					</then>
+				</if>
+			</function>
+			
+			
+			<function name="Gethostbyip">
+				<parameters>
+					<string name="hostip"/>	
+					<object name="hostobj"/>
+				</parameters>
+				<object name="onehostobj"/>
+				<pair name="onehost" keytype="string" valuetype="object"/>
+				<string name="ip"/>
+				<for var="context.onehost" in="thisclass.hostContainer">
+					<set name="context.onehostobj" value="context.onedevice.second()"/>
+					<if cond="context.onehostobj.ptr == null">
+						<then>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetHostIP" class="onehostobj">
+						<parameters>
+							<string name="hostid" out="context.ip"/>
+						</parameters>
+					</function>
+					<if cond="context.ip.toString() == context.hostip.toString()">
+						<then> 
+							<set name="hostobj" value="context.onehostobj"/>
+						</then>
+					</if>
+				</for>	
 			</function>
 		</public>
 	</class>

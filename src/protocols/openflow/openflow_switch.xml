@@ -115,7 +115,7 @@
 								<string name="peeripaddr" in="context.peeripaddr.toString()"/>
 								<string name="type" in="'switch'"/>
 								<string name="online" in="'true'"/>
-								<string name="protocol" in="'OF_13'"/>					
+								<string name="protocol" in="'OF_13'"/>		
 							</parameters>
 						</function>
 						<!--qiulei 20170807 -->

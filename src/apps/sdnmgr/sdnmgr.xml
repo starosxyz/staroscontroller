@@ -4,7 +4,7 @@
 	All rights reserved.
 	
 	@file 		sdnmgr.xml
-	@brief 		tunnelapp
+	@brief 		sdnmgrapp
 	@version 	1.1.0
 	@auth 		qiulei
 	@date		20180116
@@ -28,13 +28,21 @@
 	<object name="meterservice" value="global.MeterService" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="toposervice" value="global.TopoService" reference="true"/>
-	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>	
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/sdnmgrapi.xml"/>
 	<!--qiulei 20180116 Tuesday pm-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/sdnmgrDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/apidocs/sdnmgrDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/CSDNMGRDeviceManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/CSDNMGRPortManager.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/CSDNMGRPolicyManager.xml"/>
 
+	<object name="sdndevicemgr"/>
+	<object name="sdnpolicymgr"/>
 	<events>
 		<onevent event="bundleapp.startup">
+			<log level="101">sdnmgr app startup   ----sdnmgr.xml 38</log>
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'sdnmgr'"/>
@@ -48,20 +56,118 @@
 				</parameters>
 			</function>
 	
-			<log>sdnmgr app startup</log>
+			<log level="101">sdnmgr app startup   ----sdnmgr.xml 51</log>
 		</onevent>	
 		
 		<onevent event="bundleapp.active">
-			<log>sdnmgr bundleapp.active     ----sdnmgr.xml</log>
+			<log level="101">sdnmgr bundleapp.active     ----sdnmgr.xml 55</log>
+			<function name="createDeviceDB"/>
+			<function name="createPolicyDB"/>
+			<new name="context.sdndevicemgr" class="CSDNMGRDeviceManager"/>
+			<!---->
+			<new name="context.sdnpolicymgr" class="CSDNMGRPolicyManager"/>
+			
 			<function name="AddDocsAPI_sdnmgr"/>
+			<function name="RegisterHandler_sdnmgr"/>
+			<function name="addProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'sdnmgr'"/>
+					<string name="event_name" in="'PacketInEvent'"/>					
+					<string name="eth_type" in="'0x0806'"/>					
+				</parameters>
+			</function>	
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
-			<log>sdnmgr bundleapp.deactive    ----sdnmgr.xml</log>
+			<log level="101">sdnmgr bundleapp.deactive    ----sdnmgr.xml 61</log>
 			<function name="RemoveDocsAPI_sdnmgr"/>
-			
+			<function name="UnRegisterHandler_sdnmgr"/>
+			<function name="removeProcessor" class="PacketService">				
+				<parameters>
+					<string name="app_name" in="'sdnmgr'"/>									
+				</parameters>
+			</function>
 		</onevent>
-		
+		<onevent event="PacketInEvent">
+			<object name="openflowdevice"/>
+			<string name="local_vlan"/>	
+			<string name="pkoutjson"/>	
+			<string name="dstmac"/>	
+			<string name="ethtype"/>	
+			<object name="hostobj"/>
+			<string name="datapathid"/>
+			<string name="inportid"/>
+			<string name="outport"/>
+			<boolean name="is_havehost" value="false"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if (info.match != null) {
+					var inport_id = info.match.matchfieldlist[0].inport;					
+					context.inportid.setValue(inport_id);
+				}
+				if (info.payload != null) {
+					var pay_load = info.payload;
+					var js_vlan = info.payload.vlanid;
+					if (js_vlan == 65535)
+						js_vlan = 0;
+					var strjson=JSON.stringify(pay_load);
+					context.pkoutjson.setValue(strjson);
+					var dst_mac = info.payload.dmac;
+					var eth = info.payload.ethtype;
+					context.dstmac.setValue(dst_mac);
+					context.ethtype.setValue(eth);	
+					context.local_vlan.setValue(js_vlan);									
+				}
+
+			]]></script>
+			<if cond="context.ethtype.toString()=='2054'">
+				<then>					
+					<if cond="context.dstmac.toString()=='ff:ff:ff:ff:ff:ff'">
+						<then>
+							<if cond="context.openflowserverobj.ptr==null">
+								<then>
+									<log level="100">#openflowserverobj.ptr==null#</log>
+									<exit/>
+								</then>
+							</if>						
+							<flood name="global.openflowserverobj" strjson="context.pkoutjson.toString()" inlocation="context.datapathid.toString()+'/'+context.inportid.toString()"/>
+						</then>
+						<else>
+							<function name="is_HaveKey" class="context.hostmanager">
+								<parameters>
+									<string name="keyvalue" in="context.dstmac.toString()+'/'+context.local_vlan.toString()"/>
+									<boolean name="is_have" out="context.is_havehost"/>
+									<object name="host" out="context.hostobj"/>
+								</parameters>
+							</function>
+							<if cond="context.hostobj.ptr==null">
+								<then>
+									<exit/>
+								</then>
+							</if>
+							<function name="Getdpid" class="context.hostobj">
+								<parameters>
+									<string name="dpid" out="context.datapathid"/>
+								</parameters>
+							</function>
+							<script><![CDATA[
+								var dpid = context.datapathid.toString();
+								context.datapathid.setValue(dpid.split(":")[1]);
+							]]></script>
+							<function name="GetHostInPort" class="context.hostobj">
+								<parameters>
+									<string name="port" out="context.outport"/>
+								</parameters>
+							</function>
+							<syslog level="INFO"><![CDATA[pkoutjson = <%= context.pkoutjson.toString()%>]]></syslog>
+							<syslog level="INFO"><![CDATA[outport = <%= context.outport.toString()%>]]></syslog>
+							<getdevice name="global.openflowserverobj" deviceid="context.datapathid.toString()" output="context.openflowdevice"/>
+							<packetout name="openflowdevice" strjson="context.pkoutjson.toString()"  outport="context.outport.toString()"/>
+						</else>
+					</if>
+				</then>
+			</if>
+		</onevent>
 		<onevent event="*">
 			<function>
 				<log level="1"><![CDATA[----sdnmgr.xml invalid event <%=event.getName().toString()%>]]> </log>

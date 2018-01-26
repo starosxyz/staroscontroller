@@ -136,6 +136,46 @@
 				]]></script>
 				<set name="outjson" value="context.outdetail.toString()"/>
 			</function>
+
+			<function name="getPortinfo">
+				<parameters>
+					<string name="state"/>
+					<string name="receive"/>
+				</parameters>
+				<set name="state" value="thisclass.m_state.toString()"/>
+				<set name="receive" value="thisclass.m_rxpackets.toString()"/>
+			</function>
+			
+			<!--
+				@brief		Get port info
+				@auth 		wangkang
+				@date		2018/01/26
+				Output:
+					@param outjson 	传出去的Json数据
+			-->
+			
+			<function name="GetPortInfo">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				<script><![CDATA[
+					var onearray = new Object();
+					if (thisclass.m_portno.toString() == 4294967294){ 						
+						onearray.port = "Local";						
+					}else{
+						onearray.port=thisclass.m_portno.toString();
+					}
+					if (thisclass.m_state.toString() == '0'){ 						
+						onearray.workstate = "active";						
+					}else{
+						onearray.workstate = "deactive";
+					}
+					onearray.sendbandwidth="500";
+					onearray.receive=thisclass.m_rxpackets.toString();
+					var strjson = JSON.stringify(onearray);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
 			<!--
 				@brief		判断portno的值
 				@auth 		YangXiangRui
@@ -325,6 +365,9 @@
 				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
 			<function name="MultiPartPortDescRequest"/>
 			</function>
+			
+			
+			
 			<!--
 				@brief		将port信息存到hashmap
 				@auth 		YangXiangRui
@@ -363,6 +406,22 @@
 				</new>
 				<insert name="portContainer" key="context.portno.toString()" value="context.portobj"/>
 			</function>
+			
+			<function name="Getportbyportno">
+				<parameters>
+					<string name="portno"/>
+					<object name="protobj"/>
+				</parameters>
+				<if cond="thisclass.portContainer.hasValue(context.portno.toString())">
+					<then>
+						<lookup name="thisclass.portContainer" key="context.portno.toString()" output="context.protobj"/>
+					</then>
+				</if>
+			</function>
+			
+			
+			
+			
 			<!--
 				@brief		拿去所有设备的json信息
 				@auth 		YangXiangRui
@@ -410,6 +469,80 @@
 					var strjson=JSON.stringify(portsArray);
 					context.outjson.setValue(strjson);
 				]]></script>
+			</function>
+
+			<!--
+				@brief		获取所有端口信息
+				@auth 		wangkang
+				@date		2018/01/26
+				Output
+					@param outjson 	传出去的Json信息
+			-->
+			<function name="GetAllPortInfo">
+				<parameters>
+					<string name="outjson"/>
+				</parameters>
+				<object name="portobj"/>
+				<list name="jsonlist" valuetype="string"/>
+				<string name="strjson"/>
+				<pair name="oneportpair" keytype="string" valuetype="object"/>
+				<for var="oneportpair" in="context.portContainer">
+					<function>
+						<set name="portobj" value="context.oneportpair.second()"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log>portobj is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetPortInfo" class="context.portobj">
+							<parameters>
+								<string name="outjson"  out="context.strjson"/>
+							</parameters>
+							</function>
+						<insert name="jsonlist" value="context.strjson.toString()"/>
+						</function>
+					</for>
+				<script><![CDATA[
+					var portsArray=new Array();    
+
+					var firststr=context.jsonlist.getFirst();
+					while(firststr!=null){
+						context.print(firststr);
+						var port = firststr;	
+						var info = JSON.parse(port);						
+						portsArray.push(info);
+						firststr=context.jsonlist.getNext();
+					}
+
+					var strjson=JSON.stringify(portsArray);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+
+			<!--
+				@brief		获取指定端口信息
+				@auth 		wangkang
+				@date		2018/01/26
+				Output
+					@param outjson 	传出去的Json信息
+			-->
+			<function name="GetAppointedPortInfo">
+				<parameters>
+					<string name="portno"/>
+					<string name="outjson"/>
+				</parameters>
+				<object name="portobj"/>
+				<if cond="thisclass.portContainer.hasValue(context.portno.toString())">
+					<then>
+						<set name="context.portobj" value="thisclass.portContainer.getValue(context.portno.toString())"/>
+					</then>
+				</if>
+				<function name="GetPortInfo" class="context.portobj">
+					<parameters>
+						<string name="outjson"  out="context.outjson"/>
+					</parameters>
+				</function>
 			</function>
 			<!--
 				@brief		拿去port的json信息

@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSDNMGRTypeManager.xml
+	@brief 		Type类,TypeManager类
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180118
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CSDNMGRType">
+
+		<private>
+			<string name="m_srcdevicetype"/>
+			<string name="m_srcdevicerole" />
+			<string name="m_dstdevicetype" />
+			<string name="m_dstdevicerole"/>
+			<string name="m_priority"/>
+		</private>
+		<public>
+			<function name="CSDNMGRType">
+				<parameters>
+					<string name="srcdevicetype"/>
+					<string name="srcdevicerole"/>
+					<string name="dstdevicetype"/>
+					<string name="dstdevicerole"/>
+					<string name="priority"/>
+				</parameters>
+				<set name="thisclass.m_srcdevicetype" value="context.srcdevicetype.toString()"/>
+				<set name="thisclass.m_srcdevicerole" value="context.srcdevicerole.toString()"/>
+				<set name="thisclass.m_dstdevicetype" value="context.dstdevicetype.toString()"/>
+				<set name="thisclass.m_dstdevicerole" value="context.dstdevicerole.toString()"/>
+				<set name="thisclass.m_priority" 		 value="context.priority.toString()"/>
+			</function>
+			
+			<function name="GetOneTypeObjJsonStr">
+				<parameters>
+					<string name="typeObjJsonStr"/>
+				</parameters>
+				<string name="values"/>
+				<reference variable="values">
+					<jsonbody><![CDATA[ 
+						{	
+							"src-devicetype":"<%=thisclass.m_srcdevicetype.toString()%>",
+							"src-devicerole":"<%=thisclass.m_srcdevicerole.toString()%>",
+							"dst-devicetype":"<%=thisclass.m_dstdevicetype.toString()%>",
+							"dst-devicerole":"<%=thisclass.m_dstdevicerole.toString()%>",
+							"priority":"<%=thisclass.m_priority.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="typeObjJsonStr" value="context.values.toString()"/>
+			</function>
+			
+			
+
+			<function name="GetSrcdevicetype">
+				<parameters>
+					<string name="srcdevicetype" />
+				</parameters>
+				<set name="srcdevicetype" value="thisclass.m_srcdevicetype.toString()"/>
+			</function>
+
+			<function name="GetSrcdevicerole">
+				<parameters>
+					<string name="srcdevicerole" />
+				</parameters>
+				<set name="srcdevicerole" value="thisclass.m_srcdevicerole.toString()"/>
+			</function>
+
+			<function name="GetDstdevicetype">
+				<parameters>
+					<string name="dstdevicetype" />
+				</parameters>
+				<set name="dstdevicetype" value="thisclass.m_dstdevicetype.toString()"/>
+			</function>
+
+			<function name="GetDstdevicerole">
+				<parameters>
+					<string name="dstdevicerole" />
+				</parameters>
+				<set name="dstdevicerole" value="thisclass.m_dstdevicerole.toString()"/>
+			</function>
+
+			<function name="GetPriority">
+				<parameters>
+					<string name="priority" />
+				</parameters>
+				<set name="priority" value="thisclass.m_priority.toString()"/>
+			</function>
+
+			<function name="GetTypeinfo">
+				<parameters>
+					<string name="srcdevicetype"/>
+					<string name="srcdevicerole"/>
+					<string name="dstdevicetype"/>
+					<string name="dstdevicerole"/>
+					<string name="priority"/>
+				</parameters>
+				<set name="srcdevicetype" value="thisclass.m_srcdevicetype.toString()"/>
+				<set name="srcdevicerole" value="thisclass.m_srcdevicerole.toString()"/>
+				<set name="dstdevicetype" value="thisclass.m_dstdevicetype.toString()"/>
+				<set name="dstdevicerole" value="thisclass.m_dstdevicerole.toString()"/>
+				<set name="priority" 		 value="thisclass.m_priority.toString()"/>
+			</function>
+		</public>
+	</class>
+	
+	<class name="CSDNMGRTypeManager">
+		<private>
+			<list name="typeContainer" valuetype="object"/>
+		</private>
+		<public>
+			<function name="CSDNMGRTypeManager">
+			</function>
+			
+			<function name="isHasTpyeInTypeContainer">
+				<parameters>
+					<object name="typeobj"/>
+					<boolean name="result" value="false"/>
+				</parameters>
+				<log level="101">----enter isHasTpyeInTypeContainer CSDNMGRTypeManager.xml  136</log>
+				
+				<if cond="context.typeobj.ptr==null">
+					
+					<then>
+						<log level="101">----enter typeobj.ptr==null CSDNMGRTypeManager.xml  141</log>
+						<log level="101"><![CDATA[typeobj.ptr==null ----140]]></log>
+						
+						<exit/>
+					</then>
+				</if>
+				
+				<string name="typeObjJsonStr" />
+				<string name="typeObjJsonStr2" />
+				
+				<log level="101">----enter  CSDNMGRTypeManager.xml  151</log>
+				
+				<function name="GetOneTypeObjJsonStr" class="typeobj">
+					<parameters>
+						<string name="typeObjJsonStr" out="typeObjJsonStr"/>
+					</parameters>
+				</function>
+				<log level="101">----enter  CSDNMGRTypeManager.xml  158</log>
+				
+				<object name="onetypeobj"/>
+				<if cond="thisclass.typeContainer.size()>0">
+					<then>
+						<log level="101">----enter  判断  158</log>
+						<for var="onetypeobj" in="thisclass.typeContainer">
+		
+							<function name="GetOneTypeObjJsonStr" class="onetypeobj">
+								<parameters>
+									<string name="typeObjJsonStr" out="context.typeObjJsonStr2"/>
+								</parameters>
+							</function>
+		
+							<log level="101"><![CDATA[typeObjJsonStr=<%=context.typeObjJsonStr.toString()%> ----159]]></log>
+							<log level="101"><![CDATA[typeObjJsonStr2=<%=context.typeObjJsonStr2.toString()%> ----160]]></log>
+							
+							<if cond="context.typeObjJsonStr.toString()==context.typeObjJsonStr2.toString()">
+								<then>
+									<set name="result" value="true"/>
+									<exit/>
+								</then>
+							</if>
+							
+						</for>	
+					</then>
+					<else>
+						<log level="101">----enter  else.xml  185</log>
+						<set name="result" value="false"/>
+					</else>
+				</if>
+			</function>
+
+			<!--qiulei 20180118 am-->
+			<function name="getTypeContainer">
+				<parameters>
+					<hashmap name="typeContainer" keytype="string" valuetype="object"/>
+				</parameters>
+				<set name="typeContainer" value="thisclass.typeContainer"/>
+			</function>
+			
+			<!--qiulei 20180118 am-->
+			<function name="AddType">
+				<parameters>
+					<string name="srcdevicetype"/>
+					<string name="srcdevicerole"/>
+					<string name="dstdevicetype"/>
+					<string name="dstdevicerole"/>
+					<string name="priority"/>
+				</parameters>
+				<log level="101">----enter AddType CSDNMGRTypeManager.xml  186</log>
+				<object name="typeobj"/>
+				<new name="typeobj" class="CSDNMGRType">
+					<parameters>
+						<string name="srcdevicetype" in="context.srcdevicetype.toString()"/>
+						<string name="srcdevicerole" in="context.srcdevicerole.toString()"/>
+						<string name="dstdevicetype" in="context.dstdevicetype.toString()"/>
+						<string name="dstdevicerole" in="context.dstdevicerole.toString()"/>
+						<string name="priority" 		in="context.priority.toString()"/>
+					</parameters>
+				</new>
+
+				<boolean name="result" value="false"/>
+				<function name="isHasTpyeInTypeContainer">
+					<parameters>
+						<object name="typeobj" in="context.typeobj"/>
+						<boolean name="result" out="context.result"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.result.toBoolean()==false">
+					<then>
+						<insert name="thisclass.typeContainer" value="context.typeobj"/>
+					</then>
+				</if>
+				<log level="101"><![CDATA[typeContainer size=<%=thisclass.typeContainer.size().toString()%> ----209]]></log>
+				<log level="101">----enter AddType CSDNMGRTypeManager.xml  210</log>
+			</function>															
+
+			<!--查询容器中元素的个数-->
+			<function name="GetTypeCounts">
+				<parameters>
+					<string name="typeCounts"/>
+				</parameters>
+				<set name="typeCounts" value="context.typeContainer.size()"/>	
+			</function>
+
+			<function name="test123">
+				<log level="101">----enter test123 CSDNMGRTypeManager.xml  222</log>
+			</function>
+			<function name="GetAllTypeJsonStr">
+				<parameters>
+					<string name="allTypeJsonStr"/>
+				</parameters>
+				<log level="100"> 240 in GetAllType  ----CSDNMGRTypeManager.xml</log>
+				<log level="101"><![CDATA[typeContainer size=<%=thisclass.typeContainer.size().toString()%> ----241]]></log>
+				
+				<object name="typeobj"/>
+				<string name="onetypejson"/>
+				<string name="strjson"/>
+				<list name="typelist" valuetype="string"/>
+				
+				<for var="typeobj" in="thisclass.typeContainer">
+				
+					<function name="GetOneTypeObjJsonStr" class="typeobj">
+						<parameters>
+							<string name="typeObjJsonStr" out="context.onetypejson"/>
+						</parameters>
+					</function>
+					<insert name="typelist" value="context.onetypejson.toString()"/>
+				</for>
+				
+				<script><![CDATA[
+					var myArray=new Array();
+						
+					var firsttypeString = context.typelist.getFirst();
+					while(firsttypeString != null){
+						var typeobj = JSON.parse(firsttypeString);
+							myArray.push(typeobj);
+							firsttypeString = context.typelist.getNext();
+					}
+					
+					var strjson=JSON.stringify(myArray);
+					context.print("254 strjson="+strjson);
+					context.strjson.setValue(strjson);
+				]]></script>
+				<set name="allTypeJsonStr" value="context.strjson.toString()"/>
+				<log level="100"> 261 execute GetAllType over ----CSDNMGRTypeManager.xml</log>
+			</function>
+
+			<function name="DeleteAllPolicyType">
+				<script><![CDATA[				
+					context.typeContainer.clear();
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

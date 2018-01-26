@@ -35,11 +35,12 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/actions_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/instrunction_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/group_type_map.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/>
 	
 	<!--qiulei 20170929-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/apidocs.xml"/>
 	
-	
+	<long name="starttime" value="0" global="true"/>
 	<object name="openflowserverobj"  global="true"/>
 	<object name="restfulserver"  global="true"/>
 	
@@ -152,6 +153,7 @@ mb.start()
 			<function>
 				<!--设置CPU亲和性-->
 				<!--affinity cpuset="0,1,2,3"/-->
+				<set name="context.starttime" value="context.currentms()"/>
 				<function name="testpython"/>
 				<set name="injson" value="'[]'"/>
 				<syslog level="INFO">Hello StarOS</syslog>
@@ -180,6 +182,8 @@ a.printme()
 				<!--1.初始化全局变量 -->
 				<function name="InitGlobalResource"/>
 				<!--2.初始化全局数据MAP表 -->
+				<function name="createIntentDatabase"/>
+				
 				<function name="InitAPIMapFunction"/>
 				<!--3.hu peng 2017/07/28  change setting-->
 				<function name="InitSetting"/>
