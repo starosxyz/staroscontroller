@@ -613,6 +613,101 @@
 			</if>
 		</onevent>
 		
+		<!-- get location by ip-->
+		<onevent event="getlocationbyip">
+		<string name="hostip" value="event.getParam('params').getIndexOf(0).toString()"/>
+		<object name="hostobj"/>
+		<string name="ip"/>
+		<string name="deviceid"/>
+		<string name="port"/>
+		<object name="portobj"/>
+		<string name="state"/>
+		<string name="receive"/>
+		<string name="jsonstr"/>
+		<function name="Gethostbyip" class="HostManager">
+			<parameters>
+				<string name="hostip" in="context.hostip.toString()"/>	
+				<object name="hostobj" out="context.hostobj"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.hostobj.ptr==null">
+			<then>
+				<function name="sdnmgr_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The database is null !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="getinfo" class="hostobj">
+			<parameters>	
+				<string name="ip"  out="context.ip"/>	
+				<string name="deviceid"  out="context.deviceid"/>	
+				<string name="port" out="context.port"/>			
+			</parameters>
+		</function>
+		
+		<function name="Getportbyportno" class="PortManager">
+			<parameters>
+				<string name="portno" in="context.port.toString()"/>
+				<object name="protobj" out="context.portobj"/>
+			</parameters>
+		</function>
+			
+			
+		<if cond="context.portobj.ptr==null">
+			<then>
+				<function name="sdnmgr_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The database is null !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>	
+			
+		<function name="getPortinfo" class="portobj">
+			<parameters>
+				<string name="state" out="context.state"/>
+				<string name="receive" out="context.receive"/>
+			</parameters>
+		</function>
+
+		<script><![CDATA[
+			var onearray = new Object();
+				onearray.ipaddr=context.hostip.toString();
+			
+			if (context.port.toString() == 4294967294){ 						
+				onearray.port = context.deviceid.toString()+"/Local";						
+			}else{
+				onearray.port=context.deviceid.toString()+"/"+context.port.toString();
+			}
+			if (context.state.toString() == '0'){ 						
+				onearray.workstate = "active";						
+			}else{
+				onearray.workstate = "deactive";
+			}
+			onearray.sendbandwidth="500";
+			onearray.receive=context.receive.toString();
+			context.jsonstr.setValue(JSON.stringify(onearray));
+			]]></script>
+			
+		<if conf="context.jsonstr.toString()!=''">
+			<then>
+				<function name="SendResponse" class="RestfulService">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.jsonstr.toString()"/>
+					</parameters>
+				</function>
+			</then>
+		</if>
+	</onevent>
 		<!--处理得到 All ports 请求-->
 		<onevent event="processGetAllPortsOfDeviceRequest">
 			<log level="101">enter processGetAllPortsOfDeviceRequest  ----sdnmgrapi.xml 163</log>
@@ -3023,99 +3118,4 @@
 			</for>
 	</function>
 	
-	
-	<onevent event="getlocationbyip">
-		<string name="hostip" value="event.getParam('params').getIndexOf(0).toString()"/>
-		<object name="hostobj"/>
-		<string name="ip"/>
-		<string name="deviceid"/>
-		<string name="port"/>
-		<object name="portobj"/>
-		<string name="state"/>
-		<string name="receive"/>
-		<string name="jsonstr"/>
-		<function name="Gethostbyip" class="HostManager">
-			<parameters>
-				<string name="hostip" in="context.hostip.toString()"/>	
-				<object name="hostobj" out="context.hostobj"/>
-			</parameters>
-		</function>
-		
-		<if cond="context.hostobj.ptr==null">
-			<then>
-				<function name="sdnmgr_ErrorDataResponse">
-					<parameters>
-						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="description" in="'The database is null !'"/>
-					</parameters>
-				</function>
-				<exit/>
-			</then>
-		</if>
-		
-		<function name="getinfo" class="hostobj">
-			<parameters>	
-				<string name="ip"  out="context.ip"/>	
-				<string name="deviceid"  out="context.deviceid"/>	
-				<string name="port" out="context.port"/>			
-			</parameters>
-		</function>
-		
-		<function name="Getportbyportno" class="PortManager">
-			<parameters>
-				<string name="portno" in="context.port.toString()"/>
-				<object name="protobj" out="context.portobj"/>
-			</parameters>
-		</function>
-			
-			
-		<if cond="context.portobj.ptr==null">
-			<then>
-				<function name="sdnmgr_ErrorDataResponse">
-					<parameters>
-						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="description" in="'The database is null !'"/>
-					</parameters>
-				</function>
-				<exit/>
-			</then>
-		</if>	
-			
-		<function name="getPortinfo" class="portobj">
-			<parameters>
-				<string name="state" out="context.state"/>
-				<string name="receive" out="context.receive"/>
-			</parameters>
-		</function>
-
-		<script><![CDATA[
-			var onearray = new Object();
-				onearray.ipaddr=context.hostip.toString();
-			
-			if (context.port.toString() == 4294967294){ 						
-				onearray.port = context.deviceid.toString()+"/Local";						
-			}else{
-				onearray.port=context.deviceid.toString()+"/"+context.port.toString();
-			}
-			if (context.state.toString() == '0'){ 						
-				onearray.workstate = "active";						
-			}else{
-				onearray.workstate = "deactive";
-			}
-			onearray.sendbandwidth="500";
-			onearray.receive=context.receive.toString();
-			context.jsonstr.setValue(JSON.stringify(onearray));
-			]]></script>
-			
-		<if conf="context.jsonstr.toString()!=''">
-			<then>
-				<function name="SendResponse" class="RestfulService">
-					<parameters>
-						<string name="transportid" in="event.getParam('transportid').toString()"/>
-						<string name="json" in="context.jsonstr.toString()"/>
-					</parameters>
-				</function>
-			</then>
-		</if>
-	</onevent>
 </starlang>
