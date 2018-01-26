@@ -978,20 +978,27 @@ else:
 				<object name="onehostobj"/>
 				<pair name="onehost" keytype="string" valuetype="object"/>
 				<string name="ip"/>
+				<log level="100">981!!!!!!!!!!!!!!!!!!Gethostbyip</log>
+				<log level="100"><![CDATA[hostip= <%= context.hostip.toString()%>]]></log>
+				<log level="100"><![CDATA[hostContainer.size= <%= thisclass.hostContainer.size().toString()%>]]></log>
 				<for var="context.onehost" in="thisclass.hostContainer">
-					<set name="context.onehostobj" value="context.onedevice.second()"/>
+					<set name="context.onehostobj" value="context.onehost.second()"/>
 					<if cond="context.onehostobj.ptr == null">
 						<then>
+							<log level="100">onehostobj is null</log>
 							<exit/>
 						</then>
 					</if>
-					<function name="GetHostIP" class="onehostobj">
+
+					<function name="GetHostIP" class="context.onehostobj">
 						<parameters>
 							<string name="hostid" out="context.ip"/>
 						</parameters>
 					</function>
+					<log level="100"><![CDATA[ip= <%=context.ip.toString()%>]]></log>
 					<if cond="context.ip.toString() == context.hostip.toString()">
 						<then> 
+							<log level="100"><![CDATA[context.ip.toString() = <%=context.ip.toString()%>]]></log>
 							<set name="hostobj" value="context.onehostobj"/>
 						</then>
 					</if>
