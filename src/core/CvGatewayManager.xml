@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CvGatewayManager.xml
+	@brief 		GatewayManager
+	@version 	1.1.0
+	@auth 		YXR
+	@date		2018/1/8
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CvGateway">
+		<private>		
+			<string name="m_ip" />	
+			<string name="m_netmask" />
+			<string name="m_vmac" />
+		</private>
+		<public>
+			<function name="CvGateway">
+				<parameters>	
+					<string name="ip" />					
+					<string name="netmask" />		
+					<string name="vmac" />		
+				</parameters>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+				<set name="thisclass.m_netmask" value="context.netmask.toString()"/>
+				<set name="thisclass.m_vmac" value="context.vmac.toString()"/>
+			</function>
+
+			<function name="Getip">
+				<parameters>
+					<string name="ip" />
+				</parameters>
+				<set name="context.ip" value="thisclass.m_ip.toString()"/>
+			</function>
+			<function name="Getnetmask">
+				<parameters>
+					<string name="netmask" />
+				</parameters>
+				<set name="context.netmask" value="thisclass.m_netmask.toString()"/>
+			</function>		
+			<function name="Getvmac">
+				<parameters>
+					<string name="vmac" />
+				</parameters>
+				<set name="context.vmac" value="thisclass.m_vmac.toString()"/>
+			</function>
+			
+			<!--qiulei 20180110 OneVGatewayObjectToJsonStr-->
+			<function name="OneVGatewayObjectToJsonStr">
+				<parameters>
+					<string name="vGatewayObjectToJsonStr"/>
+				</parameters>
+				<string name="values"/>
+				<reference variable="values">
+					<jsonbody><![CDATA[ 
+						{	
+							"ip":"<%=thisclass.m_ip.toString()%>",
+							"netmask":"<%=thisclass.m_netmask.toString()%>",
+							"vmac":"<%=thisclass.m_vmac.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="vGatewayObjectToJsonStr" value="context.values.toString()"/>
+			</function>
+			
+			<function name="ToString">
+				<parameters>
+					<string name="jsonstring"  out="context.outjson"/>
+				</parameters>
+				<script><![CDATA[
+						var onearray = new Object();
+						onearray.ip=thisclass.m_ip.toString();
+						onearray.netmask=thisclass.m_netmask.toString();
+						onearray.vmac=thisclass.m_vmac.toString();
+						var strjson=JSON.stringify(onearray);
+						context.jsonstring.setValue(strjson);
+					]]></script>
+			</function>
+		</public>
+	</class>
+	
+	<class name="CvGatewayManager">
+		<private>
+			<hashmap name="vGatewayContainer" keytype="string" valuetype="object"/>
+		</private>
+		<public>			
+			<function name="CvGatewayManager">
+				<log level="100">CvGatewayManager is create</log>				
+			</function>
+
+			<function name="Addvgateway">
+				<parameters>	
+					<string name="ip" />	
+					<string name="netmask"/>
+					<string name="vmac"/>
+					<boolean name="insertResult" value="false"/>
+				</parameters>
+				<log level="100">###### CvGatewayManager Addvgateway #######</log>	
+				<log level="101"><![CDATA[ip=<%=context.ip.toString()%>]]></log>
+				<log level="101"><![CDATA[netmask=<%=context.netmask.toString()%>]]></log>
+				<log level="101"><![CDATA[vmac=<%=context.vmac.toString()%>]]></log>
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())==true">
+					<then>
+						<syslog level="INFO">###hasValue is true###</syslog>
+						<exit/>
+					</then>
+				</if>					
+				<object name="vgatewayobj"/>
+				<boolean name="ipworr" value="true"/>
+				<boolean name="netmaskworr" value="true"/>
+				<boolean name="macworr" value="true"/>
+				<script><![CDATA[					
+					context.print('ip, netmask, mac all right');
+				]]></script>	
+				<if cond="context.ipworr.toBoolean()==true">
+					<then>
+						<if cond="context.netmaskworr.toBoolean()==true">
+							<then>
+								<if cond="context.macworr.toBoolean()==true">
+									<then>
+										<new name="vgatewayobj" class="CvGateway">
+											<parameters>
+												<string name="ip"  in="context.ip.toString()"/>		
+												<string name="netmask" in="context.netmask.toString()"/>	
+												<string name="vmac" in="context.vmac.toString()"/>		
+											</parameters>
+										</new>
+										<insert name="vGatewayContainer" key="context.ip.toString()" value="context.vgatewayobj"/>
+										<set name="context.insertResult" value="true"/>
+										<log level="101">已插入----161</log>
+									</then>
+									<else>
+										<syslog level="INFO">##mac wrong##</syslog>
+									</else>
+								</if>								
+							</then>
+							<else>
+								<syslog level="INFO">##netmask wrong##</syslog>
+							</else>
+						</if>
+					</then>
+					<else>
+						<syslog level="INFO">##ip wrong##</syslog>
+					</else>
+				</if>
+				<log level="101"><![CDATA[Container size=<%=context.vGatewayContainer.size().toString()%> 172]]></log>
+			</function>
+
+			<function name="RemovevGateway"> 
+				<parameters>
+					<string name="ip"/>
+				</parameters>
+				<object name="vgatewayobj"/>
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())">
+					<then>
+						<remove name="vGatewayContainer" key="context.ip.toString()"/>
+					</then>
+				</if>
+			</function>
+
+			<function name="FindvGateway">
+				<parameters>
+					<string name="ip"/>
+					<object name="vgateway"/>
+				</parameters>
+				<if cond="context.vGatewayContainer.hasValue(context.ip.toString())">
+					<then>
+						<log level="100">----找到   CvGatewayManager.xml</log>
+						<set name="vgateway" value="thisclass.vGatewayContainer.getValue(context.ip.toString())"/>
+						<log level="100">----not null 185     CvGatewayManager.xml</log>
+						<if cond="context.vgateway.ptr==null">
+							<then>
+								<log level="100">----186  CvGatewayManager.xml</log>
+							</then>
+						</if>
+					</then>
+					<else>
+						<log level="100">----null 185 CvGatewayManager.xml</log>
+					</else>
+				</if>
+			</function>
+			
+			<function name="Is_HaveGateway">
+				<parameters>
+					<string name="ip" />
+					<boolean name="is_have" />
+					<string name="outvmac" />
+					<string name="outip" />
+				</parameters>
+				<object name="gatewayobj"/>
+				<string name="addr1"/>
+				<string name="netmask"/>
+				<string name="VGW"/>
+				<pair name="onegatewaypair" keytype="string" valuetype="object"/>
+				<for var="context.onegatewaypair" in="thisclass.vGatewayContainer">
+					<set name="context.gatewayobj" value="context.onegatewaypair.second()"/>
+					<function name="Getip" class="context.gatewayobj">
+						<parameters>
+							<string name="ip" out="context.VGW"/>
+						</parameters>
+					</function>
+					<function name="Getnetmask" class="context.gatewayobj">
+						<parameters>
+							<string name="netmask" out="context.netmask"/>
+						</parameters>
+					</function>
+					<python><![CDATA[
+addr1=libstarlang.getValueString("context.ip");
+addr2=libstarlang.getValueString("context.VGW");
+mask=libstarlang.getValueString("context.netmask");
+
+addr1=addr1.split('.');
+addr2=addr2.split('.');
+mask=mask.split('.');
+
+res1 = [];
+res2 = [];
+
+ilen = len(addr1);
+for i in range(len(addr1)):
+	res1.append(int(addr1[i]) & int(mask[i]));
+	res2.append(int(addr2[i]) & int(mask[i])); 
+
+if res1 == res2:
+	libstarlang.setValueBool("context.is_have",True);				
+					]]></python>
+					<syslog level="INFO"><![CDATA[is_have = <%=context.is_have.toBoolean()%>]]></syslog>
+					<if cond="context.is_have.toBoolean() == true">
+						<then>
+							<syslog level="INFO">##context.is_have.toBoolean() == true##</syslog>
+							<function name="Getvmac" class="context.gatewayobj">
+								<parameters>
+									<string name="vmac" out="context.outvmac"/>
+								</parameters>
+							</function>	
+							<set name="context.outip" value="context.VGW.toString()"/>
+						</then>
+						<else>
+							<syslog level="INFO">##context.is_have.toBoolean() == false##</syslog>
+							<set name="context.outip" value="''"/>
+							<set name="context.outvmac" value="''"/>
+						</else>
+					</if>
+				</for>
+			</function>
+			
+			<function name="GetAllvgwJsonData">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<string name="outjson"/>
+				<object name="onevgwinfo" />
+				<list name="vgwlist"  valuetype="string"/>
+				<pair name="onevgwpair"  keytype="string" valuetype="object"/>
+				<for var="onevgwpair" in="thisclass.vGatewayContainer">
+					<function>
+						<set name="onevgwinfo" value="context.onevgwpair.second()"/>
+						<if cond="context.onevgwinfo.ptr == null">
+							<then>
+								<log>onevgwinfo is null  ----CvGatewayManager.xml</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="ToString" class="onevgwinfo">
+							<parameters>
+								<string name="jsonstring"  out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="vgwlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var myArray=new Array(); 
+					var firststr=context.vgwlist.getFirst();
+					while(firststr!=null){
+						var vgw = firststr;									
+						var info = JSON.parse(vgw);	
+						myArray.push(info);
+						firststr=context.vgwlist.getNext();
+					}
+
+					json['vgateways']=myArray;
+										
+					var strjson=JSON.stringify(json);
+					context.jsonstring.setValue(strjson);
+				]]></script>
+			</function>
+			
+			<!--qiulei 20180110 getVGatewayJsonStrByIp-->
+			<function name="getVGatewayJsonStrByIp">
+				<parameters>
+					<string name="ip"/>
+					<string name="OneVGatewayJsonStr"/>
+				</parameters>
+				
+				<log level="101"><![CDATA[context.ip=<%=context.ip.toString()%> ----CvGatewayManager.xml 287]]></log>
+						
+				<object name="vGatewayObj"/>
+				<string name="vGatewayStr"/>
+				<if cond="thisclass.vGatewayContainer.hasValue(context.ip.toString())">
+					<then>
+						
+						<lookup name="thisclass.vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
+
+						<log level="101">enter 226      ----CvGatewayManager.xml</log>
+
+						<function name="OneVGatewayObjectToJsonStr" class="context.vGatewayObj">
+							<parameters>
+								<string name="vGatewayObjectToJsonStr" out="context.vGatewayStr"/>
+							</parameters>
+						</function>
+						
+						<set name="OneVGatewayJsonStr" value="context.vGatewayStr.toString()"/>
+					</then>	
+				</if>
+			</function>
+			
+			<!--qiulei 20180110  查询容器中元素的个数 GetVGatewayCounts-->
+			<function name="GetVGatewayCounts">
+				<parameters>
+					<string name="vGatewayCounts"/>
+				</parameters>
+				<set name="vGatewayCounts" value="context.vGatewayContainer.size()"/>	
+			</function>
+			<function name="Gethashmap">
+				<parameters>
+					<hashmap name="vhashmap"/>
+				</parameters>
+				<set name="vhashmap" value="thisclass.vGatewayContainer" />
+			</function>
+						<!--qiulei 20180113-->
+			<function name="GetAllVGatewaysStr">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<string name="outjson"/>
+				<object name="onevgwinfo" />
+				<list name="vgwlist"  valuetype="string"/>
+				<pair name="onevgwpair"  keytype="string" valuetype="object"/>
+				<for var="onevgwpair" in="thisclass.vGatewayContainer">
+					<function>
+						<set name="onevgwinfo" value="context.onevgwpair.second()"/>
+						<if cond="context.onevgwinfo.ptr == null">
+							<then>
+								<log>onevgwinfo is null  ----CvGatewayManager.xml</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="ToString" class="onevgwinfo">
+							<parameters>
+								<string name="jsonstring"  out="context.outjson"/>
+							</parameters>
+						</function>
+						<insert name="vgwlist" value="context.outjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var myArray=new Array(); 
+					var firststr=context.vgwlist.getFirst();
+					while(firststr!=null){
+						var vgw = firststr;									
+						var info = JSON.parse(vgw);	
+						myArray.push(info);
+						firststr=context.vgwlist.getNext();
+					}
+					
+					var strjson=JSON.stringify(myArray);
+					context.jsonstring.setValue(strjson);
+				]]></script>
+			</function>
+
+			<function name="Container_Is_Have">
+				<parameters>
+					<boolean name="is_null"/>
+				</parameters>
+				<if cond="thisclass.vGatewayContainer.size()==0">
+					<then>
+						<set name="is_null" value="false" />
+					</then>
+				</if>
+			</function>
+		</public>
+	</class>
+</starlang>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_echo.xml
+	@brief 		send echo msg
+	@version 	1.1.0
+	@auth 		YangXiangRui
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		Send ECHO Request
+		@auth 		YangXiangRui
+		@date		2017/11/27
+	-->	
+	<function name="OpenFlowEcho">
+		<parameters>
+			<long name="xid" />
+		</parameters>
+		<log>OpenFlowEcho</log>
+		<string name="jsonvariable" />
+		<log><![CDATA[OpenFlowEcho xid=<%=context.xid.toString()%>]]></log>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_ECHO_REQUEST">
+			<parameters>
+				<string name="transportid"  in="event.getParam('transportid').toString()"/>
+				<string name="strjson"  in="context.jsonvariable.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+</starlang>

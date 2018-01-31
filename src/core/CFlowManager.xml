@@ -1,0 +1,1670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowManager.xml
+	@brief 		流表管理
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/24
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CFlowEntry">
+		<private>
+			<string name="m_flowId" />
+			<string name="m_appId" />
+			<string name="m_permanent"/>
+			<string name="m_state" />
+			<string name="m_packets" />
+			<string name="m_bytes" />
+			<string name="m_timeout"/>
+			<string name="m_flowjson"/>
+			<string name="m_durationsec"/>
+			<string name="m_durationnsec"/>
+
+			<uint64 name="m_packetspeed"/>
+			<uint64 name="m_bytespeed"/>
+			<uint64 name="m_currenttime"/>
+		</private>
+		<public>
+			<!--qiulei 20180127-->
+			<function name="GetOneFlowJsonStr">
+				<parameters>
+					<string name="flowObjJsonStr"/>
+				</parameters>
+				<string name="values"/>
+				<reference variable="values">
+					<jsonbody><![CDATA[ 
+						{	
+							"flowid":"<%=thisclass.m_flowId.toString()%>",
+							"flow":{
+								"flownum":"<%=thisclass.m_packets.toString()%>",
+								"flowbyte":"<%=thisclass.m_bytes.toString()%>",
+								"packetspeed":"<%=thisclass.m_packetspeed.toString()%>",
+								"bytespeed":"<%=thisclass.m_bytespeed.toString()%>"
+							}
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="flowObjJsonStr" value="context.values.toString()"/>
+			</function>
+			
+			<function name="CFlowEntry">
+				<parameters>
+					<string name="flowId" />
+					<string name="appId" />
+					<string name="flowjson"/>					
+				</parameters>	
+				<set name="thisclass.m_flowId" value="context.flowId.toString()"/>
+				<set name="thisclass.m_appId" value="context.appId.toString()"/>
+				<set name="thisclass.m_flowjson" value="context.flowjson.toString()"/>
+				<set name="thisclass.m_state" value="'Added'"/>	
+				<set name="thisclass.m_packets" value="'0'"/>	
+				<set name="thisclass.m_bytes" value="'0'"/>	
+				<set name="thisclass.m_currenttime" value="context.currentms()"/>								
+			</function>
+			<function name="GetFlowJsonString">
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				<set name="jsonstring" value="thisclass.m_flowjson.toString()"/>
+			</function>
+			<function name="GetFlowJsonStringbyflowid">
+				<parameters>
+					<string name="jsonstring" />
+					<string name="flowid"/>
+				</parameters>
+				<set name="jsonstring" value="thisclass.m_flowjson.toString()"/>
+				<set name="flowid" value="thisclass.m_flowId.toString()"/>
+			</function>
+			
+			
+			
+			<function name="GetFlowJsonStringbyappidid">
+				<parameters>
+					<string name="jsonstring" />
+					<string name="appid"/>
+				</parameters>
+				<set name="jsonstring" value="thisclass.m_flowjson.toString()"/>
+				<set name="appid" value="thisclass.m_appId.toString()"/>
+			</function>
+			
+			<function name="DeleteFlowJsonStringbyappid">
+				<parameters>
+					<string name="appid"/>
+					<string name="flowid"/>
+				</parameters>
+				<set name="appid" value="thisclass.m_appId.toString()"/>
+				<set name="flowid" value="thisclass.m_flowId.toString()"/>
+				<log level="100"><![CDATA[cflomgr 69 appid !!!!!= '<%=thisclass.m_appId.toString()%>']]></log>
+			</function>
+			
+			<!--
+                "id": "0x10000d40aee30",
+                "appId": "1",
+                "groupId": "0x0",
+                "tableId": "0",
+                "priority": "40000",
+                "selector": "Criteria: 5:0x0806,1:0x0800",
+                "treatment": "Treatment Instructions: immediate:OUTPUT:CONTROLLER,OUTPUT:CONTROLLER, cleared:true",
+                "timeout": "0",
+                "permanent": "true",
+                "state": "Added",
+                "packets": "2,600",
+                "bytes": "210,600"
+			-->
+			
+			<function name="FlowEntryToJsonString">
+				<parameters>
+					<string name="flowjson" />
+				</parameters>
+				<string name="outjson" />
+				<log><![CDATA[FlowEntryToJsonString m_flowjson <%=thisclass.m_flowjson.toString()%>]]></log>
+				<script><![CDATA[
+					var info = JSON.parse(thisclass.m_flowjson.toString());
+					var flow = new Object();
+					flow.id = thisclass.m_flowId.toString();
+					flow.appId = thisclass.m_appId.toString();
+					flow.groupId = info.outgroup;
+					flow.tableId = info.tableid;
+					flow.priority = info.priority;
+					var local_selector = "Criteria: ";
+					for (var i = 0; i < info.match.matchfieldlist.length; i++)
+					{						
+						var onematch = info.match.matchfieldlist[i];
+						var key = onematch.oxmfield;
+						if (global.matchfieldName.hasParam(key)==true)
+						{
+							var keyname=global.matchfieldName.getParam(key).toString();
+							var value_type = global.matchfieldMap.getParam(key).toString();
+							var value = onematch[value_type];
+							if (onematch.hasmask == "true")
+							{
+								var value_type_mask = value_type + "mask";
+								if (onematch[value_type_mask] != null)							
+								{
+									local_selector += keyname + ':' +value + '/' + onematch[value_type_mask]+', ';
+								}
+							}
+							else 
+							{
+								local_selector += keyname + ':' + value + ', ';
+							}
+						}
+					}
+					flow.selector = local_selector;
+					var local_treatment = "Treatment Instructions: ";
+					var local_treatment_end = " cleared:true";
+					var middle_treatment;
+					var tboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if (oneinstruction.type=='1')
+							{
+								if (tboolfirst==true)
+								{
+									local_treatment+='transition:'+'TABLE:'+oneinstruction.tableid+',';
+									tboolfirst=false;
+								}
+								else
+								{
+									local_treatment+='TABLE:'+oneinstruction.tableid+',';
+								}
+							}
+						}
+					}
+					var boolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if (oneinstruction.type=='2')
+							{
+								if (boolfirst==true)
+								{
+									local_treatment+='metadata:'+'METADATA:'+oneinstruction.metadata+'/'+oneinstruction.metadatamask+', ';
+									boolfirst=false;
+								}
+								else
+								{
+									local_treatment+='METADATA:'+oneinstruction.metadata+'/'+oneinstruction.metadatamask+', ';
+								}
+							}
+						}
+					}
+					var mboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if (oneinstruction.type=='6')
+							{
+								if (mboolfirst==true)
+								{
+									local_treatment+='metered:'+'METER:'+oneinstruction.meterid+', ';
+									mboolfirst=false;
+								}
+								else
+								{
+									local_treatment+='METER:'+oneinstruction.meterid+'/'+', ';
+								}
+							}
+						}
+					}
+					var aboolfirst=true;
+					for (var i = 0; i < info.instructionlist.length; i++)
+					{
+						var oneinstruction = info.instructionlist[i];
+						if (oneinstruction.type != null)
+						{
+							if ((oneinstruction.type=='3')||(oneinstruction.type=='4')||(oneinstruction.type=='5'))
+							{
+								if (oneinstruction.actionlist != null)
+								{
+									if(oneinstruction.actionlist.length == 0)
+									{
+										local_treatment+='drop,';
+									}
+									else
+									{
+										if (aboolfirst==true)
+										{
+											local_treatment+='immediate:';
+											for (var j = 0; j < oneinstruction.actionlist.length; j++)
+											{
+												var oneaction = oneinstruction.actionlist[j];
+												var key=global.actionsMap.getParam(oneaction.type).toString();
+												var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
+												local_treatment+=keyname+':'+oneaction[key]+', ';
+											}
+											aboolfirst=false;
+										}
+										else 
+										{
+											for (var j = 0; j < oneinstruction.actionlist.length; j++)
+											{
+												var oneaction = oneinstruction.actionlist[j];
+												var key=global.actionsMap.getParam(oneaction.type).toString();
+												var keyname=global.actionsNameMap.getParam(oneaction.type).toString();
+												local_treatment+=keyname+':'+oneaction[key]+', ';
+											}	
+										}
+									}
+								}
+							}
+						}
+						}
+					flow.treatment = local_treatment + local_treatment_end;
+					flow.timeout = info.idletimeout;
+					if ((info.idletimeout == info.hardtimeout) && (info.idletimeout == 0))
+						flow.permanent = "true";
+					else
+						flow.permanent = "false";
+					flow.state = thisclass.m_state.toString();
+					flow.packets = thisclass.m_packets.toString();
+					flow.bytes = thisclass.m_bytes.toString();
+					var strjson=JSON.stringify(flow);
+					context.outjson.setValue(strjson);					
+				]]></script>
+				<set name="flowjson" value="context.outjson.toString()"/>
+			</function>
+			<!--
+				@brief		Get Flow's flowid
+				@auth 		YY
+				@date		2017/08/24
+				Input:					
+				Output:
+					@param flowid 	流表的id
+			-->	
+			<function name="GetFlowId">
+				<parameters>
+					<string name="flowid"/>					
+				</parameters>
+				<set name="context.flowid" value="thisclass.m_flowId.toString()"/>
+			</function>
+			<!--
+				@brief		Set Flow's packets bytes durationsec and durationnsec
+				@auth 		YY
+				@date		2017/08/24
+				Input:
+					@param packets 	流表的packets
+					@param bytes 	流表的bytes
+					@param durationsec 	流表的durationsec
+					@param durationnsec 	流表的durationnsec					
+				Output:				
+			-->				
+			<function name="Set4Natures">
+				<parameters>
+					<string name="flowpartstr"/>
+				</parameters>
+				<syslog level="INFO">CFlowManager Set4Natures Start</syslog>
+
+				<string name="packetstmp"/>
+				<string name="bytestmp"/>
+				<string name="packets"/>
+				<string name="bytes"/>
+				<uint64 name="currenttime" value="context.currentms()"/>
+
+				<set name="context.packetstmp" value="thisclass.m_packets.toString()"/>
+				<set name="context.bytestmp" value="thisclass.m_bytes.toString()"/>
+				<if cond="context.flowpartstr.toString() == ''">
+					<then>
+						<syslog level="INFO">CFlowManager Set4Natures flowpartstr is null</syslog>
+						<exit/>
+					</then>
+				</if>
+				<script><![CDATA[
+					var info = JSON.parse(context.flowpartstr.toString());
+					context.packets.setValue(info.packetcount);
+					context.bytes.setValue(info.bytecount);
+				]]></script>
+
+				<python><![CDATA[
+import os;
+import libstarlang;
+
+packetstmp=libstarlang.getValueString("context.packetstmp");
+packets=libstarlang.getValueString("context.packets");
+bytestmp=libstarlang.getValueString("context.bytestmp");
+bytes=libstarlang.getValueString("context.bytes");
+
+starttime2=libstarlang.getValueULongLong("context.currenttime");
+stoptime2=libstarlang.getValueULongLong("thisclass.m_currenttime");
+runTimeDifference=starttime2-stoptime2;
+runTimeDifference=runTimeDifference/1000;
+runTimeDifference=int(runTimeDifference);
+
+if runTimeDifference == 0:
+	c = 0;
+	f = 0;
+else:
+	a = int(packets,10);
+	b = int(packetstmp,10);
+	if a==b:
+		c = a-b;
+	else:
+		c = (a - b)/runTimeDifference;
+		c = int(c);
+
+	d = int(bytes,10);
+	e = int(bytestmp,10);
+	if d==e:
+		f = d-e;
+	else:
+		f = (d - e)/runTimeDifference;
+		f = int(f);
+
+libstarlang.setValueULongLong("thisclass.m_packetspeed",c);
+libstarlang.setValueULongLong("thisclass.m_bytespeed",f);
+libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
+
+				]]></python>
+				<script><![CDATA[
+					var info = JSON.parse(context.flowpartstr.toString());
+					var packets = info.packetcount;
+					var bytes = info.bytecount;
+					var durationsec = info.durationsec;
+					var durationnsec = info.durationnsec;
+					thisclass.m_packets.setValue(packets);
+					thisclass.m_bytes.setValue(bytes);
+					thisclass.m_durationsec.setValue(durationsec);
+					thisclass.m_durationnsec.setValue(durationnsec);7
+				]]></script>
+				<syslog level="INFO">CFlowManager Set4Natures End</syslog>
+			</function>
+			
+			<!--
+				@brief		Set flow messages state
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+				Input:
+					@param inmodstate  flow message state
+			-->
+			<function name="SetState">
+				<parameters>
+					<string name="inmodstate"/>
+				</parameters>
+				<set name="m_state" value="context.inmodstate.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CFlowManager">
+		<private>
+			<hashmap name="flowsContainer"  keytype="string" valuetype="object"/>
+			<string name="m_transportid"/>
+			<string name="m_arpflowid"/>
+			<string name="m_discoveryflowid"/>
+			<string name="m_errorid"/>
+		</private>
+		<public>
+			<function name="getAllflowJsonStr"><!--qiulei 0127-->
+				<parameters>
+					<string name="flowjsonstr"/>
+				</parameters>
+				<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
+				<object name="flowobj"/>
+				<list name="flowlist" valuetype="string"/>
+				<string name="strjson"/>
+				<string name="strjson2"/>
+				<for var="oneFlowsPair" in="context.flowsContainer">
+					<set name="flowobj" value="context.oneFlowsPair.second()"/>
+					<if cond="context.flowobj.ptr==null">
+						<then>
+							<log>flowobj is null</log>
+							<exit/>
+						</then>
+					</if>
+					
+					<function name="GetOneFlowJsonStr" class="context.flowobj">
+						<parameters>
+							<string name="flowObjJsonStr" out="context.strjson"/>
+						</parameters>
+					</function>	
+					<insert name="flowlist" value="context.strjson"/>
+				</for>
+				
+									
+				<script><![CDATA[
+				
+					var myArray=new Array();
+					var firstString=context.flowlist.getFirst();
+					while(firstString!=null){
+						
+						var jsoninfo = JSON.parse(firstString);
+						myArray.push(jsoninfo);
+						
+						firstString=context.flowlist.getNext();
+					}
+					
+					var root=new Object();
+						root.flows=myArray;
+						
+					var strjson2=JSON.stringify(root);
+					context.strjson2.setValue(strjson2);
+				]]></script>
+				<set name="context.flowjsonstr" value="context.strjson2"/>
+			</function>
+			
+			<function name="getflowByflowid"><!--qiulei 0127-->
+				<parameters>
+					<string name="flowid" />
+					<string name="flowjsonstr"/>
+				</parameters>
+				<object name="flowentry"/>
+				<string name="strjson"/>
+				<if cond="thisclass.flowsContainer.hasValue(context.flowid.toString())==true">
+					<then>
+						<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
+						<if cond="context.flowentry.ptr!=null">
+							<then>
+								<function name="GetOneFlowJsonStr" class="context.flowentry">
+									<parameters>
+										<string name="flowObjJsonStr" out="context.strjson"/>
+									</parameters>
+								</function>	
+			
+								<log level="100"><![CDATA[Cflowmgr 364 strjson=<%=context.strjson.toString()%>']]></log>
+								<set name="flowjsonstr" value="context.strjson"/>
+							</then>
+							<else>
+								<log level="100">flowentry is null</log>
+							</else>
+						</if>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>
+			
+			<function name="CFlowManager">
+				<parameters>
+					<string name="transportid"/>
+				</parameters>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<function name="UninstallFlowByFlowMod"/>
+			</function>
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of tunnelContainer-->
+			<function name="GetFlowCounts">
+				<parameters>
+					<long name="flowCounts"/>
+				</parameters>
+				<set name="flowCounts" value="context.flowsContainer.size()"/>
+			</function>
+			
+			<!--
+				Install Flow.
+				1)use DataPathId find the flowcontainer
+				2)Alloc a Resource id
+				3)use the resourceid as key add value to flowcontainer
+				4)Send FlowMod message to Device
+				5)return the resource id
+			-->
+			<!--
+				@brief		安装流表请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
+			<function name="InstallFlowTableRequest">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="strjson"/>
+					<string name="appId" />
+				</parameters>
+				<log level="100"> in InstallFlowTableRequest</log>
+				<log level="100"><![CDATA[294 flowsContainer= <%=context.flowsContainer.size()%>]]></log>
+				<log level="100"><![CDATA[303 strjson= <%=context.strjson.size()%>]]></log>		
+				<object name="flowentry"/>
+				<string name="sresourceid"/>
+				<string name="transportid"/>
+				<string name="sendjson"/>
+				<set name="sresourceid" value="context.allocResourceId()"/>		
+				<log level="100"><![CDATA[flowid= <%=context.sresourceid.toString()%>]]></log>		
+				<!--qiulei modify 20170807-->							
+				<if cond="context.strjson.toString()==''">
+					<then>
+						<log>strjson is null</log>
+						<exit/>
+					</then>
+				</if>
+				<script><![CDATA[				
+					var info = JSON.parse(context.strjson.toString());
+					info.cookie=context.sresourceid.toString();
+					var str_json=JSON.stringify(info);
+					context.sendjson.setValue(str_json);
+				]]></script>
+				<new name="flowentry" class="CFlowEntry">
+					<parameters>
+						<string name="flowId"  in="context.sresourceid.toString()"/>
+						<string name="appId"  in="context.appId.toString()"/>
+						<string name="flowjson"  in="context.sendjson.toString()"/>
+					</parameters>
+				</new>									
+				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
+				
+				<!---qiulei 20170831 start-->
+			
+				<string name="BarrierStrJson" />
+				<reference variable="BarrierStrJson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
+							}
+					]]></jsonbody>
+				</reference>
+				<!--openflow_api中的方法-->
+				<log level="100"><![CDATA[393 thisclass.m_transportid= <%=thisclass.m_transportid.toString()%>]]></log>		
+				<function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson" in="context.BarrierStrJson.toString()"/>
+					</parameters>
+                </function>
+				<!---qiulei 20170831 end-->
+
+				<function name="Send_OFPT13_FLOW_MOD">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.sendjson.toString()"/>
+					</parameters>
+				</function>
+				<log level="100"><![CDATA[349 flowid= <%=context.sresourceid.toString()%>]]></log>		
+				<set name="outflowid" value="context.sresourceid.toString()"/>
+				<log level="100"><![CDATA[351 outflowid= <%=context.outflowid.toString()%>]]></log>	
+				<log level="100"><![CDATA[353 flowsContainer= <%=context.flowsContainer.size()%>]]></log>	
+			</function>
+
+			<!--
+			@brief		通过appid获得流表
+			@auth 		hu peng (hupeng@staros.xyz)
+			@date		2017/11/24
+			Input:
+				@param filename 	CDeviceManager.xml
+			  	@param xmldata   	appid
+			Output: 
+				@param filename 	CDeviceManager.xml
+			  	@param xmldata   	flowjsonstr
+			-->
+			<function name="GetFlowByappid">
+				<parameters>
+					<string name="appid"/>
+					<list name="flowjsonstr"/>
+				</parameters>
+				<log level="100">CFlowManager GetFlowByappid</log>
+				<object name="flowobj"/>
+				<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
+				<string name="appId"/>
+				<string name="flowjson"/>
+				<list name="flowjsons" valuetype="string"/>
+				<log level="100"><![CDATA[CFlowManager 436 flowsContainer size= '<%=context.flowsContainer.size().toString()%>']]></log>
+				<for var="oneFlowsPair" in="context.flowsContainer">
+					<set name="flowobj" value="context.oneFlowsPair.second()"/>
+					<if cond="context.flowobj.ptr==null">
+						<then>
+							<log level="100">flowobj is null</log>
+						</then>
+					</if>
+						<function name="GetFlowJsonStringbyappidid" class="flowobj">
+							<parameters>
+								<string name="jsonstring" out="context.flowjson"/>
+								<string name="appid" out="context.appId"/>
+							</parameters>
+						</function>	
+						
+					<log level="100"><![CDATA[CFlowManager 451 appId = '<%=context.appId.toString()%>']]></log>
+					<log level="100"><![CDATA[CFlowManager  452 appid = '<%=context.appid.toString()%>']]></log>		
+					<if cond="context.appId.toString()==context.appid.toString()">
+						<then>
+							<log level="100"><![CDATA[CFlowManager 455 flowjson = '<%=context.flowjson.toString()%>']]></log>
+							<insert name="context.flowjsons" value="context.flowjson.toString()"/>
+						</then>
+						<else>
+							<log leve="100">not getflowbyappid</log>
+						</else>
+					</if>		
+				</for>
+				<set name="flowjsonstr" value="context.flowjsons"/>
+				
+				<log level="100"><![CDATA[CFlowManager 464 flowjsonstr size= '<%=context.flowjsonstr.size().toString()%>']]></log>
+			</function>
+			
+			<!--
+				@brief		获得所有流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+					@param filename 	CDeviceManager.xml
+				  	@param xmldata   	flowjsons
+			-->
+			<function name="getAllflow">
+				<parameters>
+					<list name="flowjsons"/>
+				</parameters>
+				<string name="flowjson"/>
+				<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
+				<object name="flowobj"/>
+				<list name="flowss" valuetype="string"/>
+				<string name="strjson"/>
+				<string name="flowid"/>
+				<for var="oneFlowsPair" in="context.flowsContainer">
+					<set name="flowobj" value="context.oneFlowsPair.second()"/>
+					<if cond="context.flowobj.ptr==null">
+						<then>
+							<log>flowobj is null</log>
+							<exit/>
+						</then>
+					</if>
+						<function name="GetFlowJsonStringbyflowid" class="context.flowobj">
+							<parameters>
+								<string name="jsonstring"  out="context.flowjson"/>
+								<string name="flowid" out="context.flowid"/>
+							</parameters>
+						</function>	
+						<script><![CDATA[
+							var json = JSON.parse(context.flowjson.toString());
+							json.flowid=context.flowid.toString();
+							var strjson=JSON.stringify(json);
+							context.strjson.setValue(strjson);
+						]]></script>
+						<if cond="context.flowjson.toString()!=''">
+							<then>	
+								<insert name="flowss" value="context.strjson.toString()"/>
+							</then>
+							<else>
+								<log>flowjson is null</log>
+							</else>
+						</if>
+						
+				</for>
+				<log level="100"><![CDATA[flowss size=<%=context.flowss.size()%>']]></log>
+				<set name="context.flowjsons" value="context.flowss"/>
+			</function>
+				
+			<!--
+			@brief		通过deviceid获得流表
+			@auth 		hu peng (hupeng@staros.xyz)
+			@date		2017/11/24
+			Input:
+				@param filename 	CDeviceManager.xml
+			  	@param xmldata   	deviceid
+			Output: 
+				@param filename 	CDeviceManager.xml
+			  	@param xmldata   	flowjsonstr
+			-->		
+			<function name="getflowBydeviceid">
+				<parameters>
+					<string name="deviceid" />
+					<list name="flowjsonstr"/>
+				</parameters>
+				<string name="onedeviceid"/>
+				<string name="flowjson"/>
+				<list name="flowjsons" valuetype="string"/>
+				<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
+				<object name="flowobj"/>
+				<string name="flowid"/>
+				<string name="strjson"/>
+				<for var="oneFlowsPair" in="context.flowsContainer">
+
+						<set name="flowobj" value="context.oneFlowsPair.second()"/>
+						<if cond="context.flowobj.ptr==null">
+							<then>
+								<log>flowobj is null</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetFlowJsonStringbyflowid" class="context.flowobj">
+							<parameters>
+								<string name="jsonstring"  out="context.flowjson"/>
+								<string name="flowid" out="context.flowid"/>
+							</parameters>
+						</function>	
+						<log level="200"><![CDATA[cflowmanager flowjson =<%=context.flowjson.toString()%>']]></log>
+						<log level="200"><![CDATA[cflowmanager flowid =<%=context.flowid.toString()%>']]></log>
+						<if cond="context.flowjson.toString()!=''">
+							<then>
+								<script><![CDATA[
+									var json = JSON.parse(context.flowjson.toString());
+									json.flowid=context.flowid.toString();
+									var strjson=JSON.stringify(json);
+									context.strjson.setValue(strjson);
+								]]></script>
+								<insert name="flowjsons" value="context.strjson"/>		
+							</then>
+						</if>
+		
+				</for>	
+				<set name="context.flowjsonstr" value="context.flowjsons"/>
+			</function>
+						
+			<!--
+				@brief		通过deviceid和flowid获得流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	CDeviceManager.xml
+				  	@param xmldata   	deviceid，flowid
+				Output: 
+					@param filename 	CDeviceManager.xml
+				  	@param xmldata   	flowjsonstr
+			-->				
+			<function name="getflowBydeviceidflowid">
+				<parameters>
+					<string name="flowid" />
+					<string name="deviceid" />
+					<string name="flowjsonstr"/>
+				</parameters>
+				<string name="onedeviceid"/>
+				<string name="flowjson"/>
+				<string name="flowids"/>
+				<string name="appid"/>
+				<object name="flowentry"/>
+				<string name="strjson"/>
+				<if cond="thisclass.flowsContainer.hasValue(context.flowid.toString())==true">
+					<then>
+						<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
+						<if cond="context.flowentry.ptr!=null">
+							<then>
+								<function name="GetFlowJsonStringbyflowid" class="context.flowentry">
+									<parameters>
+										<string name="jsonstring"  out="context.flowjson"/>
+										<string name="flowid" out="context.flowid"/>
+									</parameters>
+								</function>	
+								<script><![CDATA[
+									var json = JSON.parse(context.flowjson.toString());
+									json.flowid=context.flowid.toString();
+									var strjson=JSON.stringify(json);
+									context.strjson.setValue(strjson);
+								]]></script>
+								
+								<log level="100"><![CDATA[Cflowmgr 553 flowjson=<%=context.flowjson.toString()%>']]></log>
+								<set name="flowjsonstr" value="context.strjson"/>
+							</then>
+							<else>
+								<log level="100">flowentry is null</log>
+							</else>
+						</if>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>
+						
+			<!--
+				@brief		通过dappid删除流表
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+					@param filename 	CDeviceManager.xml
+				  	@param xmldata   	appid
+				Output: 
+			-->	
+			<function name="UnInstallFlowTableByappidRequest">
+				<parameters>
+					<string name="appid" />
+				</parameters>
+
+				<string name="transportid" />
+				<object name="flow"/>
+				<string name="flowjson"/>
+				<string name="flowid"/>
+				<string name="appids"/>
+			
+				<object name="flowentry"/>
+				<string name="sendflowmodjson"/>
+				<string name="flowmodjson"/>
+				<pair name="oneflow" keytype="string" valuetype="object"/>
+				<string name="thisappid"/>
+				<log level="100"><![CDATA[ 614 cflomgr flowsContainer!!!!!= '<%=context.flowsContainer.size().toString()%>']]></log>
+				<for var="oneflow" in="context.flowsContainer">
+					<set name="flow" value="context.oneflow.second()"/>
+					<if cond="context.flow.ptr!= null">
+						<then>
+							<function name="DeleteFlowJsonStringbyappid" class="flow">
+								<parameters>
+									<string name="appid" out="context.appids"/>
+									<string name="flowid" out="context.flowid"/>
+								</parameters>
+							</function>
+							<log level="100"><![CDATA[666 cflowmgr appids!!!!!= '<%=context.appids.toString()%>']]></log>
+							<log level="100"><![CDATA[667 cflowmgr flowid!!!!!= '<%=context.flowid.toString()%>']]></log>
+							<log level="100"><![CDATA[668 cflowmgr appid!!!!!= '<%=context.appid.toString()%>']]></log>
+							<if cond="context.appids.toString()==context.appid.toString()">
+								<then>
+									<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
+										<if cond="context.flowentry.ptr!=null">
+											<then>
+											<log level="100">flowentry is not null</log>
+											<function name="GetFlowJsonString" class="context.flowentry">
+												<parameters>
+													<string name="jsonstring"  out="context.flowmodjson"/>
+												</parameters>
+											</function>
+										</then>
+										<else>
+											<function>
+												<log>deviceinfo is null</log>
+												<assert/>
+												<exit/>
+											</function>
+										</else>
+										</if>
+						
+										<script><![CDATA[
+												var info = JSON.parse(context.flowmodjson.toString());
+												info.command='3';
+												var strjson=JSON.stringify(info);
+												context.sendflowmodjson.setValue(strjson);
+										]]></script>
+										
+												
+										<!---qiulei 20170831 start2-->
+										<string name="BarrierStrJson" />
+										<reference variable="BarrierStrJson">
+											<jsonbody><![CDATA[ 
+													{
+														"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
+													}
+											]]></jsonbody>
+										</reference>
+										<!--openflow_api中的方法-->
+										<function name="Send_OFPT13_BARRIER_REQUEST">
+											<parameters>
+												<string name="transportid"   in="thisclass.m_transportid.toString()"/>
+												<string name="strjson"  in="context.BarrierStrJson.toString()"/>
+											</parameters>
+						                </function>
+										<!---qiulei 20170831 end2-->
+										
+										
+										<function name="Send_OFPT13_FLOW_MOD">
+											<parameters>
+												<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+												<string name="strjson"  in="context.sendflowmodjson.toString()"/>
+											</parameters>
+										</function>
+										<remove name="flowsContainer" key="context.flowid.toString()"/>
+									
+									</then>
+								<else>
+									
+									<log level="100">not have appid</log>
+								</else>	
+							</if>
+
+						</then>
+					</if>
+				</for>
+			</function>
+			
+
+			<!--
+				Uninstall Flow.
+				1)use DataPathId find the flowcontainer
+				2)use resourcedi find the flow json string
+				3)Modify the Json String 
+				4)Send FlowMod message to Device
+				5)Delete the flow from flowcontainer
+			-->
+			<!--
+				@brief		卸载流表请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+					@param flowid   flowid
+				Output:
+			-->
+			<function name="UnInstallFlowTableRequest">
+				<parameters>
+					<string name="flowid" />
+				</parameters>
+				<string name="transportid" />
+				<object name="flowentry"/>
+				<string name="sendflowmodjson" />
+				<string name="flowmodjson"/>
+				<syslog level="INFO"><![CDATA[UnInstallFlowTableRequest flowid <%=context.flowid.toString()%>]]></syslog>
+				<if cond="context.flowsContainer.hasValue(context.flowid.toString()) == true">
+					<then>
+						<function>
+							<lookup name="flowsContainer" key="context.flowid.toString()" output="context.flowentry"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>UnInstallFlowTableRequest exit2</log>							
+							<exit/>
+						</function>
+					</else>
+				</if>
+				<!--qiulei 20170905 start1
+					Modify some bugs
+					Add if judgment-->
+				<if cond="context.flowentry!=null">
+					<then>
+						<function name="GetFlowJsonString" class="context.flowentry">
+							<parameters>
+								<string name="jsonstring"  out="context.flowmodjson"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>deviceinfo is null</log>
+							<assert/>
+							<exit/>
+						</function>
+					</else>
+				</if>
+				<!--qiulei 20170905 end1-->
+				
+				<script><![CDATA[
+						var info = JSON.parse(context.flowmodjson.toString());
+						info.command='3';
+						var strjson=JSON.stringify(info);
+						context.sendflowmodjson.setValue(strjson);
+				]]></script>
+				
+				<!---qiulei 20170831 start2-->
+				<string name="BarrierStrJson" />
+				<reference variable="BarrierStrJson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
+							}
+					]]></jsonbody>
+				</reference>
+				<!--openflow_api中的方法-->
+				<function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<string name="transportid"   in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.BarrierStrJson.toString()"/>
+					</parameters>
+                </function>
+				<!---qiulei 20170831 end2-->
+				
+				
+				<function name="Send_OFPT13_FLOW_MOD">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.sendflowmodjson.toString()"/>
+					</parameters>
+				</function>
+				<remove name="flowsContainer" key="context.flowid.toString()"/>
+			</function>
+			
+			<!--
+				@brief		得到流表json数据
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="GetFlowJsonData">
+				<parameters>
+					<string name="jsonstring"/>
+				</parameters>
+				<object name="flowobj"/>				
+				<string name="flowobjJson"/>
+				<string name="flowobj_deviceid"/>
+				<string name="outjson" />
+				<list name="flowinfos"  valuetype="string"/>
+				<pair name="oneflowPair"  keytype="string" valuetype="object"/>
+				<for var="oneflowPair" in="context.flowsContainer">
+					<set name="flowobj" value="context.oneflowPair.second()"/>
+					<if cond="context.flowobj.ptr==null">
+						<then>
+							<log>flowobj is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="FlowEntryToJsonString" class="context.flowobj">
+						<parameters>
+							<string name="flowjson"  out="context.flowobjJson"/>
+						</parameters>
+					</function>
+					<insert name="flowinfos" value="context.flowobjJson.toString()"/>
+				</for>
+				<script><![CDATA[
+					var json = new Object();
+					var payload = new Object();							
+					json['event'] = "flowDataResponse";
+					
+					var myArray = new Array();
+					
+					
+					//	qiulei 20170918 am
+					var firstString=context.flowinfos.getFirst();
+					while(firstString!=null){
+						
+						var jsoninfo = JSON.parse(firstString);
+						myArray.push(jsoninfo);
+						
+						firstString=context.flowinfos.getNext();
+					}
+					
+					
+					payload['flows'] = myArray;
+					
+					var twobject = new Object();								
+					twobject['no_rows_msg'] = "No flows found";
+													
+					payload['annots'] = twobject;
+					json['payload'] = payload;
+					var strjson=JSON.stringify(json);				
+					context.outjson.setValue(strjson);	
+				]]></script>
+				<set name="jsonstring" value="context.outjson"/>
+			</function>
+			
+			<!--
+				@brief		处理请求
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="HandleOpenFlowMultiPartFlowResponse">
+				<parameters>
+					<string name="flowjson" />
+				</parameters>
+				<syslog level="INFO">CFlowManager HandleOpenFlowMultiPartFlowResponse</syslog>
+				<syslog level="INFO"><![CDATA[CFlowManager flowjson=<%=context.flowjson.toString()%>]]></syslog>
+				<if cond="context.flowjson.toString()!=''">
+					<then>
+						<object name="flowobj" />
+						<string name="flowobj_flowid"/>
+						<string name="json_cookie" />
+
+						<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
+						<string name="oneFlowpartPair"/>
+						
+						<list name="flowpartlist"   valuetype="string"/>
+					
+						<string name="flowpartstring" />											
+							<script><![CDATA[
+								var info = JSON.parse(context.flowjson.toString());
+								if (info.statslist != null)
+								{
+									for (var i = 0; i < info.statslist.length; i++)
+									{
+										var flowstats = info.statslist[i];
+										var flowstrjson=JSON.stringify(flowstats);
+										context.flowpartlist.addValue(flowstrjson);
+									}
+								}
+							]]></script>
+									<!--
+							YY
+							Set Flow's packets bytes durationsec and durationnsec
+							1) get data from event
+							2) judge Flow's flowid and data's cookie is it equal
+							3) get packets bytes durationsec and durationnsec from data
+							4) put 4 datas set in Flow
+						-->
+						<for var="oneFlowpartPair" in="context.flowpartlist">
+							<if cond="context.oneFlowpartPair.toString()!=''">
+								<then>
+									<set name="flowpartstring" value="context.oneFlowpartPair.toString()"/>
+									<for var="oneFlowsPair" in="context.flowsContainer">
+										<set name="flowobj" value="context.oneFlowsPair.second()"/>
+										<if cond="context.flowobj.ptr==null">
+											<then>
+												<log>flowobj is null</log>
+												<exit/>
+											</then>
+										</if>
+										<function name="GetFlowId" class="context.flowobj">
+											<parameters>
+												<string name="flowid"  out="context.flowobj_flowid"/>
+											</parameters>
+										</function>
+										
+										<script><![CDATA[
+											var flowstats = context.flowpartstring.toString();
+											var info = JSON.parse(flowstats);
+											var cookie = info.cookie;
+											context.json_cookie.setValue(cookie);
+										]]></script>
+										<if cond="context.flowobj_flowid.toString()==context.json_cookie.toString()">
+											<then>
+												<function name="Set4Natures" class="context.flowobj">
+													<parameters>
+														<string name="flowpartstr"  in="context.flowpartstring.toString()"/>
+													</parameters>
+												</function>
+											</then>
+										</if>
+									</for>
+							</then>
+							<else>
+								<exit/>
+							</else>
+						</if>
+	
+					</for>
+				</then>
+				<else>
+					<exit/>
+				</else>
+				</if>
+				
+			</function>
+			
+			<!--
+				@brief		发送流表请求
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="SendFlowRequest">
+				<long name="xid" />
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>										
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>					
+					</parameters>
+				</function>
+			</function>		
+			
+			<!--
+				@brief		安装流标
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="InstallARPFlow">
+				<string name="modstrjson" />
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0806"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<string name="outflowid"  out="thisclass.m_arpflowid"/>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<string name="appId"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallIPToControllerFlow">
+				<string name="modstrjson" />
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<string name="outflowid"  out="thisclass.m_arpflowid"/>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<string name="appId"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			<!--qiulei 2017/07/27-->
+			<!--
+				@brief		安装流表
+				@auth 		qiulei
+				@date		2017/07/27
+				Input:
+				Output:
+			-->
+			<function name="InstallDiscoveryFlow">
+				<string name="modstrjson" />
+				<string name="resourceid"  value=""/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x9944"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<string name="outflowid"  out="thisclass.m_discoveryflowid"/>
+						<string name="appId"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--
+				@brief		安装默认流表
+				@auth 		qiulei
+				@date		2017/07/27
+				Input:
+				Output:
+			-->
+			<function name="InstallDefaultFlow">
+				<function name="InstallARPFlow"/>
+				<function name="InstallDiscoveryFlow"/>
+				<function name="InstallIPToControllerFlow"/>
+				<!--function name="InstallErrorFlow"/-->
+			</function>
+			
+			<!--
+				@brief		The controller sends the error flow to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+			-->
+			<function name="InstallErrorFlow">
+				<string name="modstrjson" />
+				<string name="resourceid"  value=""/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"33",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x9944"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<string name="outflowid"  out="thisclass.m_errorid"/>
+						<string name="appId"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--
+				@brief		Find flowentry object from flowsContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+				Input:
+					@param incookie   cookie
+				Output:
+					@param outflowentry   flowentry object
+			-->
+			<function name="FindFlow">
+				<parameters>
+					<string name="incookie" />
+					<object name="outflowentry" />
+				</parameters>
+				<function name="DumpFlow"/>
+				<if cond="context.flowsContainer.hasValue(context.incookie.toString()) == true">
+					<then>
+						<function>
+							<lookup name="flowsContainer" key="context.incookie.toString()" output="context.outflowentry"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			<!--
+				@brief		Find flowentry object from flowsContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+				Input:
+					@param incookie   cookie
+				Output:
+					@param outflowentry   flowentry object
+			-->
+			<function name="RemoveFlowByCookie">
+				<parameters>
+					<string name="incookie" />
+				</parameters>
+				<if cond="context.flowsContainer.hasValue(context.incookie.toString()) == true">
+					<then>
+						<function>
+							<remove name="flowsContainer" key="context.incookie.toString()"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			<!--
+				@brief		Print sresourceid from flowsContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/01
+			-->
+			<function name="DumpFlow">
+				<string name="flowkey" />
+				<pair name="oneFlowPair"  keytype="string" valuetype="object"/>
+				<for var="oneFlowPair" in="context.flowsContainer">
+					<set name="flowkey" value="context.oneFlowPair.first()"/>
+				</for>			
+			</function>
+			
+			
+			<!--
+				@brief		Uninstall Flow By FlowMod
+				@auth 		YangXiangRui
+				@date		2017/12/12
+			-->
+			<function name="UninstallFlowByFlowMod">
+				<long name="xid"/>
+				<string name="replyjson"/>
+				<string name="modstrjson"/>
+				<hashmap name="flowinfo" keytype="string" valuetype="string"/>
+				<hashmap name="deviceflowinfo" keytype="string" valuetype="hashmap"/>
+				<pair name="onedeviceflowinfopair" keytype="string" valuetype="hashmap"/>
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				
+				<syslog level="INFO"> #####Send OpenFlowMultiPartFlowRequest#####</syslog>
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>					
+					</parameters>
+				</function>
+				
+				<log level="100"> #####Send end#####</log>
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
+					<log level="100"> #####wait is success#####</log>
+					<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+					
+					<script><![CDATA[							
+						var info = JSON.parse(context.replyjson.toString());
+						if (info.statslist!=null)
+						{
+							context.print(info.statslist.length);
+							for(var i=0;i<info.statslist.length;i++)
+							{
+								var offlow = context.createHashMap("string","string");
+								if (offlow != null)
+								{
+									var strmatchjson=JSON.stringify(info.statslist[i].match);								
+									offlow.addValue('cookie', info.statslist[i].cookie);
+									offlow.addValue('flags', info.statslist[i].flags);
+									offlow.addValue('hardtimeout', info.statslist[i].hardtimeout);
+									offlow.addValue('idletimeout', info.statslist[i].idletimeout);
+									offlow.addValue('tableid', info.statslist[i].tableid);
+									offlow.addValue('priority', info.statslist[i].priority);
+									offlow.addValue('match', strmatchjson);
+									context.print(strmatchjson);
+									context.deviceflowinfo.addValue(info.statslist[i].cookie, offlow);
+									context.destroyHashMap(offlow);
+								}
+							}
+						}
+					]]></script>
+					<log level="100"> #####JS EXEC end#####</log>
+					<for var="onedeviceflowinfopair" in="context.deviceflowinfo">
+						<log level="100"> #####FOR START#####</log>
+						<set name="flowinfo" value="context.onedeviceflowinfopair.second()"/>
+						<!--<log level="100"><![CDATA[onedeviceflowinfopair size=<%=context.onedeviceflowinfopair.size().toString()%>]]></log>-->						
+						<script><![CDATA[		
+							var matchtemp = JSON.parse(context.flowinfo.getValue('match').toString());
+							
+							var matchinfo = new Object();
+								matchinfo['matchfieldlist'] = matchtemp.matchfieldlist.toString();
+								matchinfo['type'] = matchtemp.type.toString();
+								
+							var flowsinfo=new Object();
+								flowsinfo['cookie'] = context.flowinfo.getValue('cookie').toString();
+								flowsinfo['cookiemask'] = "0";
+								flowsinfo['tableid'] = context.flowinfo.getValue('tableid').toString();
+								flowsinfo['command'] = "3";
+								flowsinfo['idletimeout'] = context.flowinfo.getValue('idletimeout').toString();
+								flowsinfo['hardtimeout'] = context.flowinfo.getValue('hardtimeout').toString();
+								flowsinfo['priority'] = context.flowinfo.getValue('priority').toString();
+								flowsinfo['bufferid'] = "0xffffffff";
+								flowsinfo['outport'] = "0xffffffff";
+								flowsinfo['outgroup'] = "0xffffffff";
+								flowsinfo['flags'] = context.flowinfo.getValue('flags').toString();
+										
+								flowsinfo['match']= matchinfo;
+		
+							var strjson=JSON.stringify(flowsinfo);
+							context.modstrjson.setValue(strjson);
+						]]></script>			
+						
+						<log level="100"> #####Send_OFPT13_FLOW_MOD start#####</log>
+						<function name="Send_OFPT13_FLOW_MOD">
+							<parameters>
+								<string name="transportid" in="context.m_transportid.toString()"/>
+								<string name="strjson" in="context.modstrjson.toString()"/>
+							</parameters>
+						</function>
+						<log level="100"> #####Send_OFPT13_FLOW_MOD end#####</log>
+					</for>
+				</wait>
+			</function>
+			<!--
+				@brief		Uninstall ARP Flow
+				@auth 		YangXiangRui
+				@date		2018/01/15
+			-->
+			<function name="UninstallArpFlow">
+				<syslog level="INFO">CFlowManager UninstallArpFlow</syslog>
+				<string name="replyjson"/>
+				<string name="modstrjson"/>
+				<long name="xid"/>
+				<string name="ethtype" />
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<function name="OpenFlowMultiPartFlowRequest">
+					<parameters>						
+						<long name="xid"  in="context.xid.toLong()"/>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>			
+					</parameters>
+				</function>
+							
+				<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_FLOW,openflow.OFPT13_ERROR" transportid="thisclass.m_transportid.toString()"  xid="context.xid.toLong()" timeout="5000" detachclass="true">
+					<syslog level="INFO">CFlowManager UninstallArpFlow wait is sucess</syslog>
+
+					<set name="replyjson" value="event.getParam('eventdata').toString()"/>
+					<syslog level="INFO"><![CDATA[replyjson = <%=context.replyjson.toString()%>]]></syslog>
+					<script><![CDATA[		
+						var info = JSON.parse(context.replyjson.toString());
+						if (info.statslist!=null)
+						{
+							for(var i=0;i<info.statslist.length;i++)
+							{
+								for(var j=0;j<info.statslist[i].match.matchfieldlist.length;j++)
+								{
+									if (info.statslist[i].match.matchfieldlist[j].ethtype == "2054")	
+									{
+										var matchinfo = new Object();
+										matchinfo['matchfieldlist'] = JSON.stringify(info.statslist[i].match.matchfieldlist);
+										matchinfo['type'] = info.statslist[i].match.type.toString();
+									
+										var flowsinfo=new Object();
+											flowsinfo['cookie'] =  info.statslist[i].cookie.toString();
+											flowsinfo['cookiemask'] = "0";
+											flowsinfo['tableid'] =  info.statslist[i].tableid.toString();
+											flowsinfo['command'] = "3";
+											flowsinfo['idletimeout'] =  info.statslist[i].idletimeout.toString();
+											flowsinfo['hardtimeout'] =  info.statslist[i].hardtimeout.toString();
+											flowsinfo['priority'] =  info.statslist[i].priority.toString();
+											flowsinfo['bufferid'] = "0xffffffff";
+											flowsinfo['outport'] = "0xffffffff";
+											flowsinfo['outgroup'] = "0xffffffff";
+											flowsinfo['flags'] =  info.statslist[i].flags.toString();
+													
+											flowsinfo['match']= matchinfo;
+					
+										var strjson=JSON.stringify(flowsinfo);
+										context.modstrjson.setValue(strjson);
+									}								
+								}
+							}
+						}
+					]]></script>
+					<syslog level="INFO"><![CDATA[modstrjson = <%=context.modstrjson.toString()%>]]></syslog>
+					<if cond="context.modstrjson.toString()==''">
+						<then>
+							<syslog level="INFO">CFlowManager UninstallArpFlow modstrjson is null</syslog>
+							<exit/>
+						</then>
+					</if>
+					<function name="Send_OFPT13_FLOW_MOD">
+						<parameters>
+							<string name="transportid" in="context.m_transportid.toString()"/>
+							<string name="strjson" in="context.modstrjson.toString()"/>
+						</parameters>
+					</function>
+				</wait>
+				<function name="removeProcessor" class="PacketService">				
+					<parameters>
+						<string name="app_name" in="'hostservice'"/>									
+					</parameters>
+				</function>
+			</function>	
+		</public>
+	</class>
+</starlang>

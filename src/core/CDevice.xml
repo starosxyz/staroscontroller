@@ -1,0 +1,1051 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		Capplicatpn。xml
+	@brief 		device类
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CDevice">
+		<private>
+			<string name="m_mfrdesc" />
+			<string name="m_swdesc" />
+			<string name="m_serialnum" />
+			<string name="m_dpdesc" />
+			<string name="m_hwdesc" />
+			<string name="m_transportid" />
+			<string name="m_localipaddr" />
+			<string name="m_peeripaddr"/>
+			<string name="m_type" />
+			<string name="m_online" />
+			<string name="m_protocol"/>
+			<string name="m_auxiliaryid" />
+			<string name="m_buffers"/>
+			<string name="m_capabilities" />
+			<string name="m_datapathid" />
+			<string name="m_tables"/>
+			<object name="m_ports" />
+			<object name="m_tablemgr" />
+			<object name="m_metermgr" />
+			<object name="m_groupmgr" />
+			<object name="m_flowmgr" />
+			<!--group feature-->
+			<string name="m_group_types" />
+			<string name="m_group_capabilities" />
+			<string name="m_group_max_groups" />
+			<string name="m_group_actions" />
+			<string name="m_dropflowid"/>
+			
+			<!-- wangkang 2017/11/22-->
+			<long name="m_requestcount"/>
+			<string name="m_metaUi"/>
+			<object name="sshdevice"/>
+			<!--YangXR 2018/1/22-->
+			<object name="openflowdevice"/>
+		</private>
+		<public>
+			<function name="CDevice">
+				<parameters>
+					<string name="mfrdesc"/>
+					<string name="swdesc" />
+					<string name="serialnum" />
+					<string name="dpdesc"/>
+					<string name="hwdesc" />
+					<string name="transportid" />
+					<string name="datapathid" />
+					<string name="localipaddr" />
+					<string name="peeripaddr" />	
+					<string name="type" />
+					<string name="online" />
+					<string name="protocol"/>
+				</parameters>
+				<set name="thisclass.m_mfrdesc" value="context.mfrdesc.toString()"/>
+				<set name="thisclass.m_swdesc" value="context.swdesc.toString()"/>
+				<set name="thisclass.m_serialnum" value="context.serialnum.toString()"/>
+				<set name="thisclass.m_dpdesc" value="context.dpdesc.toString()"/>
+				<set name="thisclass.m_hwdesc" value="context.hwdesc.toString()"/>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<set name="thisclass.m_datapathid" value="context.datapathid.toString()"/>
+				<set name="thisclass.m_localipaddr" value="context.localipaddr.toString()"/>
+				<set name="thisclass.m_peeripaddr" value="context.peeripaddr.toString()"/>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_online" value="context.online.toString()"/>
+				<set name="thisclass.m_protocol" value="context.protocol.toString()"/>
+				<new name="m_ports" class="CPortManager">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>	
+					</parameters>
+				</new>
+				<new name="m_tablemgr" class="CTableManager">
+					<parameters>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</new>
+				<new name="m_metermgr" class="CMeterManager">	
+					<parameters>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>	
+					</parameters>
+				</new>
+				<!--new Group Manager object-->
+				<log>qiulei 82 CDevices.xml</log>
+				<new name="m_groupmgr" class="CGroupManager">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</new>
+				<log><![CDATA[qiulei 83 CDevices.xml thisclass.m_transportid=<%=thisclass.m_transportid.toString()%>]]></log>
+				<log>qiulei 88 CDevices.xml</log>
+				<new name="m_flowmgr" class="CFlowManager">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</new>
+				<log>qiulei 95 CDevices.xml 95行</log>
+				<new name="sshdevice" class="CSSHDevice"/>
+				<!-- wangkang 2017/11/22-->
+				<set name="thisclass.m_requestcount" value="0"/>
+				<!--function name="MultiPartPortDescRequest"/-->
+			</function>
+			
+			<!-- qiulei 2017/12/28 pm  Get the number of flowCounts-->
+			<function name="GetFlowCounts">
+				<parameters>
+					<long name="oneDeviceFlowCounts"/>
+				</parameters>
+				
+				<function name="GetFlowCounts" class="m_flowmgr">
+					<parameters>
+						<long name="flowCounts" out="context.oneDeviceFlowCounts"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--qiulei 20171120 pm 添加DeviceDetailInfoToJsonStr方法  单个device的详细信息,包含了端口的详细信息-->
+			<!--
+				@brief		调用该方法返回单个device的详细信息,包含了端口的详细信息
+				@auth 		qiulei
+				@date		2017/11/20 pm
+				Input:
+				Output: 
+					@param outjson 	获取封装后的json信息
+			-->
+			<function name="DeviceDetailInfoToJsonStr">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				
+				<string name="deviceportjson"/>
+				<string name="detailjson" />
+				
+				
+				<function name="ForDeviceDetailReqJson" class="thisclass.m_ports">
+					<parameters>
+						<string name="outjson"  out="deviceportjson"/>
+					</parameters>
+				</function>
+				
+				<script><![CDATA[
+					var portsArray = JSON.parse(context.deviceportjson.toString());                              
+					
+					var annotations=new Object();
+						annotations['managementAddress'] = thisclass.m_localipaddr.toString();
+						annotations['protocol'] = thisclass.m_protocol.toString();
+						annotations['channelId'] = thisclass.m_peeripaddr.toString();
+						
+					var device=new Object();
+						device['id']='of:'+thisclass.m_datapathid.toString();
+						device['type']=thisclass.m_type.toString();
+						device['available']="true";
+						device['role']="MASTER";
+						device['mfr']=thisclass.m_mfrdesc.toString();
+						device['hw']=thisclass.m_hwdesc.toString();
+						device['sw']=thisclass.m_swdesc.toString();
+						device['serial']=thisclass.m_serialnum.toString();
+						device['driver']="ovs";
+						device['chassisId']="";
+						
+						device['annotations']=annotations;
+						
+						device['ports']=portsArray;
+
+					var strjson=JSON.stringify(device);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			<!--
+				@brief		发送默认流表
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:
+				Output: 
+			-->
+			<function name="SendDefaultFlow">
+				<function name="InstallDefaultFlow" class="m_flowmgr"/>
+			</function>
+			
+			<!--
+				@brief		添加端口
+				@auth 		qiulei
+				@date		2017/11/28 pm
+				Input:	
+					@param advertised 	advertised信息
+					@param portno 		portno信息
+					@param config 		config信息
+					@param curr 		curr信息
+					
+					@param currspeed 	currspeed信息
+					@param hwaddr 		hwaddr信息
+					@param maxspeed 	maxspeed信息
+					@param name 		name信息
+					
+					@param peer 		peer信息
+					@param state 		state信息
+					@param supported 	supported信息
+				Output: 
+			-->
+			<function name="addPort">
+				<parameters>
+					<string name="advertised"/>			
+					<string name="portno" />
+					<string name="config"/>			
+					<string name="curr" />
+					
+					<string name="currspeed" />	
+					<string name="hwaddr" />
+					<string name="maxspeed" />
+					<string name="name" />	
+					
+					<string name="peer" />
+					<string name="state" />	
+					<string name="supported" />														
+				</parameters>
+				<function name="addPort" class="m_ports">
+					<parameters>
+						<string name="advertised"  in="context.advertised.toString()"/>			
+						<string name="portno"  in="context.portno.toString()"/>
+						<string name="config"  in="context.config.toString()"/>			
+						<string name="curr"  in="context.curr.toString()"/>
+						<string name="currspeed"  in="context.currspeed.toString()"/>	
+						<string name="hwaddr"  in="context.hwaddr.toString()"/>
+						<string name="maxspeed"  in="context.maxspeed.toString()"/>	
+						<string name="name"  in="context.name.toString()"/>	
+						<string name="peer"  in="context.peer.toString()"/>
+						<string name="state"  in="context.state.toString()"/>	
+						<string name="supported"  in="context.supported.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			
+			<function name="GetTableManager">
+				<parameters>
+					<object name="outtablemgr" />
+				</parameters>
+				<set name="outtablemgr" value="thisclass.m_tablemgr"/>
+			</function>
+			<function name="GetPortManager">
+				<parameters>
+					<object name="outportmgr" />
+				</parameters>
+				<set name="outportmgr" value="thisclass.m_ports"/>
+			</function>
+			<function name="GetFlowManager">
+				<parameters>
+					<object name="outflowmgr"/>
+				</parameters>
+				<set name="outflowmgr" value="thisclass.m_flowmgr"/>
+			</function>
+			<function name="GetMeterManager">
+				<parameters>
+					<object name="outmetermgr"/>
+				</parameters>
+				<set name="outmetermgr" value="thisclass.m_metermgr"/>
+			</function>
+			<function name="GetGroupManager">
+				<parameters>
+					<object name="outgroupmgr" />
+				</parameters>
+				<set name="outgroupmgr" value="thisclass.m_groupmgr"/>
+			</function>
+			<function name="GetDatapathId">
+				<parameters>
+					<string name="outdatapathid"/>
+				</parameters>
+				<set name="outdatapathid" value="thisclass.m_datapathid.toString()"/>
+			</function>
+			<function name="GetTransportId">
+				<parameters>
+					<string name="outtransport"/>
+				</parameters>
+				<string name="onlinejson"  value="'test'"/>
+				<set name="outtransport" value="thisclass.m_transportid.toString()"/>
+			</function>
+			
+			<!--
+				@brief		调用 GetDeviceInfoJson 函数,返回单个device的详细信息（类的属性）
+				@auth 		qiulei
+				@date		2017/11/20 pm
+				Input:
+				Output: 	strjson
+		
+			-->
+			<function name="GetDeviceInfoJson">
+				<parameters>
+					<string name="strjson" />
+				</parameters>
+				<string name="deviceinfojson"/>
+				
+				<!--qiulei 20170818-->
+				<long name="portCount" />
+				<function name="GetPortNumberSize" class="thisclass.m_ports">
+					<parameters>
+						<long name="portnumber" out="context.portCount"/>
+					</parameters>
+				</function>
+				
+				<script><![CDATA[
+						var onearray = new Object();
+							onearray.available='true';
+							onearray._iconid_available='active';
+							onearray.name="of:"+thisclass.m_datapathid.toString();
+							onearray.id="of:"+thisclass.m_datapathid.toString();
+							//-------------qiulei 20170818------------
+							onearray.num_ports=context.portCount.toLong();
+							onearray.mfr=thisclass.m_mfrdesc.toString();
+							onearray.hw=thisclass.m_hwdesc.toString();
+							onearray.sw=thisclass.m_swdesc.toString();
+							onearray.protocol=thisclass.m_protocol.toString();
+							onearray.chassisid="";
+							onearray.serial=thisclass.m_serialnum.toString();			
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			
+			<!--
+				@brief		调用GetDeviceInfoForDetailRequest，响应DetailRequest请求,
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output: 	strjson
+		
+			-->
+			<function name="GetDeviceInfoForDetailRequest">
+				<parameters>
+					<string name="strjson"/>
+				</parameters>
+				<string name="deviceinfojson" />
+				<script><![CDATA[
+						var onearray = new Object();
+							onearray.available=thisclass.m_online.toString();
+							onearray.id="of:"+thisclass.m_datapathid.toString();
+							onearray.type=thisclass.m_type.toString();
+							onearray.role="MASTER";
+							onearray.mfr=thisclass.m_mfrdesc.toString();
+							onearray.hw=thisclass.m_hwdesc.toString();
+							onearray.sw=thisclass.m_swdesc.toString();
+							onearray.protocol=thisclass.m_protocol.toString();
+							onearray.driver="ovs";
+							onearray.serial=thisclass.m_serialnum.toString();
+
+						var twoarray = new Object();
+							twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+							twoarray['protocol'] = thisclass.m_protocol.toString();
+							twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+							
+						onearray.annotations=twoarray;
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			
+			<!--
+				@brief		GetDeviceDetailInfoForDetailRequest函数,用于处理得到device的详细信息
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output: 	strjson
+			-->
+			<function name="GetDeviceDetailInfoForDetailRequest">
+				<parameters>
+					<string name="strjson" />
+				</parameters>
+				<string name="deviceinfojson"/>
+				<script><![CDATA[
+						var onearray = new Object();
+							onearray.id="of:"+thisclass.m_datapathid.toString();
+							onearray.name="of:"+thisclass.m_datapathid.toString();
+							onearray.type=thisclass.m_type.toString();
+							onearray.role="MASTER";
+							onearray._iconid_type="devIcon_SWITCH";
+							onearray.mfr=thisclass.m_mfrdesc.toString();
+							onearray.hw=thisclass.m_hwdesc.toString();
+							onearray.sw=thisclass.m_swdesc.toString();
+							onearray.protocol=thisclass.m_protocol.toString();
+							onearray.chassisid=2;
+							onearray.serial=thisclass.m_serialnum.toString();	
+						
+						var strjson = JSON.stringify(onearray);
+						context.deviceinfojson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.deviceinfojson.toString()"/>
+			</function>
+			
+			<!--
+				@brief		device在线json
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+					@param strjson 	获取封装后的json信息
+			-->
+			<function name="ToOnlineJson">
+				<parameters>
+					<string name="strjson" />
+				</parameters>
+				<string name="onlinejson"/>
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
+				<script><![CDATA[
+						var json = new Object();
+						json['event'] = "updateDevice";
+						var payload = new Object();			
+							payload['id'] = "of:" + thisclass.m_datapathid.toString();
+							payload['type'] = thisclass.m_type.toString();
+							payload['online'] = thisclass.m_online.toString();
+							
+						var onearray = new Array();
+							onearray.push("");
+							onearray.push("of:" + thisclass.m_datapathid.toString());
+							onearray.push("of:" + thisclass.m_datapathid.toString());
+							
+						payload['labels'] = onearray;
+						
+						var twoarray = new Object();
+							twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+							twoarray['protocol'] = thisclass.m_protocol.toString();
+							twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+							
+						payload['props'] = twoarray;
+						
+						var threearray = new Object();
+							threearray['x'] = 0;
+							threearray['y'] = 0;
+							
+						var three_one_array = new Object();
+							three_one_array['lng'] = 0;
+							three_one_array['lat'] = 0;
+							
+						threearray['equivLoc'] = context.memento.toString();
+						if (context.memento.size()!=0)
+						{
+							payload['metaUi'] = context.memento.toString();
+						}
+						json['payload'] = payload;			
+						var strjson = JSON.stringify(json);
+						context.onlinejson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.onlinejson.toString()"/>
+			</function>
+			
+			<!--
+				@brief		device下线json
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+					@param strjson 	获取封装后的json信息
+			-->
+			<function name="ToOfflineJson">
+				<parameters>
+					<string name="strjson" />
+				</parameters>
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
+				<string name="offlinejson" />
+				<script><![CDATA[
+						var json = new Object();
+						json['event'] = "updateDevice";
+						var payload = new Object();
+						payload['id'] = "of:" + thisclass.m_datapathid.toString();
+						payload['type'] = thisclass.m_type.toString();
+						payload['online'] = "false";
+						var onearray = new Array();
+						onearray.push("");
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						onearray.push("of:" + thisclass.m_datapathid.toString());
+						payload['labels'] = onearray;
+						
+						var twoarray = new Object();
+						twoarray['managementAddress'] = thisclass.m_localipaddr.toString();
+						twoarray['protocol'] = "OF_13";
+						twoarray['channelId'] = thisclass.m_peeripaddr.toString();
+						payload['props'] = twoarray;
+						
+						var threearray = new Object();
+						threearray['x'] = 0;
+						threearray['y'] = 0;
+						var three_one_array = new Object();
+						three_one_array['lng'] = 0;
+						three_one_array['lat'] = 0;
+						threearray['equivLoc'] = three_one_array;
+						if (context.memento.size()!=0)
+						{
+							payload['metaUi'] = context.memento.toString();
+						}
+						json['payload'] = payload;
+						
+						var strjson = JSON.stringify(json);
+						context.offlinejson.setValue(strjson);
+				]]></script>
+				<set name="strjson" value="context.offlinejson.toString()"/>
+			</function>
+			
+			
+			<!--
+				@brief		添加deviceJSON
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+					@param strjson 	获取封装后的json信息
+			-->
+			<function name="ToAddDeviceJson">
+				<parameters>
+					<string name="strjson" />
+				</parameters>
+				<string name="adddevicejson" />
+				<string name="memento"/>
+				<set name="memento" value="context.metaUi.getValue('of:'+context.m_datapathid.toString())"/>
+				<if cond="context.memento.size()==0">
+					<then>
+						<reference variable="adddevicejson">
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"addDevice",
+										"payload":
+										{
+											"id":"of:<%=thisclass.m_datapathid.toString()%>",
+											"type":"switch",
+											"online":true,
+											"labels":
+												[
+												"","of:<%=thisclass.m_datapathid.toString()%>",
+												"of:<%=thisclass.m_datapathid.toString()%>"
+												],
+											"props":
+												{
+													"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
+													"protocol":"OF_13",
+													"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
+												}
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+					</then>
+					<else>
+						<reference variable="adddevicejson">
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"addDevice",
+										"payload":
+										{
+											"id":"of:<%=thisclass.m_datapathid.toString()%>",
+											"type":"switch",
+											"online":true,
+											"labels":
+												[
+												"","of:<%=thisclass.m_datapathid.toString()%>",
+												"of:<%=thisclass.m_datapathid.toString()%>"
+												],
+											"props":
+												{
+													"managementAddress":"<%=thisclass.m_localipaddr.toString()%>",
+													"protocol":"OF_13",
+													"channelId":"<%=thisclass.m_peeripaddr.toString()%>"
+												},
+											"metaUi":<%=context.memento.toString()%>
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+					</else>
+				</if>
+				<set name="strjson" value="context.adddevicejson.toString()"/>
+			</function>
+			
+			<!--
+				@brief		响应请求,返回device详细信息
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+					@param outjson 	获取封装后的json信息
+			-->
+			<function name="ForDeviceDetailReqJson">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				<string name="deviceportjson"/>
+				<string name="detailjson" />
+				<log>CDevice ForDeviceDetailReqJson</log>
+				<function name="ForDeviceDetailReqJson" class="thisclass.m_ports">
+					<parameters>
+						<string name="outjson"  out="deviceportjson"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+					var portsArray = JSON.parse(context.deviceportjson.toString());                              
+					var details=new Object();
+						details['id']='of:'+thisclass.m_datapathid.toString();
+						details['name']='of:'+thisclass.m_datapathid.toString();
+						details['type']=thisclass.m_type.toString();
+						details['_iconid_type']='devIcon_SWITCH';
+						details['mfr']=thisclass.m_mfrdesc.toString();
+						details['hw']=thisclass.m_hwdesc.toString();
+						details['sw']=thisclass.m_swdesc.toString();
+						details['serial']=thisclass.m_serialnum.toString();
+						details['chassisid']="";
+						details['protocol']=thisclass.m_protocol.toString();
+						details['ports']=portsArray;
+					
+					var annotations=new Object();
+						annotations['managementAddress'] = thisclass.m_localipaddr.toString();
+						annotations['protocol'] = thisclass.m_protocol.toString();
+						annotations['channelId'] = thisclass.m_peeripaddr.toString();
+						
+					var device=new Object();
+						device['id']='of:'+thisclass.m_datapathid.toString();
+						device['type']=thisclass.m_type.toString();
+						device['available']="true";
+						device['role']="MASTER";
+						device['mfr']=thisclass.m_mfrdesc.toString();
+						device['hw']=thisclass.m_hwdesc.toString();
+						device['sw']=thisclass.m_swdesc.toString();
+						device['serial']=thisclass.m_serialnum.toString();
+						device['driver']="ovs";
+						device['chassisId']="";
+						
+						device['annotations']=annotations;
+					
+					var payload = new Object();
+						payload['details']=details;
+						payload['device']=device;
+						
+					var json = new Object();
+						json['event']='deviceDetailsResponse';
+						json['payload']=payload;
+					
+					var strjson=JSON.stringify(json);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			<!--
+				@brief		发送device详细信息
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:	
+					@param transportid 	transportid信息
+				Output: 
+			-->
+			<function name="SendDetails">
+				<parameters>
+					
+					<string name="transportid" />
+				</parameters>							
+				<long name="portnum" />
+				<function name="GetPortNumberSize" class="thisclass.m_ports">
+					<parameters>
+						<long name="portnumber"  out="context.portnum"/>
+					</parameters>
+				</function>
+				<string name="detailarray" />
+				<function>
+					<script><![CDATA[
+						var oneArray = new Array();			
+							oneArray.push("URI");
+							oneArray.push("Vendor");
+							oneArray.push("H/W Version");
+							oneArray.push("S/W Version");
+							oneArray.push("Serial #");
+							oneArray.push("Protocol");
+							oneArray.push("-");
+							oneArray.push("Latitude");
+							oneArray.push("Longitude");
+							oneArray.push("-");
+							oneArray.push("Ports");
+							oneArray.push("Flows");
+							oneArray.push("Tunnels");
+						
+						var twoarray = new Object();				
+							twoarray['URI'] = "of:" + thisclass.m_datapathid.toString();
+							twoarray['Vendor'] = thisclass.m_mfrdesc.toString();
+							twoarray['H/W Version'] = thisclass.m_hwdesc.toString();
+							twoarray['S/W Version'] = thisclass.m_swdesc.toString();
+							twoarray['Serial #'] = thisclass.m_serialnum.toString();
+							twoarray['Protocol'] = "OF_13";
+							twoarray['-'] = "";
+							twoarray['Latitude'] = null;
+							twoarray['Longitude'] = null;
+							twoarray['Ports'] = context.portnum.toLong();
+							twoarray['Flows'] = 4;
+							twoarray['Tunnels'] = 0;
+						
+						var threeArray = new Array();
+							threeArray.push("showDeviceView");
+							threeArray.push("showFlowView");
+							threeArray.push("showPortView");
+							threeArray.push("showGroupView");
+							threeArray.push("showMeterView");
+							threeArray.push("showDeviceFlows");
+							threeArray.push("showRelatedTraffic");
+							
+						var payload = new Object();
+							payload['title'] = "of:" + thisclass.m_datapathid.toString();
+							payload['type'] = "switch";
+							payload['id'] = "of:" + thisclass.m_datapathid.toString();
+							payload['propOrder'] = oneArray;
+							payload['props'] = twoarray;
+							payload['buttons'] = threeArray;
+						
+						var json = new Object();						
+							json['event'] = "showDetails";
+							json['payload'] = payload;
+							
+						var strjson=JSON.stringify(json);
+						context.detailarray.setValue(strjson);
+					
+					]]></script>
+				</function>
+				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+					<jsonsrc src="detailarray"/>
+				</websocket>
+			</function>
+			<!--
+				@brief		向所有端口发送Packet
+				@auth 		hupeng
+				@date		2017/08/22
+				Input:
+					@param inportid 	inportid信息
+					@param pkoutjson 	pkoutjson信息
+					@param msgblock 	msgblock信息
+				Output:
+			-->
+			<function name="PacketOutToAllPort">
+				<parameters>	
+					<string name="inportid" />	
+					<string name="pkoutjson" />
+					<messageblock name="msgblock" />
+				</parameters>
+				<log>insert CDevice's PacketOutToAllPort</log>
+				<syslog level="INFO">D POTAP</syslog>
+				<function name="PacketOutToAllPort" class="thisclass.m_ports">
+					<parameters>	
+						<string name="transportid"  in="thisclass.m_transportid"/>
+						<string name="inportid"  in="context.inportid.toString()"/>	
+						<string name="pkoutjson"  in="context.pkoutjson.toString()"/>
+						<messageblock name="msgblock"  in="context.msgblock"/>
+					</parameters>
+				</function>
+			</function>
+			
+			
+			<!--qiulei 20170823 pm-->
+			<!--Calling this method requires you to pass in four parameters 调用此方法需要传入4个参数-->
+			<!--
+				@brief		向端口发报文
+				@auth 		hupeng
+				@date		2017/08/23
+				Input:
+					@param outputport 	outputport信息
+					@param pkoutjson 	pkoutjson信息
+					@param msgblock 	msgblock信息
+					@param inportid 	inportid信息
+				Output:
+			-->
+			<function name="PacketOutToPort">
+				<parameters>
+					<string name="outputport" />
+					<string name="pkoutjson" />
+					<messageblock name="msgblock" />
+					<string name="inportid" />
+				</parameters>
+				<log>insert CDevice's PacketOutToPort</log>
+				<syslog level="NIFO">#2#</syslog>
+				<function name="PacketOutToPort" class="thisclass.m_ports">
+					<parameters>
+						<string name="outputport"  in="context.outputport.toString()"/>
+						<string name="pkoutjson"  in="context.pkoutjson.toString()"/>
+						<string name="transportid"  in="thisclass.m_transportid"/>
+						<messageblock name="msgblock"  in="context.msgblock"/>
+						<string name="inportid"  in="context.inportid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			
+			<!--
+				@brief		超时发送就发送请求
+				@auth 		hupeng
+				@date		2017/08/23
+				Input:
+					
+				Output:
+			-->
+			<function name="TimeOut">
+				<function name="GroupStateRequest" class="m_groupmgr"/>
+				
+				<function name="SendFlowRequest" class="m_flowmgr"/>				
+				<function name="SendPortStateRequest" class="m_ports"/>
+				<function name="SendTableRequest" class="m_tablemgr"/>
+			</function>
+			
+			<!--
+				@brief		处理状态请求
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
+			<function name="HandleGroupStateResponse">
+				<parameters>
+					<string name="groupjson" />
+				</parameters>
+				<function name="HandleGroupStateResponse" class="m_groupmgr">
+					<parameters>
+						<string name="groupjson"  in="context.groupjson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--
+				@brief		处理流表
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
+			<function name="HandleOpenFlowMultiPartFlowResponse">
+				<parameters>
+					<string name="flowjson" />
+				</parameters>
+				<function name="HandleOpenFlowMultiPartFlowResponse" class="m_flowmgr">
+					<parameters>
+						<string name="flowjson"  in="context.flowjson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			
+			<!--
+				@brief		处理端口状态响应
+				@auth 		qiulei
+				@date		2017/11/28
+				Input:
+				Output:
+			-->
+			<function name="HandlePortStateResponse">
+				<parameters>
+					<string name="portstatejson" />
+				</parameters>
+				<function name="HandlePortStateResponse" class="m_ports">
+					<parameters>
+						<string name="portstatejson"  in="context.portstatejson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--Get Port State Info , 2017/8/24 -->
+			<!--
+				@brief		得到端口状态信息
+				@auth 		qiulei
+				@date		2017/8/24
+				Input:
+				Output:
+			-->
+			<function name="GetPortsStateJsonData">
+				<parameters>	
+					<string name="jsonstring" />
+				</parameters>
+				<function name="GetPortsStateJsonData" class="thisclass.m_ports">
+					<parameters>	
+						<string name="jsonstring"  out="context.jsonstring"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--
+				@brief		设置流表
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="SetTableJson">
+				<parameters>
+					<string name="tablejson" />
+				</parameters>
+				<function name="SetTableJson" class="thisclass.m_tablemgr">
+					<parameters>
+						<string name="tablejson"  in="context.tablejson.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--qiulei 20170825-->
+			<!--Call this function to get a value-->
+			<!--
+				@brief		得到metermgr管理
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="GetMetermgr">
+				<parameters>
+					<!--20170901,Modify the Tag error-->
+					<object name="metermgr"/>
+				</parameters>
+				<set name="metermgr" value="thisclass.m_metermgr"/>
+			</function>
+			
+			<!-- 
+				YY 20170831
+				tablewebsocket Get one device's TableManager's data
+				1) Get data from TableManager
+				2) Put data in parameter : json
+				parameter:
+							json :
+									type :	string
+									style :	out
+			-->
+			<function name="GetTableData">		
+				<parameters>				
+					<string name="json" />
+				</parameters>
+				<string name="jsondata" />
+				<function name="GetTableData" class="thisclass.m_tablemgr">
+					<parameters>
+						<string name="data"  out="context.jsondata"/>
+					</parameters>
+				</function>
+				<set name="json" value="context.jsondata.toString()"/>
+			</function>	
+			
+			
+			
+			<!--
+				@brief		清空流表
+				@auth 		qiulei
+				@date		2017/11/25
+				Input:
+				Output:
+			-->
+			<function name="ClearFlow">		
+				<log level="10">CDevice ClearFlow</log>				
+				<function name="ClearFlow_v150" class="thisclass.sshdevice">
+					<parameters>
+						<string name="ip" in="thisclass.m_peeripaddr.toString()"/>
+					</parameters>
+				</function>
+			</function>
+
+			<!--
+					@brief		reset keepalive
+					@auth 		Wang Kang (kingsalone@sina.com)
+					@date		2017/11/22
+			-->
+			<function name="ResetKeepAlive">
+				<log>###### CDevice ResetKeepAlive ######</log>
+				<set name="thisclass.m_requestcount" value="0"/>
+				<log><![CDATA[CDevice ResetKeepAlive m_requestcount= <%=thisclass.m_requestcount.toLong()%>]]></log>
+			</function>
+			
+			<!--
+					@brief		Get Request Count
+					@auth 		Wang Kang (kingsalone@sina.com)
+					@date		2017/11/22
+					Output:
+						@param outrequestcount   request count 
+			-->
+			<function name="GetRequestCount">
+				<parameters>
+					<long name="outrequestcount"/>
+				</parameters>
+				<log>###### CDevice GetRequestCount ######</log>
+				<set name="context.outrequestcount" value="thisclass.m_requestcount.toLong()"/>
+			</function>
+
+			<!--
+				@brief		send keep alive packet to switch
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/22
+			-->
+			<function name="OpenFlowKeepAliveDetect">
+				<string name="strjson"/>
+				<long name="onerequestcount"/>
+				<log>###### CDevice OpenFlowKeepAliveDetect ######</log>
+				
+				<reference variable="strjson">
+					<jsonbody><![CDATA[ 
+						{ "xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>" }
+					]]></jsonbody>
+				</reference>
+				<function name="Send_OFPT13_ECHO_REQUEST">
+					<parameters>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+					</parameters>
+				</function>
+					
+				<set name="thisclass.m_requestcount" value="thisclass.m_requestcount.toLong()+1"/>
+			</function>
+			<!--
+			/**********************************************************************
+			* 函数名称：GetMetaUi
+			* 功能描述：添加MetaUi
+			* 访问的表：无
+			* 修改的表：无
+			* 输入参数：无             
+			* 输出参数：无
+			* 返 回 值：void
+			* 其它说明：
+			* 修改日期      版本号  修改人      修改内容
+			* **********************************************************************
+			* 2017/12/29    V1.1    易建        创建
+			************************************************************************/
+			-->
+			<function name="GetMetaUi">		
+				<parameters>
+					<string name="memento"/>
+				</parameters>
+				<set name="memento" value="context.metaUi.getValue(context.m_datapathid.toString())"/>
+			</function>
+		</public>
+	</class>
+</starlang>

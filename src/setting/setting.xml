@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		setting.xml
+	@brief 		系统全局配置参数
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang>
+	<params name="GlobalSetting" global="true"/>
+	<function name="InitSetting">
+		<!--设置OpenFlow监听地址-->
+		<set name="GlobalSetting" paramname="openflowip" value="'0.0.0.0'"/>
+		<!--设置OpenFlow监听端口-->
+		<set name="GlobalSetting" paramname="openflowopenflowport" value="'6633'"/>
+		<!--设置OpenFlow协议类型-->
+		<set name="GlobalSetting" paramname="openflowprotocol" value="'tcp'"/>
+		<!--设置OpenFlow证书，当协议类型是ssh有用-->
+		<set name="GlobalSetting" paramname="openflowcerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<!--设置OpenFlow私有证书，当协议类型是ssh有用-->
+		<set name="GlobalSetting" paramname="openflowkeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<!--设置GUI监听地址-->
+		<set name="GlobalSetting" paramname="guiip" value="'0.0.0.0'"/>
+		<!--设置GUI监听端口-->
+		<set name="GlobalSetting" paramname="guiport" value="'9922'"/>
+		<!--设置GUI协议类型，HTTP/HTTPS-->
+		<set name="GlobalSetting" paramname="guiprotocol" value="'http'"/>
+		<!--设置GUI协议类型，当协议类型是HTTPS有用-->
+		<set name="GlobalSetting" paramname="guicerfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<!--设置GUI协议类型，当协议类型是HTTPS有用-->
+		<set name="GlobalSetting" paramname="guikeyfile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<set name="GlobalSetting" paramname="hosttimeout" value="10000"/>
+		<!--OpenFlow Ip Setting-->
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'openflowip'"/>			
+				<string name="id" in="'GlobalSetting::openflowip'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'0.0.0.0'"/>
+				<string name="defValue" in="'0.0.0.0'"/>	
+				<string name="desc" in="'OpenFlow Protocol Server Listen Ip Address'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'openflowopenflowport'"/>			
+				<string name="id" in="'GlobalSetting::openflowopenflowport'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'6633'"/>
+				<string name="defValue" in="'6633'"/>	
+				<string name="desc" in="'OpenFlow Protocol Server Listen Port'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'openflowprotocol'"/>			
+				<string name="id" in="'GlobalSetting::openflowprotocol'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'tcp'"/>
+				<string name="defValue" in="'tcp'"/>	
+				<string name="desc" in="'OpenFlow Protocol Type'"/>		
+			</parameters>
+		</function>
+		<!-- wangkang -->
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'openflowcerfile'"/>			
+				<string name="id" in="'GlobalSetting::openflowcerfile'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+				<string name="defValue" in="'/opt/staros.xyz/starcore/system/servercert.pem'"/>	
+				<string name="desc" in="'OpenFlow Protocol Server Certificate'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'openflowkeyfile'"/>			
+				<string name="id" in="'GlobalSetting::openflowkeyfile'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+				<string name="defValue" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>	
+				<string name="desc" in="'OpenFlow Protocol Server Private Key'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'guiip'"/>			
+				<string name="id" in="'GlobalSetting::guiip'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'0.0.0.0'"/>
+				<string name="defValue" in="'0.0.0.0'"/>	
+				<string name="desc" in="'OpenFlow Protocol Gui Ip Address'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'guiport'"/>			
+				<string name="id" in="'GlobalSetting::guiport'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'9922'"/>
+				<string name="defValue" in="'9922'"/>	
+				<string name="desc" in="'OpenFlow Protocol Gui Port'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'guiprotocol'"/>			
+				<string name="id" in="'GlobalSetting::guiprotocol'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'http'"/>
+				<string name="defValue" in="'http'"/>	
+				<string name="desc" in="'OpenFlow Protocol Gui Protocol'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'guicerfile'"/>			
+				<string name="id" in="'GlobalSetting::guicerfile'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+				<string name="defValue" in="'/opt/staros.xyz/starcore/system/servercert.pem'"/>	
+				<string name="desc" in="'OpenFlow Protocol Gui Certificate'"/>		
+			</parameters>
+		</function>
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'guikeyfile'"/>			
+				<string name="id" in="'GlobalSetting::guikeyfile'"/>
+				<string name="type" in="'string'"/>	
+				<string name="value" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+				<string name="defValue" in="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>	
+				<string name="desc" in="'OpenFlow Protocol Gui Private Key'"/>		
+			</parameters>
+		</function>
+	<!--Add Host Timeout-->
+		<function name="addSetting" class="gSettingsManager">
+			<parameters>
+				<string name="component" in="'GlobalSetting'"/>			
+				<string name="fqComponent" in="'staros.xyz.controller.starlang.GlobalSetting'"/>
+				<string name="prop" in="'hosttimeout'"/>			
+				<string name="id" in="'GlobalSetting::hosttimeout'"/>
+				<string name="type" in="'long'"/>	
+				<string name="value" in="'10000'"/>
+				<string name="defValue" in="'10000'"/>	
+				<string name="desc" in="'Host Timeout'"/>		
+			</parameters>
+		</function>
+	</function>
+</starlang>

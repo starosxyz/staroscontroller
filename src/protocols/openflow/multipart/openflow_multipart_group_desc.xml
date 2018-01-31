@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_multipart_group_desc.xml
+	@brief 		openflow multipart group desc
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief 		the request of openflow multipart group desc
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<function name="OpenFlowMultiPartGroupDescRequest">
+		<parameters>
+			<long name="xid"/>
+		</parameters>
+		<log>OpenFlowMultiPartGroupDescRequest</log>
+		<string name="strjson"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>",
+						"flags":"0"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP_DESC">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<!--
+		@brief 		the reply of openflow multipart group desc  
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<function name="OpenFlowMultiPartGroupDescReply">
+		<parameters>
+			<long name="xid"/>
+		</parameters>
+		<log>OpenFlowMultiPartGroupDescReply</log>
+		<string name="strjson"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>",
+						"groupdesclist":[
+							{
+								"type":"1",
+								"groupid":"1",
+								"bucketlist":[
+									{
+										"weight":"1",
+										"watchport":"1",
+										"watchgroup":"22",
+										"actions":[
+											{
+												"type":"25",
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"00:0c:29:58:ef:22"
+											},
+											{
+												"type":"0",
+												"outport":"0xfffffffd",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<!--
+		@brief 		the test request of openflow multipart group desc
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<function name="TestOpenFlowMultiPartGroupDescRequest">
+		<boolean name="isstop" value="true"/>
+		<long name="xid"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toString()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartGroupDescRequest">
+				<parameters>
+					<long name="xid" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+				<function>
+					<log><![CDATA[OFPT13_MULTIPART_REPLY.OFP13MP_GROUP_DESC=<%=event.getParam('eventdata').toString()%>]]></log>
+				</function>
+			</wait>
+		</function>
+	</function>
+	<!--
+		@brief 		the test reply of openflow multipart group desc
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<function name="TestOpenFlowMultiPartGroupDescReply">
+		<boolean name="isstop" value="true"/>
+		<long name="xid"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartGroupDescReply xid=<%=context.xid.toString()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartGroupDescReply">
+				<parameters>
+					<long name="xid" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+		</function>
+	</function>
+</starlang>

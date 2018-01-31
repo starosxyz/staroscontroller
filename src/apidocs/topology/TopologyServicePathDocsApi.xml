@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		TopologyServicePathDocsApi.xml
+	@brief 		定义路径
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/09/29
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<!--
+		@brief		添加路径
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
+	<function name="addPath">		
+		<function name="allTopology"/>			
+		<!--function name="postTopology"/-->
+		<function name="otherTopologymethods"/>
+	</function>
+
+	<!--
+		@brief		删除路径
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
+	<function name="removePath">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/topologyservice/topologys'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/topologyservice/topology'"/>			
+			</parameters>
+		</function>
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/topologyservice/topology/{formdevice}/{todevice}'"/>			
+			</parameters>
+		</function>
+	</function>
+
+	<!--
+		@brief		定义所有Topology
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
+	<function name="allTopology">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Returns all Topologys",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Topologys"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}				
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topologys'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<!--
+		@brief		其他请求路径
+		@auth 		qiulei
+		@date		2017/09/15
+		Input:
+		Output: 
+	-->
+	<function name="otherTopologymethods">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Returns one Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Get one topology by fromdevice & todevice",
+								"required": true						
+							},{
+								"name": "todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Get one topology by fromdevice & todevice",
+								"required": "true"
+							}
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Topology"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},					
+					
+					"delete": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Removes one Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Topology by fromdevice&todevice",
+								"required": "true"
+							},{
+								"name": "todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Topology by fromdevice&todevice",
+								"required": "true"
+							}
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/TopologyResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					
+					
+					"post": {
+						"tags": [
+							"topologyservice"
+						],
+						"summary": "Install a new Topology",
+						"description": "",
+						"parameters": [
+							{
+								"name": "fromdevice",
+								"in": "path",
+								"type": "string",
+								"description": "Create one Topology by fromdevice",
+								"required": "true"
+							},{
+								"name": "todevice",
+								"in": "path",
+								"type": "string",
+								"description": "Create one Topology by todevice",
+								"required": "true"
+							},{
+								"name": "stream",
+								"in": "body",
+								"type": "string",
+								"description": "Create one topology",
+								"required": true,
+								"schema": {
+									"$ref": "#/definitions/Topology"
+								}					
+							}
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/TopologyResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<!--function name="postTopology">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/topologyservice/topology/{fromdevice}/{todevice}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function-->
+</starlang>

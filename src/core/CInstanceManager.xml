@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CInstanceManager.xml
+	@brief 		instance manager
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@class      CInstance
+		@brief 		The instance property is saved in the CInstance class
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<class name="CInstance">
+		<private>
+			<string name="m_id" />
+			<string name="m_ip" />
+			<boolean name="m_online" />
+			<boolean name="m_ready"/>
+			<boolean name="m_uiAttached"/>
+			<string name="m_labels"/>
+		</private>
+		<public>
+			<function name="CInstance">
+				<parameters>
+					<string name="id"/>			
+					<string name="ip" />
+				</parameters>
+				<set name="thisclass.m_id" value="context.id.toString()"/>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+				<set name="thisclass.m_online" value="true"/>
+				<set name="thisclass.m_ready" value="true"/>
+				<set name="thisclass.m_uiAttached" value="true"/>
+				<set name="thisclass.m_labels" value="context.id.toString()"/>
+			</function>
+			<!--
+				@brief		json data of add instance 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Output:
+					@param jsonstring   json data of add instance
+			-->
+			<function name="ToJson">
+				<parameters>
+					<string name="jsonstring"/>			
+				</parameters>
+				<string name="values"/>
+				<reference variable="values">
+					<jsonbody>
+					<![CDATA[
+						{
+							"event":"addInstance",
+							"payload":
+								{
+									"id":"<%=thisclass.m_id.toString()%>",
+									"ip":"<%=thisclass.m_ip.toString()%>",
+									"online":<%=thisclass.m_online.toString()%>,
+									"ready":<%=thisclass.m_ready.toString()%>,
+									"uiAttached":<%=thisclass.m_uiAttached.toString()%>,
+									"switches":1,
+									"labels":[
+										"<%=thisclass.m_uiAttached.toString()%>",
+										"<%=thisclass.m_uiAttached.toString()%>"
+									]
+								}
+						}
+					]]>
+					</jsonbody>
+				</reference>
+				<set name="jsonstring" value="context.values.toString()"/>
+			</function>
+		</public>
+	</class>
+	<!--
+		@class      CInstanceManager
+		@brief 		instance manager
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<class name="CInstanceManager">
+		<private>
+			<hashmap name="m_instanceContainer"  keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<function name="CInstanceManager">
+				<function name="addInstance">
+					<parameters>
+						<string name="id"  in="'127.0.0.1'"/>			
+						<string name="ip"  in="'127.0.0.1'"/>
+					</parameters>
+				</function>
+			</function>
+			<!--
+				@brief		add instance 
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param id    instance id
+					@param ip    locall ip
+			-->
+			<function name="addInstance">
+				<parameters>
+					<string name="id" />			
+					<string name="ip" />
+				</parameters>
+				<object name="instance"/>
+				<new name="instance" class="CInstance">
+					<parameters>
+						<string name="id"  in="context.id.toString()"/>			
+						<string name="ip"  in="context.ip.toString()"/>
+					</parameters>
+				</new>
+				<insert name="m_instanceContainer" key="context.id.toString()" value="context.instance"/>
+			</function>
+			<!--
+				@brief		add instance request
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param transportid   transport id   
+			-->
+			<function name="AddInstanceRequest">
+				<parameters>
+					<string name="transportid" />						
+				</parameters>
+				<object name="instance" />
+				<string name="instancejson" />
+				<pair name="oneinstancepair"  keytype="string" valuetype="object"/>
+				<for var="oneinstancepair" in="context.m_instanceContainer">
+					<function>			
+						<set name="instance" value="context.oneinstancepair.second()"/>
+						<if cond="context.instance.ptr == null">
+							<then>
+								<log>instance is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="ToJson" class="instance">
+							<parameters>
+								<string name="jsonstring"  out="instancejson"/>			
+							</parameters>
+						</function>
+					</function>
+				</for>
+				<websocket name="restfulserver" method="SendText" transportid="context.transportid.toString()">
+					<jsonsrc src="instancejson"/>
+				</websocket>
+			</function>
+		</public>
+	</class>
+</starlang>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="newSession"/>
+	<logconfig dest="stdout"/>
+	<function name="test">
+		<function>
+			<log>test</log>
+		</function>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<container name="testcontainer" type="hashmap" keytype="string" valuetype="string"/>
+			<variable name="testobj" type="class"/>
+			<if cond="context.testcontainer==null">
+				<then>
+					<function>
+						<log>context.testcontainer==null</log>
+					</function>
+				</then>
+				<else>
+					<function>
+						<log>context.testcontainer!=null</log>
+					</function>
+				</else>
+			</if>
+			<if cond="context.testobj==null">
+				<then>
+					<function>
+						<log>context.testobj==null</log>
+					</function>
+				</then>
+				<else>
+					<function>
+						<log>context.testobj!=null</log>
+					</function>
+				</else>
+			</if>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

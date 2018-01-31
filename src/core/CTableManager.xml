@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CTableManager.xml
+	@brief 		tablemanager
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CTable">
+		<private>
+			<string name="m_tableid"/>
+			<string name="m_activecount"/>
+			<string name="m_lookupcount"/>
+			<string name="m_matchcount"/>
+		</private>
+		<public>
+			<function name="CTable">
+				<parameters>
+					<string name="tableid"/>
+					<string name="activecount"/>
+					<string name="lookupcount"/>
+					<string name="matchcount"/>
+				</parameters>
+				<set name="thisclass.m_tableid" value="context.tableid.toString()"/>
+				<set name="thisclass.m_activecount" value="context.activecount.toString()"/>
+				<set name="thisclass.m_lookupcount" value="context.lookupcount.toString()"/>
+				<set name="thisclass.m_matchcount" value="context.matchcount.toString()"/>
+			</function>
+			<!--
+				@brief		更新table信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tableid 	tableid
+					@param activecount 	动作个数
+					@param lookupcount 	查找个数
+					@param matchcount 	匹配个数
+				Output:					
+			-->
+			<function name="UpdateTableInfo">
+				<parameters>
+					<string name="tableid"/>
+					<string name="activecount"/>
+					<string name="lookupcount"/>
+					<string name="matchcount"/>
+				</parameters>
+				<set name="thisclass.m_tableid" value="context.tableid.toString()"/>
+				<set name="thisclass.m_activecount" value="context.activecount.toString()"/>
+				<set name="thisclass.m_lookupcount" value="context.lookupcount.toString()"/>
+				<set name="thisclass.m_matchcount" value="context.matchcount.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CTableManager">
+		<private>
+			<hashmap name="tableContainer" keytype="string" valuetype="object"/>
+			<string name="m_transportid"/>
+			<string name="m_tablejson"/>
+		</private>
+		<public>
+
+			<function name="CTableManager">
+				<parameters>
+					<string name="transportid"/>
+				</parameters>	
+				<log>CTableManager is create</log>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+			</function>
+			<!--
+				@brief		更新table信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tablestatestring 	table状态json信息
+				Output:					
+			-->
+			<function name="UpdateTableState">
+				<parameters>
+					<string name="tablestatestring"/>
+				</parameters>
+				
+				<string name="tableid"/>
+				<string name="activecount"/>
+				<string name="lookupcount"/>
+				<string name="matchcount"/>
+				<object name="table"/>
+				<script><![CDATA[
+						var info = JSON.parse(context.tablestatestring.toString());
+						
+						context.tableid.setValue(info.tableid);
+						context.activecount.setValue(info.activecount);
+
+						context.lookupcount.setValue(info.lookupcount);
+						context.matchcount.setValue(info.matchedcount);
+					]]></script>
+				<if cond="thisclass.tableContainer.hasValue(context.tableid.toString())==false">
+					<then>
+						<new name="table" class="CTable">
+							<parameters>
+								<string name="tableid" in="context.tableid.toString()"/>
+								<string name="activecount" in="context.activecount.toString()"/>
+								<string name="lookupcount" in="context.lookupcount.toString()"/>
+								<string name="matchcount" in="context.matchcount.toString()" />
+							</parameters>
+						</new>
+						<insert name="tableContainer" key="context.tableid.toString()" value="context.table"/>
+					</then>
+					<else>
+						<set name="table" value="thisclass.tableContainer.getValue(context.tableid.toString())"/>
+						<if cond="context.table == null">
+							<then>
+								<log>table is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="UpdateTableInfo" class="context.table">
+							<parameters>
+								<string name="tableid" in="context.tableid.toString()"/>
+								<string name="activecount" in="context.activecount.toString()"/>
+								<string name="lookupcount" in="context.lookupcount.toString()"/>
+								<string name="matchcount" in="context.matchcount.toString()" />
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</function>
+			<!--
+				@brief		打印tableid
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:					
+			-->
+			<function name="dumpinfo">
+				<string name="tables"/>
+				<pair name="onetableContainer" keytype="string" valuetype="object"/>
+				<for var="onetableContainer" in="context.tableContainer">
+					<set name="tables" value="context.onetableContainer.first()"/>
+					<log><![CDATA[dumpinfo: tableid=<%=context.tables.toString()%>]]></log>
+				</for>
+			</function>
+			<!--
+				@brief		发送table请求
+				@auth 		YY
+				@date		2017/11/27
+				Input:					
+				Output:					
+			-->
+			<function name="SendTableRequest">
+				<long name="xid"/>							
+				<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<list name="tablestatslist" valuetype="string"/>
+				<string name="tablestatestring"/>
+				<function name="OpenFlowMultiPartTableRequest">
+					<parameters>
+						<long name="xid" in="context.xid.toLong()"/>
+						<string name="transportid" in="thisclass.m_transportid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<!--
+				@brief		设置tablejson信息
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param tablejson 	tablejson信息
+				Output:					
+			-->
+			<function name="SetTableJson">
+				<parameters>
+					<string name="tablejson"/>
+				</parameters>
+				<set name="thisclass.m_tablejson" value="context.tablejson.toString()"/>
+			</function>			
+			<!--
+				@brief		return TableManager's data
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param data 	tablejson信息
+				Output:					
+			-->
+			<function name="GetTableData">
+				<parameters>
+					<string name="data"/>
+				</parameters>				
+				<string name="outjsonstring"/>
+				<script><![CDATA[
+					var payload = new Object();
+					var tablelist = JSON.parse(thisclass.m_tablejson.toString());
+					
+					var json = new Object();
+					json.event = "tableDataResponse";
+					var twoobject = new Object();
+					twoobject.no_rows_msg = "No tables found";
+					payload.tables = tablelist.tablestatslist;
+					payload.annots = twoobject;
+					json.payload = payload;
+					var strjson=JSON.stringify(json);												
+					context.outjsonstring.setValue(strjson);								
+				]]></script>				
+				<set name="data" value="context.outjsonstring.toString()"/>
+			</function>
+		</public>
+	</class>
+</starlang>

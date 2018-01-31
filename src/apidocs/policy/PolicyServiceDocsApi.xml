@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		PolicyServiceDocsApi.xml
+	@brief 		添加topologyservice和删除topologyservice
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/01/08
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/policy/PolicyAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/policy/PolicyServicePathDocsApi.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/policy/PolicyAPIHandler.xml"/>
+	
+	<!--
+		@brief		添加 Policy Tag
+		@auth 		qiulei
+		@date		2018/01/08
+		Input:
+		Output:
+		该方法在F:\staros-controller-1.1.0\src\apidocs\apidocs.xml中被调用
+	-->
+	<function name="AddDocsAPIPolicy">
+		<string name="tag"/>
+		<reference variable="tag">
+			<jsonbody><![CDATA[
+				{
+					"name": "policy",
+					"description": "Query and Manage Policy"
+				}
+			]]></jsonbody>
+		</reference>
+		<log level="100"><![CDATA[----PolicyServiceDocsApi.xml 48行,tag= <%=context.tag.toString()%>]]></log>
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="addTag" class="APIDocsService">
+			<parameters>
+				<string name="tag" in="context.tag.toString()"/>
+			</parameters>
+		</function>
+	
+		<function name="policy_RegistDefinition"/>
+		
+		<function name="policy_addPath"/>
+		
+		<!--to register api handler-->
+		<!--调用staros-controller-1.1.0\src\apidocs\Policy\PolicyAPIHandler.xml中的方法-->
+		<function name="policy_RegisterHandler"/>
+	</function>
+	
+	<!--
+		@brief		删除 Policy Tag
+		@auth 		qiulei
+		@date		2018/01/08
+		Input:
+		Output: 
+		staros-controller-1.1.0\src\apidocs\Policy\PolicyServiceDocsApi.xml
+		该方法在F:\staros-controller-1.1.0\src\apidocs\apidocs.xml中被调用
+	-->
+	<function name="RemoveDocsAPIPolicy">
+	
+		<string name="tag"/>
+		<reference variable="tag">
+			<jsonbody><![CDATA[
+				{
+					"name": "policy",
+					"description": "Query and Manage Policy"
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="removeTag" class="APIDocsService">
+			<parameters>
+				<string name="tag" in="context.tag.toString()"/>
+			</parameters>
+		</function>
+	
+		<function name="policy_DestroyDefinition"/>
+		
+		<function name="policy_removePath"/>
+	</function>
+</starlang>

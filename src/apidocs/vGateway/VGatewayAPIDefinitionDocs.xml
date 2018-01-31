@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		VGatewayAPIDefinitionDocs.xml
+	@brief 		定义 VGateway 数据 vGateway
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/01/10
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--定义：VGateways-->
+	<!--
+		@brief		定义 VGateways
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="AddDefinitionVGatewaysData">
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
+
+		<set name="definitionname" value="'VGateways'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+					"type": "object",
+					"title": "vGateways",
+					"required": [
+						"vGateways",
+						"resultCode",
+						"resultDesc"
+					],
+					"properties": {
+						"vGateways": {
+							"type": "array",
+							"xml": {
+								"name": "vGateways",
+								"wrapped": true
+							},
+							"items": {
+								"type": "object",
+								"title": "vGateway",
+								"required": [
+									"ip",
+									"netmask",
+									"content"
+								],
+								"properties": {
+									"ip": {
+												"type": "string",
+												"example": "192.168.137.128"
+											},
+									"netmask": {
+												"type": "string",
+												"example": "255.255.255.0"
+											},
+									"vmac": {
+												"type": "string",
+												"example": "11:12:13:14:15:16"
+											}
+								}
+							}
+						},
+						"resultCode": {
+							"type": "string",
+							"example": "1"
+						},
+						"resultDesc": {
+							"type": "string",
+							"example": "ok"
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<string name="ip" />	
+		<string name="netmask"/>
+		<string name="vmac"/>
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--
+		@brief		删除VGateways
+		@auth 		qiulei
+		@date		2017/09/29
+		Input:
+		Output: 
+	-->
+	<function name="RemoveDefinitionVGatewaysData">
+		<string name="definitionname"/>
+		
+		<set name="definitionname" value="'VGateways'" />
+
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<!--
+		@brief		定义 vGateway
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="AddDefinitionVGatewayData">
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
+		
+		<set name="definitionname" value="'VGateway'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "vGateway",
+					"required": [
+						"ip",
+						"netmask",
+						"content"
+					],
+					"properties": {
+						"ip": {
+									"type": "string",
+									"example": "192.168.137.128"
+								},
+						"netmask": {
+									"type": "string",
+									"example": "255.255.255.0"
+								},
+						"vmac": {
+									"type": "string",
+									"example": "11:12:13:14:15:16"
+								}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180110-->
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--删除：Topology-->
+	<!--
+		@brief		删除 VGateway
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="RemovePutRequestDocsAPIVGateway">
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
+		
+		<set name="definitionname" value="'VGateway'" />
+		
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+	<!--定义 VGatewayResult start-->
+	<!--
+		@brief		定义:VGatewayResult
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="AddDefinitionVGatewayResultData">
+		<string name="definitionname"/>
+		<string name="definitioncontent"/>
+
+		<set name="definitionname" value="'VGatewayResult'" />
+		
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[ 
+				{
+		            "type": "object",
+		            "title": "result",
+		            "required": [
+		                "result"
+		            ],
+		            "properties": {
+		                "result": {
+		                    "type": "object",
+		                    "title": "result",
+		                    "required": [
+						        "code",
+						        "description"
+		                    ],
+		                    "properties": {
+		                        "code": {
+		                            "type": "string",
+		                            "example": "0"
+		                        },
+		                        "description": {
+		                            "type": "string",
+		                            "example": "ok"
+		                        }
+		                    }
+		                }
+		            }
+				}
+			]]></jsonbody>
+		</reference>
+
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180109-->
+		<function name="addDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+				<string name="definitioncontent" in="context.definitioncontent.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+
+	<!--
+		@brief		删除 VGatewayResult
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="RemoveDefinitionVGatewayResultData">
+		
+		<string name="definitionname"/>
+
+		<set name="definitionname" value="'VGatewayResult'" />
+
+		<!--调用staros-controller-1.1.0\src\providers\CAPIDocsService.xml类中的方法,qiulei 20180110-->
+		<function name="removeDefinition" class="APIDocsService">
+			<parameters>
+				<string name="definitionname" in="context.definitionname.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	<!--定义TopologyResult end-->
+
+
+
+	<!--
+		@brief		注册
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="vGateway_RegistDefinition">
+		<function name="AddDefinitionVGatewaysData"/>
+		<function name="AddDefinitionVGatewayData"/>
+		<function name="AddDefinitionVGatewayResultData"/>
+	</function>
+	
+	<!--
+		@brief		删除
+		@auth 		qiulei
+		@date		2018/01/10
+		Input:
+		Output: 
+	-->
+	<function name="vGateway_DestroyDefinition">
+		<function name="RemoveDefinitionVGatewaysData"/>
+		<function name="RemovePutRequestDocsAPIVGateway"/>
+		<function name="RemoveDefinitionVGatewayResultData"/>
+	</function>
+</starlang>

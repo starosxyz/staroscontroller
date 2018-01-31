@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<class name="testclass">
+		<private>
+			<variable name="teststring" type="string" value="'1'"/>
+		</private>
+		<public>
+			<function name="testclass">
+				<parameters>
+					<parameter name="stringv" type="string"/>
+				</parameters>
+				<set name="thisclass.teststring" value="context.stringv.toString()"/>
+			</function>
+			<function name="TestFun">
+				<log><![CDATA[TestFun <%=thisclass.teststring.toString()%>]]> </log>
+			</function>
+		</public>
+	</class>
+	<container name="listout" type="hashmap" keytype="string" valuetype="class"/>
+	<logconfig dest="stdout"/>
+	<container name="TestHashoutParam" type="hashmap" keytype="string" valuetype="class"/>
+	<container name="TestHashContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+	<container name="TestLongHashContainer" type="hashmap" keytype="long" valuetype="string"/>
+	<function name="TestParamList">
+		<parameters>
+			<parameter name="listparam" type="hashmap"/>
+		</parameters>
+		<container name="listcpair" type="pair" keytype="string" valuetype="class"/>
+		<variable name="teststring" type="string" value="'1'"/>
+		<variable name="testlong" type="long" value="1"/>
+		<set name="TestHashoutParam" value="context.listparam"/>
+		<for var="listcpair" in="context.TestHashoutParam">
+			<function>
+				<log><![CDATA[TestParamList first <%=context.listcpair.first()%>]]> </log>
+				<log><![CDATA[TestParamList second <%=context.listcpair.second()%>]]> </log>
+			</function>
+		</for>
+		<log><![CDATA[TestParamList size <%=context.TestHashoutParam.size()%>]]> </log>
+		<if cond="context.TestHashoutParam.hasValue(context.teststring.toString())==true">
+			<then>
+				<function>
+					<log>TestHashoutParam has value</log>
+				</function>
+			</then>
+		</if>
+	</function>
+	<function name="TestOutParamList">
+		<parameters>
+			<parameter name="listparam" type="hashmap"/>
+		</parameters>
+		<variable name="object" type="class"/>
+		<new name="object" class="testclass">
+			<parameters>
+				<parameter name="stringv" type="string" in="'22222222222222'"/>
+			</parameters>
+		</new>
+		<insert name="listparam" key="'1'" value="context.object"/>
+		<new name="object" class="testclass">
+			<parameters>
+				<parameter name="stringv" type="string" in="'333333333333333'"/>
+			</parameters>
+		</new>
+		<insert name="listparam" key="'2'" value="context.object"/>
+	</function>
+	<function name="starttest">
+			<container name="listc" type="hashmap" keytype="string" valuetype="class"/>
+			<container name="listcpair" type="pair" keytype="string" valuetype="class"/>
+			<log>session.startup</log>
+			<variable name="object" type="class"/>
+			<!--while cond="context.bstop.toBoolean()"-->
+				<function>
+					<new name="object" class="testclass">
+						<parameters>
+							<parameter name="stringv" type="string" in="'string1'"/>
+						</parameters>
+					</new>
+					<insert name="listc" key="'1'" value="context.object"/>
+					<new name="object" class="testclass">
+						<parameters>
+							<parameter name="stringv" type="string" in="'string2'"/>
+						</parameters>
+					</new>
+					<insert name="listc" key="'2'" value="context.object"/>
+					<function>	
+						<log><![CDATA[counter <%=context.listc.size()%>]]> </log>
+						<for var="listcpair" in="context.listc">
+							<function>
+								<log><![CDATA[first <%=context.listcpair.first()%>]]> </log>
+								<set name="object" value="context.listcpair.second()"/>
+								<function name="TestFun" class="object"/>
+								<log><![CDATA[second <%=context.listcpair.second()%>]]> </log>
+							</function>
+						</for>
+						<function name="TestParamList">
+							<parameters>
+								<parameter name="listparam" type="hashmap" in="context.listc"/>
+							</parameters>
+						</function>
+					</function>
+				</function>
+			<!--/while-->
+			<function name="TestOutParamList">
+				<parameters>
+				  <parameter name="listparam" type="hashmap" out="context.listout"/>
+				</parameters>
+			</function>
+			<for var="listcpair" in="context.listout">
+				<function>
+					<log><![CDATA[first <%=context.listcpair.first()%>]]> </log>
+					<log><![CDATA[second <%=context.listcpair.second()%>]]> </log>
+				</function>
+			</for>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="starttest"/>
+		</onevent>
+	</events>
+</starlang>

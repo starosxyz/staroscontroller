@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSetting.xml
+	@brief 		设置和配置
+	@version 	1.1.0
+	@auth 		Yi Jian
+	@date		2017-08-23
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+<!--
+	Author:
+			Yi Jian
+	Date:
+			2017-08-23
+	Copyright: 
+			Nanjing StarOS Inc. All rights reserved.
+-->
+	<class name="CSetting">
+		<private>
+			<string name="m_component"  />
+			<string name="m_fqComponent"  />
+			<string name="m_prop"  />
+			<string name="m_id"  />
+			<string name="m_type" />
+			<string name="m_value" />
+			<string name="m_defValue" />
+			<string name="m_desc" />
+		</private>
+		<public>
+			<function name="CSetting">
+				<parameters>
+					<string name="component" />			
+					<string name="fqComponent" />
+					<string name="prop" />			
+					<string name="id" />
+					<string name="type"/>	
+					<string name="value" />
+					<string name="defValue" />	
+					<string name="desc" />	
+				</parameters>
+				<set name="thisclass.m_component" value="context.component.toString()"/>
+				<set name="thisclass.m_fqComponent" value="context.fqComponent.toString()"/>
+				<set name="thisclass.m_prop" value="context.prop.toString()"/>
+				<set name="thisclass.m_id" value="context.id.toString()"/>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_value" value="context.value.toString()"/>
+				<set name="thisclass.m_defValue" value="context.defValue.toString()"/>
+				<set name="thisclass.m_desc" value="context.desc.toString()"/>
+			</function>
+			<function name="GetSettingJson">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				<string name="values" />
+				<reference variable="values">
+					<jsonbody><![CDATA[ 
+						{
+							"component":"<%=thisclass.m_component.toString()%>",
+							"fqComponent":"<%=thisclass.m_fqComponent.toString()%>",
+							"prop":"<%=thisclass.m_prop.toString()%>",
+							"id":"<%=thisclass.m_id.toString()%>",
+							"type":"<%=thisclass.m_type.toString()%>",
+							"value":"<%=thisclass.m_value.toString()%>",
+							"defValue":"<%=thisclass.m_defValue.toString()%>",
+							"desc":"<%=thisclass.m_desc.toString()%>"
+						}
+					]]></jsonbody>
+				</reference>
+				<set name="outjson" value="context.values.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CSettingsManager">
+		<private>
+			<hashmap name="settingContainer"  keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<function name="CSettingsManager">
+				<log>CSettingsManager is create</log>
+			</function>
+			<function name="addSetting">
+				<parameters>
+					<string name="component" />			
+					<string name="fqComponent" />
+					<string name="prop" />			
+					<string name="id" />
+					<string name="type" />	
+					<string name="value" />
+					<string name="defValue" />	
+					<string name="desc" />		
+				</parameters>
+				<object name="settingobj"  />
+				<new name="settingobj" class="CSetting">
+					<parameters>
+						<string name="component"  in="context.component.toString()"/>			
+						<string name="fqComponent"  in="context.fqComponent.toString()"/>
+						<string name="prop"  in="context.prop.toString()"/>			
+						<string name="id"  in="context.id.toString()"/>
+						<string name="type"  in="context.type.toString()"/>	
+						<string name="value"  in="context.value.toString()"/>
+						<string name="defValue"  in="context.defValue.toString()"/>	
+						<string name="desc"  in="context.desc.toString()"/>		
+					</parameters>
+				</new>
+				<insert name="settingContainer" key="context.id.toString()" value="context.settingobj"/>
+			</function>
+			<function name="GetAllSettingJson">
+				<parameters>
+					<string name="outjson" />
+				</parameters>
+				<object name="settingobj" />
+				<list name="jsonlist"  valuetype="string"/>
+				<string name="strjson"/>
+				<pair name="onesettingContainer" keytype="string" valuetype="object"/>
+				<for var="onesettingContainer" in="context.settingContainer">
+					<function>
+						<set name="settingobj" value="context.onesettingContainer.second()"/>
+						<if cond="context.settingobj.ptr == null">
+							<then>
+								<log>settingobj is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetSettingJson" class="context.settingobj">
+							<parameters>
+								<string name="outjson"  out="context.strjson"/>
+							</parameters>
+							</function>
+						<insert name="jsonlist" value="context.strjson.toString()"/>
+					</function>
+				</for>
+				<script><![CDATA[
+					var portsArray=new Array(); 
+					var firststring=context.jsonlist.getFirst();
+					while(firststring != null)
+					{
+						//context.print(i);			
+						var port = firststring;	
+						var info = JSON.parse(port);						
+						portsArray.push(info);
+						firststring = context.jsonlist.getNext();
+					}
+					var strjson=JSON.stringify(portsArray);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

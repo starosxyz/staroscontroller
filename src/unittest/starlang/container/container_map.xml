@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<container name="listout" type="hashmap" keytype="long" valuetype="string"/>
+	<logconfig dest="stdout"/>
+	<container name="TestHashoutParam" type="hashmap" keytype="string" valuetype="string"/>
+	<container name="TestHashContainer" type="hashmap" keytype="string" valuetype="hashmap"/>
+	<container name="TestLongHashContainer" type="hashmap" keytype="long" valuetype="string"/>
+	<function name="TestParamList">
+		<parameters>
+			<parameter name="listparam" type="hashmap"/>
+		</parameters>
+		<variable name="teststring" type="string" value="'1'"/>
+		<variable name="testlong" type="long" value="1"/>
+		<set name="TestHashoutParam" value="context.listparam"/>
+		<for var="j" from="0" to="context.TestHashoutParam.size()-1">
+			<function>
+				<log><![CDATA[TestParamList <%=context.TestHashoutParam.getValueByIndex(context.j.toLong()).toString()%>]]> </log>
+			</function>
+		</for>
+		<insert name="TestHashContainer" key="context.teststring.toString()" value="context.listparam"/>
+		<insert name="TestLongHashContainer" key="1" value="context.teststring.toString()"/>
+		<log><![CDATA[TestHashContainer size <%=context.TestHashContainer.size()%>]]> </log>
+		<if cond="context.TestHashContainer.hasValue(context.teststring.toString())==true">
+			<then>
+				<function>
+					<log>TestHashContainer has value</log>
+				</function>
+			</then>
+		</if>
+		<if cond="context.TestLongHashContainer.hasValue(context.testlong.toLong())==true">
+			<then>
+				<function>
+					<log>TestLongHashContainer has value</log>
+				</function>
+			</then>
+			<else>
+				<function>
+					<log>TestLongHashContainer has not the value</log>
+				</function>
+			</else>
+		</if>
+	</function>
+	<function name="TestOutParamList">
+		<parameters>
+			<parameter name="listparam" type="hashmap"/>
+		</parameters>
+		<insert name="listparam" key="'1'" value="'asdfs'"/>
+		<insert name="listparam" key="'1'" value="'ssss'"/>
+		<insert name="listparam" key="'1'" value="'strffffing3'"/>
+		<insert name="listparam" key="'1'" value="'44444'"/>
+	</function>
+	<function name="starttest">
+			<variable name="bstop" type="boolean" value="false"/>
+			<variable name="confAppSession"/>
+			<container name="listc" type="hashmap" keytype="string" valuetype="string"/>
+			<timer method="StartTimer" event="testtimer" timeout="'1000'"/>
+			<log>session.startup</log>
+			<!--while cond="context.bstop.toBoolean()"-->
+				<function>
+					<insert name="listc" key="'1'" value="'string1'"/>
+					<insert name="listc" key="'2'" value="'string2'"/>
+					<insert name="listc" key="'3'" value="'string3'"/>
+					<insert name="listc" key="'4'" value="'string4'"/>
+					<function>
+						<script>
+							<![CDATA[
+								context.listc.addValue('auxiliaryid', 'auxiliaryid');
+								context.listc.addValue('buffers', 'buffers');
+								context.listc.addValue('capabilities', 'capabilities');
+								context.listc.addValue('datapathid', 'datapathid');
+								context.listc.addValue('tables', 'tables');
+							]]>
+						</script>	
+						<log><![CDATA[counter <%=context.listc.size()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(0).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(1).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(2).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(3).toString()%>]]> </log>
+						<log><![CDATA[counter <%=context.listc.getValueByIndex(4).toString()%>]]> </log>
+						<for var="i" from="0" to="context.listc.size()-1">
+							<function>
+								<log><![CDATA[counter <%=context.listc.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+							</function>
+						</for>
+						<function name="TestParamList">
+							<parameters>
+								<parameter name="listparam" type="hashmap" in="context.listc"/>
+							</parameters>
+						</function>
+					</function>
+				</function>
+			<!--/while-->
+			<function name="TestOutParamList">
+				<parameters>
+				  <parameter name="listparam" type="hashmap" out="context.listout"/>
+				</parameters>
+			</function>
+			<for var="i" from="0" to="context.listout.size()-1">
+				<function>
+					<log><![CDATA[listout <%=context.listout.getValueByIndex(context.i.toLong()).toString()%>]]> </log>
+				</function>
+			</for>
+	</function>
+	<events>
+		<onevent event="session.startup">
+			<function name="starttest"/>
+		</onevent>
+	</events>
+</starlang>

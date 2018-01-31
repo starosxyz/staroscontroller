@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newbundleid" type="long"/>
+	<variable name="globalstring" type="string" value="'11111'" global="true"/>
+	<variable name="testcalss" type="class"  global="true"/>
+	<function name="testFunction">
+		<log>testFunction2</log>
+	</function>
+	<class name="TestClass">
+		<public>
+			<function name="TestClass">
+				<log>testclass default</log>
+			</function>
+			<function name="test">
+				<log>testclass</log>
+			</function>
+		</public>
+	</class>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+			  <new name="testcalss" class="TestClass"/>
+              <set name="newbundleid" value="context.newBundleId()"/>
+              <createbundle bundleid="newbundleid" src="/root/localsvn/starlang-1.1.0/build/starlang_debug-1.1.0/unittest/bundleapp/session_2.xml"/>
+			  <function name="testFunction"/>
+			  <destroybundle bundleid="newbundleid"/>
+			</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+			<function>
+				<log>bundleapp.ONSTART</log>
+				<log><![CDATA[ session.ONSTART eventname= <%=event.getName()%>]]></log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

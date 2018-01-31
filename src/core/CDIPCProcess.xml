@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CDIPCProcess.xml
+	@brief 		DIPC进程管理
+	@version 	1.1.0
+	@auth 		yijian (yijian@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<events>
+		<onevent event="AddAppEvent">
+		<string name="keys"/>
+		<string name="values"/>
+		<set name="keys" value="event.getParam('processname').toString()"/>
+		<reference variable="values">
+				<jsonbody><![CDATA[ 
+					{
+						"state":"ACTIVE",
+						"_iconid_state":"active",
+						"id":"<%=event.getParam('processname').toString()%>",
+						"icon":"org.onosproject.drivers",
+						"version":"<%=event.getParam('Version').toString()%>",
+						"category":"<%=event.getParam('Category').toString()%>",
+						"origin":"<%=event.getParam('Origin').toString()%>",
+						"title":"<%=event.getParam('Title').toString()%>",
+						"desc":"<%=event.getParam('Desc').toString()%>",
+						"url":"<%=event.getParam('URL').toString()%>",
+						"readme":"",
+						"role":"",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+				]]></jsonbody>
+		</reference>
+			<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+		
+			<function>
+				<log>AddAppEvent</log>
+			</function>
+
+		</onevent>
+		<onevent event="AppDeactiveEvent">
+			<remove name="appsmanager" key="event.getParam('processname').toString()"/>
+			<string name="keys"/>
+			<string name="values"/>
+			<set name="keys" value="event.getParam('processname').toString()"/>
+			<reference variable="values">
+				<jsonbody><![CDATA[ 
+						{
+							"state":"INSTALLED",
+							"_iconid_state":"appInactive",
+							"id":"<%=event.getParam('processname').toString()%>",
+							"icon":"org.onosproject.drivers",
+							"version":"<%=event.getParam('Version').toString()%>",
+							"category":"<%=event.getParam('Category').toString()%>",
+							"origin":"<%=event.getParam('Origin').toString()%>",
+							"title":"<%=event.getParam('Title').toString()%>",
+							"desc":"<%=event.getParam('Desc').toString()%>",
+							"url":"<%=event.getParam('URL').toString()%>",
+							"readme":"",
+							"role":"",
+							"required_apps":[],
+							"features":[],
+							"permissions":[]
+						}
+				]]></jsonbody>
+			</reference>
+			<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+			  <function>
+				<log>AppDeactiveEvent</log>
+			  </function>
+		</onevent>
+		<!--Session Shutdown-->
+		<onevent event="AppActiveEvent">
+		<remove name="appsmanager" key="event.getParam('processname').toString()"/>
+		<string name="keys"/>
+		<string name="values"/>
+		<set name="keys" value="event.getParam('processname').toString()"/>
+		<reference variable="values">
+			<jsonbody><![CDATA[ 
+					{
+						"state":"ACTIVE",
+						"_iconid_state":"active",
+						"id":"<%=event.getParam('processname').toString()%>",
+						"icon":"org.onosproject.drivers",
+						"version":"<%=event.getParam('Version').toString()%>",
+						"category":"<%=event.getParam('Category').toString()%>",
+						"origin":"<%=event.getParam('Origin').toString()%>",
+						"title":"<%=event.getParam('Title').toString()%>",
+						"desc":"<%=event.getParam('Desc').toString()%>",
+						"url":"<%=event.getParam('URL').toString()%>",
+						"readme":"",
+						"role":"",
+						"required_apps":[],
+						"features":[],
+						"permissions":[]
+					}
+			]]></jsonbody>
+		</reference>
+		<insert name="appsmanager" key="context.keys.toString()" value="context.values.toString()"/>
+		  <function>
+			<log>AppActiveEvent</log>
+		  </function>
+		</onevent>
+	</events>
+</starlang>

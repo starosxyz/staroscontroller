@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		keepalivePathDocsApi.xml
+	@brief 		apiUI
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/01/06
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<function name="addPath_keepalive">
+		<function name="getRuntimePanel"/>
+	</function>
+
+	<function name="removePath_keepalive">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/keepalive/request'"/>			
+			</parameters>
+		</function>
+
+	</function>
+	
+	<function name="getRuntimePanel">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"get": {
+						"tags": [
+							"keepalive"
+						],
+						"summary": "Returns runtime",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/Runtime"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}				
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/keepalive/request'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

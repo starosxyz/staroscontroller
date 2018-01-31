@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/08/28
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
+	<class name="CTopology">
+		<private>
+			<string name="appid"/>
+			<string name="add_eventname"/>	
+			<string name="remove_eventname"/>				
+		</private>
+		<public>
+			<function name="CTopology">
+				<parameters>
+					<string name="appid"/>
+					<string name="add_eventname"/>
+					<string name="remove_eventname"/>
+				</parameters>
+				<set name="thisclass.appid" value="context.appid.toString()"/>
+				<set name="thisclass.add_eventname" value="context.add_eventname.toString()"/>
+				<set name="thisclass.remove_eventname" value="context.remove_eventname.toString()"/>
+			</function>
+			<!--
+				@brief		获取添加事件名字
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param event_name 	事件名字				
+			-->
+			<function name="GetAddEventName">
+				<parameters>
+					<string name="event_name"/>
+				</parameters>
+				<set name="event_name" value="thisclass.add_eventname.toString()"/>
+			</function>
+			<!--
+				@brief		获取删除事件名字
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+				Output:
+					@param event_name 	事件名字				
+			-->
+			<function name="GetRemoveEventName">
+				<parameters>
+					<string name="event_name"/>
+				</parameters>
+				<set name="event_name" value="thisclass.remove_eventname.toString()"/>
+			</function>
+		</public>
+	</class>
+	<class name="CTopoService">		
+		<private>
+			<hashmap name="TopoContainer" keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<!--
+				@brief		添加一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+					@param add_eventname 	添加事件名字
+					@param remove_eventname 	删除事件名字
+				Output:									
+			-->
+			<function name="addTopoListener">				
+				<parameters>
+					<string name="appid"/>
+					<string name="add_eventname"/>
+					<string name="remove_eventname"/>
+				</parameters>				
+				<if cond="context.TopoContainer.hasValue(context.appid.toString())==false">
+					<then>
+						<object name="topoobj"/>
+						<new name="topoobj" class="CTopology">
+							<parameters>
+								<string name="appid" in="context.appid.toString()"/>
+								<string name="add_eventname" in="context.add_eventname.toString()"/>
+								<string name="remove_eventname" in="context.remove_eventname.toString()"/>
+							</parameters>
+						</new>
+						<insert name="TopoContainer" key="context.appid.toString()" value="context.topoobj"/>						
+					</then>
+				</if>
+			</function>
+			<!--
+				@brief		删除一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+				Output:									
+			-->
+			<function name="removeTopoListener">
+				<parameters>
+					<string name="appid"/>
+				</parameters>
+				<remove name="TopoContainer" key="context.appid.toString()"/>
+			</function>
+			<!--
+				@brief		查询一个topo监听
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param appid 	appid
+				Output:	
+					@param topoobj 	topo对象								
+			-->
+			<function name="FindTopoListener">
+				<parameters>
+					<string name="appid"/>
+					<object name="topoobj"/>
+				</parameters>
+				<set name="topoobj" value="thisclass.TopoContainer.getValue(context.appid.toString())"/>
+			</function>
+			<!--
+				@brief		发送添加topo事件
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备
+					@param path 	路径
+				Output:									
+			-->
+			<function name="ProcessAddTopoEvent">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="path"/>
+				</parameters>				
+				<string name="id"/>
+				<object name="data"/>
+				<params name="eventparam"/>
+				<long name="m_bundleid"/>
+				<string name="eventname"/>
+				<pair name="i" keytype="string" valuetype="object"/>
+				<for var="context.i" in="context.TopoContainer">
+					<set name="id" value="context.i.first()"/>
+					<set name="data" value="context.i.second()"/>
+					<if cond="context.data == null">
+						<then>
+							<log>data is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetBundleID" class="ApplicationManager">
+						<parameters>
+							<string name="appid" in="context.id.toString()"/>
+							<long name="bundleid" out="context.m_bundleid"/>
+						</parameters>
+					</function>
+					<function name="GetAddEventName" class="context.data">
+						<parameters>
+							<string name="event_name" out="context.eventname"/>
+						</parameters>						
+					</function>
+					<set name="eventparam" paramname="fromdevice" value="context.fromdevice.toString()" reset="true"/>
+					<set name="eventparam" paramname="todevice" value="context.todevice.toString()"/>
+					<set name="eventparam" paramname="path" value="context.path.toString()"/>
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam"/>
+				</for>
+			</function>
+			<!--
+				@brief		发送删除topo事件
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备
+					@param path 	路径
+				Output:									
+			-->
+			<function name="ProcessRemoveTopoEvent">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="path"/>
+				</parameters>
+				<string name="id"/>
+				<object name="data"/>
+				<params name="eventparam"/>
+				<long name="m_bundleid"/>
+				<string name="eventname"/>
+				<pair name="i" keytype="string" valuetype="object"/>
+				<for var="context.i" in="context.TopoContainer">
+					<set name="id" value="context.i.first()"/>
+					<set name="data" value="context.i.second()"/>
+					<if cond="context.data == null">
+						<then>
+							<log>data is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetBundleID" class="ApplicationManager">
+						<parameters>
+							<string name="appid" in="context.id.toString()"/>
+							<long name="bundleid" out="context.m_bundleid"/>
+						</parameters>
+					</function>
+					<function name="GetRemoveEventName" class="context.data">
+						<parameters>
+							<string name="event_name" out="context.eventname"/>
+						</parameters>						
+					</function>
+					<set name="eventparam" paramname="fromdevice" value="context.fromdevice.toString()" reset="true"/>
+					<set name="eventparam" paramname="todevice" value="context.todevice.toString()"/>
+					<set name="eventparam" paramname="path" value="context.path.toString()"/>
+					<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam"/>
+				</for>
+			</function>
+			<!--
+				@brief		获取最短路径
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备					
+				Output:							
+					@param outjson 	路径		
+			-->
+			<function name="getShortestPath">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="outjson"/>
+				</parameters>
+				<log level="101">Ctopyserver getShortestPath</log>
+				<string name="shortestlink"/>
+				<function name="getShortestLink">
+					<parameters>
+						<string name="fromdevice" in="context.fromdevice.toString()"/>
+						<string name="todevice" in="context.todevice.toString()"/>
+						<string name="outjson" out="context.shortestlink"/>
+					</parameters>
+				</function>
+				<set name="outjson" value="topology.convertToPath(context.shortestlink.toString())"/>
+			</function>	
+			<!--
+				@brief		获取最短Link
+				@auth 		YY
+				@date		2017/08/21
+				Input:	
+					@param fromdevice 	始发设备
+					@param todevice 	目的设备					
+				Output:							
+					@param outjson 	路径		
+			-->		
+			<function name="getShortestLink">
+				<parameters>
+					<string name="fromdevice"/>
+					<string name="todevice"/>
+					<string name="outjson"/>
+				</parameters>
+				<list name="toplist" valuetype="string"/>
+				<string name="json"/>
+				<function name="FindPath" class="TopoManager">
+					<parameters>
+						<string name="fromdevice" in="context.fromdevice.toString()"/>
+						<string name="todevice" in="context.todevice.toString()"/>
+						<list name="pathlist" out="context.toplist"/>
+					</parameters>
+				</function>
+				<script><![CDATA[					
+					var myArray = new Array(); 
+					var firststr = context.toplist.getFirst();
+					while(firststr!=null){
+						var info = JSON.parse(firststr);
+						myArray.push(info.paths.length);
+						firststr=context.toplist.getNext();
+					}
+					var testArray = myArray.sort();
+					var min_num = testArray[0];
+					var firstr = context.toplist.getFirst();
+					while(firstr!=null){
+						var info = JSON.parse(firstr);
+						if (info.paths.length == min_num)
+						{
+							context.json.setValue(firstr);
+							break;
+						}
+						firstr=context.toplist.getNext();
+					}
+				]]></script>
+				<set name="outjson" value="context.json.toString()"/>
+			</function>
+		</public>
+	</class>
+</starlang>

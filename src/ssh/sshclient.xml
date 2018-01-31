@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		sshclient.xml
+	@brief 		测试代码
+	@version 	1.1.0
+	@auth 		Yi Jian (yijian@staros.xyz)
+	@date		2017/11/24
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<include src="CSSHClient.xml"/>
+	<logconfig dest="stdout"/>
+	<object name="sshclient"/>
+	<object name="sshclient_v150"/>
+	<function name="StartSSHClient">
+		<new name="sshclient" class="CSSHClient"/>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+				<function>
+						<function name="StartSSHClient"/>
+						<function name="StartSSHClient" class="sshclient"/>
+				</function>
+		</onevent>
+		<onevent event="~bundleapp.shutdown">
+				<function>
+						<log>bundleapp.SHUTDOWN</log>
+				</function>
+		</onevent>
+		<onevent event="SSH.connected">
+				<function>
+						<log>SSH.connected shoudn't happen</log>
+				</function>
+		</onevent>
+		<onevent event="SSH.dataevent">
+		  <function>
+				<log>SSH.dataevent shoudn't happen</log>
+		  </function>
+		</onevent>
+		<onevent event="*">
+				<function>
+				<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+				<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+				</function>
+		</onevent>
+	</events>
+</starlang>

@@ -1,0 +1,2001 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		sdnmgrapi.xml
+	@brief 		sdnmgr's api
+	@version 	1.1.0
+	@auth 		qiulei 20180117
+	@date		2017/09/14
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/CSDNMGRTypeManager.xml"/>
+	<hashmap name="resourceid_hash" keytype="string" valuetype="string"/>
+	<object name="m_db"/>
+	<params name="dbparams"/>
+	<function name="createDeviceDB">		
+		<set name="dbparams" paramname="dbname" value="'sdndevice'"/>
+		<set name="dbparams" paramname="dbtype" value="'sqlite'"/>
+		<database name="m_db" method="Open" params="context.dbparams"/>
+		<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000" detachclass="true">
+			<log level="100"><![CDATA[open database db name <%=event.getName().toString()%>]]></log>
+			<log level="100"><![CDATA[open database db result <%=event.getParam('result').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db description <%=event.getParam('description').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+		</wait>
+		<database name="m_db" method="ExecSQL">
+			<sql><![CDATA[
+
+				create table if not exists COMPANY(
+				RESOURCEID     		TEXT   PRIMARY KEY  NOT NULL,
+				
+				IP 					TEXT 	NOT NULL,
+
+				MAC        			TEXT    NOT NULL,
+
+				LOCATION            TEXT    NOT NULL,
+
+				DEVICETYPE          TEXT    NOT NULL,
+
+				DEVICEROLE        	TEXT 	NOT NULL,
+
+				BANDWIDTH         	TEXT 	NOT NULL
+
+				);
+
+			]]></sql>
+		</database>
+		<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+			<log><![CDATA[create table result <%=event.getParam('result').toString()%>]]></log>
+			<log><![CDATA[create table description <%=event.getParam('description').toString()%>]]></log>
+			<log><![CDATA[create table transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log><![CDATA[create table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+		</wait>
+	</function>
+<!--qiulei create DataBase 20180122 start-->
+	<object name="m_db_policy"/>
+	<params name="dbparams_policy"/>
+	<function name="createPolicyDB">
+		<set name="dbparams_policy" paramname="dbname" value="'sdnpolicy'"/>
+		<set name="dbparams_policy" paramname="dbtype" value="'sqlite'"/>
+		<database name="m_db_policy" method="Open" params="context.dbparams_policy"/>
+		<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000" detachclass="true">
+			<log level="100"><![CDATA[open database db name <%=event.getName().toString()%>]]></log>
+			<log level="100"><![CDATA[open database db result <%=event.getParam('result').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db description <%=event.getParam('description').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log level="100"><![CDATA[open database db eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+		</wait>
+		
+		<database name="m_db_policy" method="ExecSQL">
+			<sql><![CDATA[
+
+				create table if not exists POLICY(
+
+				POLICYID        		TEXT,
+
+				SRCDEVICETYPE          TEXT,
+
+				SRCDEVICEROLE        	TEXT,
+				
+				DSTDEVICETYPE        	TEXT,
+				
+				DSTDEVICEROLE        	TEXT,
+				
+				PRIORITY        		TEXT
+
+				);
+
+			]]></sql>
+		</database>
+		
+		<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+			<log><![CDATA[create table result <%=event.getParam('result').toString()%>]]></log>
+			<log><![CDATA[create table description <%=event.getParam('description').toString()%>]]></log>
+			<log><![CDATA[create table transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log><![CDATA[create table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+		</wait>
+	</function>
+<!--qiulei create DataBase 20180122 end-->
+	<function name="RegisterHandler_sdnmgr">
+		<log level="101">insert tunnelserviceapi RegisterHandler</log>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processCreateandUpdateOneDeviceRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/device'"/>
+			</parameters>
+		</function>		
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processDeleteOneDeviceRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/device/{resourceid}'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processDeviceRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/devices'"/>			
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processCreateOnePolicyRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/policy'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processGetAndDelete_AllPolicysRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/policys'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processDeleteOnePolicyRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/policy/{policyid}'"/>			
+			</parameters>
+		</function>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processGetAllPortsOfDeviceRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/ports/{deviceid}'"/>			
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'get1port'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/port/{deviceid}/{portno}'"/>	
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'getlocationbyip'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/location/{ipaddr}'"/>			
+			</parameters>
+		</function>
+		<!--qiulei 20180127-->
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>
+				<string name="handleevent" in="'getflowbyFlowid'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/flows/statistics/{deviceid}/{flowid}'"/>
+			</parameters>
+		</function>
+		<!--qiulei 20180127-->
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'getallflows'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/sdnmgr/flows/statistics/{deviceid}'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="UnRegisterHandler_sdnmgr">
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/device'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/device/{resourceid}'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/devices'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/policy'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/policys'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/policy/{policyid}'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/ports/{deviceid}'"/>
+			</parameters>
+		</function>
+		
+		
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/port/{deviceid}/{portno}'"/>
+			</parameters>
+		</function>
+			<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/location/{ipaddr}'"/>
+			</parameters>
+		</function>
+		
+		<!--qiulei 20180127-->
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/flows/statistics/{deviceid}/{flowid}'"/>
+			</parameters>
+		</function>
+		
+		<!--qiulei 20180127-->
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/sdnmgr/flows/statistics/{deviceid}'"/>
+			</parameters>
+		</function>
+	</function>
+
+	<events>
+		<!-- qiulei -->
+		<onevent event="getflowbyFlowid">
+			<log level="101">enter getflowbyFlowid  ----sdnmgrapi.xml 263</log>
+			<function name="getflowbyFlowid"/>
+		</onevent>
+		
+		<!-- qiulei -->
+		<onevent event="getallflows">
+			<log level="101">enter getallflows  ----sdnmgrapi.xml 269</log>
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">getallflows  ----sdnmgrapi.xml 272</log>
+					
+					
+					<log level="100">getflowbyip  ----sdnmgrapi.xml 275</log>
+					<string name="deviceid"/>
+					<object name="deviceobj"/>
+					<object name="flowmgr"/>
+					<string name="flowjsonstr"/>
+					
+					<set name="context.deviceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+					
+					<function name="getDevice" class="DeviceManager">
+						<parameters>
+							<object name="outdevice" out="context.deviceobj"/>
+							<string name="datapathid" in="context.deviceid.toString()"/>
+						</parameters>
+					</function>
+					<if cond="context.deviceobj.ptr==null">
+						<then>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The deviceobj is null !'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetFlowManager" class="context.deviceobj">
+						<parameters>
+							<object name="outflowmgr" out="context.flowmgr"/>
+						</parameters>
+					</function>
+					<if cond="context.flowmgr.ptr==null">
+						<then>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The flowmgr is null !'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					
+					
+					<function name="getAllflowJsonStr"  class="flowmgr">
+						<parameters>
+							<string name="flowjsonstr"  out="context.flowjsonstr"/>
+						</parameters>
+					</function>
+						
+					<function name="SendResponse" class="RestfulService">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="json" in="context.flowjsonstr.toString()"/>
+						</parameters>
+					</function>
+				</then>
+			</if>
+		</onevent>
+		<!--处理 创建device 请求-->
+		<onevent event="processCreateandUpdateOneDeviceRequest">
+			<log level="101">enter processCreateOneDeviceRequest  ----sdnmgrapi.xml 101</log>
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<log level="100">processCreateOneDeviceRequest</log>
+					
+					<string name="resourceid"/>
+					<string name="ip" value="''"/>
+					<string name="mac" value="''"/>
+					<string name="location" value="''"/>
+					<string name="devicetype"/>
+					<string name="devicerole"/>
+					<string name="bandwidth"/>
+					<boolean name="result" value="false"/>
+					<string name="addDataBaseResult"/>
+					<boolean name="addResult"/>
+					<boolean name="addResult2"/>
+					<string name="outjson123"/>
+					<syslog level="INFO"><![CDATA[event 123 = <%=event.getParam('eventdata').toString()%>]]></syslog>
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						if (info.ip == null)
+						{
+							context.location.setValue(info.inlocation);
+							
+						}
+						else
+						{
+							context.ip.setValue(info.ip);
+							context.mac.setValue(info.mac);
+						}
+						
+						context.devicetype.setValue(info.devicetype);
+						context.devicerole.setValue(info.devicerole);
+						context.bandwidth.setValue(info.bandwidth);
+					]]></script>	
+					<syslog level="INFO"><![CDATA[ip= <%=context.ip.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[mac = <%=context.mac.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[location= <%=context.location.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[devicetype= <%=context.devicetype.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[devicerole = <%=context.devicerole.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[bandwidth = <%=context.bandwidth.toString()%>]]></syslog>	
+					<function name="databaseHasDevice2">
+						<parameters>
+							<string name="devicetype" in="context.devicetype.toString()"/>
+							<string name="location" in="context.location.toString()"/>
+							<string name="ip" in="context.ip.toString()"/>
+							<boolean name="result" out="context.result"/>
+						</parameters>
+					</function>
+					<syslog level="INFO"><![CDATA[context.result = <%=context.result.toString()%>]]></syslog>	
+					<if cond="context.result.toBoolean() == false">
+						<then>
+							<function name="AddSDNMGRDevice" class="sdndevicemgr">
+								<parameters>
+									<string name="ip" in="context.ip.toString()"/>
+									<string name="mac" in="context.mac.toString()"/>
+									<string name="location" in="context.location.toString()"/>
+									<string name="devicetype" in="context.devicetype.toString()"/>
+									<string name="devicerole" in="context.devicerole.toString()"/>
+									<string name="bandwidth" in="context.bandwidth.toString()"/>
+									<string name="outresourceid" out="context.resourceid"/>
+									<boolean name="addResult" out="context.addResult"/>
+								</parameters>
+							</function>
+							<syslog level="INFO"><![CDATA[context.resourceid = <%=context.resourceid.toString()%>]]></syslog>	
+							<log level="100"><![CDATA[274 Device容器插入结果 addResult=<%=context.addResult.toString()%>    --sdnmgrapi.xml]]></log>
+							
+							<string name="sdnmgrdeviceCounts"/>
+							<function name="GetSDNMGRDeviceCounts" class="sdndevicemgr">
+								<parameters>
+									<string name="sdnmgrdeviceCounts" out="context.sdnmgrdeviceCounts"/>
+								</parameters>
+							</function>
+							<log level="100"><![CDATA[281  sdnmgrdeviceCounts=<%=context.sdnmgrdeviceCounts.toString()%>   --sdnmgrapi.xml]]></log>
+							<if cond="context.ip.toString() != ''">
+								<then>
+									<function name="addMonitor" class="MonitorManager">
+										<parameters>
+											<string name="ip" in="context.ip.toString()"/>
+											<boolean name="result" out="context.addResult2"/>
+										</parameters>
+									</function>
+								</then>
+							</if>
+														<log level="100"><![CDATA[290 Monitor容器插入结果 addResult2=<%=context.addResult2.toString()%>    --sdnmgrapi.xml]]></log>
+							
+							<log level="100"><![CDATA[273  ip=<%=context.ip.toString()%>]]></log>
+							<log level="100"><![CDATA[273  mac=<%=context.mac.toString()%>]]></log>
+							<log level="100"><![CDATA[273  location=<%=context.location.toString()%>]]></log>
+							<log level="100"><![CDATA[273  devicetype=<%=context.devicetype.toString()%>]]></log>
+							<log level="100"><![CDATA[273  devicerole=<%=context.devicerole.toString()%>]]></log>
+							<log level="100"><![CDATA[273  bandwidth=<%=context.bandwidth.toString()%>]]></log>
+							<log level="100"><![CDATA[273  resourceid=<%=context.resourceid.toString()%>]]></log>
+							<database name="m_db" method="ExecSQL">
+								<sql><![CDATA[INSERT INTO COMPANY (RESOURCEID,IP,MAC,LOCATION,DEVICETYPE,DEVICEROLE,BANDWIDTH) VALUES ('<%=context.resourceid.toString()%>','<%=context.ip.toString()%>', '<%=context.mac.toString()%>','<%=context.location.toString()%>', '<%=context.devicetype.toString()%>', '<%=context.devicerole.toString()%>', '<%=context.bandwidth.toString()%>' );;
+								]]></sql>
+							</database>
+							
+							<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+								<log level="100"><![CDATA[insert table result <%=event.getParam('result').toString()%>]]></log>
+								<set name="context.addDataBaseResult" value="event.getParam('result').toString()"/>
+								<log level="100"><![CDATA[insert table description <%=event.getParam('description').toString()%>]]></log>
+								<log level="100"><![CDATA[insert table transportid <%=event.getParam('transportid').toString()%>]]></log>
+								<log level="100"><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+							</wait>
+							<if cond="context.addDataBaseResult.toString()=='-1'">
+								<then>
+									<log level="100">287 enter 失败</log>
+									<function name="sdnmgr_ErrorDataResponse">
+										<parameters>
+											<string name="transportid" in="event.getParam('transportid').toString()"/>
+											<string name="description" in="'create failed !'"/>
+										</parameters>
+									</function>
+									<exit/>
+								</then>
+							</if>
+							<function name="testResponse"/>							
+						</then>
+						<elseif cond="context.result.toBoolean() == true">
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'the obj is exist'"/>
+								</parameters>
+							</function>
+						</elseif>
+					</if>
+				</then>				
+				<elseif cond="event.getParam('method').toString() == 'PUT'">
+					<log level="100">processUpdateDeviceRequest</log>
+					<syslog level="INFO"><![CDATA[PUT enevtdata=<%=event.getParam('eventdata').toString()%>]]></syslog>
+					<string name="resourceid"/>
+					<string name="ip"/>
+					<string name="mac"/>
+					<string name="inlocation"/>
+					<string name="devicetype"/>
+					<string name="devicerole"/>
+					<string name="bandwidth"/>
+					<boolean name="result" value="true"/>
+					<string name="addDataBaseResult"/>
+					<string name="outjson123"/>
+					<long name="devicelistsize"/>
+					<list name="devicelist" valuetype="hashmap"/>
+					<long name="i"/>
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						context.devicelistsize.setValue(info.devices.length);
+					]]></script>	
+					<syslog level="INFO"><![CDATA[PUT devicelistsize=<%=context.devicelistsize.toString()%>]]></syslog>
+					
+					<for var="context.i" from="0" to="context.devicelistsize.toLong()">
+						<syslog level="INFO">##### PUT for Start ######</syslog>
+						<syslog level="INFO"><![CDATA[PUT i=<%=context.i.toString()%>]]></syslog>
+
+						<script><![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+
+							context.resourceid.setValue(info.devices[context.i.toLong()].resourceid);
+							context.ip.setValue(info.devices[context.i.toLong()].ip);
+							context.mac.setValue(info.devices[context.i.toLong()].mac);
+							context.inlocation.setValue(info.devices[context.i.toLong()].inlocation);
+							context.devicetype.setValue(info.devices[context.i.toLong()].devicetype);
+							context.devicerole.setValue(info.devices[context.i.toLong()].devicerole);
+							context.bandwidth.setValue(info.devices[context.i.toLong()].bandwidth);
+						]]></script>
+						<syslog level="INFO"><![CDATA[device.resourceid= <%=context.resourceid.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.ip= <%=context.ip.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.mac= <%=context.mac.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.inlocation= <%=context.inlocation.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.devicetype= <%=context.devicetype.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.devicerole= <%=context.devicerole.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[device.bandwidth= <%=context.bandwidth.toString()%>]]></syslog>
+					
+						<function name="databaseHasDevice2">
+							<parameters>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="location" in="context.inlocation.toString()"/>
+								<string name="ip" in="context.ip.toString()"/>
+								<boolean name="result" out="context.result"/>
+							</parameters>
+						</function>
+						
+						<syslog level="INFO"><![CDATA[update result<%=context.result.toString()%>]]></syslog>
+						<if cond="context.result.toBoolean() == true">
+							<then>
+								<function name="UpdateSDNMGRDevice" class="sdndevicemgr">
+									<parameters>
+										<string name="resourceid" in="context.resourceid.toString()"/>
+										<string name="ip" in="context.ip.toString()"/>
+										<string name="mac" in="context.mac.toString()"/>
+										<string name="inlocation" in="context.inlocation.toString()"/>
+										<string name="devicetype" in="context.devicetype.toString()"/>
+										<string name="devicerole" in="context.devicerole.toString()"/>
+										<string name="bandwidth" in="context.bandwidth.toString()"/>
+									</parameters>
+								</function>
+								
+								<function name="UpdateMonitor" class="MonitorManager">
+									<parameters>
+										<string name="ip" in="context.ip.toString()"/>
+									</parameters>
+								</function>
+								
+
+								<database name="m_db" method="ExecSQL">
+								<sql><![CDATA[
+									DELETE from COMPANY where RESOURCEID = '<%=context.resourceid.toString()%>'
+								]]></sql>
+								</database>
+								<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+									<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+									<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+									<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+									<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+								</wait>
+
+								<database name="m_db" method="ExecSQL">
+									<sql><![CDATA[INSERT INTO COMPANY (RESOURCEID,IP,MAC,LOCATION,DEVICETYPE,DEVICEROLE,BANDWIDTH) VALUES ('<%=context.resourceid.toString()%>','<%=context.ip.toString()%>', '<%=context.mac.toString()%>','<%=context.inlocation.toString()%>', '<%=context.devicetype.toString()%>', '<%=context.devicerole.toString()%>', '<%=context.bandwidth.toString()%>' );;
+									]]></sql>
+								</database>
+								
+								<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+									<log level="100"><![CDATA[insert table result <%=event.getParam('result').toString()%>]]></log>
+									<set name="context.addDataBaseResult" value="event.getParam('result').toString()"/>
+									<log level="100"><![CDATA[insert table description <%=event.getParam('description').toString()%>]]></log>
+									<log level="100"><![CDATA[insert table transportid <%=event.getParam('transportid').toString()%>]]></log>
+									<log level="100"><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+								</wait>
+								<if cond="context.addDataBaseResult.toString()=='-1'">
+									<then>
+										<log level="100">287 enter 失败</log>
+										<function name="sdnmgr_ErrorDataResponse">
+											<parameters>
+												<string name="transportid" in="event.getParam('transportid').toString()"/>
+												<string name="description" in="'update failed !'"/>
+											</parameters>
+										</function>
+									</then>
+								</if>
+							</then>
+							<elseif cond="context.result.toBoolean() == false">
+								<function name="sdnmgr_ErrorDataResponse">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="description" in="'the deviceobj is null'"/>
+									</parameters>
+								</function>
+							</elseif>
+						</if>
+						<syslog level="INFO">##### PUT for end ######</syslog>
+					</for>
+					<script><![CDATA[
+						var one=new Object();
+						one.resourceid = context.resourceid.toString();
+						one.code = "0";
+						one.description = "ok";
+						
+						var json = new Object();
+						json.result = one;
+						var strjson=JSON.stringify(json);
+						context.outjson123.setValue(strjson);
+					]]></script>
+					<function name="SendResponse" class="RestfulService">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="json" in="context.outjson123.toString()"/>
+						</parameters>
+					</function>	
+				</elseif>
+			</if>			
+		</onevent>
+		<!--处理 删除 device 请求-->
+		<onevent event="processDeleteOneDeviceRequest">
+			<log level="101">enter processDeleteOneDeviceRequest  ----sdnmgrapi.xml 320</log>
+			<if cond="event.getParam('method').toString() == 'DELETE'">
+				<then>
+					<log level="100">processDeleteOneDeviceRequest  ----sdnmgrapi.xml 323</log>
+					<string name="resourceid"/>
+					<object name="sdndevice"/>
+					<boolean name="result"/>
+					<script><![CDATA[
+						var path = event.getParam('params').getIndexOf(0).toString()
+						if (path.indexOf("{") == -1)
+							context.resourceid.setValue(path)
+						else
+							context.resourceid.setValue(path.split("{")[1].split("}")[0])
+					]]></script>
+					
+					<log level="100"><![CDATA[335 resourceid=<%=context.resourceid.toString()%>]]></log>
+					
+					<function name="databaseHasDevice">
+						<parameters>
+							<string name="resourceid" in="context.resourceid.toString()"/>
+							<boolean name="result" out="context.result"/>
+						</parameters>
+					</function>
+					<log level="100"><![CDATA[343 result=<%=context.result.toString()%>]]></log>
+					<if cond="context.result.toBoolean() == true">
+						<then>
+							<database name="m_db" method="ExecSQL">
+							<sql><![CDATA[
+								DELETE from COMPANY where RESOURCEID = '<%=context.resourceid.toString()%>'
+							]]></sql>
+							</database>
+							<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+								<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+								<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+								<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+								<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+							</wait>
+																					<string name="outip"/>
+							<boolean name="moniterDeleteResult" value="false"/>
+							<log level="100"><![CDATA[417 resourceid=<%=context.resourceid.toString()%>]]></log>
+							<function name="GetIpByResourceid" class="sdndevicemgr">
+								<parameters>
+									<string name="resourceid" in="context.resourceid.toString()"/>
+									<string name="ip" out="context.outip"/>
+								</parameters>
+							</function>
+							
+							<function name="DeleteSDNMGRDeviceByid" class="sdndevicemgr">
+								<parameters>
+									<string name="resourceid" in="context.resourceid.toString()"/>
+								</parameters>
+							</function>
+							<log level="100"><![CDATA[423 outip=<%=context.outip.toString()%>]]></log>
+							<function name="RemoveMonitor" class="MonitorManager">
+								<parameters>
+									<string name="ip" in="context.outip.toString()"/>
+									<boolean name="result" out="moniterDeleteResult"/>
+								</parameters>
+							</function>
+							<log level="100"><![CDATA[429 moniterDeleteResult=<%=context.moniterDeleteResult.toString()%>]]></log>
+							
+							<function name="testResponse"/>
+						</then>
+						<else>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The device is not exist !'"/>
+								</parameters>
+							</function>
+						</else>
+					</if>
+
+				</then>
+			</if>
+		</onevent>
+
+		<!-- Get And Delete All Device-->
+		<onevent event="processDeviceRequest">
+		<log level="101">enter getAllDevices 377</log>
+		<if cond="event.getParam('method').toString() == 'GET'">
+			<then>
+				<string name="data"/>
+				<string name="handledata"/>
+				<string name="detailarray"/>
+				<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+					<sql><![CDATA[
+						SELECT * from COMPANY
+					]]></sql>
+				</database>
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
+					<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+					<set name="context.data" value="event.getParam('eventdata').toString()"/>
+				</wait>
+				<if cond="context.data.toString() != ''">
+					<then>
+						<script><![CDATA[
+							var json = JSON.parse(context.data.toString());
+	
+							context.handledata.setValue(JSON.stringify(json.data));						
+						]]></script>
+						<if cond="context.handledata != 'null'">
+							<then>							
+								<script><![CDATA[
+									var final = new Object()
+									var arr = new Array()
+									var info = JSON.parse(context.data.toString())
+									for (var i = 0; i < info.data.length; i++)
+									{
+										var device = new Object();
+										
+										device.resourceid = JSON.parse(info.data[i]).resourceid;
+										device.ip = JSON.parse(info.data[i]).ip;
+										device.mac = JSON.parse(info.data[i]).mac;
+										device.inlocation = JSON.parse(info.data[i]).location;
+										device.devicetype = JSON.parse(info.data[i]).devicetype;
+										device.devicerole = JSON.parse(info.data[i]).devicerole;
+										device.bandwidth = JSON.parse(info.data[i]).bandwidth;
+										
+										arr.push(device)
+									}
+									final['devices'] = arr;
+									context.detailarray.setValue(JSON.stringify(final));
+								]]></script>
+								<syslog level="INFO"><![CDATA[GET ALL = <%=context.detailarray.toString()%>]]></syslog>
+								<log level="101">enter getAllDevices 423</log>
+								<function name="SendResponse" class="RestfulService">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="json" in="context.detailarray.toString()"/>
+									</parameters>
+								</function>
+							</then>
+							<else>
+								<function name="sdnmgr_ErrorDataResponse">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="description" in="'The database is null !'"/>
+									</parameters>
+								</function>
+							</else>
+						</if>
+					</then>
+					<else>
+						<function name="sdnmgr_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'The database is null !'"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</then>
+			<elseif cond="event.getParam('method').toString() == 'DELETE'">
+				<log level="100">processDeleteAllDeviceRequest  ----sdnmgrapi.xml 462</log>
+				<database name="m_db" method="ExecSQL">
+				<sql><![CDATA[
+					DELETE from COMPANY
+				]]></sql>
+				</database>
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+					<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+				
+					<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+					<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+				</wait>
+				
+				<function name="DeleteAllSDNMGRDevice" class="sdndevicemgr"/>
+				<function name="RemoveAllMonitor" class="MonitorManager"/>				
+				<function name="testResponse"/>
+			
+			</elseif>
+			<else>
+				<function name="sdnmgr_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'967 The database is null !'"/>
+					</parameters>
+				</function>
+			</else>
+		</if>			
+		</onevent>
+
+		<!--处理创建 policy 请求-->
+		<onevent event="processCreateOnePolicyRequest">
+			<log level="101">enter processCreateOnePolicyRequest  ----sdnmgrapi.xml 132</log>
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<log level="100">processCreateOnePolicyRequest  ----sdnmgrapi.xml 135</log>
+					
+					<function name="addAllPolicys"/>
+				</then>
+			</if>
+		</onevent>
+		<!--处理 get policys 请求-->
+		<onevent event="processGetAndDelete_AllPolicysRequest">
+			<log level="101">enter processGetAndDelete_AllPolicysRequest  ----sdnmgrapi.xml 352</log>
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">processGetAndDelete_AllPolicysRequest  GET  ----sdnmgrapi.xml 355</log>
+					<function name="getAllPolicys"/>
+				</then>
+			</if>
+			<if cond="event.getParam('method').toString() == 'DELETE'">
+				<then>
+					<log level="100">processGetAndDelete_AllPolicysRequest  DELETE  ----sdnmgrapi.xml 355</log>
+					<function name="deleteAllPolicys"/>
+				</then>
+			</if>
+		</onevent>
+
+		<!--处理删除 policy 请求-->
+		<onevent event="processDeleteOnePolicyRequest">
+			<log level="101">enter processDeleteOnePolicyRequest  ----sdnmgrapi.xml 147</log>
+			<log level="101"><![CDATA[method type=<%=event.getParam('method').toString()%>  ----sdnmgrapi.xml 139]]></log>
+			<if cond="event.getParam('method').toString() == 'DELETE'">
+				<then>
+					<log level="100">processDeleteOnePolicyRequest  ----sdnmgrapi.xml 142</log>
+					<string name="policyid"/>
+					<script><![CDATA[
+						context.print("eventdata="+event.getParam('eventdata').toString());
+						
+					]]></script>
+					<script><![CDATA[
+						var str = event.getParam('requestpath').toString();
+						var array = str.split("/");
+						var policyid = array[array.length-1];
+						context.policyid.setValue(policyid);
+						context.print("379 policyid="+policyid);
+					]]></script>
+					
+					<boolean name="deleteResult"/>
+					<log level="101"><![CDATA[----sdnmgrapi.xml  deleteResult=<%=context.deleteResult.toString()%> ----383]]></log>
+				
+					<function name="DeletePolicyByid" class="sdnpolicymgr">
+						<parameters>
+							<string name="policyid" in="context.policyid.toString()"/>
+							<boolean name="deleteResult" out="context.deleteResult"/>
+						</parameters>
+					</function>
+					<log level="101"><![CDATA[----sdnmgrapi.xml  deleteResult=<%=context.deleteResult.toString()%> ----389]]></log>
+				
+					<if cond="context.deleteResult.toBoolean()==false">
+						<then>
+							<log level="101"> ----删除失败</log>
+				
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The policyid is not exist!'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<log level="101"> ----删除成功</log>
+					
+					<log level="101">------删除数据库中的policy</log>
+					<database name="m_db_policy" method="ExecSQL">
+						<sql><![CDATA[
+							DELETE from POLICY where POLICYID = '<%=context.policyid.toString()%>'
+						]]></sql>
+					</database>
+					<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+						<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+						<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+						<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+						<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+					</wait>
+					
+					
+					<string name="outjson"/>
+					<script><![CDATA[
+						
+						var one = new Object();
+							one.policyid = context.policyid.toString();
+							one.code = 0;
+							one.description = "ok";
+							
+						var json = new Object();
+							json.result = one;
+							
+						var strjson=JSON.stringify(json);												
+						context.outjson.setValue(strjson);
+					]]></script>
+					<function name="SendResponse" class="RestfulService">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="json" in="context.outjson.toString()"/>
+						</parameters>
+					</function>
+				</then>
+			</if>
+		</onevent>
+		
+		<!-- Get location by ip -->
+		<onevent event="getlocationbyip">
+			<log level="100">3028!!!!!!!!!!!!!!!!!!getlocationbyip</log>
+			<string name="hostip" value="event.getParam('params').getIndexOf(0).toString()"/>
+			<object name="hostobj"/>
+			<string name="ip"/>
+			<string name="deviceid"/>
+			<string name="port"/>
+			<object name="portobj"/>
+			<object name="portmgr"/>
+			<string name="state"/>
+			<string name="receive"/>
+			<string name="sendbandwidth"/>
+			<object name="deviceobj"/>
+			<string name="jsonstr"/>
+			<log level="100"><![CDATA[hostip= <%= context.hostip.toString()%>]]></log>
+			<function name="Gethostbyip" class="HostManager">
+				<parameters>
+					<string name="hostip" in="context.hostip.toString()"/>	
+					<object name="hostobj" out="context.hostobj"/>
+				</parameters>
+			</function>
+			
+			<if cond="context.hostobj.ptr==null">
+				<then>
+					<function name="sdnmgr_ErrorDataResponse">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="description" in="'The hostobj is null !'"/>
+						</parameters>
+					</function>
+					<exit/>
+				</then>
+			</if>
+			
+			<function name="getinfo" class="context.hostobj">
+				<parameters>	
+					<string name="ip"  out="context.ip"/>	
+					<string name="deviceid"  out="context.deviceid"/>	
+					<string name="port" out="context.port"/>			
+				</parameters>
+			</function>			
+			<script><![CDATA[
+				var dpid = context.deviceid.toString();
+				context.deviceid.setValue(dpid.split(":")[1]);
+			]]></script>
+			<function name="getDevice" class="DeviceManager">
+				<parameters>
+					<object name="outdevice" out="context.deviceobj"/>
+					<string name="datapathid" in="context.deviceid.toString()"/>
+				</parameters>
+			</function>
+			<syslog level="INFO"><![CDATA[GET location = <%=context.deviceid.toString()%>]]></syslog>
+			<if cond="context.deviceobj.ptr != null">
+				<then>
+					<function name="GetPortManager" class="context.deviceobj">
+						<parameters>
+							<object name="outportmgr" out="context.portmgr"/>
+						</parameters>
+					</function>
+					<if cond="context.portmgr.ptr == null">
+						<then>
+							<log level="100">context.portmgr is null ++++++++++++++++++</log>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The portmgr is null !'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<function name="Getportbyportno" class="context.portmgr">
+						<parameters>
+							<string name="portno" in="context.port.toString()"/>
+							<object name="protobj" out="context.portobj"/>
+						</parameters>
+					</function>
+					<if cond="context.portobj.ptr==null">
+						<then>
+							<log level="100">context.portobj is null ++++++++++++++++++</log>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The portobj is null !'"/>
+								</parameters>
+							</function>
+							<exit/>
+						</then>
+					</if>
+					<function name="getPortinfo" class="context.portobj">
+						<parameters>
+							<string name="state" out="context.state"/>
+							<string name="receive" out="context.receive"/>
+							<string name="sendbandwidth" out="context.sendbandwidth"/>
+						</parameters>
+					</function>
+					<script><![CDATA[
+						var onearray = new Object();
+							onearray.ipaddr=context.hostip.toString();
+						
+						if (context.port.toString() == 4294967294){ 						
+							onearray.port = context.deviceid.toString()+"/Local";						
+						}else{
+							onearray.port=context.deviceid.toString()+"/"+context.port.toString();
+						}
+						if (context.state.toString() == '0'){ 						
+							onearray.workstate = "active";						
+						}else{
+							onearray.workstate = "deactive";
+						}
+						onearray.sendbandwidth=context.sendbandwidth.toString();
+						onearray.receive=context.receive.toString();
+						context.jsonstr.setValue(JSON.stringify(onearray));
+						]]></script>
+						
+					<if cond="context.jsonstr.toString()!=''">
+						<then>
+							<function name="SendResponse" class="RestfulService">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="json" in="context.jsonstr.toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+				</then>
+				<else>
+					<function name="sdnmgr_ErrorDataResponse">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="description" in="'The device is null !'"/>
+						</parameters>
+					</function>
+				</else>
+			</if>	
+		</onevent>
+		
+		<!--处理得到 All ports 请求-->
+		<onevent event="processGetAllPortsOfDeviceRequest">
+			<log level="101">enter processGetAllPortsOfDeviceRequest  ----sdnmgrapi.xml 163</log>
+			<log level="101"><![CDATA[method type=<%=event.getParam('method').toString()%>  ----sdnmgrapi.xml 154]]></log>
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">processGetAllPortsOfDeviceRequest  ----sdnmgrapi.xml 166</log>
+					<object name="deviceobj"/>
+					<object name="portmgr"/>
+					<string name="portmgrjson"/>
+					<string name="deviceid"/>
+					<set name="context.deviceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+					<syslog level="INFO"><![CDATA[DEVICEID = <%= context.deviceid.toString()%>]]></syslog>
+					<function name="getDevice" class="DeviceManager">
+						<parameters>
+							<object name="outdevice" out="context.deviceobj"/>
+							<string name="datapathid" in="context.deviceid.toString()"/>
+						</parameters>
+					</function>
+					<if cond="context.deviceobj.ptr != null">
+						<then>
+							<function name="GetPortManager" class="context.deviceobj">
+								<parameters>
+									<object name="outportmgr" out="context.portmgr"/>
+								</parameters>
+							</function>
+							<if cond="context.portmgr.ptr != null">
+								<then>									
+									<function name="GetAllPortInfo" class="context.portmgr">
+										<parameters>
+											<string name="outjson" out="context.portmgrjson"/>
+										</parameters>
+									</function>
+									<function name="SendResponse" class="RestfulService">
+										<parameters>
+											<string name="transportid" in="event.getParam('transportid').toString()"/>
+											<string name="json" in="context.portmgrjson.toString()"/>
+										</parameters>
+									</function>
+								</then>
+								<else>
+									<function name="sdnmgr_ErrorDataResponse">
+										<parameters>
+											<string name="transportid" in="event.getParam('transportid').toString()"/>
+											<string name="description" in="'The port is not exist !'"/>
+										</parameters>
+									</function>
+								</else>
+							</if>
+						</then>
+						<else>
+							<function name="sdnmgr_ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The device is not exist !'"/>
+								</parameters>
+							</function>
+						</else>
+					</if>
+				</then>
+			</if>
+		</onevent>
+		
+		<!-- Get appointed port info-->
+		<onevent event="get1port">
+			<log level="101">enter get1port  ----sdnmgrapi.xml 639</log>
+			<string name="deviceid"/>
+			<string name="port"/>
+			<object name="deviceobj"/>
+			<object name="portmgr"/>
+			<string name="result"/>
+			<set name="context.deviceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+			<set name="context.port" value="event.getParam('params').getIndexOf(1).toString()"/>
+				
+			<function name="getDevice" class="DeviceManager">
+				<parameters>
+					<object name="outdevice" out="context.deviceobj"/>
+					<string name="datapathid" in="context.deviceid.toString()"/>
+				</parameters>
+			</function>
+				<if cond="context.deviceobj.ptr != null">
+					<then>
+						<function name="GetPortManager" class="context.deviceobj">
+							<parameters>
+								<object name="outportmgr" out="context.portmgr"/>
+							</parameters>
+						</function>
+						<if cond="context.portmgr.ptr != null">
+							<then>
+								<function name="GetAppointedPortInfo" class="context.portmgr">
+									<parameters>
+										<string name="portno" in="context.port.toString()"/>
+										<string name="outjson" out="context.result"/>
+									</parameters>
+								</function>
+								<function name="SendResponse" class="RestfulService">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="json" in="context.result.toString()"/>
+									</parameters>
+								</function>
+							</then>
+							<else>
+								<function name="sdnmgr_ErrorDataResponse">
+									<parameters>
+										<string name="transportid" in="event.getParam('transportid').toString()"/>
+										<string name="description" in="'The port is not exist !'"/>
+									</parameters>
+								</function>
+							</else>
+						</if>
+					</then>
+					<else>
+						<function name="sdnmgr_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'The device is not exist !'"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+		</onevent>
+
+	</events>
+
+
+	<!--
+		@brief		返回错误信息
+		@auth 		YY
+		@date		2017/09/14
+		Input:
+			@param resourceid 	资源id
+			@param transportid   发送报文id
+			@param description   错误信息
+		Output:
+	-->	
+	<function name="sdnmgr_ErrorDataResponse">
+		<parameters>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.code = "-1";
+				one.description = context.description.toString();
+				
+			json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson.setValue(strjson);
+		]]></script>
+		<log level="101"><![CDATA[1173 outjson<%=context.outjson.toString()%> --------sdnmgr_ErrorDataResponse]]></log>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<!--qiulei-->
+	<function name="testResponse">
+		<log level="101">enter testResponse  ----sdnmgrapi.xml 217</log>
+		<string name="outjson123"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson123.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson123.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="databaseHasDevice2">
+		<parameters>
+			<string name="devicetype" />
+			<string name="location"/>
+			<string name="ip"/>
+			<boolean name="result"/>
+		</parameters>
+		<log level="101"><![CDATA[----sdnmgrapi.xml 789 result=<%=context.result%>]]></log>
+		<string name="data"/>
+		<string name="handledata"/>
+
+		<if cond="context.devicetype.toString()=='wireless'">
+			<then>
+				
+				<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+					<sql><![CDATA[
+						SELECT * from COMPANY where IP = '<%=context.ip.toString()%>'
+					]]></sql>
+				</database>
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<set name="context.data" value="event.getParam('eventdata').toString()"/>
+				</wait>
+				<if cond="context.data.toString() != ''">
+					<then>
+						<script><![CDATA[
+							var json = JSON.parse(context.data.toString())
+							context.handledata.setValue(JSON.stringify(json.data))
+						]]></script>
+						<if cond="context.handledata.toString() != 'null'">
+							<then>
+								<syslog level="INFO">1 handledata.toString() != 'null'"</syslog>
+								<set name="context.result" value="true"/>
+							</then>
+							<else>
+								<set name="context.result" value="false"/>
+							</else>
+						</if>
+					</then>
+					<else>
+						<set name="context.result" value="false"/>
+					</else>
+				</if>
+			</then>
+			<elseif cond="context.devicetype.toString()=='wired'">
+				<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+					<sql><![CDATA[
+						SELECT * from COMPANY where LOCATION = '<%=context.location.toString()%>'
+					]]></sql>
+				</database>
+				<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+					<set name="context.data" value="event.getParam('eventdata').toString()"/>
+				</wait>
+				<if cond="context.data.toString() != ''">
+					<then>
+						<script><![CDATA[
+							var json = JSON.parse(context.data.toString())
+							context.handledata.setValue(JSON.stringify(json.data))
+						]]></script>
+						<if cond="context.handledata.toString() != 'null'">
+							<then>
+								<syslog level="INFO">2 handledata.toString() != 'null'"</syslog>
+								<set name="context.result" value="true"/>
+							</then>
+							<else>
+								<set name="context.result" value="false"/>
+							</else>
+						</if>
+					</then>
+					<else>
+						<set name="context.result" value="false"/>
+					</else>
+				</if>
+			</elseif>
+		</if>
+	</function>
+	
+	<function name="databaseHasDevice">
+		<parameters>
+			<string name="resourceid"/>
+			<boolean name="result"/>
+		</parameters>
+		<string name="data"/>
+		<string name="handledata"/>
+		
+		<database name="m_db" method="ExecSelectSQL" databindlist="'resourceid{RESOURCEID:v};ip{IP:v};mac{MAC:v};location{LOCATION:v};devicetype{DEVICETYPE:v};devicerole{DEVICEROLE:v};bandwidth{BANDWIDTH:v}'">
+			<sql><![CDATA[
+				SELECT * from COMPANY where RESOURCEID = '<%=context.resourceid.toString()%>'
+			]]></sql>
+		</database>
+		<wait event="db.response" transportid="context.m_db.ptr.GetTransportId()" timeout="3000">
+			<set name="context.data" value="event.getParam('eventdata').toString()"/>
+		</wait>
+		<if cond="context.data.toString() != ''">
+			<then>
+				<script><![CDATA[
+					var json = JSON.parse(context.data.toString())
+					context.handledata.setValue(JSON.stringify(json.data))
+				]]></script>
+				<if cond="context.handledata.toString() != 'null'">
+					<then>
+						<set name="context.result" value="true"/>
+					</then>
+					<else>
+						<set name="context.result" value="false"/>
+					</else>
+				</if>
+			</then>
+			<else>
+				<set name="context.result" value="false"/>
+			</else>
+		</if>
+	</function>
+	
+	<function name="addAllPolicys">
+		<log level="100">enter addAllPolicys Method  ----sdnmgrapi.xml 456</log>
+		<function name="DeleteAllPolicy" class="context.sdnpolicymgr"/>
+		<function name="UninstallALLFlow"/>
+		<list name="typelist" valuetype="string"/>
+		<string name="policyid"/>
+		<string name="successresponse"/>
+		<string name="srcdevicetype"/>
+		<string name="srcdevicerole"/>
+		<string name="dstdevicetype"/>
+		<string name="dstdevicerole"/>
+		<string name="priority"/>
+		<object name="oneSDNMGRTypeMgr"/>
+		<boolean name="flow_addResult" value="false"/>
+		<new name="oneSDNMGRTypeMgr" class="CSDNMGRTypeManager"/>
+		<syslog level="INFO"><![CDATA[addAllPolicys = <%= event.getParam('eventdata').toString()%>]]></syslog>
+		<script><![CDATA[
+			context.print("----465 policy数据="+event.getParam('eventdata').toString());
+
+			var eventdata=event.getParam('eventdata').toString();
+			
+			var json = JSON.parse(eventdata);
+			var policyid=json.policyid.toString();
+			var typeArr=json.policy;
+			
+			for(var i=0;i<typeArr.length;i++){
+				var oneTypeJsonStr=JSON.stringify(typeArr[i]);
+				context.print("oneTypeJsonStr="+oneTypeJsonStr);
+				context.typelist.addValue(oneTypeJsonStr);
+			}
+			
+			context.policyid.setValue(policyid);
+		]]></script>
+		<syslog level="INFO"><![CDATA[typelist = <%= context.typelist.size()%>]]></syslog>
+		<string name="onetypestr"/>
+
+		<for var="onetypestr" in="context.typelist">
+			<syslog level="INFO"><![CDATA[onetypestr = <%= context.onetypestr.toString()%>]]></syslog>
+			<log level="101"><![CDATA[560 onetypestr=<%=context.onetypestr.toString()%>]]></log>
+			<script><![CDATA[
+				context.print("365 onetypestr="+context.onetypestr);
+				
+				var json=context.onetypestr.toString();
+				
+				context.print("566 json="+json);
+		
+				var oneTypeObj = JSON.parse(json);
+				context.print("564");
+				
+				var src_devicetype = oneTypeObj.srcdevicetype;
+				var src_devicerole = oneTypeObj.srcdevicerole;
+				var dst_devicetype = oneTypeObj.dstdevicetype;
+				var dst_devicerole = oneTypeObj.dstdevicerole;
+				
+				context.print("576");
+				context.print("src_devicetype="+src_devicetype);
+				context.print("src_devicerole="+src_devicerole);
+				context.print("dst_devicetype="+dst_devicetype);
+				context.print("dst_devicerole="+dst_devicerole);
+				context.print("priority="+priority);
+				if (oneTypeObj.priority != null)
+				{
+					var priority = oneTypeObj.priority;
+					context.priority.setValue(priority);
+				}
+				context.srcdevicetype.setValue(src_devicetype);
+				context.srcdevicerole.setValue(src_devicerole);
+				context.dstdevicetype.setValue(dst_devicetype);
+				context.dstdevicerole.setValue(dst_devicerole);
+				
+				context.print("583");
+			]]></script>
+			
+			<log level="101"><![CDATA[asdfaaaaaaaaaaaaaaaaaaaaaaaaaa]]></log>
+			<syslog level="INFO"><![CDATA[addsrcdevicetype = <%= context.srcdevicetype.toString()%>]]></syslog>
+			<syslog level="INFO"><![CDATA[addsrcdevicerole = <%= context.srcdevicerole.toString()%>]]></syslog>
+			<syslog level="INFO"><![CDATA[adddstdevicetype = <%= context.dstdevicetype.toString()%>]]></syslog>
+			<syslog level="INFO"><![CDATA[adddstdevicerole = <%= context.dstdevicerole.toString()%>]]></syslog>
+			<function name="AddType" class="oneSDNMGRTypeMgr">
+				<parameters>
+					<string name="srcdevicetype" in="context.srcdevicetype.toString()"/>
+					<string name="srcdevicerole" in="context.srcdevicerole.toString()"/>
+					<string name="dstdevicetype" in="context.dstdevicetype.toString()"/>
+					<string name="dstdevicerole" in="context.dstdevicerole.toString()"/>
+					<string name="priority" 	  in="context.priority.toString()"/>
+				</parameters>
+			</function>
+
+			<!--qiulei 20180122-->
+			<log level="101"><![CDATA[开始插入数据]]></log>
+			<database name="m_db_policy" method="ExecSQL">
+				<sql><![CDATA[INSERT INTO POLICY (POLICYID,SRCDEVICETYPE,SRCDEVICEROLE,DSTDEVICETYPE,DSTDEVICEROLE,PRIORITY) 
+				VALUES ('<%=context.policyid.toString()%>',  '<%=context.srcdevicetype.toString()%>', '<%=context.srcdevicerole.toString()%>', '<%=context.dstdevicetype.toString()%>', '<%=context.dstdevicerole.toString()%>', '<%=context.priority.toString()%>' );;
+				]]></sql>
+			</database>
+			<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+				<log level="100"><![CDATA[insert table result <%=event.getParam('result').toString()%>]]></log>
+				<log level="100"><![CDATA[insert table description <%=event.getParam('description').toString()%>]]></log>
+				<log level="100"><![CDATA[insert table transportid <%=event.getParam('transportid').toString()%>]]></log>
+				<log level="100"><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+			</wait>
+			<log level="101"><![CDATA[数据插入完毕]]></log>
+			<if cond="(context.policyid.toString()!='5')&amp;&amp;(context.policyid.toString()!='6')">
+				<then>
+					<function name="InstallFlow" class="context.sdnpolicymgr">
+						<parameters>
+							<string name="srcdevicetype" in="context.srcdevicetype.toString()"/>
+							<string name="srcdevicerole" in="context.srcdevicerole.toString()"/>
+							<string name="dstdevicetype" in="context.dstdevicetype.toString()"/>
+							<string name="dstdevicerole" in="context.dstdevicerole.toString()"/>
+							<boolean name="flow_is" out="context.flow_addResult"/>
+						</parameters>
+					</function>
+				</then>
+			</if>
+			<if cond="(context.policyid.toString()!='5')&amp;&amp;(context.policyid.toString()!='6')&amp;&amp;(context.flow_addResult.toBoolean()==false)">
+				<then>
+					<exit/>
+				</then>
+			</if>
+		</for>
+		
+		<function name="AddPolicy" class="sdnpolicymgr">
+			<parameters>
+				<string name="policyid" in="context.policyid"/>
+				<object name="sdnmgrTypeMgr" in="context.oneSDNMGRTypeMgr"/>
+			</parameters>
+		</function>
+		<if cond="(context.policyid.toString()=='5')||(context.policyid.toString()=='6')">
+			<then>
+				<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
+					<parameters>
+						<string name="priority" in="'1'"/>
+						<string name="srcdevicetype" out="context.srcdevicetype"/>
+						<string name="srcdevicerole" out="context.srcdevicerole"/>
+						<string name="dstdevicetype" out="context.dstdevicetype"/>
+						<string name="dstdevicerole" out="context.dstdevicerole"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.srcdevicetype.toString()==''">
+					<then>
+						<exit/>
+					</then>
+					<else>
+						<function name="InstallFlow" class="context.sdnpolicymgr">
+							<parameters>
+								<string name="srcdevicetype" in="context.srcdevicetype.toString()"/>
+								<string name="srcdevicerole" in="context.srcdevicerole.toString()"/>
+								<string name="dstdevicetype" in="context.dstdevicetype.toString()"/>
+								<string name="dstdevicerole" in="context.dstdevicerole.toString()"/>
+								<boolean name="flow_is" out="context.flow_addResult"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</then>
+		</if>
+		<syslog level="INFO"><![CDATA[flow_addResult = <%= context.flow_addResult.toString()%>]]></syslog>
+		<if cond="context.flow_addResult.toBoolean()==false">
+			<then>
+				<boolean name="deleteResult"/>
+				<log level="101"><![CDATA[----sdnmgrapi.xml  deleteResult=<%=context.deleteResult.toString()%> ----1605]]></log>
+				<function name="DeletePolicyByid" class="sdnpolicymgr">
+					<parameters>
+						<string name="policyid" in="context.policyid.toString()"/>
+						<boolean name="deleteResult" out="context.deleteResult"/>
+					</parameters>
+				</function>
+				
+				<log level="101">1612------删除数据库中的policy</log>
+				<database name="m_db_policy" method="ExecSQL">
+					<sql><![CDATA[
+						DELETE from POLICY where POLICYID = '<%=context.policyid.toString()%>'
+					]]></sql>
+				</database>
+				<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+					<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+					<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+					<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+					<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+				</wait>
+				
+				<function name="sdnmgr_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The policy create failed ,Because the policy was invalid.'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="setis_policyid" class="context.sdnpolicymgr">
+			<parameters>
+				<string name="plid" in="context.policyid.toString()"/>
+			</parameters>
+		</function>
+		<if cond="context.policyid.toString()!='4'">
+			<then>
+				<function name="set_policysize" class="context.sdnpolicymgr">
+					<parameters>
+						<long name="size" in="context.typelist.size()"/>
+					</parameters>
+				</function>
+			</then>
+		</if>		
+		<function name="policy_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log level="100">enter addAllPolicys Method  ----sdnmgrapi.xml 509</log>
+	</function>
+	<function name="policy_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		<log level="101">enter policy_successresponse  ----sdnmgrapi.xml 629</log>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();					
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.successresponse.setValue(strjson);
+		]]></script>
+
+	</function>
+	
+	<function name="getAllPolicys">
+		<log level="100">enter getAllPolicys Method  ----sdnmgrapi.xml 933</log>
+		<string name="data"/>
+		<string name="handledata"/>
+		<string name="detailarray"/>
+		
+		<log level="100">enter getAllPolicys Method  ----sdnmgrapi.xml 669</log>
+		<database name="m_db_policy" method="ExecSelectSQL" databindlist="'policyid{POLICYID:v};srcdevicetype{SRCDEVICETYPE:v};srcdevicerole{SRCDEVICEROLE:v};dstdevicetype{DSTDEVICETYPE:v};dstdevicerole{DSTDEVICEROLE:v};priority{PRIORITY:v}'">
+			<sql><![CDATA[
+				SELECT * from POLICY
+			]]></sql>
+		</database>
+		<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+			<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
+			<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
+			<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+			<set name="context.data" value="event.getParam('eventdata').toString()"/>
+			<log level="101"><![CDATA[SELECT DATABASE DATA=<%=context.data.toString()%>]]></log>
+		</wait>
+
+		<if cond="context.data.toString() != ''">
+			<then>
+				<syslog level="INFO"><![CDATA[data = <%= context.data.toString()%>]]></syslog>
+				<script><![CDATA[
+					var jsonobj = JSON.parse(context.data.toString());
+					
+					context.handledata.setValue(JSON.stringify(jsonobj.data));
+
+				]]></script>
+				
+				<if cond="context.handledata.toString() != 'null'">
+					<then>
+						<script><![CDATA[
+							var final = new Object();
+							var policyNewArr = new Array();
+							var ptypeArr = new Array();
+							
+							var jsonobj = JSON.parse(context.data.toString());
+							var policyArr=jsonobj.data;
+							for (var i = 0; i < policyArr.length; i++){
+								var policyid = JSON.parse(policyArr[i]).policyid;
+								
+								var ptypeobj = new Object();
+									ptypeobj.srcdevicetype = JSON.parse(policyArr[i]).srcdevicetype;
+									ptypeobj.srcdevicerole = JSON.parse(policyArr[i]).srcdevicerole;
+									ptypeobj.dstdevicetype = JSON.parse(policyArr[i]).dstdevicetype;
+									ptypeobj.dstdevicerole = JSON.parse(policyArr[i]).dstdevicerole;
+									ptypeobj.priority = JSON.parse(policyArr[i]).priority;
+									
+								var myBoolean=new Boolean(true);
+								context.print("981 myBoolean="+myBoolean);
+								for (var j = 0; j < policyNewArr.length; j++){
+									context.print("983 policyNewArr[j].policyid="+policyNewArr[j].policyid+";policyid"+policyid);
+									if(policyNewArr[j].policyid==policyid){
+										(policyNewArr[j].policy).push(ptypeobj);
+										myBoolean=new Boolean(false);
+										context.print("986 myBoolean="+myBoolean);
+										break;
+									}
+								}
+								
+								if(myBoolean==true){
+									ptypeArr.push(ptypeobj);
+								
+									var policyobj = new Object();
+										policyobj.policyid = policyid;
+										policyobj.policy = ptypeArr;
+									
+									policyNewArr.push(policyobj);
+									//ptypeArr =[];
+									ptypeArr.splice(0,ptypeArr.length);//清空数组
+									context.print("1001 清空后的长度 length="+ptypeArr.length);
+								}
+								
+							}
+							final['policys'] = policyNewArr;
+							context.detailarray.setValue(JSON.stringify(final));
+						]]></script>
+						<function name="SendResponse" class="RestfulService">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="json" in="context.detailarray.toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<function name="sdnmgr_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'The database is null !'"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</then>
+			<else>
+				<function name="sdnmgr_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'The database is null !'"/>
+					</parameters>
+				</function>
+			</else>
+		</if>
+		<log level="100">enter getAllPolicys Method  ----sdnmgrapi.xml 686</log>
+	</function>
+	
+	<function name="InstallISUFlow">
+		<parameters>
+			<string name="nosoftip"/>
+			<string name="nosoftport"/>
+			<string name="dpid"/>
+			<string name="ISUip"/>
+			<string name="ISUport"/>
+		</parameters>
+		<string name="modstrjson"/>
+			<reference variable="modstrjson">
+				<jsonbody><![CDATA[ 
+						{
+							"deviceid":"of:<%=context.dpid.toString()%>",
+							"cookie":"0",
+							"cookiemask":"0",
+							"tableid":"0",
+							"command":"0",
+							"idletimeout":"0",
+							"hardtimeout":"0",
+							"priority":"40000",
+							"bufferid":"0xffffffff",
+							"outport":"0xffffffff",
+							"outgroup":"0xffffffff",
+							"flags":"1",
+							"match":{
+									"type":"1",
+									"matchfieldlist":[
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"0",
+											"hasmask":"false",
+											"inport":"<%=context.nosoftport.toString()%>"
+										},						
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"5",
+											"hasmask":"false",
+											"ethtype":"0x0800"
+										},
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"12",
+											"hasmask":"false",
+											"dstip":"<%=context.ISUip.toString()%>"
+										},
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"11",
+											"hasmask":"false",
+											"srcip":"<%=context.nosoftip.toString()%>"
+										},					
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"10",
+											"hasmask":"false",
+											"ipproto":"17"
+										},						
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"15",
+											"hasmask":"false",
+											"udpsrc":"161"
+										}
+									]
+								},
+							"instructionlist":[
+								{
+									"type":"4",
+									"actionlist":[
+										{
+											"type":"0",
+											"outport":"<%=context.ISUport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								}
+							]
+					    }
+				]]></jsonbody>
+			</reference>
+	
+			<string name="modstrjson2"/>
+			<reference variable="modstrjson2">
+				<jsonbody><![CDATA[ 
+						{
+							"deviceid":"of:<%=context.dpid.toString()%>",
+							"cookie":"0",
+							"cookiemask":"0",
+							"tableid":"0",
+							"command":"0",
+							"idletimeout":"0",
+							"hardtimeout":"0",
+							"priority":"40000",
+							"bufferid":"0xffffffff",
+							"outport":"0xffffffff",
+							"outgroup":"0xffffffff",
+							"flags":"1",
+							"match":{
+									"type":"1",
+									"matchfieldlist":[
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"0",
+											"hasmask":"false",
+											"inport":"<%=context.ISUport.toString()%>"
+										},						
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"5",
+											"hasmask":"false",
+											"ethtype":"0x0800"
+										},
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"12",
+											"hasmask":"false",
+											"dstip":"<%=context.nosoftip.toString()%>"
+										},
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"11",
+											"hasmask":"false",
+											"srcip":"<%=context.ISUip.toString()%>"
+										},					
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"10",
+											"hasmask":"false",
+											"ipproto":"17"
+										},						
+										{
+											"oxmclass":"0x8000",
+											"oxmfield":"15",
+											"hasmask":"false",
+											"udpsrc":"161"
+										}
+									]
+								},
+							"instructionlist":[
+								{
+									"type":"4",
+									"actionlist":[
+										{
+											"type":"0",
+											"outport":"<%=context.nosoftport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								}
+							]
+					    }
+				]]></jsonbody>
+			</reference>
+	
+	
+			<string name="resourceid2"/>
+			<if cond="context.flowservice==null">
+				<then>
+					<log>flowservice is null</log>
+				</then>
+			</if>
+			<function name="InstallFlow" class="context.flowservice">
+				<parameters>
+					<string name="outflowid" out="context.resourceid2"/>
+					<string name="strjson" in="context.modstrjson2.toString()"/>
+					<string name="appId" in="'tunnelservice'"/>
+					<string name="datapathid" in="context.dpid.toString()"/>
+				</parameters>
+			</function>
+			<insert name="resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+				
+			<string name="resourceid"/>
+			<if cond="context.flowservice==null">
+				<then>
+					<log>flowservice is null</log>
+				</then>
+			</if>
+			<function name="InstallFlow" class="context.flowservice">
+				<parameters>
+					<string name="outflowid" out="context.resourceid"/>
+					<string name="strjson" in="context.modstrjson.toString()"/>
+					<string name="appId" in="'tunnelservice'"/>
+					<string name="datapathid" in="context.dpid.toString()"/>
+				</parameters>
+			</function>
+			<insert name="resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+		</function>	
+
+	<function name="UninstalloneFlow">
+		<parameters>
+			<string name="flowid"/>
+		</parameters>
+		<pair name="oneflowid" keytype="string" valuetype="string"/>
+			<for var="context.oneflowid" in="context.resourceid_hash">	
+				<if cond="context.flowid == context.oneflowid.first().toString()">
+					<then>
+						<function name="UnInstallFlow" class="context.flowservice">
+							<parameters>
+								<string name="flowid" in="context.flowid.toString()"/>			
+								<string name="datapathid" in="context.oneflowid.second().toString()"/>
+							</parameters>
+						</function>
+					</then>
+				</if>		
+			</for>
+	</function>
+	
+	<function name="UninstallALLFlow">
+		<pair name="oneflowid" keytype="string" valuetype="string"/>
+			<for var="context.oneflowid" in="context.resourceid_hash">				
+				<function name="UnInstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="flowid" in="context.oneflowid.first().toString()"/>			
+						<string name="datapathid" in="context.oneflowid.second().toString()"/>
+					</parameters>
+				</function>
+			</for>
+	</function>
+	<!--qiulei 20180128-->
+	<function name="deleteAllPolicys">
+		<log level="100">enter deleteAllPolicys Method  ----sdnmgrapi.xml 2020</log>
+		<function name="DeleteAllPolicy" class="context.sdnpolicymgr"/>
+		
+		<database name="m_db_policy" method="ExecSQL">
+			<sql><![CDATA[
+				DELETE from POLICY
+			]]></sql>
+		</database>
+		<wait event="db.response" transportid="context.m_db_policy.ptr.GetTransportId()" timeout="3000">
+			<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
+			<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
+			<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
+			<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
+		</wait>
+		<function name="testResponse"/>
+
+		<log level="100">enter deleteAllPolicys Method over ----sdnmgrapi.xml 2036</log>
+	</function>
+	
+	<!-- 20180127 qiulei-->
+	<function name="getflowbyFlowid">
+		<log level="100">enter getflowbyFlowid Method ----sdnmgrapi.xml 1877</log>
+		<if cond="event.getParam('method').toString() == 'GET'">
+			<then>
+				<log level="100">getflowbyip  ----sdnmgrapi.xml 1880</log>
+				<string name="deviceid"/>
+				<object name="deviceobj"/>
+				<object name="flowmgr"/>
+				<string name="flowid"/>
+				
+				<set name="context.deviceid" value="event.getParam('params').getIndexOf(0).toString()"/>
+				<set name="context.flowid" value="event.getParam('params').getIndexOf(1).toString()"/>
+				
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<function name="sdnmgr_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'The flowmgr is null !'"/>
+							</parameters>
+						</function>
+						<exit/>
+					</then>
+				</if>
+				
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgr"/>
+					</parameters>
+				</function>
+				<if cond="context.flowmgr.ptr==null">
+					<then>
+						<function name="sdnmgr_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'The flowmgr is null !'"/>
+							</parameters>
+						</function>
+						<exit/>
+					</then>
+				</if>
+				<string name="flowjsonstr"/>
+				
+				<log level="100"><![CDATA[1925 flowid=<%=context.flowid.toString()%>]]></log>
+				<function name="getflowByflowid" class="flowmgr"><!--qiulei 0127-->
+					<parameters>
+						<string name="flowid"  in="context.flowid.toString()"/>
+						<string name="flowjsonstr"  out="context.flowjsonstr"/>
+					</parameters>
+				</function>
+				<function name="SendResponse" class="RestfulService">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.flowjsonstr.toString()"/>
+					</parameters>
+				</function>
+				
+
+			</then>
+		</if>
+	</function>
+</starlang>

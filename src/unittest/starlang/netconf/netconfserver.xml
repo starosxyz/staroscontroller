@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<variable name="isStop" type="boolean" value="true"/>
+	<variable name="filepath" type="string"/>
+	<variable name="transportid" type="string"/>
+	<function name="NetConfServer">
+		<variable name="restfulparams" type="params"/>
+		<set name="netconfparams" paramname="listenip" value="'0.0.0.0'"/>
+		<set name="netconfparams" paramname="listenport" value="'9922'"/>
+		<set name="netconfparams" paramname="sshservice" value="'shell'"/>
+		<set name="netconfparams" paramname="authorizedkeysfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<set name="netconfparams" paramname="hostkeyfile" value="'/opt/staros.xyz/starcore/system/servercert.pem'"/>
+		<set name="netconfparams" paramname="cafile" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<set name="netconfparams" paramname="capath" value="'/opt/staros.xyz/starcore/system/serverkey.pem'"/>
+		<log>Star Netconf server</log>
+		<netconf action="StartServer" param="netconfparams" connectedevent="Netconf.connected" dataevent="Netconf.dataevent"/>
+		<wait event="Netconf.connected">
+			<netconf action="SendData" transportid="event.getParams('transportid')">
+				<xml>
+					<![CDATA[
+						<f></f>
+					]]>
+				</xml>
+			</netconf>
+		</wait>
+	</function>
+	<events>
+		<onevent event="application.ONSTART">
+			<function>
+				<function name="NetConfServer"/>
+			</function>
+		</onevent>
+		<onevent event="session.ONSTART">
+			<variable name="dbdialog"/>
+			<function>
+				<log>session.ONSTART</log>
+				<!--raise name="application.check"/-->
+			</function>
+		</onevent>
+		<onevent event="test">
+			<variable name="dbdialog"/>
+			<variable name="testxml" type="long"/>
+			<variable name="strname" type="string"/>
+			<function>
+				<script><![CDATA[var str = '<fu>x</fu>';
+					var x = new XML('<root><fu>x2</fu><fu>xssss</fu></root>');
+					context.testxml.setValue(x.children().length());
+					context.strname.setValue(x.children()[0].toString());
+				  ]]></script>
+				<log dest="stdout"><![CDATA[SystemInit get a event '<%=context.testxml.toLong()%>']]></log>
+				<log dest="stdout"><![CDATA[strname= '<%=context.strname.toString()%>']]></log>
+				<log>get event name test</log>
+				<application method="LocalEventRequest" event="hellorequest">
+					<applicationdata>
+						<![CDATA[ 
+						hello world;
+						]]>
+					</applicationdata>
+				</application>
+				<wait event="hellorequest" timeout="1000"/>
+				<log>i am here</log>
+				<!--end reason="call. end."/-->
+			</function>
+		</onevent>
+		<onevent event="application.check">
+		  <function>
+			<log dest="stdout"><![CDATA[get a event '<%=event.getName()%>']]></log>
+			<function>
+			  <!--raise name="application.check"/-->
+			</function>
+		  </function>
+		</onevent>
+		<onevent event="restfulrequest.event">
+			<function>
+				<set name="filepath" value="'/root/svn/starlang-1.0.2/build/testpage.html'"/>
+				<set name="transportid" value="event.getParam('transportid').toString()"/>
+				<log dest="stdout"><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
+				<restful action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid')">
+					<html file="context.filepath"/>
+				</restful>
+			</function>
+		</onevent>
+		<onevent event="restfulrequestssss.event">
+			<function>
+				<set name="filepath" value="'/root/svn/starlang-1.0.2/build/testpage.html'"/>
+				<set name="transportid" value="event.getParam('transportid').toString()"/>
+				<log dest="stdout"><![CDATA[restfulrequest eventname <%=event.getName()%>]]> </log>
+				<log dest="stdout"><![CDATA[restfulrequest transportid '<%=event.getParam("transportid").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest eventdata '<%=event.getParam("eventdata").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest requestpath '<%=event.getParam("requestpath").toString()%>']]></log>
+				<log dest="stdout"><![CDATA[restfulrequest method '<%=event.getParam("method").toString()%>']]></log>
+				<restful action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid')">
+					<json><![CDATA[
+						<html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>
+					]]></json>
+				</restful>
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<events>
+		<onevent event="session.startup">
+			<script><![CDATA[
+				var student = new Object(); 
+				student.name = "Lanny"; 
+				student.age = "25"; 
+				student.location = "China"; 
+				var myArray=new Array();
+				for(var i=0;i<10;i++)
+				{
+					myArray[i]='{"22","ss"}';		
+				}
+				student.test=myArray;
+				var json = JSON.stringify(student); 
+				context.print(json);
+			]]></script>
+		</onevent>
+	</events>
+</starlang>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="radiusclient" type="object"/>
+	<logconfig dest="stdout"/>
+	<function name="StarRadiusClient">
+		<variable name="radiusparam" type="params"/>
+		<set name="radiusparam" paramname="RadiusLocalIP" value="'0.0.0.0'"/>
+		<set name="radiusparam" paramname="RadiusLocalPort" value="'2322'"/>
+		<set name="radiusparam" paramname="RadiusAuthServerIP" value="'0.0.0.0'"/>
+		<set name="radiusparam" paramname="RadiusAuthServerPort" value="'2322'"/>
+		<set name="radiusparam" paramname="RadiusAuthServerIP" value="'0.0.0.0'"/>
+		<set name="radiusparam" paramname="RadiusAuthServerPort" value="'2322'"/>
+		<set name="radiusparam" paramname="RadiusAccServerIP" value="'0.0.0.0'"/>
+		<set name="radiusparam" paramname="RadiusAccServerPort" value="'2322'"/>
+		<set name="radiusparam" paramname="SharedKey" value="'2322'"/>
+		<set name="radiusparam" paramname="ResponseTimeOut" value="'2322'"/>
+		<set name="radiusparam" paramname="Retransmit" value="'2322'"/>
+		<radius name="radiusclient" action="client" params="context.radiusparam">
+		<radius name="radiusclient" action="sendmessage">
+			<jsonbody>
+				<![CDATA[ 
+					"attribute":{
+						"username":"sdfsdf",
+						"password":"sdfsdf",
+						"nasipaddr":"10.1.1.1",
+					}
+				]]>
+			</jsonbody>
+		</radius>
+		<wait event="radiusreponse">
+			
+		</wait>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<container name="testcontainer" type="hashmap" keytype="string" valuetype="string"/>
+			<variable name="strname" type="string" value="'11111'"/>
+			<function>
+				<log>session.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+					this.test;
+				  ]]></script>
+			</function>
+			<log><![CDATA[strname size <%=context.strname.toString().length%>]]> </log>
+			<for var="i" from="0" to="10">
+				<log>ssss</log>
+			</for>
+			<function name="test"/>
+			<if cond="context.testcontainer==null">
+				<then>
+					<function>
+						<log>context.testcontainer==null</log>
+					</function>
+				</then>
+				<else>
+					<function>
+						<log>context.testcontainer!=null</log>
+					</function>
+				</else>
+			</if>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

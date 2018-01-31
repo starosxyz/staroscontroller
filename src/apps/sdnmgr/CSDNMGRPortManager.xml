@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSDNMGRPortManager.xml
+	@brief 		device类
+	@version 	1.1.0
+	@auth 		YY
+	@date		2018/01/18
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CSDNMGRPort">
+		<private>
+			<long name="resourceid"/>
+			<string name="workstate"/>
+			<string name="sendbandwidth"/>
+			<string name="receive"/>
+		</private>
+		<public>
+			<function name="CSDNMGRPort">
+				<parameters>					
+					<string name="workstate"/>
+					<string name="sendbandwidth"/>
+					<string name="receive"/>
+					<long name="resourceid"/>
+				</parameters>
+				<set name="thisclass.workstate" value="context.workstate.toString()"/>
+				<set name="thisclass.sendbandwidth" value="context.sendbandwidth.toString()"/>
+				<set name="thisclass.receive" value="context.receive.toString()"/>
+				<set name="thisclass.resourceid" value="context.resourceid.toLong()"/>
+			</function>
+			<function name="port2JSON">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<script><![CDATA[
+					var info = new Object()
+					info.port = thisclass.resourceid.toLong()
+					info.workstate = thisclass.workstate.toString()
+					info.sendbandwidth = thisclass.sendbandwidth.toString()
+					info.receive = thisclass.receive.toString()
+					context.json.setValue(JSON.stringify(info))
+				]]></script>
+			</function>
+		</public>
+			
+		
+	</class>
+	
+	<class name="CSDNMGRPortManager">
+		<private>
+			<hashmap name="portmap" keytype="long" valuetype="object"/>
+			<long name="resourceid"/>
+		</private>
+		<public>
+			<function name="CSDNMGRPortManager">
+				<set name="thisclass.resourceid" value="1"/>
+				<long name="i"/>
+				<for var="context.i" from="1" to="5">
+					<function name="addPort">
+						<parameters>
+							<string name="workstate" in="'active'"/>
+							<string name="sendbandwidth" in="'257'"/>
+							<string name="receive" in="'354'"/>
+						</parameters>
+					</function>
+				</for>
+			</function>
+			<function name="addPort">
+				<parameters>
+					<string name="workstate"/>
+					<string name="sendbandwidth"/>
+					<string name="receive"/>
+				</parameters>
+				<object name="portobj"/>				
+				<if cond="thisclass.portmap.hasValue(thisclass.resourceid.toLong()) == false">
+					<then>
+						<new name="context.portobj" class="CSDNMGRPort">
+							<parameters>
+								<string name="workstate" in="context.workstate.toString()"/>
+								<string name="sendbandwidth" in="context.sendbandwidth.toString()"/>
+								<string name="receive" in="context.receive.toString()"/>
+								<long name="resourceid" in="thisclass.resourceid.toLong()"/>
+							</parameters>
+						</new>
+						<insert name="thisclass.portmap" key="thisclass.resourceid.toLong()" value="context.portobj"/>
+						<set name="thisclass.resourceid" value="thisclass.resourceid.toLong() + 1"/>
+					</then>
+				</if>
+			</function>
+			<function name="getPort">
+				<parameters>
+					<long name="resourceid"/>
+					<object name="portobj"/>				
+				</parameters>
+				<set name="context.portobj" value="thisclass.portmap.getValue(context.resourceid.toLong())"/>
+			</function>
+			<function name="allPort2JSON">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<pair name="portpair" keytype="long" valuetype="object"/>
+				<list name="portlist" valuetype="string"/>
+				<object name="portobj"/>
+				<string name="portjson"/>
+				<for var="context.portpair" in="thisclass.portmap">
+					<set name="context.portobj" value="context.portpair.second()"/>
+					<if cond="context.portobj.ptr != null">
+						<then>
+							<function name="port2JSON" class="context.portobj">
+								<parameters>
+									<string name="json" out="context.portjson"/>
+								</parameters>
+							</function>
+							<insert name="context.portlist" value="context.portjson"/>
+						</then>
+					</if>
+				</for>
+				<script><![CDATA[
+					var myArray = new Array()
+					var portstr = context.portlist.getFirst()
+					while(portstr != null){
+						var portobj = new Object()						
+						var info = JSON.parse(portstr)
+						portobj.port = info.port
+						portobj.workstate = info.workstate
+						portobj.sendbandwidth = info.sendbandwidth
+						portobj.receive = info.receive
+						myArray.push(portobj)
+						portstr = context.portlist.getNext()
+					}
+					context.json.setValue(JSON.stringify(myArray));
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

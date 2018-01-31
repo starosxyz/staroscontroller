@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_defaultconfig.xml
+	@brief 		Send_OFPT13_SET_CONFIG
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/07/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<function name="SendOpenFlowConfig">
+		<log>SendOpenFlowConfig</log>
+		
+		<long name="xid"/>
+		<string name="msl"/>
+		<string name="fflags"/>
+		<boolean name="isMax"/>
+		
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		
+		<!--if cond="context.isMax.toBoolean() == false">
+			<then>
+				<function>
+					<log>is max is false</log>
+					<string name="jsonvalue"/>
+					<reference variable="jsonvalue">
+						<jsonbody><![CDATA[ 
+								{
+									"flags":"0",
+									"misssendlen":"0xffff"
+								}
+						]]></jsonbody>
+					</reference>
+					<function name="Send_OFPT13_SET_CONFIG">
+						<parameters>
+							<string name="transportid" in="event.getParam('transportid').toString()"/>
+							<string name="strjson" in="context.jsonvalue.toString()"/>
+						</parameters>
+					</function>
+				</function>
+			</then>
+		</if-->
+		
+		<string name="jsonvalue"/>
+		<reference variable="jsonvalue">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>",
+						"flags":"0",
+						"misssendlen":"0xffff"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_SET_CONFIG">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvalue.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<function name="SendGetConfigRequest">
+		<long name="xid"/>
+		<string name="jsonvariable"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_GET_CONFIG_REQUEST">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvariable.toString()"/>
+			</parameters>
+		</function>	
+		<wait event="openflow.OFPT13_GET_CONFIG_REPLY" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+			<function>
+				<script>
+					<![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());							
+							if (info.misssendlen.toString() != 0xffff)
+							{								
+								context.print("not 0xffff");
+							}
+							else
+							{
+								context.print("is 0xffff");
+							}
+					]]>
+				</script>				
+								
+			</function>
+						
+		</wait>
+	</function>		
+	<function name="SendBRRequest">
+		<long name="xid"/>
+		<string name="jsonvariable"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<reference variable="jsonvariable">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_BARRIER_REQUEST">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.jsonvariable.toString()" />
+			</parameters>
+		</function>
+		<wait event="openflow.OFPT13_BARRIER_REPLY" transportid="event.getParam('transportid').toString()"  xid="context.xid.toLong()" timeout="5000">
+				<function>
+						<log><![CDATA[event name=<%=event.getName().toString()%>]]></log>
+						<log><![CDATA[event data=<%=event.getParam('eventdata').toString()%>]]></log>
+				</function>
+		</wait>
+	</function>
+	
+	<function name="DefaultConfig">
+		<function name="SendOpenFlowConfig"/>
+	    <function name="SendBRRequest"/>
+		<function name="SendGetConfigRequest"/>
+	</function>
+	
+</starlang>

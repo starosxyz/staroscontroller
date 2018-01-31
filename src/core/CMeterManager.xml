@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CMeterManager.xml
+	@brief 		meter manager
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<string name="metertestid"/>
+	<!--
+		@class      CBand
+		@brief 		The band property is saved in the CBand class
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<class name="CBand">
+		<private>
+			<string name="m_type" />
+			<string name="m_packets" />
+			<string name="m_bytes" />
+			<string name="m_bandjson" />
+		</private>
+		<public>
+			<function name="CBand">
+				<parameters>
+					<string name="type" />
+					<string name="bandjson" />
+				</parameters>
+				<set name="thisclass.m_type" value="context.type.toString()"/>
+				<set name="thisclass.m_bandjson" value="context.bandjson.toString()"/>
+				<set name="thisclass.m_packets" value="'0'"/>
+				<set name="thisclass.m_bytes" value="'0'"/>
+			</function>
+			<!--
+				@brief		Update Band
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param packets 	band packet	
+					@param bytes    bytes
+			-->
+			<function name="UpdateBand">
+				<parameters>
+					<string name="packets" />
+					<string name="bytes" />
+				</parameters>
+				<set name="thisclass.m_packets" value="context.packets.toString()"/>
+				<set name="thisclass.m_bytes" value="context.bytes.toString()"/>
+			</function>
+			<!--
+				@brief		band data
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Output:
+					@param bandformatter  band string data
+			-->
+			<function name="BandFormatter">
+				<parameters>
+					<string name="bandformatter" />
+				</parameters>
+				<script><![CDATA[
+					var totalstring="Bytes: "+thisclass.m_bytes.toString()+" Packets: "+thisclass.m_packets.toString()+" Type: "+thisclass.m_type.toString()+"<br>";
+					context.bandformatter.setValue(totalstring);
+				]]></script>
+			</function>
+		</public>
+	</class>
+	<!--
+		@class      CMeter
+		@brief 		The meter property is saved in the CMeter class
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<class name="CMeter">
+		<private>
+			<long name="m_id"/>
+			<string name="m_appid"/>
+			<string name="m_state" />
+			<string name="m_packets"/>
+			<string name="m_bytes" />
+			<string name="m_bands" />
+			<string name="m_meterjson" />
+			<hashmap name="BandContainer"  keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<function name="CMeter">
+				<parameters>
+					<string name="appid" />
+					<string name="strjson"/>
+					<long name="meterid" />
+				</parameters>
+				<set name="thisclass.m_appid" value="context.appid.toString()"/>
+				<set name="thisclass.m_meterjson" value="context.strjson.toString()"/>
+				<set name="thisclass.m_id" value="context.meterid.toLong()"/>
+				<set name="thisclass.m_state" value="'Added'"/>
+				<set name="thisclass.m_packets" value="'0'"/>
+				<set name="thisclass.m_bytes" value="'0'"/>
+				<hashmap name="bandlist"  keytype="string" valuetype="string"/>
+				<pair name="onebandpair"  keytype="string" valuetype="object"/>
+				<string name="bandtype" />
+				<string name="bandjson" />
+				<object name="bandobj" />
+				<script><![CDATA[
+						var info = JSON.parse(context.strjson.toString());
+						if (info.meterbandlist != null)
+						{
+							for(var i=0;i<info.meterbandlist.length;i++)
+							{
+								var oneband = info.meterbandlist[i];
+								var strjson=JSON.stringify(oneband);
+								context.bandlist.addValue(oneband.bandtype, strjson);
+							}
+						}
+				]]></script>
+				<for var="onebandpair" in="context.bandlist">
+					<function>
+						<set name="bandjson" value="context.onebandpair.second()"/>
+						<set name="bandtype" value="context.onebandpair.first()"/>
+						<new name="bandobj" class="CBand">
+							<parameters>
+								<string name="type"  in="context.bandtype.toString()"/>
+								<string name="bandjson"  in="context.bandjson.toString()"/>
+							</parameters>
+						</new>
+						<insert name="BandContainer" key="context.bandtype.toString()" value="context.bandobj"/>
+					</function>
+				</for>
+			</function>
+			<!--
+				@brief		Get meter json
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Output:
+					@param meterjson   json data of meter
+			-->
+			<function name="GetMeterJson">
+				<parameters>
+					<string name="meterjson" />
+				</parameters>
+				<set name="meterjson" value="thisclass.m_meterjson"/>
+			</function>
+
+			<!--
+				@brief		Add Band
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+					@param type 	 type
+					@param packets   packet
+					@param bytes     byte
+			-->
+			<function name="AddBand">
+				<parameters>
+					<string name="type" />
+					<string name="packets" />
+					<string name="bytes" />
+				</parameters>
+				<object name="oneband"/>
+				<new name="oneband" class="CBand">
+					<parameters>
+						<string name="type"  in="context.type.toString()"/>
+						<string name="packets"  in="context.packets.toString()"/>
+						<string name="bytes"  in="context.bytes.toString()"/>
+					</parameters>
+				</new>
+				<remove name="BandContainer" key="context.type.toString()"/>
+				<insert name="BandContainer" key="context.type.toString()" value="context.oneband"/>
+			</function>
+
+			<!--
+				@brief		Get meter info
+				@auth 		qiulei
+				@date		2017/08/28
+				Output:
+					@param id 	 	 meterid
+					@param appid 	 appid
+					@param state 	 state
+					@param packets   packet
+					@param bytes     byte
+					@param bands     band
+			-->
+			<function name="getMeterInfo">
+				<parameters>
+					<long name="id" />
+					<string name="appid" />
+					<string name="state"/>
+					<string name="packets" />
+					<string name="bytes"/>
+					<string name="bands"/>
+				</parameters>
+				
+				<set name="id" value="thisclass.m_id"/>
+				<set name="appid" value="thisclass.m_appid"/>
+				<set name="state" value="thisclass.m_state"/>
+				<set name="packets" value="thisclass.m_packets"/>
+				<set name="bytes" value="thisclass.m_bytes"/>
+				<set name="bands" value="thisclass.m_bands"/>
+			</function>
+
+			<!--
+				@brief		Band For matter
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Output:
+					@param bandformatter   band data of meter
+			-->
+			<function name="BandFormatter">
+				<parameters>
+					<string name="bandformatter" />
+				</parameters>
+				<list name="strbandlist"  valuetype="string"/>
+				<object name="bandobj" />
+				<string name="bandstring" />
+				<pair name="onebandpair"  keytype="string" valuetype="object"/>
+				<if cond="context.BandContainer.size() == 0">
+					<then>
+						<set name="bandformatter" value="'(No bands for this meter)'"/>
+						<exit/>
+					</then>
+					<else>
+						<function>
+							<for var="onebandpair" in="context.BandContainer">
+								<function>
+									<set name="bandobj" value="context.onebandpair.second()"/>
+									<if cond="context.bandobj.ptr == null">
+										<then>
+											<log>bandobj is null </log>
+											<exit/>
+										</then>
+									</if>
+									<function name="BandFormatter" class="bandobj">
+										<parameters>
+											<string name="bandformatter"  out="context.bandstring"/>
+										</parameters>
+									</function>
+									<insert name="strbandlist" value="context.bandstring.toString()"/>
+								</function>
+							</for>
+						</function>
+					</else>
+				</if>
+				<script><![CDATA[
+					var totalstring="";
+					var firststr=context.strbandlist.getFirst();
+					while(firststr!=null){
+						totalstring+=firststr;
+						context.bandformatter.setValue(totalstring);
+						firststr=context.strbandlist.getNext();
+					}
+				]]></script>
+			</function>
+
+			<!--
+				@brief		Get meter info
+				@auth 		qiulei
+				@date		2017/08/25
+				Output:
+					@param meterInfoJson 	json info of meter
+			-->
+			<function name="getOneMeterInfoJsonStr">
+				<parameters>
+					<string name="meterInfoJson" />
+				</parameters>
+				<string name="allbandstring" />
+				<function name="BandFormatter">
+					<parameters>
+						<string name="bandformatter"  out="context.allbandstring"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+					var onearray = new Object();
+						onearray.id=thisclass.m_id.toLong();
+						onearray.app_id=thisclass.m_appid.toString();
+						onearray.state=thisclass.m_state.toString();
+						onearray.packets=thisclass.m_packets.toString();
+						onearray.bytes=thisclass.m_bytes.toString();
+						onearray.bands=context.allbandstring.toString();
+					
+					var strjson = JSON.stringify(onearray);
+					context.meterInfoJson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			<!--
+				@brief		Set meter messages state
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+				Input:
+					@param inmodstate   meter message state
+			-->
+			<function name="SetState">
+				<log>##### Set MeterMessage State #####</log>
+				<parameters>
+					<string name="inmodstate" />
+				</parameters>
+				<set name="m_state" value="context.inmodstate.toString()"/>
+			</function>
+		</public>
+	</class>
+	<!--
+		@class      CMeterManager
+		@brief 		meter manager
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/11/27
+	-->
+	<class name="CMeterManager">
+		<private>
+			<hashmap name="merterContainer"  keytype="long" valuetype="object"/>
+			<string name="m_transportid" />
+			<long name="m_defaultmeterid" />
+			<long name="m_errorid" />
+			<long name="m_meterid" />
+		</private>
+		<public>
+			<function name="CMeterManager">
+				<parameters>
+					<string name="transportid" />
+				</parameters>
+				<set name="thisclass.m_transportid" value="context.transportid.toString()"/>
+				<set name="thisclass.m_meterid" value="2"/>
+				<function name="testaddmeter"/>	
+				<function name="AddErrorMeter"/>
+			</function>
+
+			<!--
+				@brief		The controller sends the meter tables to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+		   			@param strjson 	json data of meter
+		   			@param appid 	appid
+			-->
+			<function name="InstallMeterRequest">
+				<parameters>
+					<string name="strjson" />
+					<long name="meterid" />
+					<string name="appid" />
+				</parameters>
+				<string name="newflowmodjson" />
+				<set name="meterid" value="thisclass.m_meterid.toLong()"/>
+				<script><![CDATA[
+						var info = JSON.parse(context.strjson.toString());
+						info.meterid=context.meterid.toString();
+						info.command='0';
+						var strjson=JSON.stringify(info);
+						context.newflowmodjson.setValue(strjson);
+				]]></script>
+				<object name="meterobj" />
+				<new name="meterobj" class="CMeter">
+					<parameters>
+						<string name="appid"  in="context.appid.toString()"/>
+						<string name="strjson"  in="context.newflowmodjson.toString()"/>
+						<long name="meterid" in="context.meterid.toLong()"/>
+					</parameters>
+				</new>
+				<if cond="thisclass.merterContainer.hasValue(context.meterid.toLong())==false">
+					<then>
+						<function>
+							<insert name="merterContainer" key="context.meterid.toLong()" value="context.meterobj"/>
+							<function name="Send_OFPT13_METER_MOD">
+								<parameters>
+									<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+									<string name="strjson"  in="context.newflowmodjson.toString()"/>
+								</parameters>
+							</function>
+						</function>
+					</then>
+					<else>
+						<log>metermanager container already have the meter</log>
+					</else>
+				</if>
+				<set name="thisclass.m_meterid" value="thisclass.m_meterid.toLong()+1"/>
+			</function>
+
+			<!--
+				@brief		delete meter tables
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+				Input:
+		   			@param meterid 	meterid
+			-->
+			<function name="UnInstallMeterRequest">
+				<parameters>
+					<long name="meterid" />
+				</parameters>
+				<string name="transportid" />
+				<object name="meterobj" />
+				<string name="flowmodjson" />
+				<string name="sendflowmodjson"/>
+				<log><![CDATA[CMetermgr UnInstallMeterRequest meterid = <%=context.meterid.toString()%>]]></log>				
+				<if cond="context.merterContainer.hasValue(context.meterid.toLong())==true">
+					<then>
+						<function>
+							<log><![CDATA[context.merterContainer has <%=context.meterid.toString()%>]]></log>
+							<lookup name="merterContainer" key="context.meterid.toLong()" output="context.meterobj"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>UnInstallMeterRequest exit</log>							
+							<exit/>
+						</function>
+					</else>
+				</if>				
+				<function name="GetMeterJson" class="context.meterobj">
+					<parameters>
+						<string name="meterjson"  out="context.flowmodjson"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+						var info = JSON.parse(context.flowmodjson.toString());
+						info.command='3';
+						var strjson=JSON.stringify(info);
+						context.sendflowmodjson.setValue(strjson);
+				]]></script>
+				<function name="Send_OFPT13_METER_MOD">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.sendflowmodjson.toString()"/>
+					</parameters>
+				</function>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
+				<remove name="merterContainer" key="context.meterid.toLong()"/>
+				<log><![CDATA[size = <%=thisclass.merterContainer.size().toString()%>]]></log>
+				<pair name="i"  keytype="long" valuetype="object"/>
+				<long name="id" />
+				<for var="context.i" in="thisclass.merterContainer">
+					<set name="context.id" value="context.i.first()"/>
+					<log><![CDATA[context.id = <%=context.id.toString()%>]]></log>
+				</for>						
+			</function>
+
+			<!--
+				@brief		The controller sends the test meter tables to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+			-->
+			<function name="testaddmeter">			
+				<string name="modstrjson" />
+				<string name="resourceid"  value=""/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+							"command":"<$=OPENFLOW_METER_MOD_ADD$>",
+							"flag":"1",
+							"meterid":"1",
+							"meterbandlist":[
+								{
+									"bandtype":"1",
+									"rate":"1000",
+									"burstsize":"1000"
+								},
+								{
+									"bandtype":"2",
+									"preclevel":"1000"
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="InstallMeterRequest">
+					<parameters>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<long name="meterid"  out="thisclass.m_defaultmeterid"/>
+						<string name="appid"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+			
+			<!--
+				@brief		The controller sends the error meter to the device
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+			-->
+			<function name="AddErrorMeter">			
+				<string name="modstrjson" />
+				<string name="resourceid"  value=""/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+							"command":"77",
+							"flag":"1",
+							"meterid":"1",
+							"meterbandlist":[
+								{
+									"bandtype":"1",
+									"rate":"1000",
+									"burstsize":"1000"
+								},
+								{
+									"bandtype":"2",
+									"preclevel":"1000"
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="InstallMeterRequest">
+					<parameters>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<long name="meterid"  out="thisclass.m_errorid"/>
+						<string name="appid" in="'core'"/>
+					</parameters>
+				</function>
+			</function>
+
+			<!--
+				@brief		test delete meter tables
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/11/27
+			-->
+			<function name="testremovemeter">			
+				<function name="UnInstallMeterRequest">
+					<parameters>
+						<long name="meterid"  in="thisclass.m_defaultmeterid"/>
+					</parameters>
+				</function>
+			</function>
+			<!--
+				@brief		Get all json data of meter
+				@auth 		qiulei
+				@date		2017/08/25
+				Output:
+					@param jsonstring 	json data of meter
+			-->
+			<function name="GetAllMeterJsonData">	
+				<parameters>
+					<string name="jsonstring" />
+				</parameters>
+				
+				<list name="meterjsonlist"  valuetype="string"/>
+				<object name="meterobj" />
+				<string name="meterInfoJson" />
+				<pair name="onemerterpair"  keytype="long" valuetype="object"/>
+				<for var="onemerterpair" in="context.merterContainer">
+					<function>
+						<set name="meterobj" value="context.onemerterpair.second()"/>
+						<if cond="context.meterobj.ptr == null">
+							<then>
+								<log>meterobj is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="getOneMeterInfoJsonStr" class="context.meterobj">
+							<parameters>
+								<string name="meterInfoJson"  out="context.meterInfoJson"/>
+							</parameters>
+						</function>
+						<insert name="meterjsonlist" value="context.meterInfoJson.toString()"/>
+					</function>
+				</for>
+				
+				<script><![CDATA[
+					var json = new Object();
+					var payload = new Object();							
+					json['event'] = "meterDataResponse";
+					
+					var MetersArray=new Array();
+					
+					var firststr=context.meterjsonlist.getFirst();
+					while(firststr!=null){
+						var oneMeterStrJson = firststr;
+						var oneMeterObject = JSON.parse(oneMeterStrJson);
+						MetersArray.push(oneMeterObject);
+						firststr=context.meterjsonlist.getNext()
+					
+					}
+
+					payload['meters'] = MetersArray;
+					
+					var twobject = new Object();								
+					twobject['no_rows_msg'] = "No meters found";
+													
+					payload['annots'] = twobject;
+					json['payload'] = payload;
+					var strjson=JSON.stringify(json);				
+					context.jsonstring.setValue(strjson);
+					
+				]]></script>
+			</function>	
+			
+			<!--
+				@brief		Find meter object from merterContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+				Input:
+					@param inmeterid   groupid
+				Output:
+					@param outmeter   group object
+			-->
+			<function name="FindMeter">
+				<parameters>
+					<long name="inmeterid" />
+					<object name="outmeter" />
+				</parameters>				
+				<function name="DumpMeter"/>
+				<if cond="context.merterContainer.hasValue(context.inmeterid.toLong()) == true">
+					<then>						
+						<function>
+							<lookup name="merterContainer" key="context.inmeterid.toLong()" output="context.outmeter"/>
+						</function>
+					</then>
+				</if>
+			</function>
+			<!--
+				@brief		Print meterid from merterContainer
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2017/09/07
+			-->
+			<function name="DumpMeter">
+				<long name="meterkey" />
+				<pair name="onemeterpair"  keytype="long" valuetype="object"/>
+				<for var="onemeterpair" in="context.merterContainer">
+					<set name="meterkey" value="context.onemeterpair.first()"/>
+					<log><![CDATA[meterkey=<%=context.meterkey.toString()%>]]></log>
+				</for>
+			</function>
+		</public>
+	</class>
+</starlang>

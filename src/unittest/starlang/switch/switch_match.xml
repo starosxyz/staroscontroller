@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
+	<variable name="newSession"/>
+	<logconfig dest="stdout"/>
+	<function name="test">
+		<function>
+			<log>test</log>
+		</function>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<variable name="longvalue" type="long" value="1"/>
+			<log>start</log>
+			<switch value="context.longvalue.toLong()">
+				<case value="1">
+					<function>
+						<log>case 1</log>
+					</function>
+					<break/>
+				</case>
+				<case value="3">
+					<function>
+						<log>case 3</log>
+					</function>
+					<break/>
+				</case>
+				<default>
+					<function>
+						<log>default</log>
+					</function>
+				</default>
+			</switch>
+			<log>end</log>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

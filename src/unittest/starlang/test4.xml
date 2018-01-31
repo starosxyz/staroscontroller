@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+		<list name="oneList" valuetype="string"/>
+		
+		<function name="testfun">
+			<insert name="oneList" value="'1'"/>
+			<insert name="oneList" value="'2'"/>
+			<insert name="oneList" value="'3'"/>
+		</function>
+			
+		<function name="GetValueFromList">
+			<parameters>
+				<string name="firstvalue"/>
+				<string name="endvalue"/>
+			</parameters>
+			<set name="firstvalue" value="context.oneList.front().value()"/>
+			<set name="endvalue" value="context.oneList.back().value()"/>
+		</function>
+	
+		<function name="PrintList">
+			<string name="firstvalue"/>
+			<string name="endvalue"/>
+			<function name="GetValueFromList">
+				<parameters>
+					<string name="firstvalue" out="context.firstvalue"/>
+					<string name="endvalue" out="context.endvalue"/>
+				</parameters>
+			</function>
+			<log><![CDATA[test oneList firstvalue = <%=context.firstvalue.toString()%>]]></log>
+			<log><![CDATA[test oneList endvalue = <%=context.endvalue.toString()%>]]></log>
+		</function>
+
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="testfun"/>
+			<function name="PrintList"/>
+		</onevent>
+	</events>
+</starlang>

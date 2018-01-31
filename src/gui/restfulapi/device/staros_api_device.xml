@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CDeviceService.xml
+	@brief 		处理/onos/v1/docs/index.html上device的4个device请求
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/11/20
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang>
+    <function name="HandleGetDevices">
+		<params name="httpparam"/>
+		<string name="sendstrjson"/>
+        <log>HandleGetDevices</log>
+        <script><![CDATA[
+            var json = new Object();
+            var myArray=new Array();
+
+			var first=context.openflowserverobj.ptr.getDeviceFirst();
+			while(first!=null){
+				context.print(first);
+				context.print('================start===================');
+				var devices = first;									
+				if( devices == null)
+				{
+						context.print('device is null');
+				}
+				else
+				{
+						context.print('device is not null');
+				}
+				var onearray = new Object();
+				if ((devices.hasParam('auxiliaryid')==true) &&
+					(devices.hasParam('buffers')==true) &&
+					(devices.hasParam('capabilities')==true) &&
+					(devices.hasParam('datapathid')==true) &&
+					(devices.hasParam('tables')==true) &&
+					(devices.hasParam('xid')==true))
+				{
+					onearray.auxiliaryid = devices.getParam('auxiliaryid').toString();
+					onearray.buffers = devices.getParam('buffers').toString();
+					onearray.capabilities = devices.getParam('capabilities').toString();
+					onearray.datapathid = devices.getParam('datapathid').toString();
+					onearray.tables = devices.getParam('tables').toString();
+					onearray.xid = devices.getParam('xid').toString();
+					myArray.push(onearray);
+				}
+				else 
+				{
+					context.print('no param');
+				}
+				first=context.openflowserverobj.ptr.getDeviceNext();								
+			}
+
+            json['devices'] = myArray;
+			var strjson=JSON.stringify(json);
+			context.print(strjson);
+			context.sendstrjson.setValue(strjson);
+        ]]></script>
+		<set name="httpparam" paramname="Server" value="'StarOS'"/>
+		<set name="httpparam" paramname="Connection" value="'Close'"/>
+		<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+		<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+			<jsonsrc src="sendstrjson"/>
+		</restful>
+		<restful name="restfulserver" action="Disconnect" transportid="event.getParam('transportid').toString()"/>
+    </function>
+    
+    
+    
+    
+    
+    
+    <function name="HandleDeleteAndFindOneDeviceRequest">
+    	<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<log level="1">67 enter HandleDeleteAndFindOneDeviceRequest</log>
+    	<if cond="context.method.toString()=='DELETE'">
+			<then>
+				<!--qiulei 处理删除device请求-->
+				<log level="1">staros_api_device.xml 69行 enter method DELETE</log>
+				<function name="deleteDevices">
+					<parameters>
+						<string name="eventdata" in="context.eventdata.toString()"/>
+						<vector name="pathvector" in="context.pathvector"/>
+					</parameters>
+				</function>
+			</then>
+			
+			<elseif cond="context.method.toString()=='GET'">
+				<log level="1">staros_api_device.xml 86行 enter method GET</log>
+				<!--得到单个device信息-->
+				<function name="getOneDeviceJsonStr">
+    				<parameters>
+						<vector name="pathvector" in="context.pathvector"/>
+					</parameters>
+    			</function>
+			</elseif>
+			
+			<elseif cond="context.method.toString()=='PUT'">
+				<log level="1">staros_api_device.xml 95行 enter method PUT</log>
+			</elseif>
+			
+			<elseif cond="context.method.toString()=='POST'">
+				<log level="1">staros_api_device.xml 99行 enter method POST</log>
+			</elseif>
+			
+			
+		</if>				
+    </function>
+    
+	<!--qiulei 处理删除device请求-->
+    <function name="deleteDevices">
+    	<parameters>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+		</parameters>
+    	
+    	<log level="1">staros_api_device.xml 105行 enter method deleteDevices</log>
+		<string name="resourceid" value="context.pathvector.getIndexOf(0).toString()"/>
+		<object name="deviceObj"/>		
+		<log level="1"><![CDATA[119 resourceid = <%=context.resourceid.toString()%>]]></log>
+
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.resourceid.toString()"/>
+				<object name="deviceobject" out="context.deviceObj"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.deviceObj.ptr==null">
+			<then>
+				<function name="ErrorDatasResponse">
+					<parameters>
+						<string name="resourceid" in="context.resourceid.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+
+		<function name="removeDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.resourceid.toString()"/>
+			</parameters>
+		</function>
+		
+		
+		<string name="outjson"/>
+		<script><![CDATA[
+			
+			var one = new Object();
+				one.resourceId = context.resourceid.toLong();
+				one.code = "0";
+				one.description = "ok";
+			
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+    </function>
+    
+    <function name="ErrorDatasResponse">
+		<parameters>
+			<string name="resourceid"/>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.resourceId = context.resourceid.toString();
+				one.code = "-1";
+				one.description = context.description.toString();						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<!--处理得到所有device请求.-->
+	<function name="HandleGetAllDevicesRequest">
+    	<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<log level="1">191 enter HandleGetAllDevicesRequest</log>
+    	<if cond="context.method.toString()=='GET'">
+			<then>
+				<log level="1">staros_api_device.xml 194行 enter method v</log>
+    			<function name="getAllDevices"/>
+			</then>
+		</if>
+    </function>
+    
+    <function name="getAllDevices">
+		<log level="1">insert getAllDevices 200</log>
+		<string name="outjson"/>
+		
+		<function name="AllDevicesToJsonStr"  class="DeviceManager">
+			<parameters>
+				<string name="AllDevicesJsonString" out="context.outjson"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.outjson=='' || context.outjson==null">
+			<then>
+				<function name="ErrorDatasResponse">
+					<parameters>
+						<string name="resourceid" in="context.resourceid.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'No devices found'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	<!--处理得到单个device请求.-->
+	<function name="getOneDeviceJsonStr">
+		<parameters>
+			<vector name="pathvector" in="context.pathvector"/>
+		</parameters>
+
+    	<log level="1">staros_api_device.xml 105行 enter method deleteDevices</log>
+		<string name="resourceid" value="context.pathvector.getIndexOf(0).toString()"/>
+		<object name="deviceObj"/>		
+		<log level="1"><![CDATA[270 resourceid = <%=context.resourceid.toString()%>]]></log>
+
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.resourceid.toString()"/>
+				<object name="deviceobject" out="context.deviceObj"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.deviceObj.ptr==null">
+			<then>
+				<function name="ErrorDatasResponse">
+					<parameters>
+						<string name="resourceid" in="context.resourceid.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+
+		<string name="oneDevideJsonString"/>
+		<function name="GetDeviceInfoForDetailRequest" class="context.deviceObj">
+				<parameters>
+					<string name="strjson" out="oneDevideJsonString"/>
+				</parameters>
+		</function>
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.oneDevideJsonString.toString()"/>
+			</parameters>
+		</function>
+		
+	</function>
+	
+	
+	<function name="HandleGetOneDeviceForAllPortsRequest">
+    	<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		
+		<log level="1">312 enter HandleGetOneDeviceForAllPortsRequest</log>
+		
+    	<if cond="context.method.toString()=='GET'">
+			<then>
+				<!--得到单个device上的所有ports-->
+				<log level="1">staros_api_device.xml 316行 enter 判断</log>
+    			<function name="getOneDeviceAllPort">
+    				<parameters>
+						<vector name="pathvector" in="context.pathvector"/>
+					</parameters>
+    			</function>
+			</then>
+		</if>
+	</function>
+	
+	<!--得到单个device上的所有ports-->
+	<function name="getOneDeviceAllPort">
+		<parameters>
+			<vector name="pathvector"/>
+		</parameters>
+
+		<log level="1">staros_api_device.xml 331行 enter method getOneDeviceAllPort</log>
+		
+		<string name="resourceid" value="context.pathvector.getIndexOf(0).toString()"/>
+		
+		<object name="deviceObj"/>		
+		<log level="1"><![CDATA[324 resourceid = <%=context.resourceid.toString()%>]]></log>
+
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.resourceid.toString()"/>
+				<object name="deviceobject" out="context.deviceObj"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.deviceObj.ptr==null">
+			<then>
+				<function name="ErrorDatasResponse">
+					<parameters>
+						<string name="resourceid" in="context.resourceid.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This id is wrong!'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<string name="outjson"/>
+		<function name="DeviceDetailInfoToJsonStr" class="context.deviceObj">
+			<parameters>
+				<string name="outjson" out="context.outjson"/>
+			</parameters>
+		</function>
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	 
+</starlang>

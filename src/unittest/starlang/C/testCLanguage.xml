@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<function name="print">
+		<log level="100"> print start </log>
+		<script><![CDATA[
+			var libpath = '/usr/lib/addtest.so';
+            var lib = ctypes.open(libpath);
+			context.print("lib is open ");
+			var addtest = lib.declare("addtest", ctypes.default_abi, ctypes.int,ctypes.int,ctypes.int);
+			var recv= addtest(2,5);
+			context.print("recv = " + recv);
+			lib.close();
+		]]></script>
+		<log level="100"> print end </log>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="print"/>
+		</onevent>
+	</events>
+</starlang>

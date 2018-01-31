@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CWebSocketManager.xml
+	@brief 		websocket管理
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">	
+	<class name="CWebSocketManager">
+		<private>
+			<hashmap name="clientContainer" keytype="string" valuetype="string"/>
+		</private>
+		<public>
+			<!--
+				@brief		添加websocket
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
+			<function name="addWebSocket">
+				<parameters>
+					<string name="transportid"/>			
+				</parameters>
+				<log level="100"><![CDATA[addWebSocket size=<%=context.clientContainer.size().toString()%>]]></log>
+				<if cond="context.clientContainer.hasValue(context.transportid.toString()) != true">
+					<then>
+						<function>
+							<log level="100"><![CDATA[clientContainer key=<%=context.transportid.toString()%>]]></log>
+							<insert name="clientContainer" key="context.transportid.toString()" value="context.transportid.toString()"/>
+						</function>
+					</then>
+					<else>
+						<function>
+							<log>addWebSocket already have the websocket</log>
+						</function>
+					</else>
+				</if>
+			</function>
+			<!--
+				@brief		删除websocket
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
+			<function name="RemoveWebSocket">
+				<parameters>
+					<string name="transportid"/>			
+				</parameters>
+				<log level="100"><![CDATA[RemoveWebSocket size=<%=context.clientContainer.size().toString()%>]]></log>
+				<if cond="context.clientContainer.hasValue(context.transportid.toString())">
+					<then>		
+						<log level="100"><![CDATA[clientContainer key=<%=context.transportid.toString()%>]]></log>				
+						<remove name="clientContainer" key="context.transportid.toString()"/>	
+						<log level="100"><![CDATA[RemoveWebSocket  after size=<%=context.clientContainer.size().toString()%>]]></log>			
+					</then>
+				</if>
+			</function>
+			<!--
+				@brief		发送所有的websocket
+				@auth 		hu peng (hupeng@staros.xyz)
+				@date		2017/11/24
+				Input:
+				Output: 
+			-->
+			<function name="SendToAllClient">
+				<parameters>
+					<string name="strjson"/>			
+				</parameters>
+				<log level="100">#######################################</log>
+				<log level="100"><![CDATA[SendToAllClient strjson =<%=context.strjson.toString()%>]]></log>
+				<log level="100">#######################################</log>
+				<string name="client"/>
+				<log level="100"><![CDATA[clientContainer size =<%=context.clientContainer.size().toString()%>]]></log>
+				<pair name="oneclientContainer" keytype="string" valuetype="string"/>
+				<for var="oneclientContainer" in="context.clientContainer">
+					<function>
+						<set name="client" value="context.oneclientContainer.second()"/>
+						<log level="100"><![CDATA[oneclientContainer value =<%=context.client.toString()%>]]></log>
+						<websocket name="restfulserver" method="SendText" transportid="context.client.toString()">
+							<jsonsrc src="strjson"/>
+						</websocket>
+					</function>
+				</for>
+			</function>
+		</public>
+	</class>
+</starlang>

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_error_handler.xml
+	@brief 		openflow error handler
+	@version 	1.1.0
+	@auth 		Wang Kang (kingsalone@sina.com)
+	@date		2017/09/01
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and Cookie
+					2.Find the appropriate device according to TransportID
+					3.Get FlowManager from device
+					4.Find the appropriate Flowentry according to Cookie
+					5.Set Message State from Flowentry
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/01
+	-->
+	<function name="ErrorHandleFlowMod">
+		<object name="flowentryobj"/>
+		<object name="deviceobj"/>
+		<object name="flowmgrobj"/>
+		<string name="flowcookie"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if(info.body)
+				{
+					context.flowcookie.setValue(info.body.cookie);
+				}
+		]]></script>
+
+		<log><![CDATA[flowcookie=<%=context.flowcookie.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 14 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.flowmgrobj.ptr!=null">
+					<then>
+						<log>##### Flowmgrobj is not null #####</log>
+						<function name="FindFlow" class="context.flowmgrobj">
+							<parameters>
+								<string name="incookie" in="context.flowcookie.toString()"/>
+								<object name="outflowentry" out="context.flowentryobj"/>
+							</parameters>
+						</function>
+						<if cond="context.flowentryobj.ptr != null">
+							<then>
+								<log>##### Flowentryobj is not null #####</log>
+								<function name="SetState" class="context.flowentryobj">	
+									<parameters>
+										<string name="inmodstate" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+	
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and GroupId
+					2.Find the appropriate device according to TransportID
+					3.Get GroupManager from device
+					4.Find the appropriate Group according to GroupId
+					5.Set Message State from Group
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/06
+	-->
+	<function name="ErrorHandleGroupMod">
+		<object name="groupobj"/>
+		<object name="deviceobj"/>
+		<object name="groupmgrobj"/>
+		<string name="groupid"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if(info.body)
+				{
+					context.groupid.setValue(info.body.groupid);
+				}
+		]]></script>
+
+		<log><![CDATA[groupid=<%=context.groupid.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 15 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.groupmgrobj.ptr!=null">
+					<then>
+						<log>##### groupmgrobj is not null #####</log>
+						<function name="FindGroup" class="context.groupmgrobj">
+							<parameters>
+								<string name="ingroupid" in="context.groupid.toString()"/>
+								<object name="outgroup" out="context.groupobj"/>
+							</parameters>
+						</function>
+						<if cond="context.groupobj.ptr != null">										
+							<then>
+								<log>##### groupobj is not null #####</log>
+								<function name="SetState" class="context.groupobj">						
+									<parameters>
+										<string name="inmodstate" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+	
+	<!--
+		@brief		1.Get a Error Message and JSON parse,Find MessageType and MeterId
+					2.Find the appropriate device according to TransportID
+					3.Get MeterManager from device
+					4.Find the appropriate Meter according to MeterId
+					5.Set Message State from Meter
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2017/09/07
+	-->
+	<function name="ErrorHandleMeterMod">
+		<object name="meterobj"/>
+		<object name="deviceobj"/>
+		<object name="metermgrobj"/>
+		<long name="meterid"/>
+		<string name="tmpmeterid"/>
+		<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				if(info.body)
+				{
+					context.tmpmeterid.setValue(info.body.meterid);
+				}
+		]]></script>
+		<set name="meterid" value="context.tmpmeterid.toLong()"/>
+		
+		<log><![CDATA[meterid=<%=context.meterid.toString()%>]]></log>
+		<log><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>
+		<log>##### MessageType is 29 #####</log>
+		<function name="GetDeviceByTransportId" class="DeviceManager">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<object name="onedeviceobj" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr != null">
+			<then>
+				<log>##### Deviceobj is not null #####</log>
+				<function name="GetMeterManager" class="context.deviceobj">
+					<parameters>
+						<object name="outmetermgr" out="context.metermgrobj"/>
+					</parameters>
+				</function>
+				<if cond="context.metermgrobj.ptr!=null">
+					<then>
+						<log>##### metermgrobj is not null #####</log>
+						<function name="FindMeter" class="context.metermgrobj">
+							<parameters>
+								<long name="inmeterid" in="context.meterid.toLong()"/>
+								<object name="outmeter" out="context.meterobj"/>
+							</parameters>
+						</function>
+						<if cond="context.meterobj.ptr != null">										
+							<then>
+								<log>##### meterobj is not null #####</log>
+								<function name="SetState" class="context.meterobj">						
+									<parameters>
+										<string name="inmodstate" in="'Peeding'"/>
+									</parameters>	
+								</function>
+							</then>
+						</if>
+					</then>
+				</if>
+			</then>
+		</if>
+	</function>
+
+</starlang>

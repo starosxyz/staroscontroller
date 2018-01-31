@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CFlowService.xml
+	@brief 		handle flow
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/09/01
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CFlowService">
+		<public>
+			<!--
+				@brief		加载流表
+				@auth 		YY
+				@date		2017/09/01
+				Input:	
+					@param strjson 	流表json	
+					@param appId 	流表appId			
+					@param datapathid 	流表设备id
+				Output:
+					@param outflowid 	出口流表id
+			-->
+			<function name="InstallFlow">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="strjson"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
+				</parameters>
+				
+				<object name="flowmgrobj"/>
+				<object name="deviceobj"/>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+					</then>
+				</if>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+				
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+					</then>
+				</if>								
+				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<string name="outflowid" out="context.outflowid"/>
+						<string name="strjson" in="context.strjson.toString()"/>
+						<string name="appId" in="context.appId.toString()"/>
+					</parameters>
+				</function>
+				<log>CFlowService InstallFlow end</log>
+			</function>
+			<!--
+				@brief		Install Drop Flow
+				@auth 		YangXR
+				@date		2017/11/24
+				Input:
+				   @param outflowid   传出的流表id
+				   @param appId       app名
+				   @param datapathid  设备id
+				   @param inputport   inputport
+				   @param ethtype     以太类型
+				Output:
+			-->
+			<function name="InstallDropFlow">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
+					<string name="inputport"/>
+					<string name="ethtype"/>
+				</parameters>
+				<string name="strdropflow"/>
+				<object name="flowmgrobj"/>
+				<object name="deviceobj"/>
+				<reference variable="strdropflow">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inputport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"<%=context.ethtype.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+				
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>								
+				<function name="InstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<string name="outflowid" out="context.outflowid"/>
+						<string name="strjson" in="context.strdropflow.toString()"/>
+						<string name="appId" in="context.appId.toString()"/>
+					</parameters>
+				</function>
+				<log>CFlowService InstallFlow end</log>
+			</function>
+			<!--
+				@brief		卸载流表
+				@auth 		YY
+				@date		2017/09/01
+				Input:		
+					@param flowid 	流表id			
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UnInstallFlow">
+				<parameters>
+					<string name="datapathid"/>			
+					<string name="flowid"/>
+				</parameters>
+				<object name="deviceobj"/>
+				<object name="flowmgrobj"/>
+				<log>CFlowService UnInstallFlow</log>
+				<log level="100"><![CDATA[CFlowService UnInstallFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+				<log>##### CFlowServer UnInstallFlow #####</log>
+				<if cond="context.flowid == ''">
+					<then>
+						<log>flowid is null</log>
+					</then>
+				</if>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+					</then>
+				</if>
+
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>flowmgrobj is null</log>
+					</then>
+				</if>
+				
+				<function name="UnInstallFlowTableRequest" class="context.flowmgrobj">
+					<parameters>
+						<string name="flowid" in="context.flowid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+
+			<!--
+				@brief		卸载Arp流表
+				@auth 		wangkang 
+				@date		2018/01/15
+				Input:				
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UninstallArpFlow">
+				<parameters>
+					<string name="datapathid"/>			
+				</parameters>
+				<object name="deviceobj"/>
+				<object name="flowmgrobj"/>
+				<syslog level="INFO">##### CFlowServer UninstallArpFlow #####</syslog>
+				<log level="100"><![CDATA[CFlowService UninstallArpFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetFlowManager" class="context.deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>			
+				</function>
+
+				<if cond="context.flowmgrobj.ptr==null">
+					<then>
+						<log>flowmgrobj is null</log>
+						<exit/>
+					</then>
+				</if>
+				
+				<function name="UninstallArpFlow" class="context.flowmgrobj"/>
+			</function>
+
+			<!--
+				@brief		install group table
+				@auth 		wangkang
+				@date		2018/01/17
+				Input:	
+					@param strjson 	流表json	
+					@param appId 	流表appId			
+					@param datapathid 	流表设备id
+				Output:
+					@param outgroupid 	出口group id
+			-->
+			<function name="InstallGroupFlow">
+				<parameters>
+					<string name="outgroupid"/>
+					<string name="strjson"/>
+					<string name="appId"/>
+					<string name="datapathid"/>
+				</parameters>
+				<syslog level="INFO">### CFlowService InstallGroupFlow###</syslog>
+				
+				<object name="groupmgr"/>
+				<object name="deviceobj"/>
+				<string name="vxlanport"/>
+				<string name="tunnelport"/>
+				<long name="tunnelid"/>
+				<string name="jsongroup"/>
+				<script><![CDATA[
+					var info = JSON.parse(context.strjson.toString());                              
+					context.vxlanport.setValue(info.vxlanport);
+					context.tunnelport.setValue(info.tunnelport);
+					context.tunnelid.setValue(info.tunnelid);
+				]]></script>
+
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+							"command":"0",
+							"grouptype":"1",
+							"groupid":"0",
+							"bucketlist":[
+								{
+									"weight":"1",
+									"watchport":"0",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"0",
+											"outport":"<%=context.vxlanport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								},
+								{
+									"weight":"1",
+									"watchport":"0",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"25",
+											"oxmfield":"38",
+											"tunnelid":"<%=context.tunnelid.toString()%>",
+											"maxlen":"0xffff"
+										},
+										{
+											"type":"0",
+											"outport":"<%=context.tunnelport.toString()%>",
+											"maxlen":"0xffff"
+										}
+									]
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="outdevice" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgr"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.groupmgr.ptr==null">
+					<then>
+						<log>groupmgr is null</log>
+						<exit/>
+					</then>
+				</if>								
+
+				<function name="InstallGroupRequest" class="context.groupmgr">
+					<parameters>
+						<string name="in_strjson" in="context.jsongroup.toString()"/>
+						<string name="in_appid"  in="context.appId.toString()"/>
+						<string name="in_groupid" out="context.outgroupid"/>
+					</parameters>
+				</function>
+
+				<log>CFlowService InstallGroupFlow end</log>
+			</function>
+
+			<!--
+				@brief		uninstall group table
+				@auth 		wangkang
+				@date		2018/01/17
+				Input:		
+					@param flowid 	流表id			
+					@param datapathid 	流表设备id
+				Output:
+			-->
+			<function name="UnInstallGroupFlow">
+				<parameters>
+					<string name="groupid"/>
+					<string name="datapathid"/>			
+				</parameters>
+				<object name="deviceobj"/>
+				<object name="groupmgr"/>
+				<log level="100"><![CDATA[CFlowService UnInstallGroupFlow datapathid= <%=context.datapathid.toString()%>]]></log>
+				<log>##### CFlowServer UnInstallGroupFlow #####</log>
+				<if cond="context.groupid == ''">
+					<then>
+						<log>flowid is null</log>
+						<exit/>
+					</then>
+				</if>
+				<function name="findDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.datapathid.toString()"/>
+						<object name="deviceobject" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log>deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgr"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.groupmgr.ptr==null">
+					<then>
+						<log>groupmgr is null</log>
+						<exit/>
+					</then>
+				</if>
+				
+				<function name="UnInstallGroupRequest" class="context.groupmgr">
+					<parameters>
+						<string name="groupid" in="context.groupid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+
+			<!-- wangkang 2018/01/30 -->
+			<function name="TestInstallFlow">
+				<parameters>
+					<string name="deviceid"/>
+				</parameters>
+				<syslog level="INFO">###### CFlowService TestInstallFlow #######</syslog>
+				<syslog level="INFO"><![CDATA[deviceid= <%=context.deviceid.toString()%>]]></syslog>
+				<string name="groupid"/>
+				<string name="flowid1"/>
+				<string name="flowid2"/>
+				<string name="flowid3"/>
+				<string name="jsonin2out"/>
+				<string name="jsonout2in"/>
+				<string name="jsonout2in2"/>
+
+				<function name="testInstallGroup">
+					<parameters>
+						<string name="outgroupid" out="context.groupid"/>
+						<string name="deviceid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+
+				<reference variable="jsonin2out">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"1"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"22",
+												"groupid":"<%=context.groupid.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"3"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"1",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<reference variable="jsonout2in2">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"4"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"1",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+				<function name="InstallFlow">
+					<parameters>
+						<string name="outflowid" out="context.flowid1"/>
+						<string name="strjson" in="context.jsonin2out.toString()"/>
+						<string name="appId" in="'core'"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow">
+					<parameters>
+						<string name="outflowid" out="context.flowid2"/>
+						<string name="strjson" in="context.jsonout2in.toString()"/>
+						<string name="appId" in="'core'"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallFlow">
+					<parameters>
+						<string name="outflowid" out="context.flowid3"/>
+						<string name="strjson" in="context.jsonout2in2.toString()"/>
+						<string name="appId" in="'core'"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+
+
+			<function name="testInstallGroup">
+				<parameters>
+					<string name="outgroupid"/>
+					<string name="deviceid"/>
+				</parameters>
+				<syslog level="INFO">###### CFlowService testInstallGroup #######</syslog>
+				<string name="jsongroup"/>
+				<object name="groupmgr"/>
+				<object name="deviceobj"/>
+				<reference variable="jsongroup">
+					<jsonbody><![CDATA[ 
+						{
+							"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+							"command":"0",
+							"grouptype":"1",
+							"groupid":"0",
+							"bucketlist":[
+								{
+									"weight":"1",
+									"watchport":"0",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"0",
+											"outport":"3",
+											"maxlen":"0xffff"
+										}
+									]
+								},
+								{
+									"weight":"1",
+									"watchport":"0",
+									"watchgroup":"0",
+									"actions":[
+										{
+											"type":"0",
+											"outport":"4",
+											"maxlen":"0xffff"
+										}
+									]
+								}
+							]
+						}	
+					]]></jsonbody>
+				</reference>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+						<object name="outdevice" out="context.deviceobj"/>
+					</parameters>				
+				</function>
+				
+				<if cond="context.deviceobj.ptr==null">
+					<then>
+						<log level="100">deviceobj is null</log>
+						<exit/>
+					</then>
+				</if>
+
+				<function name="GetGroupManager" class="context.deviceobj">
+					<parameters>
+						<object name="outgroupmgr" out="context.groupmgr"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.groupmgr.ptr==null">
+					<then>
+						<log>groupmgr is null</log>
+						<exit/>
+					</then>
+				</if>								
+
+				<function name="InstallGroupRequest" class="context.groupmgr">
+					<parameters>
+						<string name="in_strjson" in="context.jsongroup.toString()"/>
+						<string name="in_appid"  in="'core'"/>
+						<string name="in_groupid" out="context.outgroupid"/>
+					</parameters>
+				</function>
+			</function>
+		</public>
+	</class>
+</starlang>

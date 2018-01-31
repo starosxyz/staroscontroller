@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CPortService.xml
+	@version 	1.1.0
+	@auth 		hu peng
+	@date		2017/01/30
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<class name="CPortlogy">
+		<private>
+			<string name="appid"/>
+			<string name="add_eventname"/>				
+		</private>
+		<public>
+			<!--
+				@brief		构造事件对象
+				@auth 		hupeng
+				@date		2017/01/30
+				Input:
+				   @param appid 	app名
+				   @param add_eventname   up事件名
+				   @param  remove_eventname     down事件名
+				Output:
+			-->
+			<function name="CPortlogy">
+				<parameters>
+					<string name="appid"/>
+					<string name="add_eventname"/>
+				</parameters>
+				<set name="thisclass.appid" value="context.appid.toString()"/>
+				<set name="thisclass.add_eventname" value="context.add_eventname.toString()"/>
+			</function>
+			<function name="GetAddEventName">
+				<parameters>
+					<string name="event_name"/>
+				</parameters>
+				<set name="event_name" value="thisclass.add_eventname.toString()"/>
+			</function>
+		</public>
+	</class>
+	<!--
+		@brief		APP port事件 管理类
+		@auth 		hupeng
+		@date		2017/01/30
+		Input:
+		Output:
+	-->
+	<class name="CPortService">
+		<private>
+			<hashmap name="PortContainer" keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<function name="addPortListener">				
+				<parameters>
+					<string name="appid"/>
+					<string name="add_eventname"/>
+				</parameters>		
+				<log level="100">addPortListener is start</log>	
+				<if cond="context.PortContainer.hasValue(context.appid.toString())==false">
+					<then>
+						<object name="portobj"/>
+						<new name="portobj" class="CPortlogy">
+							<parameters>
+								<string name="appid" in="context.appid.toString()"/>
+								<string name="add_eventname" in="context.add_eventname.toString()"/>
+							</parameters>
+						</new>
+						<insert name="PortContainer" key="context.appid.toString()" value="context.portobj"/>						
+					</then>
+				</if>
+			</function>
+			<function name="removePortListener">
+				<parameters>
+					<string name="appid"/>
+				</parameters>
+				<log level="100">removePortListener is start</log>	
+				<remove name="PortContainer" key="context.appid.toString()"/>
+			</function>
+			<function name="FindPortListener">
+				<parameters>
+					<string name="appid"/>
+					<object name="portobj"/>
+				</parameters>
+				<set name="portobj" value="thisclass.PortContainer.getValue(context.appid.toString())"/>
+			</function>
+			
+			
+			<function name="ProcessPort">
+				<parameters>
+					<string name="strjson"/>
+					<string name="transportid"/>		
+					<string name="datapathid"/>	
+				</parameters>
+				<log level="100">ProcessPort start!!!!!!!!!!!</log>
+				<string name="appname"/>
+				<object name="portobj"/>
+				<long name="m_bundleid"/>
+				<string name="eventname"/>
+				<params name="eventparam"/>	
+				<pair name="i" keytype="string" valuetype="object"/>
+					<for var="i" in="context.PortContainer">
+						<set name="appname" value="context.i.first()"/>
+						<set name="portobj" value="context.i.second()"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log level="100">portobj is null</log>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetBundleID" class="ApplicationManager">
+							<parameters>
+								<string name="appid" in="context.appname.toString()"/>
+								<long name="bundleid" out="context.m_bundleid"/>
+							</parameters>
+						</function>
+						
+						<function name="GetAddEventName" class="portobj">
+							<parameters>
+								<string name="event_name" out="context.eventname"/>
+							</parameters>					
+						</function>
+						<set name="eventparam" paramname="eventdata" value="context.strjson.toString()" reset="true"/>
+						<set name="eventparam" paramname="datapathid" value="context.datapathid.toString()"/>					
+						<raise name="context.eventname.toString()" bundleid="context.m_bundleid.toLong()" param="context.eventparam"/>
+					</for>
+			</function>
+		</public>
+	</class>
+</starlang>

@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		PolicyAPIHandler.xml policy_
+	@brief 		Policy的增删改查
+	@version 	1.1.0
+	@auth 		hu peng (hupeng@staros.xyz)
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		注册APP 到RestfulService
+		@auth 		qiulei
+		@date		20180109
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	getCurrentBundleId
+		Output: 
+
+	-->
+
+	<function name="policy_RegisterHandler">
+		<log>insert tunnelserviceapi RegisterHandler</log>
+		
+		
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processpolicysrequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/policy/policys'"/>			
+			</parameters>
+		</function>
+
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processcreateonepolicyrequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/policy/policy'"/>			
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processdeleteormodifyorupdateonepolicyrequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/policy/policy/{policyid}'"/>			
+			</parameters>
+		</function>
+
+	</function>
+	
+	<!--
+		@brief		注销APP 到RestfulService
+		@auth 		qiulei
+		@date		20180109
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	requestpath
+		Output: 
+		-->
+
+	<function name="policy_UnRegisterHandler">
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/policy/policys'"/>			
+			</parameters>
+		</function>
+
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/policy/policy'"/>			
+			</parameters>
+		</function>
+		
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpathtest" in="'/staroscontroller/v1/policy/policy/{policyid}'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	<events>
+		<onevent event="processpolicysrequest">
+			<if cond="event.getParam('method').toString()=='GET'">
+				<then>
+					<log level="100">得到所有Policys</log>
+					<function name="getAllPolicys"/>
+				</then>
+				<elseif cond="event.getParam('method').toString()=='POST'">
+					<log level="100">创建所有Policys</log>
+					<function name="addAllPolicys"/>
+				</elseif>
+			</if>
+		</onevent>
+
+		<onevent event="processcreateonepolicyrequest">
+			<log level="100">创建一个policy</log>
+			<function name="createOnePolicy"/>
+		</onevent>
+		
+		<onevent event="processdeleteormodifyorupdateonepolicyrequest">
+			<if cond="event.getParam('method').toString()=='GET'">
+				<then>
+					<log level="100">得到一个policy</log>
+					<function name="getOnePolicyByPolicyid"/>
+				</then>
+				<elseif cond="event.getParam('method').toString()=='DELETE'">
+
+					<log level="100">删除一个policy</log>
+					<function name="deleOnetePolicyByPolicyid"/>
+				</elseif>
+				<elseif cond="event.getParam('method').toString()=='PUT'">
+					<log level="100">更新一个policy</log>
+					<function name="updateOnePolicyByPolicyid"/>
+				</elseif>
+			</if>
+		</onevent>
+	</events>
+
+	
+
+	<function name="getAllPolicys">
+		<string name="onePolicyStr"/>
+		<function name="GetAllPolicy" class="PolicyManager">
+			<parameters>
+				<string name="policystr" out="context.onePolicyStr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.onePolicyStr=='' || context.onePolicyStr==null">
+			<then>
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'No policys found'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.onePolicyStr.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="createOnePolicy">
+		<log level="100">enter createOnePolicy Method  ----PolicyAPIHandler.xml 157</log>
+		
+		<string name="policyid"/>
+		<string name="srcIp"/>
+		<string name="dstIp"/>
+		<string name="content"/>
+		<string name="successresponse"/>
+		
+		<script><![CDATA[
+			context.print("----166 policy数据:"+event.getParam('eventdata').toString());
+
+			var json = JSON.parse(event.getParam('eventdata').toString()).policy;
+	
+			var policyid = json.policyid;
+			var srcIp = json.srcIp;
+			var dstIp = json.dstIp;
+			var content = json.content;
+			
+			context.policyid.setValue(policyid);
+			context.srcIp.setValue(srcIp);
+			context.dstIp.setValue(dstIp);
+			context.content.setValue(content);
+		]]></script>
+		
+		<string name="policyJsonStr"/>
+		<function name="GetPolicybyid" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid"/>
+				<string name="onepolicystr" out="context.policyJsonStr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.policyJsonStr.toString()!=''">
+			<then>
+				<log level="100"><![CDATA[policyid=<%=context.policyid.toString()%>已存在----PolicyAPIHandler.xml 200]]></log>
+		
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is exist'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="AddPolicy" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid.toString()"/>
+				<string name="srcIp" in="context.srcIp.toString()"/>
+				<string name="dstIp" in="context.dstIp.toString()"/>
+				<string name="content" in="context.content.toString()"/>
+			</parameters>
+		</function>
+		
+		<function name="policy_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log level="100">execute createOnePolicy over  ----PolicyAPIHandler.xml 200</log>
+	</function>
+	
+	<function name="getOnePolicyByPolicyid">
+		
+		<log level="100">enter getOnePolicyByPolicyid Method  ----PolicyAPIHandler.xml 203</log>
+		<string name="policyid"/>
+		<string name="policyJsonStr"/>
+		
+		<string name="policyJsonStr2"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("--212 行  requestpath="+str);
+			var arr = str.split("/");
+			var id=arr[arr.length-1];
+			context.print("218 id="+id);
+			if(id.indexOf("{")!=-1){
+				var thisid=(id.split("{")[1]).split("}")[0];
+				context.print("220 thisid="+thisid)
+				context.policyid.setValue(thisid);
+			}else{
+				context.policyid.setValue(id);
+			}
+		]]></script>
+		
+		<log level="100"><![CDATA[policyid=<%=context.policyid.toString()%>----PolicyAPIHandler.xml 218]]></log>
+		
+		<function name="GetPolicybyid" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid"/>
+				<string name="onepolicystr" out="context.policyJsonStr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.policyJsonStr.toString()==''">
+			<then>
+				<log level="100"><![CDATA[policyid=<%=context.policyid.toString()%>不存在----PolicyAPIHandler.xml 218]]></log>
+		
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<script><![CDATA[
+		var str=JSON.parse(context.policyJsonStr.toString());
+			var root=new Object();
+				root['policy']=str;
+			var jsonroot=JSON.stringify(root);
+			context.policyJsonStr2.setValue(jsonroot);
+		]]></script>
+		
+		<if cond="context.policyJsonStr2.toString()==''">
+			<then>
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.policyJsonStr2.toString()"/>
+			</parameters>
+		</function>
+		
+		<log level="100">execute getOnePolicyByPolicyid Method over ----PolicyAPIHandler.xml 255</log>
+	</function>
+	
+	<function name="deleOnetePolicyByPolicyid">
+		<log level="100">enter deleOnetePolicyByPolicyid Method  ----PolicyAPIHandler.xml 260</log>
+		<string name="policyid"/>
+		<object name="onepolicy"/>
+		<string name="successresponse"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("requestpath!!"+str);
+			var arr = str.split("/");
+			var id=arr[arr.length-1];
+			context.print('路径id='+id);
+			context.print('路径id='+id.indexOf("{"));
+			if(id.indexOf("{")!=-1){
+				var thisid=(id.split("{")[1]).split("}")[0];
+				context.print("220 thisid="+thisid)
+				context.policyid.setValue(thisid);
+			}else{
+				context.policyid.setValue(id);
+			}
+		]]></script>
+		
+		
+		<function name="getPolicy" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid.toString()"/>
+				<object name="onepolicy" out="context.onepolicy"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.onepolicy.ptr==null">
+			<then>
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="DeletePolicyByid" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid"/>
+			</parameters>
+		</function>
+		
+		<function name="policy_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log level="100">execute deleOnetePolicyByPolicyid Method over ----PolicyAPIHandler.xml 312</log>
+		
+	</function>
+	
+	<function name="updateOnePolicyByPolicyid">
+		<log level="100">enter updateOnePolicyByPolicyid Method  ----PolicyAPIHandler.xml 317</log>
+	
+		<string name="policyid"/>
+		<object name="onepolicy"/>
+		
+		<string name="srcIp"/>
+		<string name="dstIp"/>
+		<string name="content"/>
+		<string name="successresponse"/>
+		
+		<boolean name="updateResult"/>
+		
+		<script><![CDATA[
+			var str = event.getParam('requestpath').toString();
+			
+			context.print("requestpath!!"+str);
+			var arr = str.split("/");
+			var id=arr[arr.length-1];
+			if(id.indexOf("{")!=-1){
+				var thisid=(id.split("{")[1]).split("}")[0];
+				context.print("220 thisid="+thisid)
+				context.policyid.setValue(thisid);
+			}else{
+				context.policyid.setValue(id);
+			}
+		]]></script>
+		
+		<function name="getPolicy" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid.toString()"/>
+				<object name="onepolicy" out="context.onepolicy"/>
+			</parameters>
+		</function>
+		
+		<script><![CDATA[
+			context.print("policy更新数据:"+event.getParam('eventdata').toString());
+			var json = JSON.parse(event.getParam('eventdata').toString()).policy;
+
+			var srcIp = json.srcIp;
+			var dstIp = json.dstIp;
+			var content = json.content;
+
+			context.srcIp.setValue(srcIp);
+			context.dstIp.setValue(dstIp);
+			context.content.setValue(content);
+		]]></script>
+		
+		<if cond="context.onepolicy==null">
+			<then>
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="'-1'"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'This policyid is wrong'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="UpdatePolicy" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.policyid.toString()"/>
+				<string name="srcIp" in="context.srcIp.toString()"/>
+				<string name="dstIp" in="context.dstIp.toString()"/>
+				<string name="content" in="context.content.toString()"/>
+				<boolean name="updateResult" out="context.updateResult"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.updateResult.toBoolean()==false">
+			<then>
+				<function name="policy_ErrorDatasResponse">
+					<parameters>
+						<string name="policyid" in="context.policyid.toString()"/>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'System Exception UPDATE FAILED'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="policy_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log level="100">execute updateOnePolicyByPolicyid Method over ----PolicyAPIHandler.xml 404</log>
+		
+	</function>	
+	
+	<function name="addAllPolicys">
+		<log level="100">enter addAllPolicys Method  ----PolicyAPIHandler.xml 456</log>
+		<list name="policyslist" valuetype="string"/>
+		<string name="onepolicy"/>
+		<string name="policyid"/>
+		<string name="srcIp"/>
+		<string name="dstIp"/>
+		<string name="content"/>
+		<string name="successresponse"/>
+		<script><![CDATA[
+			context.print("----465 policys数据="+event.getParam('eventdata').toString());
+
+			var json = JSON.parse(event.getParam('eventdata').toString()).policys;
+			for(var i=0;i<json.length;i++){
+				var policystr=JSON.stringify(json[i]);
+				context.print("policystr"+policystr);
+				context.policyslist.addValue(policystr);
+			}
+			
+		]]></script>
+		<for var="onepolicy" in="policyslist">
+			<script><![CDATA[
+			var json = JSON.parse(context.onepolicy.toString());
+			if(json.policyid!=''){
+				var policyid = json.policyid;
+				context.print("policyid"+policyid)
+				var srcIp = json.srcIp;
+				context.print("srcIp"+srcIp)
+				var dstIp = json.dstIp;
+				context.print("dstIp"+dstIp)
+				var content = json.content;
+				context.print("content"+content);
+				
+				context.policyid.setValue(policyid);
+				context.srcIp.setValue(srcIp);
+				context.dstIp.setValue(dstIp);
+				context.content.setValue(content);
+			}
+	
+			
+			]]></script>
+			
+			<function name="AddPolicy" class="PolicyManager">
+				<parameters>
+					<string name="policyid" in="context.policyid.toString()"/>
+					<string name="srcIp" in="context.srcIp.toString()"/>
+					<string name="dstIp" in="context.dstIp.toString()"/>
+					<string name="content" in="context.content.toString()"/>
+				</parameters>
+			</function>
+		</for>
+		<function name="policy_successresponse">
+			<parameters>
+				<string name="successresponse" out="context.successresponse"/>
+			</parameters>
+		</function>	
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.successresponse.toString()"/>
+			</parameters>
+		</function>
+		<log level="100">enter addAllPolicys Method  ----PolicyAPIHandler.xml 509</log>
+	</function>
+
+	<function name="policy_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		
+		<string name="response"/>
+		<reference variable="response">
+			<jsonbody><![CDATA[ 
+				{
+					"result":{
+						"code": "0",
+						"description": "ok"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<set name="successresponse" value="context.response.toString()"/>
+	</function>
+	
+	<function name="policy_ErrorDatasResponse">
+		<parameters>
+			<string name="policyid"/>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.policyId = context.policyid.toString();
+				one.code = "-1";
+				one.description = context.description.toString();						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

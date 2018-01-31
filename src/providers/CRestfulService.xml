@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CRestfulService.xml
+	@brief 		restfulservice
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--Restful API Service-->
+	<class name="CRestfulService">
+		<public>
+			<function name="CRestfulService">
+				<log>CRestfulService is create</log>
+			</function>
+			<!--
+				@brief		注册api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param bundleid 	bundleid
+					@param handleevent 	处理事件
+					@param requestpathtest 	请求路径
+				Output:					
+			-->
+			<function name="RegisterAPIHandler">
+				<parameters>
+					<long name="bundleid"/>			
+					<string name="handleevent"/>
+					<string name="requestpathtest"/>			
+				</parameters>
+				<object name="apiobj"/>
+				<new name="apiobj" class="CRestfulAPIEntry">
+					<parameters>
+						<long name="bundleid" in="context.bundleid.toLong()"/>			
+						<string name="eventname" in="context.handleevent.toString()"/>
+						<string name="restfullurl" in="context.requestpathtest.toString()"/>		
+					</parameters>
+				</new>
+				<function name="AddAPIHandler" class="RestfulAPIManager">
+					<parameters>
+						<string name="requestpath2222" in="context.requestpathtest.toString()"/>
+						<object name="handler" in="context.apiobj"/>
+					</parameters>
+				</function>							
+			</function>
+			<!--
+				@brief		删除api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath 	请求路径
+				Output:					
+			-->
+			<function name="UnRegisterAPIHandler">
+				<parameters>
+					<string name="requestpath"/>			
+				</parameters>
+				<function name="RemoveAPIHandler" class="RestfulAPIManager">
+					<parameters>
+						<string name="requestpath" in="context.requestpath.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<!--
+				@brief		处理api
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param requestpath 	请求路径
+					@param method 	方式
+					@param eventdata 	信息
+				Output:					
+			-->		
+			<function name="HandleAPI">
+				<parameters>
+					<string name="requestpath"/>
+					<string name="method"/>
+					<string name="eventdata"/>
+				</parameters>
+				
+				<log level="11"><![CDATA[51 CRestfulService.xml requestpath =<%=context.requestpath.toString()%>]]></log>
+				<log level="11"><![CDATA[52 CRestfulService.xml method =<%=context.method.toString()%>]]></log>
+				<log level="11"><![CDATA[53 CRestfulService.xml eventdata =<%=context.eventdata.toString()%>]]> </log>
+				
+				
+				<object name="handlerobj"/>
+				<string name="eventname"/>
+				<long name="bundleid"/>
+				<params name="eventparam"/>
+				<params name="httpparam"/>
+				<vector name="paramvector" valuetype="string"/>
+				<hashmap name="queryparams" keytype="string" valuetype="string"/>
+				<!--qiulei 20170824 pm-->
+				<function name="GetHandler" class="RestfulAPIManager">
+					<parameters>
+						<string name="requestpath" in="context.requestpath.toString()"/>
+						<object name="handler" out="context.handlerobj"/>
+						<vector name="paramvector" out="context.paramvector"/>
+						<hashmap name="queryparam" out="context.queryparams"/>
+					</parameters>
+				</function>
+				<if cond="context.handlerobj.ptr != null">
+					<then>
+						<log level="11">70 -- context.handlerobj.ptr != null -- CRestfulService.xml</log>
+						<function name="GetAPIInfo" class="handlerobj">
+							<parameters>
+								<string name="eventname" out="context.eventname"/>
+								<long name="bundleid" out="context.bundleid"/>
+							</parameters>
+						</function>
+						<set name="eventparam" paramname="eventdata" value="context.eventdata.toString()"/>
+						<set name="eventparam" paramname="method" value="context.method.toString()"/>
+						<set name="eventparam" paramname="requestpath" value="context.requestpath.toString()"/>
+						<set name="eventparam" paramname="params" value="context.paramvector"/>
+						<set name="eventparam" paramname="queryparams" value="context.queryparams"/>
+						<set name="eventparam" paramname="transportid" value="event.getParam('transportid').toString()"/>
+						<raise name="context.eventname.toString()" bundleid="context.bundleid.toLong()" param="context.eventparam"/>
+					</then>
+					<else>
+						<function>
+							<log level="11">78 没有对应的路径 CRestfulService.xml</log>
+							<string name="errorjson"/>
+							<reference variable="errorjson">
+									<jsonbody><![CDATA[ 
+										{"code":"404","message":"HTTP 404 Not Found"}
+									]]></jsonbody>
+							</reference>
+							<set name="httpparam" paramname="Server" value="'StarOS'"/>
+							<set name="httpparam" paramname="Connection" value="'Close'"/>
+							<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+							<restful name="restfulserver" action="RESPONSE" status="404" text="ok" transportid="event.getParam('transportid').toString()" httpparams="httpparam">
+								<jsonsrc src="errorjson"/>
+							</restful>
+						</function>
+					</else>
+				</if>
+			</function>
+			<!--
+				@brief		发送回应
+				@auth 		YY
+				@date		2017/11/27
+				Input:
+					@param transportid 	发包id
+					@param json 	信息					
+				Output:					
+			-->
+			<function name="SendResponse">	
+				<parameters>
+					<string name="transportid"/>
+					<string name="json"/>
+				</parameters>
+				<params name="httpparam"/>			
+				<set name="httpparam" paramname="Server" value="'StarOS'"/>
+				<set name="httpparam" paramname="Connection" value="'Close'"/>
+				<set name="httpparam" paramname="Content-Type" value="'application/json'"/>
+				<if cond="context.transportid.toString()==''">
+					<then>
+						<log level="11"><![CDATA[SendResponse error, json=<%=context.json.toString()%>]]></log>
+						<assert/>
+					</then>
+				</if>
+				<restful name="restfulserver" action="RESPONSE" status="200" text="ok" transportid="context.transportid.toString()" httpparams="httpparam">
+					<jsonsrc src="json"/>
+				</restful>
+			</function>
+		</public>
+	</class>
+</starlang>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<variable name="newSession"/>
+	<variable name="nulltest" type="string"/>
+	<variable name="systemparam" type="params"/>
+	<events>
+		<onevent event="session.startup">
+		<variable name="bstop" type="boolean" value="true"/>
+			<function>
+				<log>session.startup</log>
+			</function>
+		</onevent>
+		<onevent event="~session.shutdown">
+			<function>
+				<log>session.shutdown</log>
+				<!--raise name="application.check"/-->
+			</function>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

@@ -1,0 +1,2097 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CSDNMGRPolicyManager.xml
+	@brief 		Policy类,PolicyManager类
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180118
+	
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	
+	CSDNMGRTypeManager sdnmgrTypeMgr
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<class name="CSDNMGRPolicy">
+		<private>
+			<string name="m_policyid"/>
+			<object name="m_sdnmgrTypeMgr"/>
+		</private>
+		
+		<public>
+		
+			<function name="CSDNMGRPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				
+				<set name="thisclass.m_policyid" value="context.policyid.toString()"/>
+				<set name="thisclass.m_sdnmgrTypeMgr" value="context.sdnmgrTypeMgr"/>
+				
+			</function>
+			
+			<function name="GetsdnmgrTypeMgr">
+				<parameters>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				<set name="context.sdnmgrTypeMgr" value="thisclass.m_sdnmgrTypeMgr"/>
+			</function>
+			
+			<function name="GetOnePolicyObjToJsonStr">
+				<parameters>
+					<string name="policyObjJsonStr"/>
+				</parameters>
+				
+				<log level="100">----CSDNMGRPolicyManager.xml  enter GetOnePolicyObjToJsonStr 53</log>
+				
+				<function name="test123" class="thisclass.m_sdnmgrTypeMgr"/>
+				<string name="allTypeJsonStr"/>
+				<function name="GetAllTypeJsonStr" class="thisclass.m_sdnmgrTypeMgr">
+					<parameters>
+						<string name="allTypeJsonStr" out="context.allTypeJsonStr"/>
+					</parameters>
+				</function>
+				<log level="100">----CSDNMGRPolicyManager.xml  enter GetOnePolicyObjToJsonStr 60</log>
+				<log level="100"><![CDATA[63 allTypeJsonStr=<%=context.allTypeJsonStr.toString()%>]]></log>
+				<script><![CDATA[
+					var typeArr=JSON.parse(context.allTypeJsonStr.toString());
+					context.print("解析完毕");
+					context.print("typeArr.length="+typeArr.length);
+					
+					var root = new Object();
+						root['policyid']=thisclass.m_policyid.toString();
+						root['policy']=typeArr;
+				
+					var strjson = JSON.stringify(root);
+					context.print("78 strjson="+strjson);
+					context.policyObjJsonStr.setValue(strjson);
+					context.print("js执行结束");
+					
+				]]></script>
+				
+			</function>
+
+		</public>
+	</class>
+	
+	<class name="CSDNMGRPolicyManager">
+		<private>
+			<hashmap name="resourceid_hash" keytype="string" valuetype="string"/>
+			<hashmap name="sdnmgrPolicyManager" keytype="string" valuetype="object"/>			
+			<string name="is_port"/>
+			<string name="policydpid"/>
+			<string name="policyid"/>
+			<long name="policysize"/>
+		</private>
+		
+		<public>
+			<function name="CSDNMGRPolicyManager">
+				<set name="thisclass.is_port" value="'0'"/>
+				<set name="thisclass.policydpid" value="''"/>
+				<set name="thisclass.policyid" value="'0'"/>				
+				<set name="thisclass.policysize" value="0"/>
+			</function>
+			
+			<!--qiulei 20180118 pm-->
+			<function name="getPolicyContainer">
+				<parameters>
+					<hashmap name="sdnmgrPolicyManager" keytype="string" valuetype="object"/>
+				</parameters>
+				<set name="sdnmgrPolicyManager" value="thisclass.sdnmgrPolicyManager"/>
+			</function>
+			
+			<!--qiulei 20180118 pm-->
+			<function name="AddPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="sdnmgrTypeMgr"/>
+				</parameters>
+				<object name="policyobj"/>
+				<new name="policyobj" class="CSDNMGRPolicy">
+					<parameters>
+						<string name="policyid" in="context.policyid"/>
+						<object name="sdnmgrTypeMgr" in="context.sdnmgrTypeMgr"/>
+					</parameters>
+				</new>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())==false">
+					<then>
+						<insert name="thisclass.sdnmgrPolicyManager" key="context.policyid.toString()" value="context.policyobj"/>
+						<log level="101"><![CDATA[context.sdnmgrPolicyManager.size=<%=context.sdnmgrPolicyManager.size().toString()%> ----142]]></log>
+						
+						<log level="101">add over</log>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>
+			</function>
+			
+			<!--查询容器中元素的个数-->
+			<function name="GetPolicyCounts">
+				<parameters>
+					<string name="policyCounts"/>
+				</parameters>
+				<set name="policyCounts" value="context.sdnmgrPolicyManager.size()"/>	
+			</function>
+			
+			<function name="getPolicy">
+				<parameters>
+					<string name="policyid"/>
+					<object name="onepolicy"/>
+				</parameters>
+				<set name="onepolicy" value="thisclass.sdnmgrPolicyManager.getValue(context.policyid.toString())"/>
+			</function>
+			
+			<function name="DeletePolicyByid">
+				<parameters>
+					<string name="policyid"/>
+					<boolean name="deleteResult" value="false"/>
+				</parameters>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())">
+					<then>
+						<remove name="sdnmgrPolicyManager" key="context.policyid.toString()"/>
+						<set name="deleteResult" value="true"/>
+					</then>
+					<else>
+						<set name="deleteResult" value="false"/>
+					</else>
+				</if>
+				<log level="101"><![CDATA[----CSDNMGRPolicyManager.xml  deleteResult=<%=context.deleteResult.toString()%> ----155]]></log>
+				
+			</function>
+			
+			<function name="GetAllPolicy">
+				<parameters>
+					<string name="policystr"/>
+				</parameters>
+				
+				<log level="100"> 182 in GetAllPolicy  ----CSDNMGRPolicyManager.xml</log>
+				<log level="101"><![CDATA[sdnmgrPolicyManager size=<%=thisclass.sdnmgrPolicyManager.size().toString()%> ----216]]></log>
+				
+				<object name="policyobj"/>
+				<string name="onepolicyjson"/>
+				<string name="strjson"/>
+				<list name="policylist" valuetype="string"/>
+				<pair name="onepolicyptr" keytype="string" valuetype="object"/>
+				<log level="100">----CSDNMGRPolicyManager.xml  163</log>
+				<for var="onepolicyptr" in="thisclass.sdnmgrPolicyManager">
+					<set name="context.policyobj" value="context.onepolicyptr.second()"/>
+					
+					<log level="100">----CSDNMGRPolicyManager.xml  167</log>
+					<function name="GetOnePolicyObjToJsonStr" class="context.policyobj">
+						<parameters>
+							<string name="policyObjJsonStr" out="context.onepolicyjson"/>
+						</parameters>
+					</function>
+
+					<log level="100">----CSDNMGRPolicyManager.xml  167</log>
+					<insert name="policylist" value="context.onepolicyjson.toString()"/>
+				</for>
+				
+				<script><![CDATA[	
+						var json = new Object();
+						var myArray=new Array();
+						
+					var firstpolicyString = context.policylist.getFirst();
+					while(firstpolicyString != null){
+						var objlist = JSON.parse(firstpolicyString);
+							myArray.push(objlist);
+							firstpolicyString = context.policylist.getNext();
+					}
+					json['policys']=myArray;
+					var strjson=JSON.stringify(json);
+					context.strjson.setValue(strjson);
+				]]></script>
+				<set name="policystr" value="context.strjson.toString()"/>
+				<log level="100"> 214 execute GetAllPolicy over ----CSDNMGRPolicyManager.xml</log>
+			</function>
+			
+			<function name="GetOnePolicyJsonStrbyid">
+				<parameters>
+					<string name="policyid"/>
+					<string name="onepolicystr"/>
+				</parameters>
+				
+				<log level="101"><![CDATA[context.policyid=<%=context.policyid.toString()%> ----216]]></log>
+
+				<object name="policyobj"/>
+				<string name="policystr"/>
+				<if cond="thisclass.sdnmgrPolicyManager.hasValue(context.policyid.toString())">
+					<then>
+						<lookup name="sdnmgrPolicyManager" key="context.policyid.toString()" output="context.policyobj"/>
+
+						<log level="101">enter 226</log>
+
+						<function name="GetOnePolicyObjToJsonStr" class="policyobj">
+							<parameters>
+								<string name="policyObjJsonStr" out="context.policystr"/>
+							</parameters>
+						</function>
+
+						<set name="onepolicystr" value="context.policystr.toString()"/>
+					</then>	
+				</if>
+			</function>
+			<function name="setis_policyport">
+				<parameters>
+					<string name="port"/>
+				</parameters>
+				<set name="thisclass.is_port" value="context.port.toString()"/>
+			</function>
+			<function name="setis_policydpid">
+				<parameters>
+					<string name="dpid"/>
+				</parameters>
+				<set name="thisclass.policydpid" value="context.dpid.toString()"/>
+			</function>
+			<function name="setis_policyid">
+				<parameters>
+					<string name="plid"/>
+				</parameters>
+				<set name="thisclass.policyid" value="context.plid.toString()"/>
+			</function>
+			<function name="set_policysize">
+				<parameters>
+					<long name="size"/>
+				</parameters>
+				<set name="thisclass.policysize" value="context.size.toLong()"/>
+			</function>
+			<function name="getpolicysize">
+				<parameters>
+					<string name="size"/>
+				</parameters>
+				<set name="context.size" value="''+thisclass.policysize"/>
+			</function>
+			<function name="getpolicyid">
+				<parameters>
+					<string name="plid"/>
+				</parameters>
+				<set name="context.plid" value="thisclass.policyid.toString()"/>
+			</function>
+			<function name="getpolicyport">
+				<parameters>
+					<string name="port"/>
+					<string name="deviceid"/>
+				</parameters>
+				<set name="context.port" value="thisclass.is_port.toString()"/>
+				<set name="context.deviceid" value="thisclass.policydpid.toString()"/>
+			</function>
+			
+			<function name="getpolicystrbypriority">
+				<parameters>
+					<string name="priority"/>
+					<string name="srcdevicetype" value="''"/>
+					<string name="srcdevicerole" value="''"/>
+					<string name="dstdevicetype" value="''"/>
+					<string name="dstdevicerole" value="''"/>
+				</parameters>
+				<object name="policyobj"/>
+				<object name="typemgrobj"/>
+				<pair name="onepolicyptr" keytype="string" valuetype="object"/>
+				
+				<for var="onepolicyptr" in="thisclass.sdnmgrPolicyManager">				
+					<set name="context.policyobj" value="context.onepolicyptr.second()"/>
+					<function name="GetsdnmgrTypeMgr" class="context.policyobj">
+						<parameters>
+							<object name="sdnmgrTypeMgr" out="context.typemgrobj"/>
+						</parameters>
+					</function>
+					<function name="getpolicybypriority" class="context.typemgrobj">
+						<parameters>
+							<string name="priority" in="context.priority.toString()"/>
+							<string name="srcdevicetype" out="context.srcdevicetype"/>
+							<string name="srcdevicerole" out="context.srcdevicerole"/>
+							<string name="dstdevicetype" out="context.dstdevicetype"/>
+							<string name="dstdevicerole" out="context.dstdevicerole"/>
+						</parameters>
+					</function>
+					<if cond="context.srcdevicerole != ''">
+						<then>
+							<exit/>
+						</then>
+					</if>
+				</for>
+			</function>
+			
+			<function name="DeleteAllPolicy">
+				<pair name="policymgr" keytype="string" valuetype="object"/>
+				<object name="onepolicy"/>
+				<object name="typemgr"/>
+				<for var="context.policymgr" in="thisclass.sdnmgrPolicyManager">
+					<set name="context.onepolicy" value="context.policymgr.second()"/>
+					<if cond="context.onepolicy.ptr == null">
+						<then>
+							<log>context.onepolicy is null </log>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetsdnmgrTypeMgr" class="context.onepolicy">
+						<parameters>
+							<object name="sdnmgrTypeMgr" out="context.typemgr"/>
+						</parameters>
+					</function>
+					<if cond="context.typemgr.ptr == null">
+						<then>
+							<log>context.typemgr is null </log>
+							<exit/>
+						</then>
+					</if>
+					<function name="DeleteAllPolicyType" class="context.typemgr"/>
+				</for>
+				<script><![CDATA[				
+					context.sdnmgrPolicyManager.clear();
+				]]></script>
+				<set name="thisclass.policysize" value="0"/>
+			</function>
+			
+			<function name="InstallFlow">
+				<parameters>
+					<string name="srcdevicetype"/>
+					<string name="srcdevicerole"/>
+					<string name="dstdevicetype"/>
+					<string name="dstdevicerole"/>
+					<boolean name="flow_is" value="false"/> 
+				</parameters>
+				<syslog level="INFO"><![CDATA[sdtype<%=context.srcdevicetype.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[sdrole<%=context.srcdevicerole.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[ddtype<%=context.dstdevicetype.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[ddrole<%=context.dstdevicerole.toString()%>]]></syslog>
+				<if cond="thisclass.resourceid_hash.size!=0">
+					<then>
+						<function name="UninstallALLFlow"/>
+					</then>
+				</if>			
+				<string name="srcip"/>
+				<string name="dstip"/>
+				<string name="srcmac"/>
+				<string name="dstmac"/>
+				<string name="srctpid"/>
+				<string name="dsttpid"/>
+				<string name="srcinport"/>
+				<string name="dstinport"/>
+				<string name="srcoutport"/>
+				<string name="dstoutport"/>
+				<string name="srcdpid"/>
+				<string name="dstdpid"/>
+				<string name="location"/>
+				<boolean name="is_swired" value="false"/>
+				<boolean name="is_dwired" value="false"/>
+				<object name="openflowdevice"/>
+				<if cond="context.srcdevicetype.toString()=='wired'">
+					<then>
+						<set name="is_swired" value="true"/>
+					</then>
+				</if>
+				<if cond="context.dstdevicetype.toString()=='wired'">
+					<then>
+						<set name="is_dwired" value="true"/>
+					</then>
+				</if>
+				<syslog level="INFO"><![CDATA[is_swired = <%=context.is_swired.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[is_dwired = <%=context.is_dwired.toString()%>]]></syslog>
+
+				<if cond="context.is_swired.toBoolean()==true">
+					<then>
+						<function name="GetLocationByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="location" out="context.location"/>
+								<string name="devicetype" in="context.srcdevicetype.toString()"/>
+								<string name="devicerole" in="context.srcdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.location.toString()==''">
+							<then>								
+								<syslog level="INFO">swired_location is null</syslog>
+								<exit/>
+							</then>
+						</if>
+						<syslog level="INFO"><![CDATA[swired_location<%=context.location.toString()%>]]></syslog>
+						<script><![CDATA[
+							var ltion = context.location.toString();
+							context.srcdpid.setValue(ltion.split("/")[0]);
+							context.srcinport.setValue(ltion.split("/")[1]);
+						]]></script>
+						<function name="GetTransportIdFromDevice" class="context.devicemgr">
+							<parameters>
+								<string name="datapathid" in="context.srcdpid.toString()"/>
+								<string name="transportid" out="context.srctpid"/>
+							</parameters>
+						</function>
+						<function name="GetIPMACByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="ip" out="context.dstip"/>
+								<string name="mac" out="context.dstmac"/>
+								<string name="devicetype" in="context.dstdevicetype.toString()"/>
+								<string name="devicerole" in="context.dstdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<function name="GetTPPByIP" class="context.hostmanager">
+							<parameters>
+								<string name="transport" out="context.dsttpid"/>
+								<string name="port" out="context.dstinport"/>
+								<string name="dpid" out="context.dstdpid"/>
+								<string name="ip" in="context.dstip.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.dstdpid.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<syslog level="INFO"><![CDATA[srcdpid = <%=context.srcdpid.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[dstdpid = <%=context.dstdpid.toString()%>]]></syslog>
+					</then>
+					<elseif cond="context.is_dwired.toBoolean()==true">
+						<function name="GetLocationByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="location" out="context.location"/>
+								<string name="devicetype" in="context.dstdevicetype.toString()"/>
+								<string name="devicerole" in="context.dstdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.location.toString()==''">
+							<then>
+								<log>434 context.location.toString()==''</log>
+								<exit/>
+							</then>
+						</if>
+						<syslog level="INFO"><![CDATA[dwired_location<%=context.location.toString()%>]]></syslog>
+						<script><![CDATA[
+							var ltion = context.location.toString();
+							context.dstdpid.setValue(ltion.split("/")[0]);
+							context.dstinport.setValue(ltion.split("/")[1]);
+						]]></script>
+						<function name="GetTransportIdFromDevice" class="context.devicemgr">
+							<parameters>
+								<string name="datapathid" in="context.dstdpid.toString()"/>
+								<string name="transportid" out="context.dsttpid"/>
+							</parameters>
+						</function>
+						<function name="GetIPMACByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="ip" out="context.srcip"/>
+								<string name="mac" out="context.srcmac"/>
+								<string name="devicetype" in="context.srcdevicetype.toString()"/>
+								<string name="devicerole" in="context.srcdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<function name="GetTPPByIP" class="context.hostmanager">
+							<parameters>
+								<string name="transport" out="context.srctpid"/>
+								<string name="port" out="context.srcinport"/>
+								<string name="dpid" out="context.srcdpid"/>
+								<string name="ip" in="context.srcip.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.srcdpid.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+					</elseif>
+					<else>
+						<function name="GetIPMACByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="ip" out="context.srcip"/>
+								<string name="mac" out="context.srcmac"/>
+								<string name="devicetype" in="context.srcdevicetype.toString()"/>
+								<string name="devicerole" in="context.srcdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.srcip.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<if cond="context.srcmac.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetIPMACByTR" class="context.sdndevicemgr">
+							<parameters>
+								<string name="ip" out="context.dstip"/>				
+								<string name="mac" out="context.dstmac"/>
+								<string name="devicetype" in="context.dstdevicetype.toString()"/>
+								<string name="devicerole" in="context.dstdevicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.dstip.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<if cond="context.dstmac.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetTPPByIP" class="context.hostmanager">
+							<parameters>
+								<string name="transport" out="context.srctpid"/>
+								<string name="port" out="context.srcinport"/>
+								<string name="dpid" out="context.srcdpid"/>
+								<string name="ip" in="context.srcip.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.srcdpid.toString()==''">
+							<then>
+								<exit/>
+								<syslog level="INFO">no device</syslog>
+							</then>
+						</if>
+						<function name="GetTPPByIP" class="context.hostmanager">
+							<parameters>
+								<string name="transport" out="context.dsttpid"/>
+								<string name="port" out="context.dstinport"/>
+								<string name="dpid" out="context.dstdpid"/>
+								<string name="ip" in="context.dstip.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.dstdpid.toString()==''">
+							<then>
+								<exit/>
+								<syslog level="INFO">no device</syslog>
+							</then>
+						</if>
+					</else>
+				</if>
+				<syslog level="INFO"><![CDATA[srcdpid = <%=context.srcdpid.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[dstdpid = <%=context.dstdpid.toString()%>]]></syslog>
+				<if cond="context.srcdpid.toString() == context.dstdpid.toString()">
+					<then>
+						<syslog level="INFO">#Install same flow#</syslog>
+						<if cond="context.is_swired.toBoolean()==true">
+							<then>
+								<function name="InstallSWIREDFlowMid">
+									<parameters>			
+										<string name="dip" in="''"/>
+										<string name="dmac" in="''"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.dstinport.toString()"/>
+									</parameters>
+								</function>
+								<set name="context.flow_is" value="true"/>
+							</then>
+							<elseif cond="context.is_dwired.toBoolean()==true">
+								<function name="InstallDWIREDFlowMid">
+									<parameters>			
+										<string name="sip" in="''"/>
+										<string name="smac" in="''"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.dstinport.toString()"/>
+									</parameters>
+								</function>
+								<set name="context.flow_is" value="true"/>
+							</elseif>
+							<else>
+								<function name="InstallFlowMid">
+									<parameters>
+										<string name="sip" in="context.srcip.toString()"/>
+										<string name="smac" in="context.srcmac.toString()"/>				
+										<string name="dip" in="context.dstip.toString()"/>
+										<string name="dmac" in="context.dstmac.toString()"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.dstinport.toString()"/>
+									</parameters>
+								</function>
+								<set name="context.flow_is" value="true"/>
+								<syslog level="INFO">#1000#</syslog>
+							</else>
+						</if>
+						
+					</then>
+					<else>	
+						<set name="context.openflowdevice" value="context.openflowserverobj.getValue().getDevice(context.srctpid.toString())"/>
+						<set name="context.srcoutport" value="context.openflowdevice.ptr.getOutPort(context.dstdpid.toString())"/>
+						<set name="context.openflowdevice" value="context.openflowserverobj.getValue().getDevice(context.dsttpid.toString())"/>
+						<set name="context.dstoutport" value="context.openflowdevice.ptr.getOutPort(context.srcdpid.toString())"/>
+						<if cond="context.is_swired.toBoolean()==true">
+							<then>
+								<function name="InstallSWIREDFlowStart">
+									<parameters>				
+										<string name="dip" in="context.dstip.toString()"/>
+										<string name="dmac" in="context.dstmac.toString()"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.srcoutport.toString()"/>
+									</parameters>
+								</function>
+								
+								<function name="InstallSWIREDFlowEnd">
+									<parameters>			
+										<string name="dip" in="context.dstip.toString()"/>
+										<string name="dmac" in="context.dstmac.toString()"/>
+										<string name="dpid" in="context.dstdpid.toString()"/>
+										<string name="inport" in="context.dstinport.toString()"/>
+										<string name="outport"  in="context.dstoutport.toString()"/>
+									</parameters>
+								</function>
+							</then>
+							
+							<elseif cond="context.is_dwired.toBoolean()==true">
+								<function name="InstallDWIREDFlowStart">
+									<parameters>				
+										<string name="sip" in="context.srcip.toString()"/>
+										<string name="smac" in="context.srcmac.toString()"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.srcoutport.toString()"/>
+									</parameters>
+								</function>
+								
+								<function name="InstallDWIREDFlowEnd">
+									<parameters>			
+										<string name="sip" in="context.srcip.toString()"/>
+										<string name="smac" in="context.srcmac.toString()"/>
+										<string name="dpid" in="context.dstdpid.toString()"/>
+										<string name="inport" in="context.dstinport.toString()"/>
+										<string name="outport"  in="context.dstoutport.toString()"/>
+									</parameters>
+								</function>
+							</elseif>
+							
+							<else>						
+								<syslog level="INFO">#Install 2 switch flow#</syslog>	
+								<function name="InstallFlowStart">
+									<parameters>
+										<string name="sip" in="context.srcip.toString()"/>
+										<string name="smac" in="context.srcmac.toString()"/>				
+										<string name="dip" in="context.dstip.toString()"/>
+										<string name="dmac" in="context.dstmac.toString()"/>
+										<string name="dpid" in="context.srcdpid.toString()"/>
+										<string name="inport" in="context.srcinport.toString()"/>
+										<string name="outport"  in="context.srcoutport.toString()"/>
+									</parameters>
+								</function>
+								
+								<function name="InstallFlowEnd">
+									<parameters>
+										<string name="sip" in="context.srcip.toString()"/>
+										<string name="smac" in="context.srcmac.toString()"/>				
+										<string name="dip" in="context.dstip.toString()"/>
+										<string name="dmac" in="context.dstmac.toString()"/>
+										<string name="dpid" in="context.dstdpid.toString()"/>
+										<string name="inport" in="context.dstinport.toString()"/>
+										<string name="outport"  in="context.dstoutport.toString()"/>
+									</parameters>
+								</function>
+							</else>
+						</if>					
+					</else>
+				</if>
+				<function name="setis_policyport" class="context.sdnpolicymgr">
+					<parameters>
+						<string name="port" in="context.dstinport.toString()"/>
+					</parameters>
+				</function>
+				<function name="setis_policydpid" class="context.sdnpolicymgr">
+					<parameters>
+						<string name="dpid" in="context.srcdpid.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="InstallFlowStart">
+				<parameters>
+					<string name="sip"/>
+					<string name="smac"/>
+					<string name="dip"/>
+					<string name="dmac"/>
+					<string name="dpid"/>
+					<string name="inport"/>
+					<string name="outport"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.smac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dmac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.dmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+		
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+					
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+		
+			</function>
+			
+			<function name="InstallFlowEnd">
+				<parameters>
+					<string name="sip"/>
+					<string name="smac"/>
+					<string name="dip"/>
+					<string name="dmac"/>
+					<string name="dpid"/>
+					<string name="inport"/>
+					<string name="outport"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.smac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.dmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+				
+				
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="InstallFlowMid">
+				<parameters>
+					<string name="sip" in="context.srcip.toString()"/>
+					<string name="smac" in="context.srcmac.toString()"/>				
+					<string name="dip" in="context.dstip.toString()"/>
+					<string name="dmac" in="context.dstmac.toString()"/>
+					<string name="dpid" in="context.srcdpid.toString()"/>
+					<string name="inport" in="context.srcinport.toString()"/>
+					<string name="outport"  in="context.srcoutport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[	
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},						
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[				
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											}
+											
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+				
+				
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			<function name="InstallSWIREDFlowMid">
+				<parameters>			
+					<string name="dip" in="context.dstip.toString()"/>
+					<string name="dmac" in="context.dstmac.toString()"/>
+					<string name="dpid" in="context.srcdpid.toString()"/>
+					<string name="inport" in="context.srcinport.toString()"/>
+					<string name="outport"  in="context.dstinport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											}
+											
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[								
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+				
+				
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="InstallDWIREDFlowMid">
+				<parameters>			
+					<string name="sip" in="context.srcip.toString()"/>
+					<string name="smac" in="context.srcmac.toString()"/>
+					<string name="dpid" in="context.srcdpid.toString()"/>
+					<string name="inport" in="context.srcinport.toString()"/>
+					<string name="outport"  in="context.dstinport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											}
+											
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											}											
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+				
+				
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="InstallSWIREDFlowStart">
+				<parameters>				
+					<string name="dip" in="context.dstip.toString()"/>
+					<string name="dmac" in="context.dstmac.toString()"/>
+					<string name="dpid" in="context.srcdpid.toString()"/>
+					<string name="inport" in="context.srcinport.toString()"/>
+					<string name="outport"  in="context.srcoutport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dmac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.dmac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+		
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+					
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="InstallSWIREDFlowEnd">
+				<parameters>			
+					<string name="dip" in="context.dstip.toString()"/>
+					<string name="dmac" in="context.dstmac.toString()"/>
+					<string name="dpid" in="context.dstdpid.toString()"/>
+					<string name="inport" in="context.dstinport.toString()"/>
+					<string name="outport"  in="context.dstoutport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dmac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.dip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.dmac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+		
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+					
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			<function name="InstallDWIREDFlowStart">
+				<parameters>				
+					<string name="sip" in="context.srcip.toString()"/>
+					<string name="smac" in="context.srcmac.toString()"/>
+					<string name="dpid" in="context.srcdpid.toString()"/>
+					<string name="inport" in="context.srcinport.toString()"/>
+					<string name="outport"  in="context.srcoutport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+		
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+					
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="InstallDWIREDFlowEnd">
+				<parameters>			
+					<string name="sip" in="context.srcip.toString()"/>
+					<string name="smac" in="context.srcmac.toString()"/>
+					<string name="dpid" in="context.dstdpid.toString()"/>
+					<string name="inport" in="context.dstinport.toString()"/>
+					<string name="outport"  in="context.dstoutport.toString()"/>
+				</parameters>
+				<string name="modstrjson"/>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+				<string name="modstrjson2"/>
+				<reference variable="modstrjson2">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.outport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.sip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.smac.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.inport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+						    }
+					]]></jsonbody>
+				</reference>
+		
+		
+				<string name="resourceid2"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid2"/>
+						<string name="strjson" in="context.modstrjson2.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+					
+				<string name="resourceid"/>
+				<if cond="context.flowservice==null">
+					<then>
+						<log>flowservice is null</log>
+					</then>
+				</if>
+				<function name="InstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="outflowid" out="context.resourceid"/>
+						<string name="strjson" in="context.modstrjson.toString()"/>
+						<string name="appId" in="'tunnelservice'"/>
+						<string name="datapathid" in="context.dpid.toString()"/>
+					</parameters>
+				</function>
+				<insert name="thisclass.resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+			</function>
+			
+			<function name="UninstallALLFlow">
+				<pair name="oneflowid" keytype="string" valuetype="string"/>
+					<for var="context.oneflowid" in="thisclass.resourceid_hash">				
+						<function name="UnInstallFlow" class="FlowService">
+							<parameters>
+								<string name="flowid" in="context.oneflowid.first().toString()"/>			
+								<string name="datapathid" in="context.oneflowid.second().toString()"/>
+							</parameters>
+						</function>
+					</for>
+			</function>
+		</public>
+	</class>
+</starlang>

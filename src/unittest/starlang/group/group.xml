@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<function name="TestInstallFlow">
+		<string name="groupid"/>
+		<string name="jsongroup"/>
+		<string name="jsonin2out"/>
+		<string name="jsonout2in"/>
+		<string name="jsonout2in2"/>
+		<string name="deviceid" value="'128983241836'"/>
+
+		<function name="testInstallGroup">
+			<parameters>
+				<string name="outgroupid" out="context.groupid"/>
+				<string name="deviceid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+
+		<reference variable="jsonin2out">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"1"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"22",
+										"groupid":"<%=context.groupid.toString()%>",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<reference variable="jsonout2in">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"3"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"1",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<reference variable="jsonout2in2">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"4"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"1",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+
+		<function name="InstallFlow" class="flowservice">
+			<parameters>
+				<string name="outflowid" out="context.flowid1"/>
+				<string name="strjson" in="context.jsonin2out.toString()"/>
+				<string name="appId" in="'group'"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<function name="InstallFlow" class="flowservice">
+			<parameters>
+				<string name="outflowid" out="context.flowid2"/>
+				<string name="strjson" in="context.jsonout2in.toString()"/>
+				<string name="appId" in="'group'"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+		<function name="InstallFlow" class="flowservice">
+			<parameters>
+				<string name="outflowid" out="context.flowid3"/>
+				<string name="strjson" in="context.jsonout2in2.toString()"/>
+				<string name="appId" in="'group'"/>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+
+	<function name="testInstallGroup">
+		<parameters>
+			<string name="outgroupid"/>
+			<string name="deviceid"/>
+		</parameters>
+		<string name="jsongroup"/>
+		<object name="groupmgr"/>
+		<object name="deviceobj"/>
+		<reference variable="jsongroup">
+			<jsonbody><![CDATA[ 
+				{
+					"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+					"command":"0",
+					"grouptype":"1",
+					"groupid":"0",
+					"bucketlist":[
+						{
+							"weight":"1",
+							"watchport":"3",
+							"watchgroup":"0",
+							"actions":[
+								{
+									"type":"0",
+									"outport":"3",
+									"maxlen":"0xffff"
+								}
+							]
+						},
+						{
+							"weight":"2",
+							"watchport":"4",
+							"watchgroup":"0",
+							"actions":[
+								{
+									"type":"0",
+									"outport":"4",
+									"maxlen":"0xffff"
+								}
+							]
+						}
+					]
+				}	
+			]]></jsonbody>
+		</reference>
+		<function name="getDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.deviceid.toString()"/>
+				<object name="outdevice" out="context.deviceobj"/>
+			</parameters>				
+		</function>
+		
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<log level="100">deviceobj is null</log>
+				<exit/>
+			</then>
+		</if>
+
+		<function name="GetGroupManager" class="context.deviceobj">
+			<parameters>
+				<object name="outgroupmgr" out="context.groupmgr"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.groupmgr.ptr==null">
+			<then>
+				<log>groupmgr is null</log>
+				<exit/>
+			</then>
+		</if>								
+
+		<function name="InstallGroupRequest" class="context.groupmgr">
+			<parameters>
+				<string name="in_strjson" in="context.jsongroup.toString()"/>
+				<string name="in_appid"  in="'group'"/>
+				<string name="in_groupid" out="context.outgroupid"/>
+			</parameters>
+		</function>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="TestInstallFlow"/>
+		</onevent>
+	</events>
+</starlang>

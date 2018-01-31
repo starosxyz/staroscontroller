@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang>
+	<class name="CUiExtensionManager">
+		<private>
+			<hashmap name="userPreferences" keytype="string" valuetype="string"/>
+		</private>
+		<public>
+			<function name="setPreference">
+				<parameters>
+					<string name="username"/>
+					<string name="key"/>
+					<string name="value"/>
+				</parameters>
+				<log><![CDATA[setPreference username <%=context.username.toString()%>]]></log>
+				<log><![CDATA[setPreference key <%=context.key.toString()%>]]></log>
+				<log><![CDATA[setPreference value <%=context.value.toString()%>]]></log>
+				<string name="userkey" value="context.username.toString()+'/'+context.key.toString()"/>
+				<if cond="context.userPreferences.hasValue(context.userkey.toString())==false">
+					<then>
+						<insert name="thisclass.userPreferences" key="context.userkey" value="context.value.toString()"/>
+					</then>
+					<else>
+						<remove name="thisclass.userPreferences" key="context.userkey.toString()"/>
+						<insert name="thisclass.userPreferences" key="context.userkey" value="context.value.toString()"/>
+					</else>
+				</if>
+			</function>
+			<function name="getPreference">
+				<parameters>
+					<string name="prefstring"/>
+				</parameters>
+				<script><![CDATA[
+					var jsonroot = new Object();
+					var firstpair=thisclass.userPreferences.getFirst();
+					while(firstpair!=null){
+						var first = firstpair.first().toString();
+						var final_first = first.split('/')[1];
+						var second = firstpair.second().toString(); 
+						var jsonsecond = JSON.parse(second);
+						jsonroot[final_first]=jsonsecond;
+						firstpair=thisclass.userPreferences.getNext();
+					}
+					var strjson=JSON.stringify(jsonroot);
+					context.prefstring.setValue(strjson);
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

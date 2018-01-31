@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+	<struct name="sss">
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+		<variable name="classstring1" type="uint8_t"/>
+	</struct>
+	<variable name="classstring1" type="struct"/>
+	<set name="classstring1" value="1" struct="ssdfs"/>
+	<class name="CTest">
+		<public>
+			<function name="CTest">
+				<parameters>
+					<parameter name="CTesttestparam1" type="string"/>
+					<parameter name="CTesttestparam2" type="string"/>
+				</parameters>
+				<log><![CDATA[CTesttestparam1 <%=context.CTesttestparam1.toString()%>]]> </log>
+				<log><![CDATA[CTesttestparam2 <%=context.CTesttestparam2.toString()%>]]> </log>
+			</function>
+		</public>
+	</class>
+	<class name="CTestClassBase">
+		<private>
+			<variable name="classstring1" type="string"/>
+			<variable name="CTestclass" type="class"/>
+		</private>
+		<public>
+			<function name="CTestClassBase">
+				<log>CTestClassBase</log>
+				<parameters>
+					<parameter name="testparam1" type="string"/>
+				</parameters>
+				<log><![CDATA[testparam1 <%=context.testparam1.toString()%>]]> </log>
+				<new name="CTestclass" class="CTest">
+					<parameters>
+						<parameter name="CTesttestparam1" type="string" in="context.testparam1"/>
+						<parameter name="CTesttestparam2" type="string" in="'22222222222222'"/>
+					</parameters>
+				</new>
+			</function>
+			<function name="FunctioninCTestBase">
+				<function>
+					<set name="thisclass.classstring1" value="'sdffffffffffffs'"/>
+					<log>FunctioninCTestBase</log>
+					<log><![CDATA[classstring1 <%=thisclass.classstring1.toString()%>]]> </log>
+				</function>
+			</function>
+		</public>
+	</class>
+	<class name="CTestClass" extends="CTestClassBase">
+		<private>
+			<variable name="classstring2" type="string"/>
+		</private>
+		<public>
+			<function name="CTestClass">
+				<log>CTestClass</log>
+				<parameters>
+					<parameter name="testparam" type="string"/>
+					<parameter name="testparamout" type="string"/>
+				</parameters>
+				<set name="thisclass.classstring2" value="'classstring2'"/>
+				<log><![CDATA[testparam <%=context.testparam.toString()%>]]> </log>
+				<set name="testparamout" value="thisclass.classstring2.toString()"/>
+				<function name="CTestClassBase">
+					<parameters>
+						<parameter name="testparam1" type="string" in="context.testparam.toString()"/>
+					</parameters>
+				</function>
+			</function>
+			<function name="GetClassName">
+				<parameters>
+					<parameter name="classname" type="string"/>
+				</parameters>
+				<set name="classname" value="'testclassname'"/>
+			</function>
+			<function name="FunctioninCTest">
+				<function>
+					<set name="thisclass.classstring2" value="'classstring2'"/>
+					<log>FunctioninCTest</log>
+					<log><![CDATA[classstring2 <%=thisclass.classstring2.toString()%>]]> </log>
+					<function name="FunctioninCTestBase"/>
+					<set name="thisclass.classstring2" value="'sssssssssssssssssssssssssssssssssssssssssssss'"/>
+					<log><![CDATA[classstring2 <%=thisclass.classstring2.toString()%>]]> </log>
+				</function>
+			</function>
+		</public>
+	</class>
+	<function name="testclasssss">
+		<log>testclasssss new object</log>
+		<variable name="testclass" type="class"/>
+		<variable name="testclassin" type="string" value="'1111111111111111111'"/>
+		<variable name="testclassout" type="string"/>
+		<variable name="classnametest" type="string"/>
+		<new name="testclass" class="CTestClass">
+			<parameters>
+				<parameter name="testparam" type="string" in="context.testclassin.toString()"/>
+				<parameter name="testparamout" type="string" out="context.testclassout"/>
+			</parameters>
+		</new>
+		<log><![CDATA[testclassout <%=context.testclassout.toString()%>]]> </log>
+		<function name="FunctioninCTestBase" class="context.testclass"/>
+		<function name="FunctioninCTest" class="context.testclass"/>
+		<function name="GetClassName" class="context.testclass">
+			<parameters>
+				<parameter name="classname" type="string" out="classnametest"/>
+			</parameters>
+		</function>
+		<log><![CDATA[classnametest <%=context.classnametest.toString()%>]]> </log>
+	</function>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<log>session.startup</log>
+				<script><![CDATA[
+					context.print('ss print');
+					this.test;
+				  ]]></script>
+			</function>
+			<function name="testclasssss"/>
+		</onevent>
+		<onevent event="*">
+			<function>
+			<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+			</function>
+		</onevent>
+	</events>
+</starlang>

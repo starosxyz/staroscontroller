@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="class">
+	<class name="sss">
+		<variable name="newSession"/>
+		<variable name="nulltest" type="string"/>
+		<variable name="systemparam" type="params"/>
+		<variable name="sdfsdfs" type="class"/>
+		<functions>
+			<function name="sss">
+				<function>
+					<script><![CDATA[
+						var student = new Object(); 
+						student.name = "Lanny"; 
+						student.age = "25"; 
+						student.location = "China"; 
+						var json = JSON.stringify(student); 
+						context.nulltest.setValue(json);
+						var json = '{"name":"GDT","age":"15","University":"GDUT"}';
+						var info = JSON.parse(json);
+						context.nulltest.setValue(info.name);
+					]]></script>
+					<log><![CDATA[ nulltest= <%=context.nulltest.toString()%>]]></log>
+					<log>******************************************************************************************</log>
+					<log>*</log>
+					<log>*  Copyright (C) 2013-2017, Nanjing WFNEX Technology Co., Ltd</log>
+					<log>*</log>
+					<log>******************************************************************************************</log>
+					<newclass name="sdfsdfs" class="sss"/>
+					<function class="sdfsdfs" name="sdfsdfs"/>
+				</function>
+			</function>
+			<function event="~sss">
+				<variable name="dbdialog"/>
+				<function>
+					<log>session.ONSTART</log>
+					<raise name="application.check"/>
+				</function>
+			</function>
+			<function event="test">
+				<variable name="dbdialog"/>
+				<variable name="testxml" type="long"/>
+				<variable name="strname" type="string"/>
+				<variable name="testparams" type="params"/>
+				<function>
+					<script><![CDATA[var str = '<fu>x</fu>';
+						var x = new XML('<root><fu>x2</fu><fu>xssss</fu></root>');
+						context.testxml.setValue(x.children().length());
+						context.strname.setValue(x.children()[0].toString());
+					  ]]></script>
+					<log dest="stdout"><![CDATA[SystemInit get a event '<%=context.testxml.toLong()%>']]></log>
+					<log dest="stdout"><![CDATA[strname= '<%=context.strname.toString()%>']]></log>
+					<log level="1"><![CDATA[ event name <%=event.getName()%>]]> </log>
+					<log level="1"><![CDATA[ iamparam value <%=event.getParam("iamparam").toString()%>]]> </log>
+					<set name="testparams" paramname="listenip" value="'0.0.0.0'"/>
+					<set name="testparams" paramname="listenport" value="'9922'"/>
+					<set name="testparams" paramname="sshservice" value="'shell'"/>
+					<log>get event name test</log>
+					<application method="LocalEventRequest" event="hellorequest" params="context.testparams">
+						<applicationdata>
+							<![CDATA[ 
+							hello world;
+							]]>
+						</applicationdata>
+					</application>
+					<wait event="hellorequest" timeout="1000"/>
+					<log>i am here</log>
+					<!--end reason="call. end."/-->
+				</function>
+			</function>
+			<function event="application.check">
+			  <function>
+				<log dest="stdout"><![CDATA[get a event '<%=event.getName()%>']]></log>
+				<function>
+				  <raise name="application.check"/>
+				</function>
+			  </function>
+			</function>
+			<function event="*">
+				<function>
+				<log level="1"><![CDATA[ invalid event <%=event.getName()%>]]> </log>
+				<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
+				</function>
+			</function>
+		</functions>
+	</class>
+</starlang>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		openflow_multipart_group.xml
+	@brief 		send openflow_multipart_grouprequest and openflow_multipart_groupreply
+	@version 	1.1.0
+	@auth 		YY
+	@date		2017/11/27
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		send openflow_multipart_grouprequest
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+			@param xid 	xid
+		Output:					
+	-->
+	<function name="OpenFlowMultiPartGroupRequest">
+		<parameters>
+			<long name="xid"/>
+			<string name="transportid"/>
+		</parameters>
+		<log>OpenFlowMultiPartGroupRequest</log>
+		<string name="strjson"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>",
+						"flags":"0",
+						"groupid":"0xfffffffc"
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REQUEST.OFP13MP_GROUP">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="strjson" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<!--
+		@brief		send openflow_multipart_groupreply
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+			@param xid 	xid
+		Output:					
+	-->
+	<function name="OpenFlowMultiPartGroupReply">
+		<parameters>
+			<long name="xid"/>
+		</parameters>
+		<log>OpenFlowMultiPartGroupReply</log>
+		<string name="strjson"/>
+		<reference variable="strjson">
+			<jsonbody><![CDATA[ 
+					{
+						"xid":"<%=context.xid.toString()%>",
+						"groupid":"1",
+						"statslist":[
+							{
+								"groupid":"1",
+								"refcount":"1",
+								"packetcount":"1",
+								"bytecount":"1",
+								"duretionsec":"1",
+								"durationnsec":"1",
+								"bucketcounterlist":[
+									{
+										"packetcount":"1",
+										"bytecount":"1"
+									},
+									{
+										"packetcount":"1",
+										"bytecount":"1"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="Send_OFPT13_MULTIPART_REPLY.OFP13MP_GROUP">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="strjson" in="context.strjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	<!--
+		@brief		befroe send openflow_multipart_groupreply match xid
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+		Output:					
+	-->
+	<function name="TestOpenFlowMultiPartGroupRequest">
+		<boolean name="isstop" value="true"/>
+		<long name="xid"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartGroupDescRequest xid=<%=context.xid.toString()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartGroupRequest">
+				<parameters>
+					<long name="xid" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+			<wait event="openflow.OFPT13_MULTIPART_REPLY.OFP13MP_GROUP,openflow.OFPT13_ERROR" transportid="event.getParam('transportid').toString()" xid="context.xid.toLong()">
+				<function>
+					<log><![CDATA[OFPT13_MULTIPART_REPLY.OFP13MP_GROUP=<%=event.getParam('eventdata').toString()%>]]></log>
+				</function>
+			</wait>
+		</function>
+	</function>
+	<!--
+		@brief		befroe send openflow_multipart_groupreply match xid
+		@auth 		YY
+		@date		2017/11/27
+		Input:
+		Output:					
+	-->
+	<function name="TestOpenFlowMultiPartGroupReply">
+		<boolean name="isstop" value="true"/>
+		<long name="xid"/>
+		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+		<log><![CDATA[TestOpenFlowMultiPartGroupReply xid=<%=context.xid.toString()%>]]></log>
+		<function>
+			<function name="OpenFlowMultiPartGroupReply">
+				<parameters>
+					<long name="xid" in="context.xid.toLong()"/>
+				</parameters>
+			</function>
+		</function>
+	</function>
+</starlang>

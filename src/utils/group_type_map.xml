@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2017 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		group_type_map.xml
+	@brief 		OpenFlow 组字段对应表
+	@version 	1.1.0
+	@auth 		Qiu Lei
+	@date		2017/08/11
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang>
+	<params name="GroupTypeParam" global="true"/>
+	<!--
+		@brief		初始化MAP表
+		@auth 		qiulei (qiulei@staros.xyz)
+		@date		2017/11/24
+		Input:
+		Output:
+	-->
+	<function name="InitGroupType">
+		<set name="GroupTypeParam" paramname="OFPGT_ALL" value="'0'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_SELECT" value="'1'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_INDIRECT" value="'2'"/>
+		<set name="GroupTypeParam" paramname="OFPGT_FF" value="'3'"/>
+	</function>
+</starlang>

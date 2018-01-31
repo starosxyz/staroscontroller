@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<function name="HandleAppDataRequest">
+	<!--hupeng 20170731-->
+		<string name="outjson"/>
+		<function name="GetAppJsonString" class="ApplicationManager">
+			<parameters>
+				<!--appjson is return value-->
+				<string name="appjson" out="context.outjson"/>
+			</parameters>
+		</function>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>		
+	</function>
+	<function name="HandleappManagementRequest">
+	<!--hupeng 20170731-->
+		<string name="name"/>
+		<string name="action"/>
+		<function>
+			<script><![CDATA[
+					var info = JSON.parse(event.getParam('eventdata').toString());
+					context.action.setValue(info.payload.action);
+					context.name.setValue(info.payload.name);
+			]]></script>
+			<if cond="context.action.toString() == 'deactivate'">
+				<then>
+					<function name="AppDeactiveEvent" class="ApplicationManager">
+						<parameters>
+							<!--appjson is return value-->
+							<string name="id" in="context.name"/>
+						</parameters>
+					</function>
+				</then>
+				<elseif cond="context.action.toString() == 'activate'">
+					<function name="AppActiveEvent" class="ApplicationManager">
+						<parameters>
+							<!--appjson is return value-->
+							<string name="id" in="context.name"/>
+						</parameters>
+					</function>
+				</elseif>
+				<elseif cond="context.action.toString() == 'uninstall'">
+					<function name="UninstallApp" class="ApplicationManager">
+						<parameters>
+							<!--appjson is return value-->
+							<string name="id" in="context.name"/>
+						</parameters>
+					</function>
+				</elseif>
+			</if>
+		</function>
+		
+	</function>
+	<function name="HandleappDetailsRequest">
+	<!--hupeng 20170731-->
+		<string name="outjson" value=""/>
+		<string name="processname" value=""/>
+		<boolean name="ishavapayload"/>
+		<script><![CDATA[
+			var info = JSON.parse(event.getParam('eventdata').toString());
+			var payloadstr=JSON.stringify(info.payload);
+		
+			if (info.payload.id!=null)
+			{
+				var processname=info.payload.id;
+				context.processname.setValue(processname);
+				context.ishavapayload.setValue(true);
+			}
+			else 
+			{
+				context.ishavapayload.setValue(false);
+			}
+		]]></script>
+	
+		<if cond="context.ishavapayload.toBoolean()==true">
+			<then>
+				<function name="GetAppdetalJsonString" class="ApplicationManager">
+					<parameters>
+						<!--appjson is return value-->
+						<string name="appdetailjson" out="context.outjson"/>
+						<string name="app_id" in="context.processname"/>
+					</parameters>
+				</function>
+			</then>
+			<else>
+				<function name="GetCurrentappname" class="ApplicationManager">
+					<parameters>
+						<string name="outappname" out="processname"/>
+					</parameters>
+				</function>
+				<function name="GetAppdetalJsonString" class="ApplicationManager">
+					<parameters>
+						<!--appjson is return value-->
+						<string name="appdetailjson" out="context.outjson"/>
+						<string name="app_id" in="context.processname"/>
+					</parameters>
+				</function>
+			</else>
+		</if>
+		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
+			<jsonsrc src="outjson"/>
+		</websocket>	
+			
+	</function>
+</starlang>
