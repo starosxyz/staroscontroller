@@ -42,89 +42,274 @@
 			<string name="dstip"/>
 			<string name="srcip"/>
 			<string name="dstmac"/>
+			<string name="srcmac"/>
 			<string name="protocol"/>
+			<string name="dstport"/>
+			<string name="srcport"/>
 		</parameters>
+		<string name="modstrjson"/>
 		<log level="1"><![CDATA[installflow dpid = <%=context.dpid.toString()%>]]></log>
 		<log level="1"><![CDATA[installflow outport = <%=context.outport.toString()%>]]></log>
 		<log level="1"><![CDATA[installflow inport = <%=context.inport.toString()%>]]></log>
 		<if cond="context.outport.toString()==''">
 			<then>
-				<assert/>
+				<exit/>
 			</then>
 		</if>
-
-		<string name="modstrjson"/>
-		<reference variable="modstrjson">
-			<jsonbody><![CDATA[ 
-					{
-						"deviceid":"of:<%=context.dpid.toString()%>",
-						"cookie":"0",
-						"cookiemask":"0",
-						"tableid":"0",
-						"command":"0",
-						"idletimeout":"10",
-						"hardtimeout":"0",
-						"priority":"50000",
-						"bufferid":"0xffffffff",
-						"outport":"0xffffffff",
-						"outgroup":"0xffffffff",
-						"flags":"1",
-						"match":{
-								"type":"1",
-								"matchfieldlist":[
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"0",
-										"hasmask":"false",
-										"inport":"<%=context.inport.toString()%>"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"3",
-										"hasmask":"false",
-										"dstmac":"<%=context.dstmac.toString()%>"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"5",
-										"hasmask":"false",
-										"ethtype":"0x0800"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"11",
-										"hasmask":"false",
-										"srcip":"<%=context.srcip.toString()%>"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"12",
-										"hasmask":"false",
-										"dstip":"<%=context.dstip.toString()%>"
-									},
-									{
-										"oxmclass":"0x8000",
-										"oxmfield":"10",
-										"hasmask":"false",
-										"ipproto":"<%=context.protocol.toString()%>"
-									}
-								]
-							},
-						"instructionlist":[
+		<if cond="context.protocol.toString()=='1'">
+			<then>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
 							{
-								"type":"4",
-								"actionlist":[
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"10",
+								"hardtimeout":"0",
+								"priority":"50000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dstmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.srcmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.protocol.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
 									{
-										"type":"0",
-										"outport":"<%=context.outport.toString()%>",
-										"maxlen":"0xffff"
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
 									}
 								]
 							}
-						]
-				    }
-			]]></jsonbody>
-		</reference>
+					]]></jsonbody>
+				</reference>
+			</then>
+		</if>
+		<if cond="context.protocol.toString()=='6'">
+			<then>
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"10",
+								"hardtimeout":"0",
+								"priority":"50000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dstmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.srcmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.protocol.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+			</then>
+			<elseif cond="context.protocol.toString()=='17'">
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"10",
+								"hardtimeout":"0",
+								"priority":"50000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"3",
+												"hasmask":"false",
+												"dstmac":"<%=context.dstmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"4",
+												"hasmask":"false",
+												"srcmac":"<%=context.srcmac.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"<%=context.protocol.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"15",
+												"hasmask":"false",
+												"udpsrc":"<%=context.srcport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"16",
+												"hasmask":"false",
+												"udpdst":"<%=context.dstport.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+
+			</elseif>
+		</if>
 		<string name="resourceid"/>
 		<if cond="context.flowservice==null">
 			<then>
@@ -221,10 +406,8 @@
 			<string name="srcip"/>
 			<string name="dstip"/>
 			<string name="protocol"/>
-			<string name="tcp_srcport"/>
-			<string name="udp_srcport"/>
-			<string name="tcp_dstport"/>
-			<string name="udp_dstport"/>
+			<string name="srcport"/>
+			<string name="dstport"/>
 			<set name="datapathid" value="event.getParam('datapathid').toString()"/>		
 			<syslog level="INFO"><![CDATA[datapathid = <%=context.datapathid.toString()%>]]></syslog>
 			<log level="1">forwarding PacketInEvent</log>
@@ -312,9 +495,20 @@
 									var dstip = info.payload.ethernetpayload.destinationaddress;
 									var srcip = info.payload.ethernetpayload.sourceaddress;
 									var protocol=info.payload.ethernetpayload.protocol;
+									var ippayload=info.payload.ethernetpayload.ippayload;
 									context.dstip.setValue(dstip);
 									context.srcip.setValue(srcip);
-									context.protocol.setValue(protocol);	
+									context.protocol.setValue(protocol);
+									if (protocol=='6')
+									{
+										context.srcport.setValue(ippayload.sourceport);
+										context.dstport.setValue(ippayload.destinationport);
+									}
+									else if (protocol=='17')
+									{
+										context.srcport.setValue(ippayload.sourceport);
+										context.dstport.setValue(ippayload.destinationport);
+									}
 								}								
 							}
 						]]></script>
@@ -328,7 +522,10 @@
 										<string name="dstip" in="context.dstip.toString()"/>
 										<string name="srcip" in="context.srcip.toString()"/>
 										<string name="dstmac" in="context.dstmac.toString()"/>
+										<string name="srcmac" in="context.srcmac.toString()"/>
 										<string name="protocol" in="context.protocol.toString()"/>
+										<string name="dstport" in="context.dstport.toString()"/>
+										<string name="srcport" in="context.srcport.toString()"/>
 									</parameters>
 								</function>
 								<packetout name="context.openflowserverobj" deviceid="context.dpid.toString()" msgblk="context.packetmsgblock" outport="context.hostoutport.toString()"/>
@@ -342,7 +539,10 @@
 										<string name="dstip" in="context.dstip.toString()"/>
 										<string name="srcip" in="context.srcip.toString()"/>
 										<string name="dstmac" in="context.dstmac.toString()"/>
+										<string name="srcmac" in="context.srcmac.toString()"/>
 										<string name="protocol" in="context.protocol.toString()"/>
+										<string name="dstport" in="context.dstport.toString()"/>
+										<string name="srcport" in="context.srcport.toString()"/>
 									</parameters>
 								</function>
 								<packetout name="context.openflowserverobj" deviceid="context.dpid.toString()" msgblk="context.packetmsgblock" outport="context.openflowserverobj.ptr.getOutPort(event.getParam('datapathid').toString(),context.dpid.toString())"/>

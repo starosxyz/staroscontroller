@@ -46,7 +46,15 @@
 				</parameters>
 					<set name="thisclass.m_mac" value="context.mac.toString()"/>
 					<set name="thisclass.m_ip" value="context.ip.toString()"/>
-					<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
+					<if cond="context.vlan.toString() == '' || context.vlan.toString() == null">
+						<then>
+							<set name="thisclass.m_vlan" value="'None'"/>
+						</then>
+						<else>
+							<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
+						</else>
+					</if>
+					
 					<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
