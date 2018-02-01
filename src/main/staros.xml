@@ -35,7 +35,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/actions_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/instrunction_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/utils/group_type_map.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/sysgui.xml"/>
 	
 	<!--qiulei 20170929-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/apidocs.xml"/>
@@ -182,7 +182,7 @@ a.printme()
 				<!--1.初始化全局变量 -->
 				<function name="InitGlobalResource"/>
 				<!--2.初始化全局数据MAP表 -->
-				<function name="createIntentDatabase"/>
+			
 				
 				<function name="InitAPIMapFunction"/>
 				<!--3.hu peng 2017/07/28  change setting-->
@@ -210,7 +210,8 @@ a.printme()
 				<!--启动自动拓扑发现-->
 				<function name="startDiscovery" class="TopoManager"/> 
 				
-
+				<function name="InitSysGui"/>
+				
 				<!--qiulei 201700929 Monday-->
 				<function name="RegisterAddDocsAPITopology"/>
 			</function>

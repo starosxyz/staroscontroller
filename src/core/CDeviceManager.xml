@@ -31,6 +31,32 @@
 			<function name="CDeviceManager">
 				<log>CDeviceManager is create</log>
 			</function>
+			
+			
+			
+			<!--hu-->
+			<function name="GetAlldevice">
+				<parameters>
+					<list name="alldeviceobj"/>
+				</parameters>
+				<object name="switchdevice"/>
+				<pair name="oneDevicePair" keytype="string" valuetype="object"/>
+				<list name="devicelist" valuetype="object"/>
+				<for var="oneDevicePair" in="context.deviceContainer">
+					<function>
+						<set name="switchdevice" value="context.oneDevicePair.second()"/>
+						<if cond="context.switchdevice.ptr!= null">
+							<then>
+								<insert name="devicelist" value="context.switchdevice"/>
+							</then>
+						</if>	
+					</function>
+				</for>
+				<set name="alldeviceobj" value="context.devicelist"/>
+			</function>
+			
+
+			
 			<!--qiulei 20171117pm-->
 			<!--
 				@brief		以json字符创返回所有device

@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		staros_api_statistics.xml
+	@version 	1.1.0
+	@auth 		hu peng
+	@date		2017/01/31
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<function name="GetportsBydeviceid">
+		 <parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<log level="100">insert GetportsBydeviceid</log>
+		<string name="deviceId" value="context.pathvector.getIndexOf(0).toString()"/>
+		<object name="deviceobj"/>
+		<object name="portobj"/>
+		<string name="allportsstr"/>
+		<string name="jsonstr"/>
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.deviceId.toString()"/>
+				<object name="deviceobject" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<log level="100"> 44 device is null</log>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.deviceobj">
+			<parameters>
+				<object name="outportmgr" out="context.portobj"/>
+			</parameters>
+		</function>
+		<if cond="context.portobj.ptr==null">
+			<then>
+				<log level="100">61 portobj is null</log>	
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetAllportsInfo" class="context.portobj">
+			<parameters>
+				<string name="outjson" out="context.allportsstr"/>
+			</parameters>
+		</function>
+		<if cond="context.allportsstr.toString==''">
+			<then>
+				<log level="100">79 allportsstr is null</log>	
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<script><![CDATA[
+				var  json=new Object();
+			 	var array=new Array();
+				var portsjson=JSON.parse(context.allportsstr.toString());
+				portsjson['deviceId']=context.deviceId.toString();
+				array.push(portsjson);
+				json['statistics']=array;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+	
+	<function name="DeltaGetportsBydeviceidAndport">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<string name="deviceId" value="context.pathvector.getIndexOf(0).toString()"/>
+		<string name="portno" value="context.pathvector.getIndexOf(1).toString()"/>
+		<string name="jsonstr"/>
+		<script><![CDATA[
+				var  json=new Object();
+				var onedevicejson=new Object();
+				var portsarray=new Array();
+				var onearray=new Object();
+				var allarray=new Array();
+				onearray.port=context.portno.toString();
+				onearray.packetsReceived="98";
+				onearray.packetsSent="98";
+				onearray.bytesReceived="98";
+				onearray.bytesSent="9162";
+				onearray.packetsRxDropped="0";
+				onearray.packetsTxDropped="0";
+				onearray.packetsRxErrors="0";
+				onearray.packetsTxErrors="0";
+				onearray.durationSec="90";
+				portsarray.push(onearray);
+				onedevicejson['deviceId']=context.deviceId.toString();
+				onedevicejson['ports']=portsarray;
+				allarray.push(onedevicejson);
+				json['statistics']=allarray;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+	
+	
+	
+	
+	<function name="GetAllports">
+		 <parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<list name="devicelist" valuetype="object"/>
+		<function name="GetAlldevice" class="DeviceManager">
+			<parameters>
+				<list name="alldeviceobj" out="context.devicelist"/>
+			</parameters>
+		</function>
+		<log level="100"><![CDATA[devicelist size = <%=context.devicelist.size().toString()%>]]></log>
+		<object name="oneDevice"/>
+		<object name="portobj"/>
+		<string name="deviceId"/>
+		<string name="onedeviceportsjson"/>
+		<list name="portsjsonlist" valuetype="string"/>
+		<string name="strjson"/>
+		<string name="allportsstr"/>
+		<for var="oneDevice" in="context.devicelist">
+			<function>
+				<if cond="context.oneDevice.ptr!= null">
+					<then>
+						<function name="GetDatapathId" class="oneDevice">
+							<parameters>
+								<string name="outdatapathid" out="context.deviceId"/>
+							</parameters>
+						</function>
+						<log level="100"><![CDATA[deviceId = <%=context.deviceId.toString()%>]]></log>
+						<if cond="context.oneDevice.ptr!=null">
+							<then>
+								<log level="100">device is not null</log>
+								<function name="GetPortManager" class="context.oneDevice">
+									<parameters>
+										<object name="outportmgr" out="context.portobj"/>
+									</parameters>
+								</function>
+								<if cond="context.portobj.ptr!=null">
+									<then>
+										<log level="100">port is not null</log>
+										<function name="GetAllportsInfo" class="context.portobj">
+											<parameters>
+												<string name="outjson" out="context.allportsstr"/>
+											</parameters>
+										</function>
+										<if cond="context.allportsstr.toString()!=''">
+											<then>
+												<log level="100">allportsstr is not null</log>
+												<script><![CDATA[
+													var portsjson=JSON.parse(context.allportsstr.toString());
+													portsjson['deviceId']=context.deviceId.toString();
+													context.onedeviceportsjson.setValue(JSON.stringify(portsjson));
+												]]></script>
+												<insert name="portsjsonlist" value="context.onedeviceportsjson.toString()"/>
+											</then>
+										</if>
+									</then>
+								</if>
+							</then>
+						</if>	
+					</then>
+				</if>	
+			</function>
+		</for>
+		<if cond="context.portsjsonlist.size()==0">
+			<then>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'data is null !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<script><![CDATA[
+					var portsArray=new Array();    
+					var str = new Object();
+					var firststr=context.portsjsonlist.getFirst();
+					while(firststr!=null){
+						var port = firststr;	
+						var info = JSON.parse(port);						
+						portsArray.push(info);
+						firststr=context.portsjsonlist.getNext();
+					}
+					str['statistics'] = portsArray;
+					var strjson=JSON.stringify(str);
+					context.strjson.setValue(strjson);
+				]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.strjson.toString()"/>
+			</parameters>
+		</function>	
+
+	</function>
+	
+	
+	<function name="DeltaGetportsBydeviceid">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<string name="deviceId" value="context.pathvector.getIndexOf(0).toString()"/>
+		<string name="jsonstr"/>
+		<script><![CDATA[
+				var  json=new Object();
+				var onedevicejson=new Object();
+				var portsarray=new Array();
+				var onearray=new Object();
+				var allarray=new Array();
+				onearray.port="1";
+				onearray.packetsReceived="98";
+				onearray.packetsSent="98";
+				onearray.bytesReceived="98";
+				onearray.bytesSent="9162";
+				onearray.packetsRxDropped="0";
+				onearray.packetsTxDropped="0";
+				onearray.packetsRxErrors="0";
+				onearray.packetsTxErrors="0";
+				onearray.durationSec="90";
+				portsarray.push(onearray);
+				onedevicejson['deviceId']=context.deviceId.toString();
+				onedevicejson['ports']=portsarray;
+				allarray.push(onedevicejson);
+				json['statistics']=allarray;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+	
+	
+	
+	
+	<function name="GetportsBydeviceidAndport">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<object name="deviceobj"/>
+		<object name="portobj"/>
+		<string name="deviceId" value="context.pathvector.getIndexOf(0).toString()"/>
+		<string name="portno" value="context.pathvector.getIndexOf(1).toString()"/>
+		<string name="oneportjson"/>
+		<string name="jsonstr"/>
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.deviceId.toString()"/>
+				<object name="deviceobject" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<log level="100"> 44 device is null</log>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetPortManager" class="context.deviceobj">
+			<parameters>
+				<object name="outportmgr" out="context.portobj"/>
+			</parameters>
+		</function>
+		<if cond="context.portobj.ptr==null">
+			<then>
+				<log level="100">61 portobj is null</log>	
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetonePortInfo" class="context.portobj">
+			<parameters>
+				<string name="portno" in="context.portno.toString()"/>
+				<string name="outjson" out="context.oneportjson"/>
+			</parameters>
+		</function>
+		
+		<if cond="context.oneportjson.toString()==''">
+			<then>
+				<log level="100">166 oneportjson is null</log>	
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'data is null !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<script><![CDATA[
+				var  json=new Object();
+				var onejson=new Object();
+			 	var array=new Array();
+			 	var portsarray=new Array();
+				var portsjson=JSON.parse(context.oneportjson.toString());
+				portsarray.push(portsjson);
+				onejson['deviceId']=context.deviceId.toString();
+				onejson['ports']=portsarray;
+				array.push(onejson);
+				json['statistics']=array;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+	
+	
+	
+	<function name="GettablesBydeviceid">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<string name="deviceId" value="context.pathvector.getIndexOf(0).toString()"/>
+		<object name="deviceobj"/>
+		<object name="tableobj"/>
+		<string name="tablejson"/>
+		<string name="jsonstr"/>
+		<function name="findDevice" class="DeviceManager">
+			<parameters>
+				<string name="datapathid" in="context.deviceId.toString()"/>
+				<object name="deviceobject" out="context.deviceobj"/>
+			</parameters>
+		</function>
+		<if cond="context.deviceobj.ptr==null">
+			<then>
+				<log level="100"> 44 device is null</log>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		
+		<function name="GetTableManager" class="context.deviceobj">
+			<parameters>
+				<object name="outtablemgr" out="context.tableobj"/>
+			</parameters>
+		</function>
+		<if cond="context.tableobj.ptr==null">
+			<then>
+				<log level="100">tableobj is null</log>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="GetTableData" class="context.tableobj">
+			<parameters>
+				<string name="data" out="context.tablejson"/>
+			</parameters>
+		</function>	
+		<if cond="context.tablejson.toString()==''">
+			<then>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'find failed !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<script><![CDATA[
+				var  json=new Object();
+				var table=new Object();
+				var onearray=new Array();
+				var info=JSON.parse(context.tablejson.toString());
+				var tablejsonlist=info.payload.tables;
+				var array=new Array();
+				for(var i=0;i<tablejsonlist.length;i++){
+					var onetable=new Object();
+					onetable['tableId']=tablejsonlist[i].tableid;
+					onetable['deviceId']=context.deviceId.toString();
+					onetable['activeEntries']=tablejsonlist[i].activecount;
+					onetable['packetsLookedUp']=tablejsonlist[i].lookupcount;
+					onetable['packetsMathced']=tablejsonlist[i].matchcount;
+					array.push(onetable);
+				}
+				
+				table['deviceId']=context.deviceId.toString();
+				table['table']=array;
+				onearray.push(table);
+				json['statistics']=onearray;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<if cond="context.jsonstr.toString()==''">
+			<then>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'data is null !'"/>
+					</parameters>
+				</function>
+				<exit/>
+			</then>
+		</if>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+
+	</function>
+	
+	
+	
+	<function name="DeltaGetallports">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<string name="jsonstr"/>
+		<script><![CDATA[
+				var  json=new Object();
+				var onedevicejson=new Object();
+				var portsarray=new Array();
+				var onearray=new Object();
+				var allarray=new Array();
+				onearray.port="1";
+				onearray.packetsReceived="98";
+				onearray.packetsSent="98";
+				onearray.bytesReceived="98";
+				onearray.bytesSent="9162";
+				onearray.packetsRxDropped="0";
+				onearray.packetsTxDropped="0";
+				onearray.packetsRxErrors="0";
+				onearray.packetsTxErrors="0";
+				onearray.durationSec="90";
+				portsarray.push(onearray);
+				onedevicejson['deviceId']="1";
+				onedevicejson['ports']=portsarray;
+				allarray.push(onedevicejson);
+				json['statistics']=allarray;
+				context.jsonstr.setValue(JSON.stringify(json));
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.jsonstr.toString()"/>
+			</parameters>
+		</function>	
+	</function>
+	
+	
+	<function name="Gettables">
+		<parameters>
+			<string name="requestpath"/>
+			<string name="method"/>
+			<string name="eventdata"/>
+			<vector name="pathvector"/>
+			<hashmap name="queryparams"/>
+		</parameters>
+		<list name="devicelist" valuetype="object"/>
+		<object name="oneDevice"/>
+		<string name="deviceId"/>
+		<object name="tableobj"/>
+		<string name="tablejson"/>
+		<string name="onetablesjson"/>
+		<list name="tablesjsonlist" valuetype="string"/>
+		<string name="outjson"/>
+		<function name="GetAlldevice" class="DeviceManager">
+			<parameters>
+				<list name="alldeviceobj" out="context.devicelist"/>
+			</parameters>
+		</function>
+		<for var="oneDevice" in="context.devicelist">
+			<function>
+				<if cond="context.oneDevice.ptr!= null">
+					<then>
+						<function name="GetDatapathId" class="oneDevice">
+							<parameters>
+								<string name="outdatapathid" out="context.deviceId"/>
+							</parameters>
+						</function>
+						<function name="GetTableManager" class="context.oneDevice">
+							<parameters>
+								<object name="outtablemgr" out="context.tableobj"/>
+							</parameters>
+						</function>
+						<if cond="context.tableobj.ptr!=null">
+							<then>
+								<function name="GetTableData" class="context.tableobj">
+									<parameters>
+										<string name="data" out="context.tablejson"/>
+									</parameters>
+								</function>	
+							</then>
+						</if>
+						<if cond="context.tablejson.toString()!=''">
+							<then>
+								<script><![CDATA[
+									var info=JSON.parse(context.tablejson.toString());
+									var onedevicetable=new Object();
+									var tablejsonlist=info.payload.tables;
+									var array=new Array();
+									for(var i=0;i<tablejsonlist.length;i++){
+										var onetable=new Object();
+										onetable['tableId']=tablejsonlist[i].tableid;
+										onetable['deviceId']=context.deviceId.toString();
+										onetable['activeEntries']=tablejsonlist[i].activecount;
+										onetable['packetsLookedUp']=tablejsonlist[i].lookupcount;
+										onetable['packetsMathced']=tablejsonlist[i].matchcount;
+										array.push(onetable);
+									}
+									onedevicetable['deviceId']=context.deviceId.toString();
+									onedevicetable['table']=array;
+									
+									context.onetablesjson.setValue(JSON.stringify(onedevicetable));
+								]]></script>
+								<insert name="tablesjsonlist" value="context.onetablesjson.toString()"/>
+							</then>
+						</if>
+					</then>
+				</if>	
+			</function>
+		</for>
+		<if cond="context.tablesjsonlist.size()!=0">
+			<then>
+				<script><![CDATA[
+					var tablesArray=new Array();    
+					var str = new Object();
+					var firststr=context.tablesjsonlist.getFirst();
+					while(firststr!=null){
+						var table = firststr;	
+						var info = JSON.parse(table);						
+						tablesArray.push(info);
+						firststr=context.tablesjsonlist.getNext();
+					}
+					str['statistics'] = tablesArray;
+					var strjson=JSON.stringify(str);
+					context.outjson.setValue(strjson);
+				]]></script>
+				<function name="SendResponse" class="RestfulService">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.outjson.toString()"/>
+					</parameters>
+				</function>
+			</then>
+			<else>
+				<function name="statistics_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'data is null !'"/>
+					</parameters>
+				</function>
+				<exit/>	
+			</else>
+		</if>
+			
+	</function>
+	
+		
+	<function name="statistics_ErrorDataResponse">
+		<parameters>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.code = "-1";
+				one.description = context.description.toString();
+				
+			json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson.setValue(strjson);
+		]]></script>
+		<log level="101"><![CDATA[534 outjson<%=context.outjson.toString()%> --------statistics_ErrorDataResponse]]></log>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+</starlang>

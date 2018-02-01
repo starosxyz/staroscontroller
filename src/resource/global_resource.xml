@@ -59,7 +59,7 @@
 
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
 	
-	<include src="/opt/staros.xyz/staroscontroller/starlang/core/intent/CIntentManager.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CIntentManager.xml"/>
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CPortService.xml"/>
 	<object name="ApplicationManager" global="true"/>

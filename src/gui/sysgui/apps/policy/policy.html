@@ -1,0 +1,68 @@
+﻿<!--
+/***********************************************************************
+ * Copyright (C) 2016-2017, Nanjing StarOS Technology Co., Ltd 
+ * Description: 
+ * Author:           Yang Yang
+ * Date:             2017-01-13
+**********************************************************************/
+-->
+    <section class="content-header">
+      <h1>
+        业务流管理    
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> 业务流管理</a></li>
+      </ol>
+    </section>
+	
+
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">业务流管理</h3>
+            	<p>
+				 			
+                <a class="add fr r"><button type="button" style="width: 75px;margin-left: 10px;float: right;margin-top: 5px;" class="btn btn-block btn-success" ng-click="showDialog()">删除</button></a>
+    	        <a href="javascript:void(0)" class="del fr r"><button type="button" style="width: 75px;margin-left: 10px;float: right;margin-top: 5px;" class="btn btn-block btn-warning" ng-click="update()">修改</button></a>
+                <a href="#/policycreate" class="add fr r"><button type="button" style="width: 75px;margin-left: 10px;float: right;margin-top: 5px;" class="btn btn-block btn-info">新建</button></a>
+				
+            	</p>
+			</div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <table id="table_list" class="table table-bordered table-hover">
+               <!--<tr><th width='20'>选择</th><th width='195'>用户名</th><th width='195'>权限</th> <th width='195'>用户密码</th></tr>-->
+				   <thead>
+						<tr>
+						  <th>操作</th>
+						  <th>名称</th>
+						  <th>源IP</th>
+						  <th>目的IP</th>
+						  <th>传输协议</th>
+						  <th>虚拟网关</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="x in policy_list">
+							<td><input type='radio' id='checking' name='checking' class='select_btn fl' value='{{x.id}}' title='{{x.description}}'/></td>
+							<td>{{ x.name}}</td>
+							<td>{{ x.srcIp}}</td>
+							<td>{{ x.dstIp}}</td>
+							<td>{{ x.protType}}</td>
+							<td>{{ x.vgateway}}</td>
+						</tr>
+					</tbody>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+       </div>
+						
+    </section>

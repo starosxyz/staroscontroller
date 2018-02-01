@@ -69,14 +69,6 @@
 				</parameters>
 			</function>
 
-			<function name="mytopremove" class="IntentManager">
-				<parameters>
-					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
-					<string name="todevice" in="event.getParam('todevice').toString()"/>
-					<string name="path" in="event.getParam('path').toString()"/>
-				</parameters>
-			</function>
-
 			<function name="RemovePath" class="TopoManager">
 				<parameters>
 					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
@@ -148,12 +140,6 @@
 				</parameters>
 			</function>
 
-			<function name="mytopchange" class="IntentManager">
-				<parameters>
-					<string name="fromdevice" in="event.getParam('fromdevice').toString()"/>
-					<string name="todevice" in="event.getParam('todevice').toString()"/>
-				</parameters>
-			</function>
 		</onevent>
 	</events>
 </starlang>

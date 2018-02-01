@@ -195,12 +195,44 @@
 					onearray.txerrors=thisclass.m_txerrors.toString();
 					onearray.hwaddr=thisclass.m_hwaddr.toString();
 					onearray.maxbandwidth=thisclass.m_maxspeed.toString();
+					onearray.durationsec=thisclass.m_durationsec.toString();
 					
 					var strjson = JSON.stringify(onearray);
 					context.outjson.setValue(strjson);
 				]]></script>
 				<syslog level="INFO"><![CDATA[CPort GetPortInfo outjson= <%=context.outjson.toString()%>]]></syslog>
 			</function>
+			
+			
+			<!--hu-->
+			
+			<function name="GetonePortinfo">
+				<parameters>
+					<string name="outjson" />
+				</parameters>	
+				<script><![CDATA[
+					var onearray = new Object();
+					if (thisclass.m_portno.toString() == 4294967294){ 						
+						onearray.port = "Local";						
+					}else{
+						onearray.port=thisclass.m_portno.toString();
+					}
+					onearray.packetsReceived=thisclass.m_rxpackets.toString();
+					onearray.packetsSent=thisclass.m_txpackets.toString();
+					onearray.bytesReceived=thisclass.m_rxbytes.toString();
+					onearray.bytesSent=thisclass.m_txbytes.toString();
+					onearray.packetsRxDropped=thisclass.m_rxdropped.toString();
+					onearray.packetsTxDropped=thisclass.m_txdropped.toString();
+					onearray.packetsRxErrors=thisclass.m_rxerrors.toString();
+					onearray.packetsTxErrors=thisclass.m_txerrors.toString();
+					onearray.durationSec=thisclass.m_durationsec.toString();
+					var strjson = JSON.stringify(onearray);
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+		
+			
 			<!--
 				@brief		判断portno的值
 				@auth 		YangXiangRui
@@ -623,6 +655,66 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				Output
 					@param outjson 	传出去的Json信息
 			-->
+			
+			<function name="GetAllportsInfo">
+				<parameters>
+					<string name="outjson"/>
+				</parameters>
+				<object name="portobj"/>
+				<list name="jsonlist" valuetype="string"/>
+				<string name="strjson"/>
+				<pair name="oneportpair" keytype="string" valuetype="object"/>
+				<for var="oneportpair" in="context.portContainer">
+					<function>
+						<set name="portobj" value="context.oneportpair.second()"/>
+						<if cond="context.portobj.ptr == null">
+							<then>
+								<log>portobj is null </log>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetonePortinfo" class="context.portobj">
+							<parameters>
+								<string name="outjson"  out="context.strjson"/>
+							</parameters>
+							</function>
+						<insert name="jsonlist" value="context.strjson.toString()"/>
+						</function>
+					</for>
+				<script><![CDATA[
+					var portsArray=new Array();    
+					var str = new Object();
+					var firststr=context.jsonlist.getFirst();
+					while(firststr!=null){
+						context.print(firststr);
+						var port = firststr;	
+						var info = JSON.parse(port);						
+						portsArray.push(info);
+						firststr=context.jsonlist.getNext();
+					}
+					str['ports'] = portsArray;
+					var strjson=JSON.stringify(str);
+					
+					context.outjson.setValue(strjson);
+				]]></script>
+			</function>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			<function name="GetAllPortInfo">
 				<parameters>
 					<string name="outjson"/>
@@ -665,7 +757,34 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 					context.outjson.setValue(strjson);
 				]]></script>
 			</function>
-
+			
+			
+			<function name="GetonePortInfo">
+				<parameters>
+					<string name="portno"/>
+					<string name="outjson"/>
+				</parameters>
+				<object name="portobj"/>
+				<syslog level="INFO">########################CPortManager GetAppointedPortInfo</syslog>
+				<if cond="thisclass.portContainer.hasValue(context.portno.toString())">
+					<then>
+						<set name="context.portobj" value="thisclass.portContainer.getValue(context.portno.toString())"/>
+					</then>
+				</if>
+				<if cond="context.portobj.ptr != null">
+					<then>
+						<function name="GetonePortinfo" class="context.portobj">
+							<parameters>
+								<string name="outjson" out="context.outjson"/>
+							</parameters>
+						</function>
+					</then>
+				</if>
+			</function>
+			
+			
+			
+			
 			<!--
 				@brief		获取指定端口信息
 				@auth 		wangkang

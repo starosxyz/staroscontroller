@@ -3,7 +3,7 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		staros_websocket_vgateway.xml
+	@file 		staros_websocket_intent.xml
 	@brief 		handle settings' data
 	@version 	1.1.0
 	@auth 		qiulei
@@ -30,26 +30,31 @@
 		Output:					
 	-->
 	<function name="HandleintentRequest">
+		<log level="101">enter HandleintentRequest ----staros_websocket_intent.xml 33</log>
 		<string name="intentjson"/>
 		<string name="outjson"/>
 
-		<function name="AllIntentToJsonStr" class="IntentManager">
+		<function name="GetAllIntentJson2" class="IntentManager">
 			<parameters>
-				<string name="AllIntentJsonString" out="context.intentjson"/>
+				<string name="allintentjson" out="context.intentjson"/>
 			</parameters>
 		</function>
+
 		<script><![CDATA[
 				var intentArr=JSON.parse(context.intentjson.toString());
-				var payload = new Object();
-					payload['intents'] = intentArr;
+				context.print("46 intentArr,typeof="+typeof(intentArr));
+				
+				//var payload = new Object();
+				//	payload['intents'] = intentArr;
 				
 				var json = new Object();
 					json['event'] = "intentDataResponse";
-					json['payload'] = payload;
+					json['payload'] = intentArr;
 					
 				var strjson=JSON.stringify(json);
 				context.outjson.setValue(strjson);
 			]]></script>
+		<log level="100"><![CDATA[----staros_websocket_intent.xml 54行,outjson= <%=context.outjson.toString()%>]]></log>
 		<websocket name="restfulserver" method="SendText" transportid="event.getParam('transportid').toString()">
 			<jsonsrc src="outjson"/>
 		</websocket>

@@ -1902,7 +1902,7 @@
 				}
 			}
 		},
-		"/intents/relatedflows/{appId}/{key}": {
+		"/intents/relatedflows/{key}": {
 			"get": {
 				"tags": [
 					"intents"
@@ -1911,12 +1911,6 @@
 				"description": "Returns all flow entries of the specified intent.",
 				"parameters": [
 					{
-						"name": "appId",
-						"in": "path",
-						"type": "string",
-						"description": "application identifier",
-						"required": true
-					}, {
 						"name": "key",
 						"in": "path",
 						"type": "string",
@@ -1996,7 +1990,7 @@
 				}
 			}
 		},
-		"/intents/{appId}/{key}": {
+		"/intents/{key}": {
 			"get": {
 				"tags": [
 					"intents"
@@ -2005,12 +1999,6 @@
 				"description": "Returns details of the specified intent.",
 				"parameters": [
 					{
-						"name": "appId",
-						"in": "path",
-						"type": "string",
-						"description": "application identifier",
-						"required": true
-					}, {
 						"name": "key",
 						"in": "path",
 						"type": "string",
@@ -2041,12 +2029,6 @@
 				"description": "Withdraws the specified intent from the system.",
 				"parameters": [
 					{
-						"name": "appId",
-						"in": "path",
-						"type": "string",
-						"description": "application identifier",
-						"required": true
-					}, {
 						"name": "key",
 						"in": "path",
 						"type": "string",
@@ -9649,9 +9631,8 @@
 								"example": "org.onosproject.ovsdb"
 							},
 							"priority": {
-								"type": "integer",
-								"format": "int64",
-								"example": 55
+								"type": "string",
+								"example": "55"
 							},
 							"fromdevice": {
 								"type": "string",
@@ -9688,7 +9669,7 @@
 				"id",
 				"appId",
 				"type",
-				"paths"
+				"flows"
 			],
 			"properties": {
 				"id": {
@@ -9703,180 +9684,167 @@
 					"type": "string",
 					"example": "HostToHostIntent"
 				},
-				"paths": {
+				"flows": {
 					"type": "array",
 					"xml": {
-						"name": "paths",
+						"name": "flows",
 						"wrapped": true
 					},
 					"items": {
-						"type": "array",
-						"xml": {
-							"name": "flows",
-							"wrapped": true
-						},
-						"items": {
-							"type": "object",
-							"title": "flow",
-							"required": [
-								"id",
-								"tableId",
-								"appId",
-								"groupId",
-								"priority",
-								"timeout",
-								"isPermanent",
-								"deviceId",
-								"state",
-								"life",
-								"packets",
-								"bytes",
-								"lastSeen"
-							],
-							"properties": {
-								"id": {
-									"type": "string",
-									"example": "12103425214920339"
-								},
-								"tableId": {
-									"type": "integer",
-									"format": "int32",
-									"example": 3
-								},
-								"appId": {
-									"type": "string",
-									"example": "org.onosproject.core"
-								},
-								"groupId": {
-									"type": "integer",
-									"format": "int64",
-									"example": 0
-								},
-								"priority": {
-									"type": "integer",
-									"format": "int32",
-									"example": 40000
-								},
-								"timeout": {
-									"type": "integer",
-									"format": "int32",
-									"example": 0
-								},
-								"isPermanent": {
-									"type": "boolean",
-									"example": true
-								},
-								"deviceId": {
-									"type": "string",
-									"example": "of:0000000000000003"
-								},
-								"state": {
-									"type": "string",
-									"example": "ADDED"
-								},
-								"life": {
-									"type": "integer",
-									"format": "int64",
-									"example": 69889
-								},
-								"packets": {
-									"type": "integer",
-									"format": "int64",
-									"example": 22546
-								},
-								"bytes": {
-									"type": "integer",
-									"format": "int64",
-									"example": 1826226
-								},
-								"lastSeen": {
-									"type": "integer",
-									"format": "int64",
-									"example": 1447892365670
-								},
-								"treatment": {
+						"type": "object",
+						"title": "flow",
+						"required": [
+							"deviceid",
+							"cookie",
+							"cookiemask",
+							"tableid",
+							"command",
+							"idletimeout",
+							"hardtimeout",
+							"priority",
+							"bufferid",
+							"outport",
+							"outgroup",
+							"flags",
+							"match",
+							"instructionlist"
+						],
+						"properties": {
+							"deviceid": {
+								"type": "string",
+								"example": "of:1"
+							},
+							"cookie": {
+								"type": "string",
+								"example": "0"
+							},
+							"cookiemask": {
+								"type": "string",
+								"example": "0"
+							},
+							"tableid": {
+								"type": "string",
+								"example": "0"
+							},
+							"command": {
+								"type": "string",
+								"example": "0"
+							},
+							"idletimeout": {
+								"type": "string",
+								"example": "10"
+							},
+							"hardtimeout": {
+								"type": "string",
+								"example": "0"
+							},
+							"priority": {
+								"type": "string",
+								"example": "50000"
+							},
+							"bufferid": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"outport": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"outgroup": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"flags": {
+								"type": "string",
+								"example": "1"
+							},
+							"match": {
+								"type": "object",
+								"title": "match",
+								"required": [
+									"type",
+									"matchfieldlist"
+								],
+								"properties": {
+									"type": {
+										"type": "string",
+										"example": "1"
+									},
+									"matchfieldlist": {
+										"type": "array",
+										"xml": {
+											"name": "matchfieldlist",
+											"wrapped": true
+										},
+										"items": {
+											"type": "object",
+											"title": "match",
+											"required": [
+												"oxmclass",
+												"oxmfield",
+												"hasmask",
+												"inport"
+											],
+											"properties": {
+												"oxmclass": {
+													"type": "string",
+													"example": "0x8000"
+												},
+												"oxmfield": {
+													"type": "string",
+													"example": "0"
+												},
+												"hasmask": {
+													"type": "string",
+													"example": "false"
+												},
+												"inport": {
+													"type": "string",
+													"example": "2"
+												}
+											}
+										}
+									}
+								}
+							},
+							"instructionlist": {
+								"type": "array",
+								"title": "instructionlist",
+								"items": {
 									"type": "object",
-									"title": "treatment",
+									"title": "instruction",
 									"required": [
-										"instructions",
-										"deferred"
+										"type",
+										"actionlist"
 									],
 									"properties": {
-										"instructions": {
+										"type": {
+											"type": "string",
+											"example": "4"
+										},
+										"actionlist": {
 											"type": "array",
-											"title": "treatment",
-											"required": [
-												"properties",
-												"port"
-											],
+											"title": "actionlist",
 											"items": {
 												"type": "object",
-												"title": "instruction",
+												"title": "action",
 												"required": [
 													"type",
-													"port"
+													"outport",
+													"maxlen"
 												],
 												"properties": {
 													"type": {
 														"type": "string",
-														"example": "OUTPUT"
+														"example": "0"
 													},
-													"port": {
+													"outport": {
 														"type": "string",
-														"example": "CONTROLLER"
-													}
-												}
-											}
-										},
-										"deferred": {
-											"type": "array",
-											"xml": {
-												"name": "deferred",
-												"wrapped": true
-											},
-											"items": {
-												"type": "string"
-											}
-										}
-									}
-								},
-								"selector": {
-									"type": "object",
-									"title": "selector",
-									"required": [
-										"criteria"
-									],
-									"properties": {
-										"criteria": {
-											"type": "array",
-											"xml": {
-												"name": "criteria",
-												"wrapped": true
-											},
-											"items": {
-												"type": "object",
-												"title": "criteria",
-												"properties": {
-													"type": {
+														"example": "3"
+													},
+													"maxlen": {
 														"type": "string",
-														"description": "Ethernet field name",
-														"example": "ETH_TYPE"
-													},
-													"ethType": {
-														"type": "int64",
-														"format": "int64",
-														"example": "0x88cc",
-														"description": "Ethernet frame type"
-													},
-													"mac": {
-														"type": "string",
-														"example": "00:00:11:00:00:01"
-													},
-													"port": {
-														"type": "int64",
-														"format": "int64",
-														"example": 1,
-														"description": "Match port"
+														"example": "0xffff"
 													}
 												}
 											}
@@ -9914,9 +9882,8 @@
 					"example": "org.onosproject.ovsdb"
 				},
 				"priority": {
-					"type": "integer",
-					"format": "int64",
-					"example": 55
+					"type": "string",
+					"example": "55"
 				},
 				"fromdevice": {
 					"type": "string",

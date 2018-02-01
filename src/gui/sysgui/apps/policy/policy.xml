@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		test5.xml
+	@brief 		测试注册页面
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/12/11
+	
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>		
+	<object name="policyobj" />		
+	<function name="policyRegister">	
+		<params name="clientparams"/>			
+		<set name="clientparams" paramname="header" value="'系统设置'"/>
+		<set name="clientparams" paramname="category" value="'控制器'"/>
+		<set name="clientparams" paramname="categoryclass" value="''"/>			
+		<set name="clientparams" paramname="id" value="'policy'"/>
+		<set name="clientparams" paramname="label" value="'策略'"/>
+		<set name="clientparams" paramname="labelclass" value="''"/>			
+		<set name="clientparams" paramname="js" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/policy/policy.js'"/>
+		<set name="clientparams" paramname="html" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/policy/policy.html'"/>
+		<set name="clientparams" paramname="requesttype" value="'policyDataRequest'"/>
+		<set name="clientparams" paramname="responsetype" value="'policyDataResponse'"/>
+		<set name="clientparams" paramname="processevent" value="'getAllPolicys'"/>					
+		<systemgui name="context.policyobj" action="Register" params="clientparams"></systemgui>			
+	</function>
+
+	<function name="sendPolicyMessage">
+		
+	</function>
+ 
+	<events>		
+		<onevent event="getAllPolicys">
+			<function name="sendPolicyMessage"/>
+		</onevent>
+	</events>
+</starlang>

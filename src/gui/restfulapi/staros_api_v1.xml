@@ -26,6 +26,12 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/flows/staros_api_flows.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/topology/staros_api_topology.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/statistics/staros_api_statistics.xml"/>
+	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/>
+	
+	
 	<!--include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/-->
 	<!--WebGUI-->
 	<!--{"code":404,"message":"HTTP 404 Not Found"}-->

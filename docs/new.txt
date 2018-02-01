@@ -1,0 +1,107 @@
+<packeout name="openflowdevice" msgblk="event.getMessageBlock()"  outport=""/>
+<flood name="openflowobj" msgblk="event.getMessageBlock()"  inlocation=""/>
+
+<refrerec name="strjson">
+	<jsonbody>
+		{
+		  "intents": [
+			{
+			  "type": "HostToHostIntent",
+			  "id": "0x6",
+			  "appId": "org.onosproject.ovsdb",
+			  "priority": 55,
+				"fromdevice":"1",
+				"todevice":"2",
+				"fromdevicematch":{
+				},
+				"fromdeviceinstructionlist":[
+				],
+				"todevicematch":{
+				}
+				"todeviceinstructionlist:[
+				],
+				"middevicematch":{
+				}
+			}
+		  ]
+		}
+	</jsonbody>
+</reference>
+
+
+
+<intent name="sssssinte" ofobj="contex.openflowobj" value="context.strjson.toString()">
+
+{
+  "intents": [
+    {
+      "type": "HostToHostIntent",
+      "id": "0x6",
+      "appId": "org.onosproject.ovsdb",
+      "priority": 55,
+		"fromdevice":"1",
+		"todevice":"2",
+		"fromdevicematch":{
+		},
+		"fromdeviceinstructionlist":[
+		],
+		"todevicematch":{
+		}
+		"todeviceinstructionlist:[
+		],
+		"middevicematch":{
+		}
+    }
+  ]
+}
+
+
+
+
+
+{
+  "id": "0x5",
+  "appId": "org.onosproject.ovsdb",
+  "type": "HostToHostIntent",
+  "flows": [
+    [
+		{
+			"deviceid":"of:1,
+			"cookie":"0",
+			"cookiemask":"0",
+			"tableid":"0",
+			"command":"0",
+			"idletimeout":"10",
+			"hardtimeout":"0",
+			"priority":"50000",
+			"bufferid":"0xffffffff",
+			"outport":"0xffffffff",
+			"outgroup":"0xffffffff",
+			"flags":"1",
+			"match":{
+					"type":"1",
+					"matchfieldlist":[
+						{
+							"oxmclass":"0x8000",
+							"oxmfield":"0",
+							"hasmask":"false",
+							"inport":"2"
+						}
+					]
+				},
+			"instructionlist":[
+				{
+					"type":"4",
+					"actionlist":[
+						{
+							"type":"0",
+							"outport":"3",
+							"maxlen":"0xffff"
+						}
+					]
+				}
+			]
+		}
+    ]
+  ]
+}

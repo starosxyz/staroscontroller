@@ -1,0 +1,95 @@
+<section class="content-header">
+	<h1>
+           网络管理
+    </h1>
+	<ol class="breadcrumb">
+		<li>
+			<a href="#"><i class="fa fa-dashboard"></i>主页</a>
+		</li>
+		<li>
+			<a href="#">网络管理</a>
+		</li>
+		<li class="active">服务链管理</li>
+	</ol>
+</section>
+	<style type="text/css">
+	#div1 {width:488px;height:70px;padding:10px;border:1px solid #aaaaaa;}
+	.leftImg{
+		width:17px;
+		height:18px;
+		float: left;
+		border:0;
+		margin-top: 40px;
+		background:url("dist/img/icon06.png");
+	}
+	.rightImg{
+		width:17px;
+		height:18px;
+		float: left;
+		border:0;
+		margin-top: 40px;
+		background:url("dist/img/icon07.png");
+	}
+	.fw {
+		top: 213px;
+		position: absolute;
+		margin-left: 100px;
+		z-index: 7;
+	}
+	
+	img{
+		cursor:pointer;
+	}
+</style>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+		
+		  	<div class="t_box fl" id="ul1" style="margin-left:20%;margin-right:20%;">
+            	<div class="con fl" style="width:96%">    
+			
+                	<div class="con_top2">
+                    	<label>服务链名称</label>
+                        <input type="text"  placeholder="请输入名称" class="r fl" id="svcChainName"/>
+                    	<label>关联业务流</label>
+                        <input type="text" class="r fl" id="policyName_id" disabled="disabled"/>
+                    </div>
+                    <div class="con_m fl">
+                    	<div class="con_pic">
+                        	<div class="leftImg"></div>
+                        		<div class="submitChain">
+                        			<em style="width:80%;"></em>
+                        		</div>
+                            <div class="rightImg"></div>
+                        </div>
+                         <input class="ip" style="margin-left:18%;"  id="out_port" disabled="disabled"/>
+						<div>
+                       <input  id="in_port" style="margin-left:79%;border:1px solid #ddd; width:95px;height:30px;margin-top:10px" disabled="disabled"/>
+						</div>
+                        <a href="#/servicechain" class="btn btn-block btn-warning" style="width: 75px;margin-right:280px;float: right;margin-top:5px">取消</a>
+                    	<a ng-click="update()" class="btn btn-block btn-primary" style="width: 75px;float: right;margin-right:25px;margin-top:5px">保存</a>
+                        
+                    	
+                    </div>
+                </div>
+                <div class="con_bottom fl" style="width:750px">
+                	<img src="dist/img/icon_fw_b.png" class="vFW"/>
+                    <img src="dist/img/icon_lb_b.png" class="vLB"/>
+                    <img src="dist/img/icon_vo_b.png" class="vVO"/>
+                    <img src="dist/img/icon_dp_b.png" class="vDP"/>
+                </div>
+          </div>
+		  	<div id='maskDiv' style="z-index:9999"></div>
+            <div id="login_dialogDiv" class="dialogDiv r" >
+                <h1>修改成功</h1>
+                <a  href="#/servicechain" ng-click="close_loginDiv()" title="关闭窗口" class="close_btn r fl btn">确认</a>
+            </div>
+			</div>
+            
+          </div>
+        </div>
+    
+  </section>

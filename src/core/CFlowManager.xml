@@ -1537,6 +1537,7 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 									offlow.addValue('priority', info.statslist[i].priority);
 									offlow.addValue('match', strmatchjson);
 									context.print(strmatchjson);
+									context.deviceflowinfo.removeValue(info.statslist[i].cookie);
 									context.deviceflowinfo.addValue(info.statslist[i].cookie, offlow);
 									context.destroyHashMap(offlow);
 								}

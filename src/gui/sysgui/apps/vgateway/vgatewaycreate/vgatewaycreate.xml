@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		test5.xml
+	@brief 		测试注册页面
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2017/12/11
+	
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>		
+	<object name="vgatewaycreateobj"/>		
+	<function name="vgatewaycreateRegister">			
+		<params name="clientparams"/>			
+		<set name="clientparams" paramname="header" value="''"/>
+		<set name="clientparams" paramname="category" value="''"/>
+		<set name="clientparams" paramname="categoryclass" value="''"/>			
+		<set name="clientparams" paramname="id" value="'vgatewaycreate'"/>
+		<set name="clientparams" paramname="label" value="''"/>
+		<set name="clientparams" paramname="labelclass" value="''"/>			
+		<set name="clientparams" paramname="js" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/vgateway/vgatewaycreate/vgatewaycreate.js'"/>
+		<set name="clientparams" paramname="html" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/vgateway/vgatewaycreate/vgatewaycreate.html'"/>
+		<set name="clientparams" paramname="requesttype" value="'vgatewayCreateRequest'"/>
+		<set name="clientparams" paramname="responsetype" value="'vgatewayCreateResponse'"/>
+		<set name="clientparams" paramname="processevent" value="'addVgateway'"/>					
+		<systemgui name="context.vgatewaycreateobj" action="Register" params="clientparams"></systemgui>			
+	</function>
+
+	<function name="addvgateway">
+		<string name="ip"/>
+		<string name="netmask"/>
+		<string name="vmac"/>
+		<boolean name="insertResult"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			context.ip.setValue(data.ip)
+			context.vmac.setValue(data.mac)
+			context.netmask.setValue(data.information)
+		]]></script>
+		<function name="Addvgateway" class="vGatewayManager">
+			<parameters>	
+				<string name="ip" in="context.ip.toString()"/>	
+				<string name="netmask" in="context.netmask.toString()"/>
+				<string name="vmac" in="context.vmac.toString()"/>
+				<boolean name="insertResult" out="context.insertResult"/>
+			</parameters>
+		</function>
+	</function>
+
+	<events>
+		<onevent event="addVgateway">
+			<function name="addvgateway"/>			
+		</onevent>
+	</events>
+</starlang>

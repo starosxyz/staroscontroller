@@ -90,6 +90,39 @@
 						context.jsonstring.setValue(strjson);
 					]]></script>
 			</function>
+
+			<function name="json2StarOS">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<script><![CDATA[
+					var info = new Object()
+					info.mac = thisclass.m_vmac.toString()
+					info.ip = thisclass.m_ip.toString()
+					info.information = thisclass.m_netmask.toString()
+					context.json.setValue(JSON.stringify(info))
+				]]></script>
+			</function>
+
+			<function name="setIP">
+				<parameters>
+					<string name="ip"/>
+				</parameters>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+			</function>
+			<function name="setMAC">
+				<parameters>
+					<string name="mac"/>
+				</parameters>
+				<set name="thisclass.m_vmac" value="context.mac.toString()"/>
+			</function>
+			<function name="setINFORMATION">
+				<parameters>
+					<string name="information"/>
+				</parameters>
+				<set name="thisclass.m_netmask" value="context.information.toString()"/>
+			</function>
+
 		</public>
 	</class>
 	
@@ -394,6 +427,75 @@ if res1 == res2:
 					</then>
 				</if>
 			</function>
+
+			<function name="getAllVgateways2StarOS">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<pair name="vgatewaypair" keytype="string" valuetype="object"/>
+				<object name="onevgateway"/>
+				<string name="onestr"/>
+				<list name="result" valuetype="string"/>
+				<for var="vgatewaypair" in="thisclass.vGatewayContainer">
+					<set name="context.onevgateway" value="context.vgatewaypair.second()"/>
+					<function name="json2StarOS" class="context.onevgateway">
+						<parameters>
+							<string name="json" out="context.onestr"/>
+						</parameters>
+					</function>
+					<insert name="context.result" value="context.onestr"/>
+				</for>
+				<script><![CDATA[
+					var myArray=new Array()
+					var firststr=context.result.getFirst()
+					while(firststr!=null){
+						var vgw = firststr				
+						var info = JSON.parse(vgw)
+						myArray.push(info)
+						firststr=context.result.getNext()
+					}					
+					var root = new Object()
+					root['vgateways'] = myArray
+					context.json.setValue(JSON.stringify(root))
+				]]></script>
+			</function>
+
+			<function name="updateVgateway4StarOS">
+				<parameters>
+					<string name="ip"/>
+					<string name="mac"/>
+					<string name="information"/>
+				</parameters>
+				<object name="vgateway"/>
+				<function name="FindvGateway">
+					<parameters>
+						<string name="ip" in="context.ip.toString()"/>
+						<object name="vgateway" out="context.vgateway"/>
+					</parameters>
+				</function>				
+				<if cond="context.vgateway.ptr == null">
+					<then>
+						<syslog level="INFO">context.vgateway.ptr == null</syslog>
+					</then>
+					<else>
+						<function name="setIP" class="context.vgateway">
+							<parameters>
+								<string name="ip" in="context.ip.toString()"/>
+							</parameters>
+						</function>
+						<function name="setMAC" class="context.vgateway">
+							<parameters>
+								<string name="mac" in="context.mac.toString()"/>
+							</parameters>
+						</function>
+						<function name="setINFORMATION" class="context.vgateway">
+							<parameters>
+								<string name="information" in="context.information.toString()"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</function>			
 		</public>
 	</class>
 </starlang>

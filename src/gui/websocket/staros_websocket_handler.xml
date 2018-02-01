@@ -48,6 +48,8 @@
 	<!--qiulei 20180115-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_policy.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_vgateway.xml"/>
+	<!--qiulei 20180201-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/websocket/staros_websocket_intent.xml"/>
 	<!--WebGUI-->
 	<!--
 		@brief		Handle WebSocket According to type

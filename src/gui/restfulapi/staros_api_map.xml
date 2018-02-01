@@ -39,10 +39,20 @@
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/flows/{deviceId}/{flowId}" value="'HandflowsDFrequest'"/>
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/flows/{deviceId}" value="'HandflowsDrequest'"/>
 
-		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/intents/{appid}/{key}" value="'Handprocessintent'"/>
-		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/intents/relatedflows/{appid}/{key}" value="'Handprocessgetrelatedflows'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/intents/{key}" value="'Handprocessintent'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/intents/relatedflows/{key}" value="'Handprocessgetrelatedflows'"/>
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/intents" value="'Handprocessallintents'"/>
-
-
+		
+		
+		
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/ports/{deviceId}" value="'GetportsBydeviceid'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/delta/ports/{deviceId}/{port}" value="'DeltaGetportsBydeviceidAndport'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/ports" value="'GetAllports'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/delta/ports/{deviceId}" value="'DeltaGetportsBydeviceid'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/ports/{deviceId}/{port}" value="'GetportsBydeviceidAndport'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/flows/tables/{deviceId}" value="'GettablesBydeviceid'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/delta/ports" value="'DeltaGetallports'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/flows/link" value="'Getlink'"/>
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/flows/tables" value="'Gettables'"/>
 	</function>
 </starlang>

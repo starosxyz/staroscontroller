@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CIntentManager.xml
+	@brief 		流表管理
+	@version 	1.1.0
+	@auth 		Yijian
+	@date		2018/01/24
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CIntentEntry">
+		<private>
+			<string name="m_id"/>
+			<string name="m_strjson"/>
+			<intent name="m_intent" ofobj="context.openflowserverobj"/>
+			
+			<string name="m_strjsonNoId"/><!-- qiulei 20180201 -->
+		</private>
+		<public>
+			<function name="CIntentEntry">
+				<parameters>
+					<string name="id"/>
+					<string name="strjson"/>				
+				</parameters>
+				
+				<!-- qiulei 20180201 -->
+				<set name="thisclass.m_strjsonNoId" value="context.strjson.toString()"/>
+				
+				<set name="thisclass.m_id" value="context.id.toString()"/>
+				<!--set name="thisclass.m_strjson" value="context.strjson.toString()"/-->
+				<script><![CDATA[
+						var json = JSON.parse(context.strjson.toString());
+						json.id = thisclass.m_id.toString();
+						thisclass.m_strjson.setValue(JSON.stringify(json));
+				]]></script>
+				<set name="thisclass.m_intent" value="thisclass.m_strjson.toString()"/>		
+			</function>
+
+			<!--
+				@brief		Get intent flow table
+				@auth 		wangkang
+				@date		2018/01/31
+				Output: 
+					@param strflows  intent flow table
+			-->
+			<function name="GetRelatedFlows">
+				<parameters>
+					<string name="strflows"/>				
+				</parameters>	
+				<syslog level="INFO">CIntentEntry GetRelatedFlows</syslog>
+				<set name="context.strflows" value="context.m_intent.getRelatedFlows()"/>		
+			</function>
+			
+			<function name="GetState">
+				<parameters>
+					<string name="state"/>				
+				</parameters>	
+				<set name="context.state" value="context.m_intent.getState()"/>		
+			</function>
+
+			<!--
+				@brief		intent object info
+				@auth 		wangkang
+				@date		2018/01/24 
+				Input:
+				Output: 
+					@param IntentToJson 	获取封装后的json信息
+			-->
+			<function name="GetIntentJson">
+				<parameters>
+					<string name="intentjson"/>
+				</parameters>
+				<syslog level="INFO">CIntentEntry GetIntentJson</syslog>
+				<set name="context.intentjson" value="thisclass.m_strjson.toString()"/>
+			</function>
+
+			<!--
+				@brief		Get intent id
+				@auth 		wangkang
+				@date		2018/01/24
+				Input:					
+				Output:
+					@param intentid 	intent id
+			-->	
+			<function name="GetIntentId">
+				<parameters>
+					<string name="intentid"/>					
+				</parameters>
+				<set name="context.intentid" value="thisclass.m_id.toString()"/>
+			</function>
+			<!--qiulei 20180201-->
+			<function name="GetNoIdIntentJson">
+				<parameters>
+					<string name="noIdIntentJsonStr"/>
+				</parameters>
+				<set name="context.noIdIntentJsonStr" value="thisclass.m_strjsonNoId.toString()"/>		
+			</function>
+		
+		</public>
+	</class>
+
+	<class name="CIntentManager">
+		<private>
+			<hashmap name="intentContainer"  keytype="string" valuetype="object"/>
+			<long name="m_intentid"/>
+		</private>
+		<public>
+			<function name="CIntentManager">
+				<syslog level="INFO">CIntentManager is create</syslog>
+				<set name="thisclass.m_intentid" value="1"/>
+			</function>
+			
+			<function name="addIntent">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="strjson"/>				
+				</parameters>
+				<log level="100"><![CDATA[----CIntentManager.xml 126,strjson=<%=context.strjson.toString()%>]]></log>
+		
+				
+				<object name="intentobj"/>
+				<string name="oneintentjson"/>
+				<string name="intentid"/>
+				<pair name="i" keytype="string" valuetype="object"/>
+				<object name="intentobj2"/>
+				<boolean name="flag" value="true"/>
+				<for var="i" in="context.intentContainer">
+					<set name="context.intentobj" value="context.i.second()"/>
+					<if cond="context.intentobj != null">
+						<then>
+							<function name="GetNoIdIntentJson" class="context.intentobj">
+								<parameters>
+									<string name="noIdIntentJsonStr" out="context.oneintentjson"/>
+								</parameters>
+							</function>
+							<if cond="context.oneintentjson.toString()==context.strjson.toString()">
+								<then>
+									<function name="GetIntentId" class="context.intentobj">
+										<parameters>
+											<string name="intentid" out="context.intentid"/>
+										</parameters>
+									</function>
+									<set name="context.outflowid" value="context.intentid.toString()"/>
+									<set name="flag" value="false"/>
+									<exit/>
+								</then>
+							</if>
+						</then>
+					</if>
+				</for>
+				<if cond="context.flag.toBoolean()==true">
+					<then>
+						<new name="intentobj2" class="CIntentEntry">
+							<parameters>
+								<string name="id" in="thisclass.m_intentid.toString()"/>
+								<string name="strjson" in="context.strjson.toString()"/>
+							</parameters>
+						</new>	
+						<if cond="context.intentContainer.hasValue(thisclass.m_intentid.toString())==true">
+							<then>
+								<remove name="intentContainer" key="thisclass.m_intentid.toString()"/>
+							</then>
+						</if>
+						<insert name="thisclass.intentContainer" key="thisclass.m_intentid.toString()" value="context.intentobj2"/>
+						<set name="context.outflowid" value="thisclass.m_intentid.toString()"/>
+						<set name="thisclass.m_intentid" value="thisclass.m_intentid.toLong()+1"/>
+						
+						<log level="INFO"><![CDATA[CIntentManager 173 intentContainer.size= <%=thisclass.intentContainer.size().toString()%>]]></log>
+				
+					</then>
+				</if>
+				
+			</function>
+
+			<!--
+				@brief		删除intent
+				@auth 		wangkang
+				@date		2018/01/24
+				Input:
+					@param intentid
+				Output: 
+			-->
+			<function name="removeintent">
+				<parameters>
+					<string name="intentid"/>
+				</parameters>
+				<syslog level="INFO">CIntentManager removeintent</syslog>
+				<if cond="context.intentContainer.hasValue(context.intentid.toString())==true">
+					<then>
+						<remove name="intentContainer" key="context.intentid.toString()"/>
+					</then>
+				</if>
+				<syslog level="INFO"><![CDATA[CIntentManager intentContainer.size= <%=thisclass.intentContainer.size().toString()%>]]></syslog>
+			</function>
+
+			<!--
+				@brief		Get intent Num
+				@auth 		Wang Kang (kingsalone@sina.com)
+				@date		2018/01/24
+				Output:
+		   			@param intentCounts 	size of intent Container
+			-->
+			<function name="GetIntentCounts">
+				<parameters>
+					<string name="intentCounts"/>
+				</parameters>
+				<set name="intentCounts" value="context.intentContainer.size()"/>
+			</function>
+
+			<!--
+				@brief		intent转换为json字符串
+				@auth 		wangkang
+				@date		2018/01/24
+				Input:
+				Output: 
+					@param AllIntentJsonString
+			-->
+			<function name="GetAllIntentJson">
+				<parameters>
+					<string name="allintentjson"/>
+				</parameters>
+				<syslog level="INFO">CIntentManager GetAllIntentJson</syslog>
+				<object name="intentobj"/>
+				<string name="oneintentjson"/>
+				<list name="intentjsonlist" valuetype="string"/>
+				<pair name="i" keytype="string" valuetype="object"/>
+				
+				<log level="100"><![CDATA[----CIntentManager.xml 54行,intentContainer.size()= <%=context.intentContainer.size().toString()%>]]></log>
+				<for var="i" in="context.intentContainer">
+					<set name="context.intentobj" value="context.i.second()"/>
+					<if cond="context.intentobj != null">
+						<then>
+							<function name="GetIntentJson" class="context.intentobj">
+								<parameters>
+									<string name="intentjson" out="context.oneintentjson"/>
+								</parameters>
+							</function>
+							<insert name="context.intentjsonlist" value="context.oneintentjson.toString()"/>
+						</then>
+					</if>
+				</for>
+				
+				<script><![CDATA[
+					var json = new Object();
+					var intentarray = new Array();
+					
+					var first_str = context.intentjsonlist.getFirst();
+					while (first_str != null){
+						var jsonobj = JSON.parse(first_str);
+						intentarray.push(jsonobj);
+						first_str = context.intentjsonlist.getNext();
+					}
+					
+					json['intents']=intentarray;
+					//json['resultCode']="0";//屏蔽人 qiulei
+					//json["resultDesc"]="ok";//屏蔽人 qiulei
+					var strjson = JSON.stringify(json);
+					context.allintentjson.setValue(strjson);
+				]]></script>
+				<log level="100"><![CDATA[----CIntentManager.xml 257行,allintentjson= <%=context.allintentjson.toString()%>]]></log>
+				<syslog level="INFO"><![CDATA[GetAllIntentJson allintentjson= <%=context.allintentjson.toString()%>]]></syslog>
+			</function>
+			
+			<!-- qiulei 20180201pm -->
+			<function name="GetAllIntentJson2">
+				<parameters>
+					<string name="allintentjson"/>
+				</parameters>
+				<log level="INFO">277 enter GetAllIntentJson2   ---CIntentManager.xml</log>
+				<object name="intentobj"/>
+				<string name="oneintentjson"/>
+				<string name="oneintentjson2"/>
+				<string name="state"/>
+				<list name="intentjsonlist" valuetype="string"/>
+				<pair name="i" keytype="string" valuetype="object"/>
+				
+				<log level="100"><![CDATA[----CIntentManager.xml 285行,intentContainer.size()= <%=context.intentContainer.size().toString()%>]]></log>
+				<for var="i" in="context.intentContainer">
+					<set name="context.intentobj" value="context.i.second()"/>
+					<if cond="context.intentobj != null">
+						<then>
+							<function name="GetIntentJson" class="context.intentobj">
+								<parameters>
+									<string name="intentjson" out="context.oneintentjson"/>
+								</parameters>
+							</function>
+							<log level="100"><![CDATA[----CIntentManager.xml 295行,oneintentjson=<%=context.oneintentjson.toString()%>]]></log>
+				
+							<function name="GetState" class="context.intentobj">
+								<parameters>
+									<string name="state" out="context.state"/>
+								</parameters>	
+							</function>
+
+							<script><![CDATA[
+									context.print("js 304 oneintentjson="+context.oneintentjson.toString());
+									var oneIntentObj = JSON.parse(context.oneintentjson.toString());
+									
+									var intentObj = new Object();
+										intentObj.appId = oneIntentObj.appId;
+										intentObj.key	= oneIntentObj.id;
+										intentObj.type = oneIntentObj.type;
+										intentObj.priority = oneIntentObj.priority;
+										intentObj.state =context.state.toString();
+										
+										var strjson = JSON.stringify(intentObj);
+										context.oneintentjson2.setValue(strjson);
+
+							]]></script>
+							<insert name="context.intentjsonlist" value="context.oneintentjson2.toString()"/>
+						</then>
+					</if>
+				</for>
+				
+				<script><![CDATA[
+					var json = new Object();
+					var intentarray = new Array();
+					
+					var first_str = context.intentjsonlist.getFirst();
+					while (first_str != null){
+						var jsonobj = JSON.parse(first_str);
+						intentarray.push(jsonobj);
+						first_str = context.intentjsonlist.getNext();
+					}
+					
+					json['intents']=intentarray;
+					var strjson2 = JSON.stringify(json);
+					context.allintentjson.setValue(strjson2);
+				]]></script>
+				<log level="100"><![CDATA[----CIntentManager.xml 257行,allintentjson= <%=context.allintentjson.toString()%>]]></log>
+			</function>
+			
+			<!--
+				@brief		Get intent object
+				@auth 		wangkang
+				@date		2018/01/24
+				Input:
+					@param intentid
+				Output: 
+					@param intentobj
+			-->
+			<function name="GetOneIntentObject">
+				<parameters>
+					<string name="intentid"/>
+					<object name="intentobj"/>
+				</parameters>
+				<log level="100"><![CDATA[GetOneIntentObject intentid = <%=context.intentid.toString()%>]]></log>
+				<if cond="context.intentContainer.hasValue(context.intentid.toString())==true">
+					<then>
+						<lookup name="intentContainer" key="context.intentid.toString()" output="context.intentobj"/>
+					</then>
+					<else>
+						<log level="100"> intent is null </log>
+					</else>
+				</if>
+			</function>
+			
+			<!--
+				@brief		Get intent flow table
+				@auth 		wangkang
+				@date		2018/01/31
+				Input:
+					@param intentid  intent id
+				Output: 
+					@param intentflows  intent flow table
+			-->
+			<function name="GetIntentFlows">
+				<parameters>
+					<string name="intentid"/>
+					<string name="intentflows"/>				
+				</parameters>
+				<syslog level="INFO">CIntentManager GetIntentFlows</syslog>	
+				<object name="intentobj"/>
+				<if cond="thisclass.intentContainer.hasValue(context.intentid.toString())">
+					<then>
+						<set name="context.intentobj" value="thisclass.intentContainer.getValue(context.intentid.toString())"/>
+						<function name="GetRelatedFlows" class="context.intentobj">
+							<parameters>
+								<string name="strflows" out="context.intentflows"/>				
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<syslog level="INFO">GetIntentFlows intentobj is null</syslog>
+					</else>
+				</if>		
+			</function>
+			
+			
+			
+		</public>
+	</class>
+</starlang>

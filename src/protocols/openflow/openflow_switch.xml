@@ -50,6 +50,11 @@
 				<exit/>
 			</then>
 		</if>
+		<if cond="context.openflowdevice.ptr==null">
+			<then>
+				<exit/>
+			</then>
+		</if>
 		<set name="localipaddr" value="context.openflowdevice.ptr.getParam('localipaddr').toString()"/>
 		<set name="peeripaddr" value="context.openflowdevice.ptr.getParam('peeripaddr').toString()"/>
 		<set name="xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>

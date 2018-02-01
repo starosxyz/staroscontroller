@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/vgateway/vgateway.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/vgateway/vgatewaycreate/vgatewaycreate.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/vgateway/vgatewayupdate/vgatewayupdate.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/policy/policy.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/policy/policycreate/policycreate.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/policy/policyupdate/policyupdate.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/servicechain/servicechain.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/servicechain/servicechaincreate/servicechaincreate.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/servicechain/servicechainupdate/servicechainupdate.xml"/>
+	<function name="InitSysGui">
+		<function name="vgatewayRegister"/>
+		<function name="vgatewaycreateRegister"/>
+		<function name="vgatewayupdateRegister"/>		
+		<function name="policyRegister"/>
+		<function name="policycreateRegister"/>
+		<function name="policyupdateRegister"/>
+		<function name="servicechainRegister"/>
+		<function name="servicechaincreateRegister"/>
+		<function name="servicechainupdateRegister"/>
+	</function>
+</starlang>

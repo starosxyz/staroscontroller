@@ -3,11 +3,11 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		sdnmgrapi.xml
+	@file 		staros_api_intent.xml
 	@brief 		sdnmgr's api
 	@version 	1.1.0
 	@auth 		hu peng
-	@date		2017/01/24
+	@date		2017/01/31
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -22,60 +22,6 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<object name="intent_db"/>
-	<params name="dbparams"/>
-	<function name="createIntentDatabase">
-		
-		<function>		
-			<set name="dbparams" paramname="dbname" value="'intent'"/>
-			<set name="dbparams" paramname="dbtype" value="'sqlite'"/>
-			<database name="intent_db" method="Open" params="context.dbparams"/>
-			<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000" detachclass="true">
-				<log level="100"><![CDATA[open database db name <%=event.getName().toString()%>]]></log>
-				<log level="100"><![CDATA[open database db result <%=event.getParam('result').toString()%>]]></log>
-				<log level="100"><![CDATA[open database db description <%=event.getParam('description').toString()%>]]></log>
-				<log level="100"><![CDATA[open database db transportid <%=event.getParam('transportid').toString()%>]]></log>
-				<log level="100"><![CDATA[open database db eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-			</wait>
-			<database name="intent_db" method="ExecSQL">
-				<sql><![CDATA[
-	
-					create table if not exists COMPANY(
-					ID     		TEXT   PRIMARY KEY  NOT NULL,
-					
-					APPID 					TEXT 	NOT NULL,
-	
-					TYPE        			TEXT    NOT NULL,
-	
-					PRIORITY            TEXT    NOT NULL,
-
-					INLOCATION            TEXT    NOT NULL,
-	
-					INMATCH          TEXT    NOT NULL,
-	
-					INACTION        	TEXT 	NOT NULL,
-					
-					OUTLOCATION         	TEXT 	NOT NULL,
-					
-					OUTMATCH         	TEXT 	NOT NULL,
-					
-					OUTACTION       TEXT NOT NULL,
-					
-					MIDMATCH        TEXT  NOT NULL
-					);
-	
-				]]></sql>
-			</database>
-			<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000">
-				<log><![CDATA[create table result <%=event.getParam('result').toString()%>]]></log>
-				<log><![CDATA[create table description <%=event.getParam('description').toString()%>]]></log>
-				<log><![CDATA[create table transportid <%=event.getParam('transportid').toString()%>]]></log>
-				<log><![CDATA[create table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-			</wait>
-		</function>
-	</function>
-
-
 
 	<function name="Handprocessintent">
 		  <parameters>
@@ -85,127 +31,73 @@
 			<vector name="pathvector"/>
 			<hashmap name="queryparams"/>
 		</parameters>
-		<string name="data"/>
-		<string name="appid" value="context.pathvector.getIndexOf(0).toString()"/>
-		<string name="key" value="context.pathvector.getIndexOf(1).toString()"/>
+		<string name="key" value="context.pathvector.getIndexOf(0).toString()"/>
+		<log level="100"><![CDATA[35!!!!!!!! key=<%=context.key.toString()%>]]></log>
 		<log level="101">enter Handprocessintent  ----staros_api_intent.xml 93</log>
 		<if cond="event.getParam('method').toString() == 'GET'">
 			<then>
-					<database name="intent_db" method="ExecSelectSQL" databindlist="'id{ID:v};appid{APPID:v};type{TYPE:v};priority{PRIORITY:v};inlocation{INLOCATION:v};inmatch{INMATCH:v};inaction{INACTION:v};i]).outlocation{OUTLOCATION:v};outmatch{OUTMATCH:v};outaction{OUTACTION:v};midmatch{MIDMATCH:v}'">
-					<sql><![CDATA[
-						SELECT * from COMPANY where APPID = '<%=context.appid.toString()%>' and ID='<%=context.key.toString()%>'
-						]]></sql>
-					</database>
-					<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000">
-						<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
-						<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
-						<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
-						<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-						<set name="context.data" value="event.getParam('eventdata').toString()"/>
-					</wait>
-					
-					<string name="detailarray"/>
-					<string name="handledata"/>
-					<log level="100">Handprocessintent</log>		
-						<if cond="context.data.toString() != ''">
-							<then>
-								<script><![CDATA[
-									var json = JSON.parse(context.data.toString());
-									context.handledata.setValue(JSON.stringify(json.data));						
-								]]></script>
-								<if cond="context.handledata != 'null'">
-									<then>					
-										<script><![CDATA[
-											var json = new Object()
-											var arr = new Array()
-											var info = JSON.parse(context.data.toString())
-											for (var i = 0; i < info.data.length; i++)
-											{
-												var intent = new Object();									
-												intent.type = JSON.parse(info.data[i]).type;
-												intent.id = JSON.parse(info.data[i]).id;
-												intent.appId = JSON.parse(info.data[i]).appid;
-												intent.priority = JSON.parse(info.data[i]).priority;
-												intent.inlocation = JSON.parse(info.data[i]).inlocation;
-												intent.inmath = JSON.parse(info.data[i]).inmath;
-												intent.inaction = JSON.parse(info.data[i]).inaction;
-												intent.outlocation = JSON.parse(info.data[i]).outlocation;
-												intent.outmath = JSON.parse(info.data[i]).outmath;
-												intent.outaction = JSON.parse(info.data[i]).outaction;
-												intent.midmatch = JSON.parse(info.data[i]).midmatch;
-												arr.push(intent)
-											}
-											json['intents'] = arr;
-											context.detailarray.setValue(JSON.stringify(json));
-											]]></script>
-										<function name="SendResponse" class="RestfulService">
-											<parameters>
-												<string name="transportid" in="event.getParam('transportid').toString()"/>
-												<string name="json" in="context.detailarray.toString()"/>
-											</parameters>
-										</function>	
-									</then>
-									<else>
-										<function name="intent_ErrorDataResponse">
-											<parameters>
-												<string name="transportid" in="event.getParam('transportid').toString()"/>
-												<string name="description" in="'The database is null !'"/>
-											</parameters>
-										</function>
-									</else>
-								</if>
-							</then>
-							<else>
-								<function name="intent_ErrorDataResponse">
-									<parameters>
-										<string name="transportid" in="event.getParam('transportid').toString()"/>
-										<string name="description" in="'The database is null !'"/>
-									</parameters>
-								</function>
-							</else>
-					</if>
-				</then>
-				<elseif cond="event.getParam('method').toString() == 'DELETE'">
-					<boolean name="result"/>
-					<function name="databaseHasintent">
-						<parameters>
-							<string name="appid" in="context.appid.toString()"/>
-							<string name="key" in="context.key.toString()"/>
-							<boolean name="result" out="context.result"/>
-						</parameters>
-					</function>
-					<if cond="context.result.toBoolean()==true">
-						<then>
-							<database name="intent_db" method="ExecSQL">
-							<sql><![CDATA[
-								DELETE from COMPANY where APPID = '<%=context.appid.toString()%>' and KEY='<%=context.key.toString()%>'
-							]]></sql>
-							</database>
-							<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000">
-								<log level="100"><![CDATA[DELETE table result <%=event.getParam('result').toString()%>]]></log>
-								<log level="100"><![CDATA[DELETE table description <%=event.getParam('description').toString()%>]]></log>
-								<log level="100"><![CDATA[DELETE table transportid <%=event.getParam('transportid').toString()%>]]></log>
-								<log level="100"><![CDATA[DELETE table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-							</wait>
-							
-							
-							<!--!!!!!!!!!!!!!!!-->
-							
-							<function name="intentResponse"/>
-						</then>
-						<else>
-							<function name="intent_ErrorDataResponse">
-								<parameters>
-									<string name="transportid" in="event.getParam('transportid').toString()"/>
-									<string name="description" in="'The database is null !'"/>
-								</parameters>
-							</function>	
-						</else>
-					</if>
-				</elseif>
-			</if>	
+				<object name="intentobj"/>
+				<string name="intentjson"/>
+				<string name="detailarray"/>
+				<function name="GetOneIntentObject" class="IntentManager">
+					<parameters>
+						<string name="intentid" in="context.key.toString()"/>
+						<object name="intentobj" out="context.intentobj"/>
+					</parameters>
+				</function>
+				<if cond="context.intentobj.ptr==null">
+					<then>
+						<function name="intent_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'find is null !'"/>
+							</parameters>
+						</function>
+						<exit/>
+					</then>	
+				</if>	
+				<function name="GetIntentJson" class="context.intentobj">
+					<parameters>
+						<string name="intentjson" out="context.intentjson"/>
+					</parameters>	
+				</function>
+				<if cond="context.intentjson.toString()!=''">
+					<then>					
+						<script><![CDATA[
+							var json = new Object()
+							var arr = new Array()
+							var info = JSON.parse(context.intentjson.toString())
+							arr.push(info);
+							json['intents'] = arr;
+							context.detailarray.setValue(JSON.stringify(json));
+							]]></script>
+						<function name="SendResponse" class="RestfulService">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="json" in="context.detailarray.toString()"/>
+							</parameters>
+						</function>	
+					</then>
+					<else>
+						<function name="intent_ErrorDataResponse">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="description" in="'data is null !'"/>
+							</parameters>
+						</function>
+					</else>
+				</if>		
+			</then>
+			<elseif cond="event.getParam('method').toString() == 'DELETE'">
+				<function name="removeintent" class="IntentManager">
+					<parameters>
+						<string name="intentid" in="context.key.toString()"/>
+					</parameters>
+				</function>
+				<function name="intentResponse"/>
+			</elseif>
+		</if>	
 	</function>
-
 
 	<function name="Handprocessallintents">
 		<parameters>
@@ -215,203 +107,52 @@
 			<vector name="pathvector"/>
 			<hashmap name="queryparams"/>
 		</parameters>
+		<log level="101">110 enter Handprocessallintents </log>
+		<log level="INFO"><![CDATA[CIntentManager 111 eventdata= <%=thisclass.eventdata.toString()%>]]></log>
 		<if cond="event.getParam('method').toString() == 'GET'">
 			<then>
-				<string name="data"/>
-				<string name="handledata"/>
-				<string name="detailarray"/>			
-				<database name="intent_db" method="ExecSelectSQL" databindlist="'id{ID:v};appid{APPID:v};type{TYPE:v};priority{PRIORITY:v};inlocation{INLOCATION:v};inmatch{INMATCH:v};inaction{INACTION:v};i]).outlocation{OUTLOCATION:v};outmatch{OUTMATCH:v};outaction{OUTACTION:v};midmatch{MIDMATCH:v}'">
-					<sql><![CDATA[
-						SELECT * from COMPANY
-					]]></sql>
-				</database>
-				<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000">
-					<log level="100"><![CDATA[SELECT table result <%=event.getParam('result').toString()%>]]></log>
-					<log level="100"><![CDATA[SELECT table description <%=event.getParam('description').toString()%>]]></log>
-					<log level="100"><![CDATA[SELECT table transportid <%=event.getParam('transportid').toString()%>]]></log>
-					<log level="100"><![CDATA[SELECT table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-					<set name="context.data" value="event.getParam('eventdata').toString()"/>
-				</wait>
-				<if cond="context.data.toString() != ''">
+				<string name="alltentejson"/>
+				<function name="GetAllIntentJson" class="IntentManager">
+					<parameters>
+						<string name="allintentjson" out="context.alltentejson"/>
+					</parameters>
+				</function>
+				<if cond="context.alltentejson.toString()!=''">
 					<then>
-						<script><![CDATA[
-							var json = JSON.parse(context.data.toString())
-							context.handledata.setValue(JSON.stringify(json.data))
-						]]></script>
-						<if cond="context.handledata.toString() != 'null'">
-							<then>
-								<script><![CDATA[
-									var final = new Object()
-									var arr = new Array()
-									var info = JSON.parse(context.data.toString())
-									for (var i = 0; i < info.data.length; i++)
-									{
-										var intent = new Object();									
-										intent.type = JSON.parse(info.data[i]).type;
-										intent.id = JSON.parse(info.data[i]).id;
-										intent.appId = JSON.parse(info.data[i]).appid;
-										intent.priority = JSON.parse(info.data[i]).priority;
-										intent.inlocation = JSON.parse(info.data[i]).inlocation;
-										intent.inmath = JSON.parse(info.data[i]).inmath;
-										intent.inaction = JSON.parse(info.data[i]).inaction;
-										intent.outlocation = JSON.parse(info.data[i]).outlocation;
-										intent.outmath = JSON.parse(info.data[i]).outmath;
-										intent.outaction = JSON.parse(info.data[i]).outaction;
-										intent.midmatch = JSON.parse(info.data[i]).midmatch;
-										arr.push(intent)
-									}
-									final['intents'] = arr;
-									context.detailarray.setValue(JSON.stringify(final));
-								]]></script>
-								<function name="SendResponse" class="RestfulService">
-									<parameters>
-										<string name="transportid" in="event.getParam('transportid').toString()"/>
-										<string name="json" in="context.detailarray.toString()"/>
-									</parameters>
-								</function>
-							</then>
-							<else>
-								<function name="intent_ErrorDataResponse">
-									<parameters>
-										<string name="transportid" in="event.getParam('transportid').toString()"/>
-										<string name="description" in="'The database is null !'"/>
-									</parameters>
-								</function>
-							</else>
-						</if>
+						<function name="SendResponse" class="RestfulService">
+							<parameters>
+								<string name="transportid" in="event.getParam('transportid').toString()"/>
+								<string name="json" in="context.alltentejson.toString()"/>
+							</parameters>
+						</function>		
 					</then>
 					<else>
 						<function name="intent_ErrorDataResponse">
 							<parameters>
 								<string name="transportid" in="event.getParam('transportid').toString()"/>
-								<string name="description" in="'The database is null !'"/>
+								<string name="description" in="'data is null !'"/>
 							</parameters>
 						</function>
 					</else>
-				</if>
-				
+				</if>		
 			</then>
 			<elseif cond="event.getParam('method').toString() == 'POST'">
-				<string name="oneintent"/>
-				<string name="appId" />
-				<string name="type"/>
-				<string name="priority"/>
-				<string name="inmatchjson"/>
-				<string name="ininstructjson"/>
-				<string name="inputdevice"/>
-				<string name="inport"/>
-				<string name="outputdevice"/>
-				<string name="outport"/>
-				<string name="outlocation"/>
-				<string name="inlocation"/>
-				<string name="outmatchjson"/>
-				<string name="outinstructjson"/>
-				<string name="midmatchjson"/>
-				<long name="intentid"/>
-				<string name="thisintentid"/>
-				<string name="addDataBaseResult"/>
-					<script><![CDATA[
-						var intentjson = JSON.parse(event.getParam('eventdata').toString());
-						context.print(event.getParam('eventdata').toString())
-						context.appId.setValue(intentjson.appId);
-						context.print("appid="+intentjson.appId)
-						context.type.setValue(intentjson.type);
-						context.print("type="+intentjson.type)
-						context.priority.setValue(intentjson.priority);
-						context.print("priority="+intentjson.priority)
-						var inputdevice=((intentjson.inlocation).split("/"))[0];
-						
-				
-						context.inputdevice.setValue(inputdevice);
-						
-						var inputport=((intentjson.inlocation).split("/"))[1];
-						context.print("326="+inputport)
-					
-						context.inport.setValue(inputport);
-						
-						context.inmatchjson.setValue(JSON.stringify(intentjson.inmath));
-						context.print("inmatchjson="+JSON.stringify(intentjson.inmath))
-						
-						context.ininstructjson.setValue(JSON.stringify(intentjson.inaction));
-						
-						context.print("ininstructjson="+JSON.stringify(intentjson.inaction))
-						
-						context.inlocation.setValue(intentjson.inlocation);
-						
-						
-						var outdevice=(((intentjson.outlocation).split("/"))[0]);
-						
-						context.outputdevice.setValue(outdevice);
-						context.print("outdevice="+outdevice)
-						
-						context.outlocation.setValue(intentjson.outlocation);
-						
-						var outdeviceport=(((intentjson.outlocation).split("/"))[1]);
-					
-						context.outport.setValue(outdeviceport);
-						context.print("outdeviceport="+outdeviceport)
-						
-						context.outmatchjson.setValue(JSON.stringify(intentjson.outmath));
-						context.print("outmatchjson="+JSON.stringify(intentjson.outmath))
-						context.outinstructjson.setValue(JSON.stringify(intentjson.outaction));
-						context.print("outinstructjson="+JSON.stringify(intentjson.outaction))
-						context.midmatchjson.setValue(JSON.stringify(intentjson.midmatch));
-						context.print("midmatchjson="+JSON.stringify(intentjson.midmatch))
-						
-					]]></script>
-					
+				<log level="101">enter Handprocessallintents POST</log>
+				<string name="intentid"/>
+				<log level="INFO"><![CDATA[CIntentManager 141 eventdata= <%=thisclass.eventdata.toString()%>]]></log>
 				<function name="addIntent" class="IntentManager">
 					<parameters>
-						<long name="intentid" out="context.intentid"/>
-						<string name="appId" in="context.appId.toString()"/>
-						<string name="type" in="context.type.toString()"/>
-						<string name="priority" in="context.priority.toString()"/>
-						<string name="inmatchjson" in="context.inmatchjson.toString()"/>
-						<string name="ininstructjson" in="context.ininstructjson.toString()"/>
-						<string name="inputdevice" in="context.inputdevice.toString()"/>
-						<string name="inport" in="context.inport.toString()"/>
-						<string name="outputdevice" in="context.outputdevice.toString()"/>
-						<string name="outport" in="context.outport.toString()"/>
-						<string name="outmatchjson" in="context.outmatchjson.toString()"/>
-						<string name="outinstructjson" in="context.outinstructjson.toString()"/>
-						<string name="midmatchjson" in="context.midmatchjson.toString()"/>				
+						<string name="outflowid" out="context.intentid"/>
+						<string name="strjson" in="context.eventdata.toString()"/>				
 					</parameters>
 				</function>
-				
-				<script><![CDATA[
-						context.thisintentid.setValue('' + context.intentid.toLong());
-						context.print("thisintentid="+context.thisintentid.toString())
-				]]></script>
-				<database name="intent_db" method="ExecSQL">
-					<sql><![CDATA[INSERT INTO COMPANY (ID,APPID,TYPE,PRIORITY,INLOCATION,INMATCH,INACTION,OUTLOCATION,OUTMATCH,OUTACTION,MIDMATCH) VALUES ('<%=context.thisintentid.toString()%>','<%=context.appId.toString()%>', '<%=context.type.toString()%>','<%=context.priority.toString()%>', '<%=context.inlocation.toString()%>', '<%=context.inmatchjson.toString()%>', '<%=context.ininstructjson.toString()%>','<%=context.outlocation.toString()%>' ,'<%=context.outmatchjson.toString()%>','<%=context.outinstructjson.toString()%>','<%=context.midmatchjson.toString()%>');;
-					]]></sql>
-				</database>	
-					<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="2000">
-						<log level="100"><![CDATA[insert table result <%=event.getParam('result').toString()%>]]></log>
-						<set name="context.addDataBaseResult" value="event.getParam('result').toString()"/>
-						<log level="100"><![CDATA[insert table description <%=event.getParam('description').toString()%>]]></log>
-						<log level="100"><![CDATA[insert table transportid <%=event.getParam('transportid').toString()%>]]></log>
-						<log level="100"><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
-					</wait>
-					<if cond="context.addDataBaseResult.toString()=='-1'">
-						<then>
-							<log level="100">287 enter 失败</log>
-							<function name="intent_ErrorDataResponse">
-								<parameters>
-									<string name="transportid" in="event.getParam('transportid').toString()"/>
-									<string name="description" in="'create failed !'"/>
-								</parameters>
-							</function>
-							<exit/>
-						</then>
-					</if>
-					<function name="intentResponse"/>
+
+				<function name="intentResponse"/>
 			</elseif>
-			
 		</if>
 	</function>
-	
-	
+
+
 	<function name="Handprocessgetrelatedflows">
 		<parameters>
 			<string name="requestpath"/>
@@ -420,59 +161,35 @@
 			<vector name="pathvector"/>
 			<hashmap name="queryparams"/>
 		</parameters>
-		<string name="appid" value="context.pathvector.getIndexOf(0).toString()"/>
-		<string name="key" value="context.pathvector.getIndexOf(1).toString()"/>
-		
-
-		<!-- 拿到下发成功的流标  -->
-		
-
-
+		<string name="key" value="context.pathvector.getIndexOf(0).toString()"/>
+		<string name="intentflows"/>
+		<function name="GetIntentFlows" class="IntentManager">
+			<parameters>
+				<string name="intentid" in="context.key.toString()"/>
+				<string name="intentflows" out="context.intentflows"/>				
+			</parameters>
+		</function>
+		<if cond="context.intentflows.toString()!=''">
+			<then>
+				<function name="SendResponse" class="RestfulService">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.intentflows.toString()"/>
+					</parameters>
+				</function>
+			</then>
+			<else>
+				<function name="intent_ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="'data is null !'"/>
+					</parameters>
+				</function>
+			</else>
+		</if>
 	</function>
 	
-		
 
-		<function name="databaseHasintent">
-			<parameters>
-				<string name="appid"/>
-				<string name="key"/>
-				<boolean name="result"/>
-			</parameters>
-			<string name="data"/>
-			<string name="handledata"/>
-			
-				<database name="intent_db" method="ExecSelectSQL" databindlist="'id{ID:v};appid{APPID:v};type{TYPE:v};priority{PRIORITY:v};inlocation{INLOCATION:v};inmatch{INMATCH:v};inaction{INACTION:v};i]).outlocation{OUTLOCATION:v};outmatch{OUTMATCH:v};outaction{OUTACTION:v};midmatch{MIDMATCH:v}'">
-				<sql><![CDATA[
-					SELECT * from COMPANY where APPID = '<%=context.appid.toString()%>' and KEY='<%=context.key.toString()%>'
-				]]></sql>
-			</database>
-			<wait event="db.response" transportid="context.intent_db.ptr.GetTransportId()" timeout="3000">
-				<set name="context.data" value="event.getParam('eventdata').toString()"/>
-			</wait>
-			<if cond="context.data.toString() != ''">
-				<then>
-					<script><![CDATA[
-						var json = JSON.parse(context.data.toString())
-						context.handledata.setValue(JSON.stringify(json.data))
-					]]></script>
-					<if cond="context.handledata.toString() != 'null'">
-						<then>
-							<set name="context.result" value="true"/>
-						</then>
-						<else>
-							<set name="context.result" value="false"/>
-						</else>
-					</if>
-				</then>
-				<else>
-					<set name="context.result" value="false"/>
-				</else>
-			</if>
-	</function>
-		
-		
-		
-		
 	<function name="intentResponse">
 		<log level="101">enter testResponse  ----sdnmgrapi.xml 217</log>
 		<string name="outjson"/>
@@ -494,10 +211,7 @@
 		</function>
 	</function>
 		
-		
-		
-	
-		
+
 		
 	<function name="intent_ErrorDataResponse">
 		<parameters>
