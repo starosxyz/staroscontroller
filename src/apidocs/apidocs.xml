@@ -31,6 +31,8 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/keepalive/keepaliveDocsApi.xml"/>
 	<!--20180124-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/monitor/monitorDocsApi.xml"/>
+	<!--20180207-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apidocs/connectivity/connectivityDocsApi.xml"/>
 	<!--
 		@brief		注册Topology
 		@auth 		qiulei
@@ -48,6 +50,9 @@
 		<!--staros-controller-1.1.0\src\apidocs\keepalive\keepaliveDocsApi.xml qiulei 20180117-->
 		<function name="AddDocsAPI_keepalive"/>
 		<function name="AddDocsAPI_monitor"/>
+		
+		
+		<function name="AddDocsAPI_connectivity"/>
 	</function>
 	
 	<!--
@@ -66,5 +71,6 @@
 		<!--staros-controller-1.1.0\src\apidocs\keepalive\keepaliveDocsApi.xml qiulei 20180117-->
 		<function name="RemoveDocsAPI_keepalive"/>
 		<function name="RemoveDocsAPI_monitor"/>
+		<function name="RemoveDocsAPI_connectivity"/>
 	</function>
 </starlang>

@@ -4,6 +4,8 @@
  * Author:           Yang Yang
  * Date:             2017-01-13
 **********************************************************************/
+
+/*
 (function () {
     'use strict';
 	var $log, $scope, $http;
@@ -28,35 +30,12 @@
 				//var description;//描述信息
 				
 				
-				var username = GetUserName();
+				var username;
 				
 				
 				
 	function getPolicycreate(){
 		//判断ip地址
-		$("#src_ip").blur(function(){
-			var obj=$("#src_ip").val();
-			var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-			var reg = obj.match(exp);
-			if(reg==null)
-			{
-			   alert("请输入正确的IP地址");
-			   $("#src_ip").val('');
-			   return;
-			}
-		});
-		
-		$("#dst_ip").blur(function(){
-			var obj=$("#dst_ip").val();
-			var exp=/^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-			var reg = obj.match(exp);
-			if(reg==null)
-			{
-			   alert("请输入正确的IP地址");
-			   $("#dst_ip").val('');
-			   return;
-			}
-		});
 		$.ajax({
 			type 		:"GET",
 			url 		:getProtocol()+ipaddr+"/vgateway",
@@ -190,6 +169,65 @@
 			getPolicycreate();
 			
 			// cleanup
+			$scope.$on('$destroy', function () {
+				$log.log('OvPolicycreateCtrl has been destroyed');
+			});
+
+			
+		}]);
+}());
+*/
+
+(function () {
+    'use strict';
+    var $log, $scope, $location, fs, tbs, ns, mast, ps, wss, is, ks;
+	var Req = 'policyCreateRequest';
+	var Resp = 'policyCreateResponse';
+	// constants
+	angular.module('ovPolicycreate', [])
+		.controller('OvPolicycreateCtrl', 
+        ['$log', '$scope', '$location',
+            'FnService', 'TableBuilderService', 'NavService',
+            'MastService', 'PanelService', 'KeyService', 'IconService',
+            'WebSocketService',
+
+        function (_$log_, _$scope_, _$location_, _fs_, _tbs_, _ns_,
+                    _mast_, _ps_, _ks_, _is_, _wss_) {
+            $log = _$log_;
+            $scope = _$scope_;
+            $location = _$location_;
+            fs = _fs_;
+            tbs = _tbs_;
+            ns = _ns_;
+            is = _is_;
+            wss = _wss_;
+            mast = _mast_;
+            ps = _ps_;
+
+			///////////////////////////////////////////////////////////////////////////////////////////////
+			var id;
+			var srcIp;
+			var dstIp;
+			var content;
+
+			//添加行
+			function addRow(){		
+				id = document.getElementById("id").value;
+				srcIp = document.getElementById("srcip").value;
+				dstIp = document.getElementById("dstip").value;
+				content = $("#content").find("option:selected").text();
+				
+				var data = {};
+				data.id = id;
+				data.srcip = srcIp;
+				data.dstip = dstIp;
+				data.content = content
+				wss.sendEvent(Req,data);
+				window.location.href="#/policy";
+			}
+			///////////////////////////////////////////////////////////////////////////////////////////////
+                    
+			$scope.addRow = addRow;
 			$scope.$on('$destroy', function () {
 				$log.log('OvPolicycreateCtrl has been destroyed');
 			});

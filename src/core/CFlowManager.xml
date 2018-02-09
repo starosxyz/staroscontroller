@@ -64,7 +64,7 @@
 			
 			<function name="CFlowEntry">
 				<parameters>
-					<string name="flowId" />
+					<string name="flowId" />k
 					<string name="appId" />
 					<string name="flowjson"/>					
 				</parameters>	
@@ -386,7 +386,7 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 					thisclass.m_packets.setValue(packets);
 					thisclass.m_bytes.setValue(bytes);
 					thisclass.m_durationsec.setValue(durationsec);
-					thisclass.m_durationnsec.setValue(durationnsec);7
+					thisclass.m_durationnsec.setValue(durationnsec);
 				]]></script>
 				<syslog level="INFO">CFlowManager Set4Natures End</syslog>
 			</function>
@@ -544,10 +544,11 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				<!--qiulei modify 20170807-->							
 				<if cond="context.strjson.toString()==''">
 					<then>
-						<log>strjson is null</log>
+						<log level="100">strjson is null!!!!!!!!!!!!!!!!!!!!!!!!</log>
 						<exit/>
 					</then>
 				</if>
+				<log level="100">strjson is  not null!!!!!!!!!!!!!!!!!!!!!!!!</log>
 				<script><![CDATA[				
 					var info = JSON.parse(context.strjson.toString());
 					info.cookie=context.sresourceid.toString();
@@ -726,34 +727,32 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				<string name="flowid"/>
 				<string name="strjson"/>
 				<for var="oneFlowsPair" in="context.flowsContainer">
-
-						<set name="flowobj" value="context.oneFlowsPair.second()"/>
-						<if cond="context.flowobj.ptr==null">
-							<then>
-								<log>flowobj is null</log>
-								<exit/>
-							</then>
-						</if>
-						<function name="GetFlowJsonStringbyflowid" class="context.flowobj">
-							<parameters>
-								<string name="jsonstring"  out="context.flowjson"/>
-								<string name="flowid" out="context.flowid"/>
-							</parameters>
-						</function>	
-						<log level="200"><![CDATA[cflowmanager flowjson =<%=context.flowjson.toString()%>']]></log>
-						<log level="200"><![CDATA[cflowmanager flowid =<%=context.flowid.toString()%>']]></log>
-						<if cond="context.flowjson.toString()!=''">
-							<then>
-								<script><![CDATA[
-									var json = JSON.parse(context.flowjson.toString());
-									json.flowid=context.flowid.toString();
-									var strjson=JSON.stringify(json);
-									context.strjson.setValue(strjson);
-								]]></script>
-								<insert name="flowjsons" value="context.strjson"/>		
-							</then>
-						</if>
-		
+					<set name="flowobj" value="context.oneFlowsPair.second()"/>
+					<if cond="context.flowobj.ptr==null">
+						<then>
+							<log>flowobj is null</log>
+							<exit/>
+						</then>
+					</if>
+					<function name="GetFlowJsonStringbyflowid" class="context.flowobj">
+						<parameters>
+							<string name="jsonstring"  out="context.flowjson"/>
+							<string name="flowid" out="context.flowid"/>
+						</parameters>
+					</function>	
+					<log level="200"><![CDATA[cflowmanager flowjson =<%=context.flowjson.toString()%>']]></log>
+					<log level="200"><![CDATA[cflowmanager flowid =<%=context.flowid.toString()%>']]></log>
+					<if cond="context.flowjson.toString()!=''">
+						<then>
+							<script><![CDATA[
+								var json = JSON.parse(context.flowjson.toString());
+								json.flowid=context.flowid.toString();
+								var strjson=JSON.stringify(json);
+								context.strjson.setValue(strjson);
+							]]></script>
+							<insert name="flowjsons" value="context.strjson"/>		
+						</then>
+					</if>
 				</for>	
 				<set name="context.flowjsonstr" value="context.flowjsons"/>
 			</function>
@@ -832,7 +831,8 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				<string name="flowjson"/>
 				<string name="flowid"/>
 				<string name="appids"/>
-			
+				<!---qiulei 20170831 start2-->
+				<string name="BarrierStrJson" />
 				<object name="flowentry"/>
 				<string name="sendflowmodjson"/>
 				<string name="flowmodjson"/>
@@ -881,8 +881,7 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 										]]></script>
 										
 												
-										<!---qiulei 20170831 start2-->
-										<string name="BarrierStrJson" />
+
 										<reference variable="BarrierStrJson">
 											<jsonbody><![CDATA[ 
 													{
@@ -1013,6 +1012,8 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 					</parameters>
 				</function>
 				<remove name="flowsContainer" key="context.flowid.toString()"/>
+				
+				<log level="100"><![CDATA[1018 flowsContainer!!!!huhuhu= <%=context.flowsContainer.size()%>]]></log>
 			</function>
 			
 			<!--
@@ -1060,6 +1061,7 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 					while(firstString!=null){
 						
 						var jsoninfo = JSON.parse(firstString);
+						context.print("jsoninfo:"+jsoninfo)
 						myArray.push(jsoninfo);
 						
 						firstString=context.flowinfos.getNext();
@@ -1092,20 +1094,22 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				</parameters>
 				<syslog level="INFO">CFlowManager HandleOpenFlowMultiPartFlowResponse</syslog>
 				<syslog level="INFO"><![CDATA[CFlowManager flowjson=<%=context.flowjson.toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[CFlowManager flowsContainer=<%=context.flowsContainer.size().toString()%>]]></syslog>
 				<if cond="context.flowjson.toString()!=''">
 					<then>
 						<object name="flowobj" />
 						<string name="flowobj_flowid"/>
 						<string name="json_cookie" />
-
+						
 						<pair name="oneFlowsPair"  keytype="string" valuetype="object"/>
 						<string name="oneFlowpartPair"/>
-						
+						<string name="thisflowjson"/>
 						<list name="flowpartlist"   valuetype="string"/>
-					
+						<object name="flowentry"/>
 						<string name="flowpartstring" />											
 							<script><![CDATA[
 								var info = JSON.parse(context.flowjson.toString());
+								
 								if (info.statslist != null)
 								{
 									for (var i = 0; i < info.statslist.length; i++)
@@ -1128,49 +1132,78 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 							<if cond="context.oneFlowpartPair.toString()!=''">
 								<then>
 									<set name="flowpartstring" value="context.oneFlowpartPair.toString()"/>
-									<for var="oneFlowsPair" in="context.flowsContainer">
-										<set name="flowobj" value="context.oneFlowsPair.second()"/>
-										<if cond="context.flowobj.ptr==null">
-											<then>
-												<log>flowobj is null</log>
-												<exit/>
-											</then>
-										</if>
-										<function name="GetFlowId" class="context.flowobj">
-											<parameters>
-												<string name="flowid"  out="context.flowobj_flowid"/>
-											</parameters>
-										</function>
-										
-										<script><![CDATA[
+									<syslog level="INFO"><![CDATA[flowpartstring =<%=context.flowpartstring.toString()%>]]></syslog>
+									<script><![CDATA[
 											var flowstats = context.flowpartstring.toString();
 											var info = JSON.parse(flowstats);
 											var cookie = info.cookie;
 											context.json_cookie.setValue(cookie);
 										]]></script>
-										<if cond="context.flowobj_flowid.toString()==context.json_cookie.toString()">
+										<if cond="context.json_cookie.toString()!='0'">
 											<then>
-												<function name="Set4Natures" class="context.flowobj">
-													<parameters>
-														<string name="flowpartstr"  in="context.flowpartstring.toString()"/>
-													</parameters>
-												</function>
-											</then>
-										</if>
-									</for>
-							</then>
-							<else>
-								<exit/>
-							</else>
-						</if>
-	
-					</for>
-				</then>
-				<else>
-					<exit/>
-				</else>
-				</if>
-				
+												<if cond="context.flowsContainer.size()==0">
+													<then>
+														<new name="flowentry" class="CFlowEntry">
+															<parameters>
+																<string name="flowId"  in="context.json_cookie.toString()"/>
+																<string name="appId"  in="'core'"/>
+																<string name="flowjson"  in="context.flowpartstring.toString()"/>
+															</parameters>
+														</new>
+														<insert name="context.flowsContainer" key="context.json_cookie.toString()" value="context.flowentry"/>
+													</then>
+												</if>
+												<for var="oneFlowsPair" in="context.flowsContainer">
+													<set name="flowobj" value="context.oneFlowsPair.second()"/>
+													<if cond="context.flowobj.ptr==null">
+														<then>
+															<log level="100">flowobj is null</log>
+															<exit/>
+														</then>
+													</if>
+													<function name="GetFlowId" class="context.flowobj">
+														<parameters>
+															<string name="flowid"  out="context.flowobj_flowid"/>
+														</parameters>
+													</function>
+													<if cond="context.flowobj_flowid.toString()==context.json_cookie.toString()">
+														<then>
+															<syslog level="INFO"><![CDATA[true json_cookie =<%=context.json_cookie.toString()%>]]></syslog>
+															<function name="Set4Natures" class="context.flowobj">
+																<parameters>
+																	<string name="flowpartstr"  in="context.flowpartstring.toString()"/>
+																</parameters>
+															</function>
+														</then>
+													</if>
+													<if cond="context.flowsContainer.hasValue(context.json_cookie.toString())==false">
+														<then>
+															<syslog level="INFO"><![CDATA[json_cookie =<%=context.json_cookie.toString()%>]]></syslog>
+															<new name="flowentry" class="CFlowEntry">
+																<parameters>
+																	<string name="flowId"  in="context.json_cookie.toString()"/>
+																	<string name="appId"  in="'core'"/>
+																	<string name="flowjson"  in="context.flowpartstring.toString()"/>
+																</parameters>
+															</new>
+																<insert name="context.flowsContainer" key="context.json_cookie.toString()" value="context.flowentry"/>	
+														</then>
+													</if>						
+												</for>
+										</then>
+									</if>
+										
+								</then>
+								<else>
+									<exit/>
+								</else>
+							</if>
+						</for>
+					</then>
+					<else>
+						<exit/>
+					</else>
+				</if>	
 			</function>
 			
 			<!--
@@ -1665,7 +1698,35 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 						<string name="app_name" in="'hostservice'"/>									
 					</parameters>
 				</function>
-			</function>	
+			</function>
+			<!-- qiulei 20180209pm -->
+			<function name="getflowBydeviceid2">
+				<parameters>
+					<string name="deviceid" />
+					<list name="flowjsonstr"/>
+				</parameters>
+			
+				<object name="deviceobj"/>
+				<function name="getDevice" class="DeviceManager">
+					<parameters>
+						<object name="outdevice" out="context.deviceobj"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+			
+				<object name="flowmgrobj"/>
+				<function name="GetFlowManager" class="deviceobj">
+					<parameters>
+						<object name="outflowmgr" out="context.flowmgrobj"/>
+					</parameters>
+				</function>
+				
+				<function name="getAllflow" class="flowmgrobj">
+					<parameters>
+						<list name="flowjsons" out="context.flowjsonstr"/>
+					</parameters>
+				</function>
+			</function>
 		</public>
 	</class>
 </starlang>

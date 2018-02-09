@@ -100,6 +100,17 @@
 				<set name="dstIp" value="thisclass.m_dstIp.toString()"/>
 				<set name="content" value="thisclass.m_content.toString()"/>
 			</function>
+
+			<function name="getID2json">
+				<parameters>
+					<string name="id"/>
+				</parameters>
+				<script><![CDATA[
+					var root = new Object()
+					root.id = thisclass.m_policyid.toString()
+					context.id.setValue(JSON.stringify(root))
+				]]></script>
+			</function>
 		</public>
 	</class>
 	
@@ -370,6 +381,37 @@
 				]]></script>
 				<set name="policystr" value="context.strjson.toString()"/>
 				<log level="100"> 372 execute GetAllPolicys  ----CPolicyManager.xml</log>
+			</function>
+
+			<function name="getAllID">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<pair name="ppair" keytype="string" valuetype="object"/>
+				<object name="policyobj"/>
+				<list name="idlist" valuetype="string"/>
+				<string name="id"/>
+				<for var="context.ppair" in="thisclass.policyContainer">
+					<set name="context.policyobj" value="context.ppair.second()"/>
+					<function name="OnePolicyObjectToJsonString" class="context.policyobj">
+						<parameters>
+							<string name="policyObjectToJson" out="context.id"/>
+						</parameters>
+					</function>
+					<insert name="context.idlist" value="context.id.toString()"/>
+				</for>
+				<script><![CDATA[
+					var myArray=new Array()					
+					var firstpolicyString = context.idlist.getFirst()
+					while(firstpolicyString != null){
+						var jsoninfo = JSON.parse(firstpolicyString)
+							myArray.push(jsoninfo)
+							firstpolicyString = context.idlist.getNext()
+					}
+					var root = new Object()
+					root.data = myArray
+					context.json.setValue(JSON.stringify(root))
+				]]></script>			
 			</function>
 		</public>
 	</class>

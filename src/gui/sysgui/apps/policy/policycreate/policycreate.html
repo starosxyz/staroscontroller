@@ -27,16 +27,16 @@
 							<div class="box-body">
 								<form role="form">
 									<div class="form-group">
-										<label>名称</label>
-										<input type="text" class="form-control" id="name" />
+										<label>业务流ID</label>
+										<input type="text" class="form-control" id="id" />
 									</div>
 									<div class="form-group">
 										<label>源IP</label>
-										<input type="text" class="form-control" id="src_ip" />
+										<input type="text" class="form-control" id="srcip" />
 									</div>
 									<div class="form-group">
 										<label>目的IP</label>
-										<input type="text" class="form-control" id="dst_ip" />
+										<input type="text" class="form-control" id="dstip" />
 									</div>
 									<div class="form-group">
 										<label>传输协议</label>
@@ -44,13 +44,6 @@
 											<option value="TCP">TCP</option>
 											<option value="UDP">UDP</option>
 											<option value="ICMP">ICMP</option>
-										</select>
-									</div>
-									<div class="form-group">
-										<label>虚拟网关</label>
-										<select class="form-control" id="vgateway">
-											<option value="" >--请选择--</option>
-											<option ng-repeat="x in onos_list">{{x.name}}</option>
 										</select>
 									</div>
 									<div style="margin-left: 35%;">	

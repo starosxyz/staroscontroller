@@ -45,8 +45,8 @@
         // key bindings need to be made after the services have been injected
         // thus, deferred to here...
         actionMap = {
-            I: [toggleInstances, 'Toggle ONOS instances panel'],
-            O: [toggleSummary, 'Toggle ONOS summary panel'],
+            I: [toggleInstances, 'Toggle STAROS instances panel'],
+            O: [toggleSummary, 'Toggle Staros summary panel'],
             D: [toggleUseDetailsFlag, 'Disable / enable details panel'],
 
             H: [toggleHosts, 'Toggle host visibility'],

@@ -42,7 +42,25 @@
 	</function>
 
 	<function name="addpolicy">
-		
+		<string name="id"/>
+		<string name="srcip"/>
+		<string name="dstip"/>
+		<string name="content"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			context.id.setValue(data.id)
+			context.srcip.setValue(data.srcip)
+			context.dstip.setValue(data.dstip)
+			context.content.setValue(data.content)
+		]]></script>
+		<function name="AddPolicy" class="PolicyManager">
+			<parameters>
+				<string name="policyid" in="context.id.toString()"/>
+				<string name="srcIp" in="context.srcip.toString()"/>
+				<string name="dstIp" in="context.dstip.toString()"/>
+				<string name="content" in="context.content.toString()"/>
+			</parameters>
+		</function>
 	</function>
 
 	<events>

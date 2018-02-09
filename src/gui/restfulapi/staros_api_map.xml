@@ -54,5 +54,9 @@
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/delta/ports" value="'DeltaGetallports'"/>
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/flows/link" value="'Getlink'"/>
 		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/statistics/flows/tables" value="'Gettables'"/>
+		
+		<!--connectivity
+		<set name="APIV1MapFunction" paramname="/staroscontroller/v1/connectivity/{h1}/{h2}" value="'HandleConnectivityRequest'"/>
+		-->
 	</function>
 </starlang>

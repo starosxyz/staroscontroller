@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		intentforwarding.xml
+	@brief 		intentforwarding
+	@version 	1.1.0
+	@auth 		WANGKANG
+	@date		2018/01/22
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	-->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
+
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="devicemgr" value="global.DeviceManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="meterservice" value="global.MeterService" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	<object name="toposervice" value="global.TopoService" reference="true"/>
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<object name="intentmanager" value="global.IntentManager" reference="true"/>
+
+	<events>
+		<onevent event="bundleapp.startup">
+			<function name="RegistApplication" class="context.applicationmgr">
+				<parameters>
+					<string name="id" in="'connectivity'"/>
+					<string name="version" in="'1.0.0'"/>
+					<string name="category" in="'Traffic'"/>
+					<string name="origin" in="'StarOS Inc.'"/>
+					<string name="title" in="'Connectivity'"/>
+					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="url" in="'192.168.80.10'"/>
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
+				</parameters>
+			</function>			
+			<log level="1">Connectivity bundleapp.startup </log>
+			<syslog level="INFO">Connectivity app startup</syslog>
+		</onevent>	
+		
+		<onevent event="bundleapp.active">
+			<log level="1">Connectivity bundleapp.active </log>
+		</onevent>
+		
+		<onevent event="~bundleapp.deactive">
+			<log level="1">~bundleapp.deactive </log>
+		</onevent>
+		
+
+		
+		<onevent event="~bundleapp.shutdown">
+			<log>connectivity is shutdown</log>
+		</onevent>
+		
+		<onevent event="*">
+			<log level="1"><![CDATA[ invalid event connectivity <%=event.getName().toString()%>]]> </log>
+			<log level="1"><![CDATA[ invalid param connectivity <%=event.getParam("eventdata").toString()%>]]> </log>
+		</onevent>
+	</events>
+
+</starlang>

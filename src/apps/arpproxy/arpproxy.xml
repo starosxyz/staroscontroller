@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		nullapp.xml
+	@brief 		nullapp
+	@version 	1.1.0
+	@auth 		YY
+	@date		2018/02/08
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<events>
+		<onevent event="bundleapp.startup">
+			<function>
+				<function name="RegistApplication" class="context.applicationmgr">
+					<parameters>
+						<string name="id" in="'arpproxy'"/>
+						<string name="version" in="'1.0.0'"/>
+						<string name="category" in="'Traffic'"/>
+						<string name="origin" in="'StarOS Inc.'"/>
+						<string name="title" in="'ARPProxy'"/>
+						<string name="desc" in="'Write By YY'"/>		
+						<string name="url" in="'null'"/>
+						<long name="bundleid" in="context.getCurrentBundleId()"/>					
+					</parameters>
+				</function>
+			</function>
+		</onevent>			
+		
+		<onevent event="bundleapp.active">
+			<function>
+				<function name="addProcessor" class="PacketService">				
+					<parameters>
+						<string name="app_name" in="'arpproxy'"/>
+						<string name="event_name" in="'PacketInEvent'"/>
+						<string name="eth_type" in="'0x0806'"/>
+					</parameters>
+				</function>				
+			</function>
+		</onevent>
+
+		<onevent event="~bundleapp.deactive">
+			<function>
+				<function name="removeProcessor" class="PacketService">				
+					<parameters>
+						<string name="app_name" in="'arpproxy'"/>									
+					</parameters>
+				</function>
+			</function>
+		</onevent>
+		
+		<onevent event="PacketInEvent">
+			<syslog level="INFO">insert arpproxy PacketInEvent ---------^^^^^^^^*******************</syslog>
+			<function name="handleARP"/>
+			<syslog level="INFO">arpproxy PacketInEvent end ---------^^^^^^^^*******************</syslog>
+		</onevent>
+
+		<onevent event="~bundleapp.shutdown">
+			
+		</onevent>		
+
+		<onevent event="*">
+
+		</onevent>
+	</events>
+
+	<function name="handleARP">
+		<syslog level="INFO">insert arpproxy handleARP ---------^^^^^^^^*******************</syslog>
+		<syslog level="INFO"><![CDATA[eventdata = <%=event.getParam('eventdata').toString()%>]]></syslog>
+		<string name="dstmac"/>
+		<string name="sendip"/>
+		<string name="targetip"/>
+		<string name="outport"/>
+		<string name="deviceid"/>
+		<string name="isHostMac"/>
+		<boolean name="isArpRequest" value="false"/>
+		<object name="host"/>
+		<set name="deviceid" value="event.getParam('datapathid').toString()"/>
+		<!-- <set name="outport" value="event.getParam('inport').toString()"/> -->
+		<syslog level="INFO"><![CDATA[eventdata = <%=event.getParam('datapathid').toString()%>]]></syslog>
+		<syslog level="INFO"><![CDATA[eventdata = <%=event.getParam('eventdata').toString()%>]]></syslog>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			if (data.payload != null)
+			{
+				if (data.payload.ethtype == '2054')
+				{
+					if (data.payload.ethernetpayload.opcode == '1')
+					{
+						context.isArpRequest.setValue(true);
+						context.sendip.setValue(data.payload.ethernetpayload.targetprotocoladdress)
+						context.targetip.setValue(data.payload.ethernetpayload.senderprotocoladdress)
+						context.dstmac.setValue(data.payload.ethernetpayload.senderhardwareaddress)
+						context.outport.setValue(data.match.matchfieldlist[0].inport)
+					}
+				}
+			}
+		]]></script>
+		<if cond="context.isArpRequest.toBoolean()==false">
+			<then>
+				<exit/>
+			</then>
+		</if>
+		<syslog level="INFO"><![CDATA[context.sendip = <%=context.sendip.toString()%>]]></syslog>
+		<function name="Gethostbyip" class="hostmanager">
+			<parameters>
+				<string name="hostip" in="context.sendip.toString()"/>	
+				<object name="hostobj" out="context.host"/>
+			</parameters>
+		</function>
+		<if cond="context.host.ptr != null">
+			<then>
+				<function name="GetHostMac" class="context.host">
+					<parameters>
+						<string name="hostmac" out="context.isHostMac"/>
+					</parameters>
+				</function>								
+				<function name="SendARPReply">
+					<parameters>
+						<string name="srcmac" in="context.isHostMac.toString()"/>
+						<string name="dstmac" in="context.dstmac.toString()"/>
+						<string name="sendip" in="context.sendip.toString()"/>
+						<string name="targetip" in="context.targetip.toString()"/>
+						<string name="outport" in="context.outport.toString()"/>
+						<string name="deviceid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>				
+			</then>
+			<else>
+				<syslog level="INFO">context.host.ptr == null</syslog>
+			</else>
+		</if>
+		<syslog level="INFO">arpproxy handleARP end ---------^^^^^^^^*******************</syslog>
+	</function>
+
+	<function name="SendARPReply">
+		<parameters>
+			<string name="srcmac"/>
+			<string name="dstmac"/>
+			<string name="sendip"/>
+			<string name="targetip"/>
+			<string name="outport"/>
+			<string name="deviceid"/>
+		</parameters>
+		<syslog level="INFO">insert arpproxy SendARPReply ---------^^^^^^^^*******************</syslog>
+		<string name="json"/>
+		<script><![CDATA[
+			var info = new Object()
+			info.dmac = context.dstmac.toString()
+			var index = new Object()
+			index.hardwareType = "1"
+			index.hardwareaddresslength = "6"
+			index.opcode = "2"
+			index.protocolType = "2048"
+			index.protocoladdresslength = "4"
+			index.senderhardwareaddress = context.srcmac.toString()
+			index.senderprotocoladdress = context.sendip.toString()
+			index.targethardwareaddress = context.dstmac.toString()
+			index.targetprotocoladdress = context.targetip.toString()
+			info.ethernetpayload = index
+			info.ethtype = "2054"
+			info.priority = "0"
+			info.qinqpriority = "0"
+			info.qinqtpid = "0"
+			info.qinqvid = "65535"
+			info.smac = context.srcmac.toString()
+			info.vlanid = "65535"
+			context.json.setValue(JSON.stringify(info))
+		]]></script>
+		<packetout name="context.openflowserverobj" deviceid="context.deviceid.toString()" strjson="context.json.toString()" outport="context.outport.toString()"/>
+		<syslog level="INFO">arpproxy SendARPReply end ---------^^^^^^^^*******************</syslog>
+	</function>			
+</starlang>

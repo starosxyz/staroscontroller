@@ -79,16 +79,16 @@
 			
 			<function name="ToString">
 				<parameters>
-					<string name="jsonstring"  out="context.outjson"/>
+					<string name="jsonstring"/>
 				</parameters>
 				<script><![CDATA[
-						var onearray = new Object();
-						onearray.ip=thisclass.m_ip.toString();
-						onearray.netmask=thisclass.m_netmask.toString();
-						onearray.vmac=thisclass.m_vmac.toString();
-						var strjson=JSON.stringify(onearray);
-						context.jsonstring.setValue(strjson);
-					]]></script>
+					var onearray = new Object();
+					onearray.ip=thisclass.m_ip.toString();
+					onearray.netmask=thisclass.m_netmask.toString();
+					onearray.vmac=thisclass.m_vmac.toString();
+					var strjson=JSON.stringify(onearray);
+					context.jsonstring.setValue(strjson);
+				]]></script>
 			</function>
 
 			<function name="json2StarOS">
@@ -268,6 +268,8 @@ for i in range(len(addr1)):
 	res1.append(int(addr1[i]) & int(mask[i]));
 	res2.append(int(addr2[i]) & int(mask[i])); 
 
+print(res1);
+print(res2);
 if res1 == res2:
 	libstarlang.setValueBool("context.is_have",True);				
 					]]></python>
@@ -347,7 +349,6 @@ if res1 == res2:
 				<string name="vGatewayStr"/>
 				<if cond="thisclass.vGatewayContainer.hasValue(context.ip.toString())">
 					<then>
-						
 						<lookup name="thisclass.vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
 
 						<log level="101">enter 226      ----CvGatewayManager.xml</log>
@@ -495,6 +496,119 @@ if res1 == res2:
 						</function>
 					</else>
 				</if>
+			</function>
+
+			<function name="HandleARPRequest">
+				<string name="dstmac"/>
+				<string name="sendip"/>
+				<string name="targetip"/>
+				<string name="outport"/>
+				<string name="deviceid"/>
+				<string name="arptargetip"/>
+				<object name="vgateway"/>
+				<string name="ismyvgateway"/>
+				<boolean name="isArpRequest" value="false"/>
+				<object name="host"/>
+				<set name="deviceid" value="event.getParam('datapathid').toString()"/>
+				<set name="outport" value="event.getParam('inport').toString()"/>
+				<syslog level="INFO">insert CvGatewayManager HandleARPRequest ----------------***************^^^^^^^^^^^^^^</syslog>
+				<syslog level="INFO"><![CDATA[eventdata = <%=event.getParam('datapathid').toString()%>]]></syslog>
+				<syslog level="INFO"><![CDATA[eventdata = <%=event.getParam('eventdata').toString()%>]]></syslog>
+				<script><![CDATA[
+					var data = JSON.parse(event.getParam('eventdata').toString())
+					if (data.payload != null)
+					{
+						if (data.payload.ethtype == '2054')
+						{
+							if (data.payload.ethernetpayload.opcode == '1')
+							{
+								context.isArpRequest.setValue(true);
+								context.sendip.setValue(data.payload.ethernetpayload.targetprotocoladdress)
+								context.targetip.setValue(data.payload.ethernetpayload.senderprotocoladdress)
+								context.dstmac.setValue(data.payload.ethernetpayload.senderhardwareaddress)
+							}
+						}
+					}
+				]]></script>
+				<if cond="context.isArpRequest.toBoolean()==false">
+					<then>
+						<exit/>
+					</then>
+				</if>
+				<function name="getHostByIP" class="HostManager">
+					<parameters>
+						<string name="hostip" in="context.targetip.toString()"/>
+						<object name="hostobj" out="context.host"/>
+					</parameters>
+				</function>
+				<function name="FindvGateway">
+					<parameters>
+						<string name="ip" in="context.sendip.toString()"/>
+						<object name="vgateway" out="context.vgateway"/>
+					</parameters>
+				</function>
+				<if cond="context.vgateway.ptr != null">
+					<then>
+						<syslog level="INFO">context.vgateway.ptr != null</syslog>
+						<function name="Getvmac" class="context.vgateway">
+							<parameters>
+								<string name="vmac" out="context.ismyvgateway"/>
+							</parameters>
+						</function>								
+						<function name="SendARPReply">
+							<parameters>
+								<string name="srcmac" in="context.ismyvgateway.toString()"/>
+								<string name="dstmac" in="context.dstmac.toString()"/>
+								<string name="sendip" in="context.sendip.toString()"/>
+								<string name="targetip" in="context.targetip.toString()"/>
+								<string name="outport" in="context.outport.toString()"/>
+								<string name="deviceid" in="context.deviceid.toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<else>
+						<syslog level="INFO">context.vgateway.ptr == null</syslog>
+					</else>
+				</if>
+				<syslog level="INFO">CvGatewayManager HandleARPRequest end ----------------*****************^^^^^^^^^^^^^^^^^</syslog>
+			</function>
+
+			<function name="SendARPReply">
+				<parameters>
+					<string name="srcmac"/>
+					<string name="dstmac"/>
+					<string name="sendip"/>
+					<string name="targetip"/>
+					<string name="outport"/>
+					<string name="deviceid"/>
+				</parameters>
+				<syslog level="INFO">insert CvGatewayManager SendARPReply ----------------***************^^^^^^^^^^^^^^</syslog>
+				<string name="json"/>
+				<script><![CDATA[
+					var info = new Object()
+					info.dmac = context.dstmac.toString()
+					var index = new Object()
+					index.hardwareType = "1"
+					index.hardwareaddresslength = "6"
+					index.opcode = "2"
+					index.protocolType = "2048"
+					index.protocoladdresslength = "4"
+					index.senderhardwareaddress = context.srcmac.toString()
+					index.senderprotocoladdress = context.sendip.toString()
+					index.targethardwareaddress = context.dstmac.toString()
+					index.targetprotocoladdress = context.targetip.toString()
+					info.ethernetpayload = index
+					info.ethtype = "2054"
+					info.priority = "0"
+					info.qinqpriority = "0"
+					info.qinqtpid = "0"
+					info.qinqvid = "65535"
+					info.smac = context.srcmac.toString()
+					info.vlanid = "65535"
+					context.json.setValue(JSON.stringify(info))
+				]]></script>
+				<packetout name="context.openflowserverobj" deviceid="context.deviceid.toString()" strjson="context.json.toString()" outport="context.outport.toString()"/>
+				<syslog level="INFO">CvGatewayManager SendARPReply end ----------------*****************^^^^^^^^^^^^^^^^^</syslog>
 			</function>			
 		</public>
 	</class>

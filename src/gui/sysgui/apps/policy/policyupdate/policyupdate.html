@@ -27,32 +27,27 @@
 							<div class="box-body">
 								<form role="form">
 									<div class="form-group">
-										<label>名称</label>
-										<input type="text" class="form-control" id="name" />
+										<label>业务流ID</label>
+										<input type="text" class="form-control" id="id"  value="{{id}}" disabled="disabled"/>
 									</div>
 									<div class="form-group">
 										<label>源IP</label>
-										<input type="text" class="form-control" id="src_ip" />
+										<input type="text" class="form-control" id="srcip"  value="{{srcip}}"/>
 									</div>
 									<div class="form-group">
 										<label>目的IP</label>
-										<input type="text" class="form-control" id="dst_ip" />
+										<input type="text" class="form-control" id="dstip"  value="{{dstip}}"/>
 									</div>
 									<div class="form-group">
 										<label>传输协议</label>
-											<select id="content" name="selse" class="form-control">
-												<option value="TCP">TCP</option>
-												<option value="UDP">UDP</option>
-												<option value="ICMP">ICMP</option>
-											</select>
-									</div>
-									<div class="form-group">
-										<label>虚拟网关</label>
-										<input type="text" class="form-control" id="vgateway" disabled="disabled"/>
-										
+											<select id="content" name="selse" class="form-control" value="{{content}}">
+											<option value="TCP">TCP</option>
+											<option value="UDP">UDP</option>
+											<option value="ICMP">ICMP</option>
+										</select>
 									</div>
 									<div style="margin-left: 35%;">	
-										<a href="javascript:void(0)" style="float: left;margin-right: 5%;"><button type="button" class="btn btn-block btn-success" ng-click="update()">保存</button></a>
+										<a href="javascript:void(0)" style="float: left;margin-right: 5%;"><button type="button" class="btn btn-block btn-success" ng-click="save()">保存</button></a>
 										<a href="#/policy" style="float: left;"><button type="button" class="btn btn-block btn-warning">取消</button></a>
 									</div>
 								</form>

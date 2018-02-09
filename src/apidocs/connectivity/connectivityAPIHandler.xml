@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		ConnectivityAPIHandler.xml connectivity_
+	@brief 		Connectivity的增删改查
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180207
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<!--
+		@brief		注册APP 到RestfulService
+		@auth 		qiulei
+		@date		20180207
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	getCurrentBundleId
+		Output: 
+
+	-->
+
+	<function name="connectivity_RegisterHandler">
+		<log>enter connectivity_RegisterHandler</log>
+
+		<function name="RegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processPostAndDeleteConnectivityRequest'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/connectivity/connectivity/{h1}/{h2}'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	<!--
+		@brief		注销APP 到RestfulService
+		@auth 		qiulei
+		@date		20180207
+		Input:
+			@param filename 	CRestfulService.xml
+		  	@param xmldata   	requestpath
+		Output: 
+		-->
+
+	<function name="connectivity_UnRegisterHandler">
+		<function name="UnRegisterAPIHandler" class="RestfulService">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/connectivity/connectivity/{h1}/{h2}'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	<events>
+		<onevent event="processPostAndDeleteConnectivityRequest">
+			<log level="100">enter processPostAndDeleteConnectivityRequest</log>
+			
+			<string name="h1" value="event.getParam('params').getIndexOf(0).toString()"/>
+			<string name="h2" value="event.getParam('params').getIndexOf(1).toString()"/>
+			<syslog level="INFO"><![CDATA[connectivity_api h1= <%=context.h1.toString()%>]]></syslog>
+			<syslog level="INFO"><![CDATA[connectivity_api h2= <%=context.h2.toString()%>]]></syslog>
+
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<connectivity ofobj="context.openflowserverobj" action="Install" h1="context.h1.toString()" h2="context.h2.toString()"/>
+					<function name="SuccessResponse"/>
+				</then>
+				<elseif cond="event.getParam('method').toString() == 'DELETE'">
+					<connectivity ofobj="context.openflowserverobj" action="UnInstall" h1="context.h1.toString()" h2="context.h2.toString()"/>
+					<function name="SuccessResponse"/>
+				</elseif>
+			</if>
+		</onevent>
+	</events>
+
+
+	<function name="SuccessResponse">
+		<log level="101">enter connectivity_successresponse  ----connectivityAPIHandler.xml 97</log>
+		<string name="response"/>
+		<reference variable="response">
+			<jsonbody><![CDATA[ 
+				{
+					"result":{
+						"code": "0",
+						"description": "ok"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.response.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="connectivity_ErrorDatasResponse">
+		<parameters>
+			<string name="connectivityid"/>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.connectivityId = context.connectivityid.toString();
+				one.code = "-1";
+				one.description = context.description.toString();						
+			json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

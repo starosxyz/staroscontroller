@@ -60,7 +60,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CUiExtensionManager.xml"/>
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CIntentManager.xml"/>
-	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/core/CConnectivityManager.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/providers/CPortService.xml"/>
 	<object name="ApplicationManager" global="true"/>
 	<!--qiulei 20170811-->
@@ -95,6 +95,7 @@
 	<object name="vGatewayManager" global="true"/>
 	<object name="IntentManager" global="true"/>
 	<object name="PortService" global="true"/>
+	<object name="ConnectivityManager" global="true"/>
 	<function name="InitGlobalResource">
 		<log>InitGlobalResource</log>		
 		<!--qiulei 20170811-->
@@ -128,6 +129,7 @@
 		<new name="traffic" class="CTrafficMonitor"/>
 		<new name="uiExtension" class="CUiExtensionManager"/>
 		<new name="PolicyManager" class="CPolicyManager"/>
+		<new name="ConnectivityManager" class="CConnectivityManager"/>
 		<!-- wangkang 2018/01/24 -->
 		<new name="MonitorManager" class="CMonitorManager"/>
 		<!--yxr-->

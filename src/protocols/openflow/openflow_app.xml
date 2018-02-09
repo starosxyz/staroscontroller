@@ -396,21 +396,9 @@
 			<log>Get a PacketIn Message</log>
 			<!--<log level="100"><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>-->
 			<!--<log level="100"><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>-->
-			<messageblock name="packetmsgblock"/>
-			<string name="datapathid"/>
-			<function name="GetDatapathIdByTransportid" class="DeviceManager">
-				<parameters>
-					<string name="transportid" in="event.getParam('transportid').toString()"/>
-					<string name="datapathid" out="context.datapathid"/>
-				</parameters>
-			</function>
-			
-			<!--
-			<script><![CDATA[
-				var dpid = context.datapathid.toString();
-				context.datapathid.setValue(dpid.split(":")[1]);
-			]]></script>
-			-->
+
+			<function name="HandleARPRequest" class="vGatewayManager"/>
+
 			
 			<function name="ProcessPacket" class="PacketService">
 				<parameters>

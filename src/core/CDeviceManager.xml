@@ -255,18 +255,19 @@
 				<for var="context.functionname" in="context.listernellist">
 					<function callback="functionname">
 						<parameters>
-								<string name="type" in="'add'"/>
-								<object name="deviceobj" in="context.deviceobject"/>					
+							<string name="type" in="'add'"/>
+							<object name="deviceobj" in="context.deviceobject"/>					
 						</parameters>
 					</function>		
 				</for>
 
 				<string name="onlinejson"/>
-	
+				<!--
 				<log level="100">ClearFlow start</log>
 				<function name="ClearFlow" class="deviceobject"/>				
 				<wait event="NorFoundEvent" timeout="3000"/>
 				<log level="100">ClearFlow end</log>
+				-->
 			
 				<function name="SendDefaultFlow" class="deviceobject"/>
 				<!-- wangkang 2018/01/30 -->
@@ -1707,6 +1708,7 @@
 										</parameters>
 									</function>
 									<for var="oneflowjson" in="context.flowlist">
+										<log level="100"><![CDATA[1711 oneflowjson= <%=context.oneflowjson.toString()%>]]></log>
 											<function name="InstallFlowTableRequest" class="flowobj">
 												<parameters>
 													<string name="outflowid" out="context.flowid"/>

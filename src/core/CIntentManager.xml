@@ -36,7 +36,7 @@
 					<string name="id"/>
 					<string name="strjson"/>				
 				</parameters>
-				
+				<syslog level="INFO">CIntentEntry is create</syslog>
 				<!-- qiulei 20180201 -->
 				<set name="thisclass.m_strjsonNoId" value="context.strjson.toString()"/>
 				
@@ -130,8 +130,7 @@
 					<string name="strjson"/>				
 				</parameters>
 				<log level="100"><![CDATA[----CIntentManager.xml 126,strjson=<%=context.strjson.toString()%>]]></log>
-		
-				
+				<syslog level="INFO"><![CDATA[addIntent	strjson = <%=context.strjson.toString()%>]]></syslog>
 				<object name="intentobj"/>
 				<string name="oneintentjson"/>
 				<string name="intentid"/>
@@ -149,6 +148,7 @@
 							</function>
 							<if cond="context.oneintentjson.toString()==context.strjson.toString()">
 								<then>
+									<syslog level="INFO">strjson is exists</syslog>
 									<function name="GetIntentId" class="context.intentobj">
 										<parameters>
 											<string name="intentid" out="context.intentid"/>
@@ -179,7 +179,7 @@
 						<set name="context.outflowid" value="thisclass.m_intentid.toString()"/>
 						<set name="thisclass.m_intentid" value="thisclass.m_intentid.toLong()+1"/>
 						
-						<log level="INFO"><![CDATA[CIntentManager 173 intentContainer.size= <%=thisclass.intentContainer.size().toString()%>]]></log>
+						<syslog level="INFO"><![CDATA[CIntentManager intentContainer.size= <%=thisclass.intentContainer.size().toString()%>]]></syslog>
 				
 					</then>
 				</if>

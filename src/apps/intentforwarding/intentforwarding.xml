@@ -345,9 +345,9 @@
 		</parameters>
 		<string name="modstrjson"/>
 		<string name="intentid"/>
-		<log level="1"><![CDATA[installflow dpid = <%=context.dpid.toString()%>]]></log>
-		<log level="1"><![CDATA[installflow outport = <%=context.outport.toString()%>]]></log>
-		<log level="1"><![CDATA[installflow inport = <%=context.inport.toString()%>]]></log>
+		<log level="1"><![CDATA[installintent dpid = <%=context.dpid.toString()%>]]></log>
+		<log level="1"><![CDATA[installintent outport = <%=context.outport.toString()%>]]></log>
+		<log level="1"><![CDATA[installintent inport = <%=context.inport.toString()%>]]></log>
 		<if cond="context.outport.toString()==''">
 			<then>
 				<exit/>
@@ -356,10 +356,10 @@
 		<reference variable="modstrjson">
 			<jsonbody><![CDATA[ 
 				{
-				  "type": "DeviceToDeviceIntent",
-				  "appId": "intentforwarding",
-				  "priority": "55000",
-				 "fromdevice":"<%=context.indevice.toString()%>",
+					"type": "DeviceToDeviceIntent",
+					"appId": "intentforwarding",
+					"priority": "55000",
+					"fromdevice":"<%=context.indevice.toString()%>",
 					"todevice":"<%=context.outdevice.toString()%>",
 					"fromdevicematch":{
 						"type":"1",
@@ -683,7 +683,8 @@
 									var ippayload=info.payload.ethernetpayload.ippayload;
 									context.dstip.setValue(dstip);
 									context.srcip.setValue(srcip);
-									context.protocol.setValue(protocol);
+									context.protocol.setValue(protocol);	
+									
 									if (protocol=='6')
 									{
 										context.srcport.setValue(ippayload.sourceport);
@@ -693,7 +694,7 @@
 									{
 										context.srcport.setValue(ippayload.sourceport);
 										context.dstport.setValue(ippayload.destinationport);
-									}
+									}		
 								}								
 							}
 						]]></script>

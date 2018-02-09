@@ -9,47 +9,9 @@
 		<li>
 			<a href="#">网络管理</a>
 		</li>
-		<li class="active">服务链管理</li>
+		<li class="active">主机业务</li>
 	</ol>
 </section>
-<style type="text/css">
-	#div1 {
-		width: 488px;
-		height: 70px;
-		padding: 10px;
-		border: 1px solid #aaaaaa;
-	}
-	
-	.leftImg {
-		width: 17px;
-		height: 18px;
-		float: left;
-		border: 0;
-		margin-top: 40px;
-		background: url("dist/img/icon06.png");
-	}
-	
-	.rightImg {
-		width: 17px;
-		height: 18px;
-		float: left;
-		border: 0;
-		margin-top: 40px;
-		background: url("dist/img/icon07.png");
-	}
-	
-	.fw {
-		top: 213px;
-		position: absolute;
-		margin-left: 100px;
-		z-index: 7;
-	}
-	
-	img {
-		cursor: pointer;
-	}
-</style>
-<!-- Main content -->
 <section class="content">
 	<div class="row">
 		<div class="col-xs-12">
@@ -58,12 +20,12 @@
 					<div class="con fl" style="width:96%">
 
 						<div class="con_top2">
-							<label>服务链名称</label>
-							<input type="text" placeholder="请输入名称" class="r fl" id="svcChainName" />
+							<label>主机业务名称</label>
+							<input type="text" placeholder="请输入名称" class="r fl" id="name" />
 							<label>关联业务流</label>
-							<select id="policyId" class="r fl">
+							<select id="policy" class="r fl">
 								<option>--请选择--</option>
-								<option ng-repeat="x in serviceChain_list" value='{{x.id}}'>{{x.name}}</option>
+								<option ng-repeat="x in data.data" value='{{x.policyid}}'>{{x.policyid}}</option>
 							</select>
 						</div>
 						<div class="con_m fl">
@@ -74,19 +36,13 @@
 								</div>
 								<div class="rightImg"></div>
 							</div>
-							<input class="ip" style="margin-left:18%;" id="out_port" disabled="disabled" />
+							<input class="ip" style="margin-left:18%;" id="outport" disabled="disabled"/>
 							<div>
-								<input id="in_port" style="margin-left:79%;border:1px solid #ddd; width:95px;height:30px;margin-top:10px" disabled="disabled" />
+								<input id="inport" style="margin-left:79%;border:1px solid #ddd; width:95px;height:30px;margin-top:10px" disabled="disabled"/>
 							</div>
 							<a href="#/servicechain" class="btn btn-block btn-warning" style="width: 75px;margin-right:38%;float: right;margin-top:5px">取消</a>
 							<a ng-click="addRow()" class="btn btn-block btn-primary" style="width: 75px;float: right;margin-right:5%;margin-top:5px">提交</a>
 						</div>
-					</div>
-					<div class="con_bottom fl" style="width:750px">
-						<img src="dist/img/icon_fw_b.png" class="vFW" />
-						<img src="dist/img/icon_lb_b.png" class="vLB" />
-						<img src="dist/img/icon_vo_b.png" class="vVO" />
-						<img src="dist/img/icon_dp_b.png" class="vDP" />
 					</div>
 				</div>
 				<div id='maskDiv' style="z-index:9999"></div>

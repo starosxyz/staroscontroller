@@ -42,7 +42,39 @@
 	</function>
 
 	<function name="addservicechain">
-		
+		<string name="type"/>
+		<string name="policylist"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			context.type.setValue(data.type)
+		]]></script>
+		<if cond="context.type.toString() == 'get'">
+			<then>				
+				<function name="getAllID" class="PolicyManager">
+					<parameters>
+						<string name="json" out="context.policylist"/>
+					</parameters>
+				</function>
+				<systemgui name="context.servicechaincreateobj" action="SendMessage">
+					<jsonsrc src="context.policylist"/>
+				</systemgui>
+			</then>
+			<elseif cond="context.type.toString() == 'create'">
+				<string name="name"/>
+				<string name="policy"/>				
+				<script><![CDATA[
+					var data = JSON.parse(event.getParam('eventdata').toString())
+					context.name.setValue(data.name)
+					context.policy.setValue(data.policy)
+				]]></script>
+				<function name="addConnectivity" class="ConnectivityManager">
+					<parameters>
+						<string name="name" in="context.name.toString()"/>
+						<string name="policy" in="context.policy.toString()"/>
+					</parameters>
+				</function>
+			</elseif>
+		</if>
 	</function>
 
 	<events>

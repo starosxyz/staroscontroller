@@ -38,21 +38,19 @@
 				   <thead>
 						<tr>
 						  <th>操作</th>
-						  <th>名称</th>
+						  <th>业务流ID</th>
 						  <th>源IP</th>
 						  <th>目的IP</th>
 						  <th>传输协议</th>
-						  <th>虚拟网关</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="x in policy_list">
-							<td><input type='radio' id='checking' name='checking' class='select_btn fl' value='{{x.id}}' title='{{x.description}}'/></td>
-							<td>{{ x.name}}</td>
+						<tr ng-repeat="x in data.policys">
+							<td><input type='radio' id='checking' name='checking' class='select_btn fl' value='{{x.policyid}}' title='{{x.description}}'/></td>
+							<td>{{ x.policyid}}</td>
 							<td>{{ x.srcIp}}</td>
 							<td>{{ x.dstIp}}</td>
-							<td>{{ x.protType}}</td>
-							<td>{{ x.vgateway}}</td>
+							<td>{{ x.content}}</td>
 						</tr>
 					</tbody>
               </table>

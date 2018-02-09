@@ -42,7 +42,35 @@
 	</function>
 
 	<function name="sendPolicyMessage">
-		
+		<string name="id"/>
+		<string name="type"/>		
+		<string name="jsonarray"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			if (data.type == 'remove') {
+				context.id.setValue(data.id)
+				context.type.setValue(data.type)
+			}
+		]]></script>
+		<if cond="context.type.toString() == 'remove'">
+			<then>
+				<function name="DeletePolicyByid" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.id.toString()"/>
+					</parameters>
+				</function>
+			</then>
+			<else>
+				<function name="GetAllPolicy" class="PolicyManager">
+					<parameters>
+						<string name="policystr" out="context.jsonarray"/>
+					</parameters>
+				</function>
+				<systemgui name="context.policyobj" action="SendMessage">
+					<jsonsrc src="context.jsonarray"/>
+				</systemgui>
+			</else>
+		</if>
 	</function>
  
 	<events>		

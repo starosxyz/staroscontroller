@@ -628,101 +628,118 @@
 		@date		2017/11/24
 		Input:
 			@param filename 	CDeviceManager.xml
-		  	@param xmldata   	flowdeviceidlist，flowlist，appid
+		  	@param xmldata   	flowlist，appid
 		Output: 
 	-->
-	
-
-
 	<function name="addflows">
 		<parameters>
 			<string name="eventdata" />
 		</parameters>
 		<log level="100">api_flows addflows</log>
+		<syslog level="INFO"><![CDATA[addflows eventdata =<%=context.eventdata.toString()%>]]></syslog>
 		<string name="appid"/>
-		<list name="flowdeviceidlist" valuetype="string"/>	
 		<list name="flowlist" valuetype="string"/>
-		<list name="legalidlist" valuetype="string"/>
 		<string name="onedeviceid"/>
 		<object name="deviceobj"/>
-			<script><![CDATA[				
-					var str = event.getParam('requestpath').toString();
-					var array = str.split("/");
-					var appids=array[array.length-1];
-					var appid=(appids.split("?"))[1];
-					var appidvalue=(appid.split("="))[1];
-					context.print("484"+appidvalue);
-					context.appid.setValue(appidvalue);
-					context.print("486"+context.eventdata.toString())
-					var json = JSON.parse(context.eventdata.toString());
+		<string name="json"/>
+		<object name="flowobj"/>
+		<string name="oneflowjson"/>
+		<string name="flowid"/>
+		<script><![CDATA[				
+				var str = event.getParam('requestpath').toString();
+				var array = str.split("/");
+				var appids=array[array.length-1];
+				var appid=(appids.split("?"))[1];
+				var appidvalue=(appid.split("="))[1];
+				context.print("484"+appidvalue);
+				context.appid.setValue(appidvalue);
+				context.print("486"+context.eventdata.toString())
+				var json = JSON.parse(context.eventdata.toString());
 
-							for(var i=0;i<json.flows.length;i++){
-								var flows=json.flows[i];
-								var strjson=JSON.stringify(flows);			
-								context.flowlist.addValue(strjson);
-								context.flowdeviceidlist.addValue(json.flows[i].deviceid);
-							}
-	
-					
-			]]></script>
-			<if cond="context.appid.toString()!=''">
-				<then>
-					<string name="json"/>
-					<log level="100">hu 500  api_flows addflows </log>
-					<!-- YY 2017-12-22 -->
-					<for var="context.onedeviceid" in="context.flowdeviceidlist">						
-						<function name="getDevice" class="DeviceManager">
-							<parameters>
-								<object name="outdevice" out="context.deviceobj"/>
-								<string name="datapathid" in="context.onedeviceid.toString()"/>
-							</parameters>
-						</function>
-						<if cond="context.deviceobj.ptr!=null">
-							<then>
-								<insert name="context.legalidlist" value="context.onedeviceid.toString()"/>
-							</then>
-							<else>
-								<function name="ErrorDataResponse">
-									<parameters>
-										<string name="transportid" in="event.getParam('transportid').toString()"/>
-										<string name="description" in="'The device is not found !'"/>
-									</parameters>
-								</function>
-								<break/>
-							</else>
-						</if>
-					</for>
-					<!-- YY 2017-12-22 -->
-					<function name="Addflows" class="DeviceManager">
+				for(var i=0;i<json.flows.length;i++){
+					var flows=json.flows[i];
+					var strjson=JSON.stringify(flows);			
+					context.flowlist.addValue(strjson);
+				}	
+		]]></script>
+		<if cond="context.appid.toString()!=''">
+			<then>
+				<log level="100">hu 500  api_flows addflows </log>
+				<log level="100"><![CDATA[668  flowlist= <%=context.flowlist.size().toString()%>]]></log>
+				<!-- YY 2017-12-22 -->
+				<for var="oneflowjson" in="context.flowlist">
+					<script><![CDATA[
+						var json = JSON.parse(context.oneflowjson.toString());
+						var deviceid = json.deviceid.split(":")[1];
+						context.onedeviceid.setValue(deviceid);
+					]]></script>
+					<log level="100"><![CDATA[672  onedeviceid= <%=context.onedeviceid.toString()%>]]></log>
+					<function name="getDevice" class="DeviceManager">
 						<parameters>
-							<string name="appid" in="context.appid.toString()"/>
-							<list name="flowdeviceidlist" in="context.legalidlist"/>
-							<list name="flowlist" in="context.flowlist"/>
+							<object name="outdevice" out="context.deviceobj"/>
+							<string name="datapathid" in="context.onedeviceid.toString()"/>
 						</parameters>
 					</function>
-					<function name="success">
-						<parameters>
-							<string name="json" out="context.json"/>
-						</parameters>
-					</function>
-					<function name="SendResponse" class="RestfulService">
-						<parameters>
-							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="json" in="context.json.toString()"/>
-						</parameters>
-					</function>
-				</then>
-				<else>
-					<function name="ErrorDataResponse">
-						<parameters>
-							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="description" in="' appid  is wrong!'"/>
-						</parameters>
-					</function>
-					
-				</else>
-			</if>
-		
+					<if cond="context.deviceobj.ptr!=null">
+						<then>
+							<function name="GetFlowManager" class="context.deviceobj">
+								<parameters>
+									<object name="outflowmgr" out="context.flowobj"/>
+								</parameters>
+							</function>
+							<if cond="context.flowobj.ptr!=null">
+								<then>
+									<function name="InstallFlowTableRequest" class="context.flowobj">
+										<parameters>
+											<string name="outflowid" out="context.flowid"/>
+											<string name="strjson" in="context.oneflowjson.toString()" />
+											<string name="appId" in="context.appid.toString()" />
+										</parameters>
+									</function>
+								</then>
+								<else>
+									<function name="ErrorDataResponse">
+										<parameters>
+											<string name="transportid" in="event.getParam('transportid').toString()"/>
+											<string name="description" in="'The flowobj is null !'"/>
+										</parameters>
+									</function>
+									<break/>
+								</else>
+							</if>
+						</then>
+						<else>
+							<function name="ErrorDataResponse">
+								<parameters>
+									<string name="transportid" in="event.getParam('transportid').toString()"/>
+									<string name="description" in="'The device is not found !'"/>
+								</parameters>
+							</function>
+							<break/>
+						</else>
+					</if>
+				</for>
+				<function name="success">
+					<parameters>
+						<string name="json" out="context.json"/>
+					</parameters>
+				</function>
+				<function name="SendResponse" class="RestfulService">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="json" in="context.json.toString()"/>
+					</parameters>
+				</function>
+			</then>
+			<else>
+				<function name="ErrorDataResponse">
+					<parameters>
+						<string name="transportid" in="event.getParam('transportid').toString()"/>
+						<string name="description" in="' appid  is wrong!'"/>
+					</parameters>
+				</function>
+			</else>
+		</if>	
 	</function>
 	
 	<!--
@@ -744,12 +761,12 @@
 		</parameters>
 		<log level="100">api_flows deleteflows</log>
 		<list name="result" valuetype="string"/>
-			<function name="Deleteflows" class="DeviceManager">
-				<parameters>
-						<string name="jsonstr" in="context.eventdata.toString()"/>
-						<list name="results" out="context.result"/>
-				</parameters>
-			</function>
+		<function name="Deleteflows" class="DeviceManager">
+			<parameters>
+					<string name="jsonstr" in="context.eventdata.toString()"/>
+					<list name="results" out="context.result"/>
+			</parameters>
+		</function>
 		<string name="fristresult"/>
 		<string name="json"/>
 		<log level="100"><![CDATA[561 resultsize!!!!!= '<%=context.result.size().toString()%>']]></log>

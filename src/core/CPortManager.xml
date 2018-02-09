@@ -101,6 +101,7 @@
 				<set name="thisclass.m_txspeed" value="0"/>
 				<set name="thisclass.m_rxspeed" value="0"/>
 				<set name="thisclass.m_txbytes" value="'0'"/>
+				<set name="thisclass.m_rxbytes" value="'0'"/>
 				<set name="thisclass.m_currenttime" value="context.currentms()"/>
 				<if cond="thisclass.m_state.toString() !='0'">
 					<then>
@@ -184,7 +185,7 @@
 						onearray.workstate = "deactive";
 					}
 					onearray.sendbandwidth=thisclass.m_txspeed.toString();
-					onearray.recvbandwidth=thisclass.m_txspeed.toString();
+					onearray.recvbandwidth=thisclass.m_rxspeed.toString();
 					onearray.rxpackets=thisclass.m_rxpackets.toString();
 					onearray.txpackets=thisclass.m_txpackets.toString();
 					onearray.rxbytes=thisclass.m_rxbytes.toString();
@@ -361,39 +362,15 @@
 				<uint64 name="currenttime" value="context.currentms()"/>
 				<if cond="context.portstate.toString()!=''">
 					<then>
-						<if cond="thisclass.m_txbytes.toString() == '0'">
-							<then>
-								<script><![CDATA[
-									var info = JSON.parse(context.portstate.toString());
-									thisclass.m_rxpackets.setValue(info.rxpackets);
-									thisclass.m_txpackets.setValue(info.txpackets);
-									thisclass.m_rxbytes.setValue(info.rxbytes);
-									thisclass.m_txbytes.setValue(info.txbytes);
+						<set name="context.txbytestmp" value="thisclass.m_txbytes.toString()"/>
+						<set name="context.rxbytestmp" value="thisclass.m_rxbytes.toString()"/>
+						<script><![CDATA[
+							var info = JSON.parse(context.portstate.toString());
+							context.txbytes.setValue(info.txbytes);
+							context.rxbytes.setValue(info.rxbytes);
+						]]></script>
 
-									thisclass.m_rxdropped.setValue(info.rxdropped);
-									thisclass.m_txdropped.setValue(info.txdropped);
-									thisclass.m_rxerrors.setValue(info.rxerrors);
-									thisclass.m_txerrors.setValue(info.txerrors);
-									
-									thisclass.m_rxframeerr.setValue(info.rxframeerr);
-									thisclass.m_rxovererr.setValue(info.rxovererr);
-									thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
-									thisclass.m_collisions.setValue(info.collisions);
-									thisclass.m_durationsec.setValue(info.durationsec);
-									thisclass.m_durationnsec.setValue(info.durationnsec);
-								]]></script>
-								<set name="thisclass.m_currenttime" value="context.currenttime"/>
-							</then>
-							<else>
-								<set name="context.txbytestmp" value="thisclass.m_txbytes.toString()"/>
-								<set name="context.rxbytestmp" value="thisclass.m_rxbytes.toString()"/>
-								<script><![CDATA[
-									var info = JSON.parse(context.portstate.toString());
-									context.txbytes.setValue(info.txbytes);
-									context.rxbytes.setValue(info.rxbytes);
-								]]></script>
-
-								<python><![CDATA[
+						<python><![CDATA[
 import os;
 import libstarlang;
 
@@ -419,7 +396,6 @@ else:
 	else:
 		c = (a - b)/runTimeDifference;
 		c = int(c);
-
 	d = int(rxbytes,10);
 	e = int(rxbytestmp,10);
 	if d==e:
@@ -432,31 +408,29 @@ libstarlang.setValueULongLong("thisclass.m_txspeed",c);
 libstarlang.setValueULongLong("thisclass.m_rxspeed",f);
 libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 
-								]]></python>
-								<syslog level="INFO"><![CDATA[thisclass.m_txspeed= <%=thisclass.m_txspeed.toString()%>]]></syslog>
+						]]></python>
+						<syslog level="INFO"><![CDATA[thisclass.m_txspeed= <%=thisclass.m_txspeed.toString()%>]]></syslog>
 
-								<script><![CDATA[
-									var info = JSON.parse(context.portstate.toString());
-									thisclass.m_rxpackets.setValue(info.rxpackets);
-									thisclass.m_txpackets.setValue(info.txpackets);
-									thisclass.m_rxbytes.setValue(info.rxbytes);
-									thisclass.m_txbytes.setValue(info.txbytes);
+						<script><![CDATA[
+							var info = JSON.parse(context.portstate.toString());
+							thisclass.m_rxpackets.setValue(info.rxpackets);
+							thisclass.m_txpackets.setValue(info.txpackets);
+							thisclass.m_rxbytes.setValue(info.rxbytes);
+							thisclass.m_txbytes.setValue(info.txbytes);
 
-									thisclass.m_rxdropped.setValue(info.rxdropped);
-									thisclass.m_txdropped.setValue(info.txdropped);
-									thisclass.m_rxerrors.setValue(info.rxerrors);
-									thisclass.m_txerrors.setValue(info.txerrors);
-									
-									thisclass.m_rxframeerr.setValue(info.rxframeerr);
-									thisclass.m_rxovererr.setValue(info.rxovererr);
-									thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
-									thisclass.m_collisions.setValue(info.collisions);
-									thisclass.m_durationsec.setValue(info.durationsec);
-									thisclass.m_durationnsec.setValue(info.durationnsec);
+							thisclass.m_rxdropped.setValue(info.rxdropped);
+							thisclass.m_txdropped.setValue(info.txdropped);
+							thisclass.m_rxerrors.setValue(info.rxerrors);
+							thisclass.m_txerrors.setValue(info.txerrors);
+							
+							thisclass.m_rxframeerr.setValue(info.rxframeerr);
+							thisclass.m_rxovererr.setValue(info.rxovererr);
+							thisclass.m_rxcrcerr.setValue(info.rxcrcerr);
+							thisclass.m_collisions.setValue(info.collisions);
+							thisclass.m_durationsec.setValue(info.durationsec);
+							thisclass.m_durationnsec.setValue(info.durationnsec);
 
-								]]></script>
-							</else>
-						</if>
+						]]></script>
 					</then>
 					<else>
 						<exit/>
@@ -523,6 +497,8 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 						json['bytes_tx']=thisclass.m_txbytes.toString();
 						json['pkt_rx_drp']=thisclass.m_rxdropped.toString();
 						json['pkt_tx_drp']=thisclass.m_txdropped.toString();
+						json['tx_speed']=thisclass.m_txspeed.toString();
+						json['rx_speed']=thisclass.m_rxspeed.toString();
 						json['duration']=thisclass.m_durationsec.toString();
 						var jsonstring=JSON.stringify(json);
 						context.jsonstring.setValue(jsonstring);
@@ -698,22 +674,6 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 					context.outjson.setValue(strjson);
 				]]></script>
 			</function>
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
 			
 			<function name="GetAllPortInfo">
 				<parameters>

@@ -412,6 +412,7 @@
 			<string name="strjson"/>
 		<messageblock name="msgblock"/>
 		</parameters>
+		<syslog level="INFO"><![CDATA[packout strjson = <%=context.strjson.toString()%>]]></syslog>
 		<params name="openflowparams" />
         <log>Send_OFPT13_PACKET_OUT</log>
 		<set name="openflowparams" paramname="transportid" value="context.transportid"/>

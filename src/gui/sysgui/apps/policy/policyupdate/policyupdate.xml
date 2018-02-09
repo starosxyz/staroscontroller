@@ -42,7 +42,60 @@
 	</function>
 
 	<function name="send1PolicyMessage">
-		
+		<string name="id"/>
+		<object name="policy"/>
+		<string name="json"/>
+		<string name="type"/>
+		<string name="srcip"/>
+		<string name="dstip"/>
+		<string name="content"/>
+		<boolean name="result"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			context.type.setValue(data.type)
+			context.id.setValue(data.id)
+		]]></script>
+		<if cond="context.type.toString() == 'get'">
+			<then>
+				<function name="getPolicy" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.id.toString()"/>
+						<object name="onepolicy" out="context.policy"/>
+					</parameters>
+				</function>
+				<if cond="context.policy.ptr != null">
+					<then>
+						<syslog level="INFO">context.policy.ptr != null -------------*******************^^^^^^^^^^^^^^^^</syslog>
+						<function name="OnePolicyObjectToJsonString" class="context.policy">
+							<parameters>
+								<string name="policyObjectToJson" out="context.json"/>
+							</parameters>
+						</function>
+						<syslog level="INFO"><![CDATA[<%=context.json.toString()%>]]></syslog>
+						<systemgui name="context.policyupdateobj" action="SendMessage">
+							<jsonsrc src="context.json"/>
+						</systemgui>
+					</then>
+				</if>
+			</then>
+			<elseif cond="context.type.toString() == 'update'">
+				<script><![CDATA[
+					var data = JSON.parse(event.getParam('eventdata').toString())
+					context.srcip.setValue(data.srcip)
+					context.dstip.setValue(data.dstip)
+					context.content.setValue(data.content)
+				]]></script>
+				<function name="UpdatePolicy" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.id.toString()"/>
+						<string name="srcIp" in="context.srcip.toString()"/>
+						<string name="dstIp" in="context.dstip.toString()"/>
+						<string name="content" in="context.content.toString()"/>
+						<boolean name="updateResult" out="context.result"/>
+					</parameters>
+				</function>
+			</elseif>
+		</if>
 	</function>
 
 	<events>

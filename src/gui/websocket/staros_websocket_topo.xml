@@ -305,7 +305,7 @@
 					{
 						"event": "showSummary",
 						"payload": {
-							"title": "ONOS Summary",
+							"title": "Staros Summary",
 							"type": "node",
 							"id": null,
 							"propOrder": [

@@ -22,6 +22,7 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/api_error.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/device/staros_api_device.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/flows/staros_api_flows.xml"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/staros_api_map.xml"/>
@@ -30,7 +31,7 @@
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/statistics/staros_api_statistics.xml"/>
 	
 	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/>
-	
+	<include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/connectivity/connectivity_api.xml"/>
 	
 	<!--include src="/opt/staros.xyz/staroscontroller/starlang/gui/restfulapi/intents/staros_api_intent.xml"/-->
 	<!--WebGUI-->

@@ -92,6 +92,20 @@
 				<set name="context.mac" value="thisclass.m_mac.toString()"/>
 				<set name="context.vlan" value="thisclass.m_vlan.toString()"/>
 			</function>
+
+			<function name="getPort">
+				<parameters>	
+					<string name="port" />			
+				</parameters>
+				<set name="context.port" value="thisclass.m_port"/>
+			</function>
+
+			<function name="getIP">
+				<parameters>	
+					<string name="ip" />			
+				</parameters>
+				<set name="context.ip" value="thisclass.m_ip"/>
+			</function>
 			
 			<!--
 				@brief		打印host信息
@@ -1022,6 +1036,17 @@ else:
 					</if>
 				</for>	
 			</function>
+
+			<function name="getHostByIP">
+				<parameters>
+					<string name="hostip"/>	
+					<object name="hostobj"/>
+				</parameters>				
+				<set name="context.hostobj" value="thisclass.hostContainer.getValue(context.hostip.toString())"/>				
+			</function>
+
+		
+
 		</public>
 	</class>
 </starlang>

@@ -65,8 +65,7 @@
 				@date		2018/01/24
 				Input:
 					@param ip 	    host的ip信息
-				Output:	
-				F:\staros-controller-1.1.0\src\gui\restfulapi\onos\v1\docs\apis\onos\v1				
+				Output:				
 			-->	
 			<function name="RemoveMonitor"> 
 				<parameters>

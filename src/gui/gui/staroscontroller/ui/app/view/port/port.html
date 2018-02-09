@@ -57,6 +57,8 @@
                 <option value="bytes_tx">Bytes Sent</option>
                 <option value="pkt_rx_drp">Pkts RX Dropped</option>
                 <option value="pkt_rx_drp">Pkts TX Dropped</option>
+                <option value="tx_speed">TXSPEED </option>
+                <option value="rx_speed">RXSPEED </option>
                 <option value="duration">Duration (sec) </option>
             </select>
         </div>
@@ -73,6 +75,8 @@
                     <td class="right" colId="bytes_tx" sortable>Bytes Sent </td>
                     <td class="right" colId="pkt_rx_drp" sortable>Pkts RX Dropped </td>
                     <td class="right" colId="pkt_tx_drp" sortable>Pkts TX Dropped </td>
+                    <td class="right" colId="tx_speed" sortable>TXSPEED</td>
+                    <td class="right" colId="rx_speed" sortable>RXSPEED</td>
                     <td class="right" colId="duration" sortable>Duration (sec) </td>
                 </tr>
             </table>
@@ -95,6 +99,8 @@
                     <td class="right">{{port.bytes_tx}}</td>
                     <td class="right">{{port.pkt_rx_drp}}</td>
                     <td class="right">{{port.pkt_tx_drp}}</td>
+                    <td class="right">{{port.tx_speed}}</td>
+                    <td class="right">{{port.rx_speed}}</td>
                     <td class="right">{{port.duration}}</td>
                 </tr>
             </table>

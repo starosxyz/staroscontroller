@@ -1,0 +1,9 @@
+ curl -X POST --header 'Content-Type: application/octet_stream' --header 'Accept: application/json' -d '{ \ 
+   "ip": "100.1.1.10" \ 
+ }' 'http://192.168.52.131:9922/staroscontroller/v1/connectivity/100.1.1.10/100.1.1.200'
+ 
+ 
+ 
+ curl -X DELETE --header 'Content-Type: application/octet_stream' --header 'Accept: application/json' -d '{ \ 
+   "ip": "100.1.1.200" \ 
+ }' 'http://192.168.52.131:9922/staroscontroller/v1/connectivity/100.1.1.10/100.1.1.200'

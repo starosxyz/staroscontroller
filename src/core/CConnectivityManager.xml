@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		CConnectivityManager.xml
+	@brief 		CConnectivityManager
+	@version 	1.1.0
+	@auth 		YY
+	@date		2018/02/06
+	
+	
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<class name="CConnectivity">
+		<private>
+			<string name="name"/>
+			<string name="policy"/>
+		</private>
+		<public>
+			<function name="CConnectivity">
+				<parameters>
+					<string name="name"/>
+					<string name="policy"/>
+				</parameters>
+				<set name="thisclass.name" value="context.name.toString()"/>
+				<set name="thisclass.policy" value="context.policy.toString()"/>				
+			</function>
+			<function name="getName">
+				<parameters>
+					<string name="name"/>
+				</parameters>
+				<set name="context.name" value="thisclass.name.toString()"/>
+			</function>
+			<function name="getPolicy">
+				<parameters>
+					<string name="policy"/>
+				</parameters>
+				<set name="context.policy" value="thisclass.policy.toString()"/>
+			</function>
+			<function name="getPolicyObject">
+				<parameters>
+					<object name="policyObj"/>
+				</parameters>
+				<object name="policyobj"/>
+				<function name="getPolicy" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="thisclass.policy.toString()"/>
+						<object name="onepolicy" out="context.policyobj"/>
+					</parameters>
+				</function>
+				<if cond="context.policyobj.ptr != null">
+					<then>
+						<set name="context.policyObj" value="context.policyobj"/>
+					</then>
+				</if>
+			</function>
+			<function name="toJson">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<object name="policyobj"/>
+				<string name="policyjson"/>
+				<function name="getPolicyObject">
+					<parameters>
+						<object name="policyObj" out="context.policyobj"/>
+					</parameters>
+				</function>
+				<function name="OnePolicyObjectToJsonString" class="context.policyobj">
+					<parameters>
+						<string name="policyObjectToJson" out="context.policyjson"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+					var root = new Object()
+					root.name = thisclass.name.toString()					
+					root.policyid = thisclass.policy.toString()
+					var data = JSON.parse(context.policyjson.toString())
+					root.srcIp = data.srcIp
+					root.dstIp = data.dstIp
+					context.json.setValue(JSON.stringify(root))
+				]]></script>
+			</function>
+		</public>
+	</class>
+	
+	<class name="CConnectivityManager">
+		<private>
+			<hashmap name="connectivityContainer" keytype="string" valuetype="object"/>
+		</private>
+		<public>
+			<function name="CConnectivityManager">
+			</function>
+
+			<function name="addConnectivity">
+				<parameters>
+					<string name="name"/>
+					<string name="policy"/>
+				</parameters>
+				<object name="connectivity"/>
+				<object name="policyobj"/>		
+				<string name="srcip"/>
+				<string name="dstip"/>		
+				<function name="getPolicy" class="PolicyManager">
+					<parameters>
+						<string name="policyid" in="context.policy.toString()"/>
+						<object name="onepolicy" out="context.policyobj"/>
+					</parameters>
+				</function>
+				<if cond="context.policyobj.ptr != null">
+					<then>
+						<new name="connectivity" class="CConnectivity">
+							<parameters>
+								<string name="name" in="context.name.toString()"/>
+								<string name="policy" in="context.policy.toString()"/>
+							</parameters>
+						</new>
+						<function name="GetSrcIp" class="context.policyobj">
+							<parameters>
+								<string name="srcIp" out="context.srcip"/>
+							</parameters>
+						</function>
+						<function name="GetDstIp" class="context.policyobj">
+							<parameters>
+								<string name="dstIp" out="context.dstip"/>
+							</parameters>
+						</function>
+						<connectivity ofobj="context.openflowserverobj" action="Install" h1="context.srcip.toString()" h2="context.dstip.toString()"/>
+						<insert name="thisclass.connectivityContainer" key="context.name.toString()" value="context.connectivity"/>
+					</then>
+				</if>
+			</function>
+			<function name="get1Connectivity">
+				<parameters>
+					<string name="name"/>
+					<object name="connectivityobj"/>
+				</parameters>
+				<if cond="thisclass.connectivityContainer.hasValue(context.name.toString())">
+					<then>
+						<set name="context.connectivityobj" value="thisclass.connectivityContainer.getValue(context.name.toString())"/>
+					</then>
+				</if>
+			</function>
+			<function name="deleteConnectivity">
+				<parameters>
+					<string name="name"/>
+				</parameters>
+				<object name="connectivityobj"/>
+				<object name="policyobj"/>
+				<string name="srcip"/>
+				<string name="dstip"/>
+				<function name="get1Connectivity">
+					<parameters>
+						<string name="name" in="context.name.toString()"/>
+						<object name="connectivityobj" out="context.connectivityobj"/>
+					</parameters>
+				</function>
+				<if cond="context.connectivityobj.ptr != null">
+					<then>
+						<function name="getPolicyObject" class="context.connectivityobj">
+							<parameters>
+								<object name="policyObj" out="context.policyobj"/>
+							</parameters>
+						</function>
+						<function name="GetSrcIp" class="context.policyobj">
+							<parameters>
+								<string name="srcIp" out="context.srcip"/>
+							</parameters>
+						</function>
+						<function name="GetDstIp" class="context.policyobj">
+							<parameters>
+								<string name="dstIp" out="context.dstip"/>
+							</parameters>
+						</function>
+						<connectivity ofobj="context.openflowserverobj" action="UnInstall" h1="context.srcip.toString()" h2="context.dstip.toString()"/>
+						<remove name="thisclass.connectivityContainer" key="context.name"/>
+					</then>
+				</if>
+			</function>
+			<function name="updateConnectivity">
+				<parameters>
+					<string name="name"/>
+					<string name="policy"/>
+				</parameters>
+				<object name="connectivityobj"/>
+				<object name="connectivity"/>
+				<function name="get1Connectivity">
+					<parameters>
+						<string name="name" in="context.name.toString()"/>
+						<object name="connectivityobj" out="context.connectivityobj"/>
+					</parameters>
+				</function>
+				<if cond="context.connectivityobj.ptr != null">
+					<then>
+						<function name="getPolicy" class="PolicyManager">
+							<parameters>
+								<string name="policyid" in="context.policy.toString()"/>
+								<object name="onepolicy" out="context.policyobj"/>
+							</parameters>
+						</function>
+						<if cond="context.policyobj.ptr != null">
+							<then>						
+								<remove name="thisclass.connectivityContainer" key="context.name"/>
+								<new name="connectivity" class="CConnectivity">
+									<parameters>
+										<string name="name" in="context.name.toString()"/>
+										<string name="policy" in="context.policy.toString()"/>
+									</parameters>
+								</new>
+								<insert name="thisclass.connectivityContainer" key="context.name" value="context.connectivity"/>
+							</then>
+						</if>
+					</then>
+				</if>
+			</function>
+			<function name="getAll2Json">
+				<parameters>
+					<string name="json"/>
+				</parameters>
+				<pair name="conpair" keytype="string" value="object"/>
+				<object name="conobj"/>
+				<list name="outjsonlist" valuetype="string"/>
+				<string name="outjson"/>				
+				<for var="context.conpair" in="thisclass.connectivityContainer">
+					<set name="context.conobj" value="context.conpair.second()"/>
+					<if cond="context.conobj.ptr != null">
+						<then>
+							<function name="toJson" class="context.conobj">
+								<parameters>
+									<string name="json" out="context.outjson"/>
+								</parameters>
+							</function>
+							<insert name="context.outjsonlist" value="context.outjson.toString()"/>
+						</then>
+					</if>
+				</for>
+				<script><![CDATA[
+					var myArray=new Array()						
+					var firstpolicyString = context.outjsonlist.getFirst()
+					while(firstpolicyString != null){
+						var jsoninfo = JSON.parse(firstpolicyString.toString())
+							myArray.push(jsoninfo)
+							firstpolicyString = context.outjsonlist.getNext()
+					}
+					var root = new Object()
+					root.connectivitys = myArray
+					context.json.setValue(JSON.stringify(root))
+				]]></script>
+			</function>
+		</public>
+	</class>
+</starlang>

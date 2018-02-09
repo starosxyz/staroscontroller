@@ -42,7 +42,46 @@
 	</function>
 
 	<function name="send1servicechainMessage">
-		
+		<string name="name"/>
+		<object name="connectivityobj"/>
+		<string name="type"/>
+		<string name="policy"/>
+		<string name="policylist"/>
+		<string name="json"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			context.type.setValue(data.type)
+			context.name.setValue(data.name)
+		]]></script>
+		<if cond="context.type.toString() == 'get'">
+			<then>							
+				<function name="getAllID" class="PolicyManager">
+					<parameters>
+						<string name="json" out="context.policylist"/>
+					</parameters>
+				</function>
+				<script><![CDATA[
+					var root = JSON.parse(context.policylist.toString())
+					root.name = context.name.toString()
+					context.json.setValue(JSON.stringify(root))
+				]]></script>
+				<systemgui name="context.servicechainupdateobj" action="SendMessage">
+					<jsonsrc src="context.json"/>
+				</systemgui>
+			</then>
+			<elseif cond="context.type.toString() == 'update'">
+				<script><![CDATA[
+					var data = JSON.parse(event.getParam('eventdata').toString())
+					context.policy.setValue(data.policy)
+				]]></script>
+				<function name="updateConnectivity" class="ConnectivityManager">
+					<parameters>
+						<string name="name" in="context.name.toString()"/>
+						<string name="policy" in="context.policy.toString()"/>
+					</parameters>
+				</function>
+			</elseif>
+		</if>
 	</function>
 
 	<events>

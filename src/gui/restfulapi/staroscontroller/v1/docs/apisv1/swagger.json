@@ -7810,153 +7810,154 @@
 			}
 		},
 		"FlowsBatchPost": {
-    "type": "object",
-    "title": "flows",
-    "required": [
-        "flows"
-    ],
-    "properties": {
-		"flows":{
 			"type": "object",
-			"title": "flow",
-			"required": ["xid", "cookie", "cookiemask", "tableid", "command", 
-				"idletimeout", "hardtimeout", "priority", "bufferid", "outport",
-				"outgroup", "flags", "match", "instructionlist"],
+			"title": "flows",
+			"required": [
+				"flows"
+			],
 			"properties": {
-				"xid": {
-					"type": "string",
-					"example": "0"
-				},
-				"cookie": {
-					"type": "string",
-					"example": "0"
-				},
-				"cookiemask": {
-					"type": "string",
-					"example": "0"
-				},
-				"tableid": {
-					"type": "string",
-					"example": "0"
-				},
-				"command": {
-					"type": "string",
-					"example": "0"
-				},
-				"idletimeout": {
-					"type": "string",
-					"example": "0"
-				},
-				"hardtimeout": {
-					"type": "string",
-					"example": "0"
-				},
-				"priority": {
-					"type": "string",
-					"example": "4000"
-				},
-				"bufferid": {
-					"type": "string",
-					"example": "0xffffffff"
-				},
-				"outport": {
-					"type": "string",
-					"example": "0xffffffff"
-				},
-				"outgroup": {
-					"type": "string",
-					"example": "0xffffffff"
-				},
-				"flags": {
-					"type": "string",
-					"example": "1"
-				},
-				"match": {
-					"type": "object",
-					"title": "match",
-					"required": ["type", "matchfieldlist"],
-					"properties": {
-						"type": {
-							"type": "string",
-							"example": "1"
-						},
-						"matchfieldlist": {
-							"type": "array",
-							"xml": {
-								"name": "matchfieldlist",
-								"wrapped": true
-							},
-							"items": {
-								"type": "object",
-								"title": "matchfield",
-								"required": ["oxmclass", "oxmfield", "hasmask", "inport"],
-								"properties": {
-									"oxmclass": {
-										"type": "string",
-										"example": "0x8000"
-									},
-									"oxmfield": {
-										"type": "string",
-										"example": "6"
-									},
-									"hasmask": {
-										"type": "string",
-										"example": "false"
-									},
-									"inport": {
-										"type": "string",
-										"example": "123"
-									}
-								}
-							}
-						}
-					}
-				},
-				"instructionlist": {
+				"flows":{
 					"type": "array",
 					"xml": {
-						"name": "instructionlist",
+						"name": "flows",
 						"wrapped": true
 					},
 					"items": {
 						"type": "object",
-						"title": "instruction",
-						"required": ["type", "actionlist"],
+						"title": "flow",
+						"required": ["deviceid", "cookie", "cookiemask", "tableid", "command", 
+							"idletimeout", "hardtimeout", "priority", "bufferid", "outport",
+							"outgroup", "flags", "match", "instructionlist"],
 						"properties": {
-							"type": {
+							"deviceid": {
 								"type": "string",
-								"example": "4"
+								"example": "of:1"
 							},
-							"actionlist": {
+							"cookie": {
+								"type": "string",
+								"example": "0"
+							},
+							"cookiemask": {
+								"type": "string",
+								"example": "0"
+							},
+							"tableid": {
+								"type": "string",
+								"example": "0"
+							},
+							"command": {
+								"type": "string",
+								"example": "0"
+							},
+							"idletimeout": {
+								"type": "string",
+								"example": "0"
+							},
+							"hardtimeout": {
+								"type": "string",
+								"example": "0"
+							},
+							"priority": {
+								"type": "string",
+								"example": "4000"
+							},
+							"bufferid": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"outport": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"outgroup": {
+								"type": "string",
+								"example": "0xffffffff"
+							},
+							"flags": {
+								"type": "string",
+								"example": "1"
+							},
+							"match": {
+								"type": "object",
+								"title": "match",
+								"required": ["type", "matchfieldlist"],
+								"properties": {
+									"type": {
+										"type": "string",
+										"example": "1"
+									},
+									"matchfieldlist": {
+										"type": "array",
+										"xml": {
+											"name": "matchfieldlist",
+											"wrapped": true
+										},
+										"items": {
+											"type": "object",
+											"title": "matchfield",
+											"required": ["oxmclass", "oxmfield", "hasmask", "inport"],
+											"properties": {
+												"oxmclass": {
+													"type": "string",
+													"example": "0x8000"
+												},
+												"oxmfield": {
+													"type": "string",
+													"example": "0"
+												},
+												"hasmask": {
+													"type": "string",
+													"example": "false"
+												},
+												"inport": {
+													"type": "string",
+													"example": "2"
+												}
+											}
+										}
+									}
+								}
+							},
+							"instructionlist": {
 								"type": "array",
 								"xml": {
-									"name": "actionlist",
+									"name": "instructionlist",
 									"wrapped": true
 								},
 								"items": {
 									"type": "object",
-									"title": "action",
-									"required": ["type", "oxmclass", "oxmfield", "hasmask", "vlanid"],
+									"title": "instruction",
+									"required": ["type", "actionlist"],
 									"properties": {
 										"type": {
 											"type": "string",
-											"example": "25"
+											"example": "4"
 										},
-										"oxmclass": {
-											"type": "string",
-											"example": "0x8000"
-										},
-										"oxmfield": {
-											"type": "string",
-											"example": "6"
-										},
-										"hasmask": {
-											"type": "string",
-											"example": "false"
-										},
-										"vlanid": {
-											"type": "string",
-											"example": "3"
+										"actionlist": {
+											"type": "array",
+											"xml": {
+												"name": "actionlist",
+												"wrapped": true
+											},
+											"items": {
+												"type": "object",
+												"title": "action",
+												"required": ["type", "outport", "maxlen"],
+												"properties": {
+													"type": {
+														"type": "string",
+														"example": "0"
+													},
+													"outport": {
+														"type": "string",
+														"example": "2"
+													},
+													"maxlen": {
+														"type": "string",
+														"example": "0xffff"
+													}
+												}
+											}
 										}
 									}
 								}
@@ -7965,10 +7966,7 @@
 					}
 				}
 			}
-		}
-		
-    }
-},
+		},
 		"FlowRules": {
 			"type": "object",
 			"title": "flows",

@@ -117,7 +117,7 @@
 					</parameters>
 				</new>
 				<log>qiulei 95 CDevices.xml 95行</log>
-				<new name="sshdevice" class="CSSHDevice"/>
+				<!--new name="sshdevice" class="CSSHDevice"/-->
 				<!-- wangkang 2017/11/22-->
 				<set name="thisclass.m_requestcount" value="0"/>
 				<!--function name="MultiPartPortDescRequest"/-->

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		ConnectivityServicePathDocsApi.xml
+	@brief 		定义路径
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		20180207
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	
+	<!--
+		@brief		添加路径
+		@auth 		qiulei
+		@date		20180207
+		Input:
+		Output: 
+	-->
+	<function name="connectivity_addPath">
+	<!--
+		<function name="allConnectivity"/>			
+		<function name="addPostRequestPath_connectivity"/>
+	-->
+		
+		<function name="otherConnectivityMethods"/>
+	</function>
+
+	<!--
+		@brief		删除路径
+		@auth 		qiulei
+		@date		20180207
+		Input:
+		Output: 
+	-->
+	<function name="connectivity_removePath">
+		<function name="removePath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="'/connectivity/connectivity'"/>			
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<!--
+		@brief		其他请求路径
+		@auth 		qiulei
+		@date		20180207
+		Input:
+		Output: 
+	-->
+	<function name="otherConnectivityMethods">
+		<string name="name"/>
+		<string name="pathconntent"/>
+		<reference variable="pathconntent">
+			<jsonbody><![CDATA[ 
+				{
+					"delete": {
+						"tags": [
+							"connectivity"
+						],
+						"summary": "Remove one Connectivity",
+						"description": "",
+						"parameters": [
+							{
+								"name": "h1",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Connectivity by h1",
+								"required": "true"
+							},
+							{
+								"name": "h2",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Connectivity by h2",
+								"required": "true"
+							}
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/ConnectivityResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					"post": {
+						"tags": [
+							"connectivity"
+						],
+						"summary": "Create a new Connectivity",
+						"description": "",
+						"parameters": [
+							{
+								"name": "h1",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Connectivity by h1",
+								"required": "true"
+							},
+							{
+								"name": "h2",
+								"in": "path",
+								"type": "string",
+								"description": "Delete one Connectivity by h2",
+								"required": "true"
+							}
+						],
+						"consumes": [
+							"application/octet_stream"
+						],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/ConnectivityResult"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<set name="context.name" value="'/connectivity/connectivity/{h1}/{h2}'"/>
+		<function name="addPath" class="APIDocsService">
+			<parameters>
+				<string name="pathname" in="context.name.toString()"/>
+				<string name="pathconntent" in="context.pathconntent.toString()"/>
+			</parameters>
+		</function>
+	</function>
+</starlang>

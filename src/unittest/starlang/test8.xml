@@ -61,11 +61,23 @@ libstarlang.setValueLong("context.runTimeDifference",result2);
 		</function>
 	</function>
 
+	<function name="testIP">
+		<string name="ip" value="'abcde'"/>
+		<python><![CDATA[
+import os;
+import libstarlang;
+addr1=libstarlang.getValueString("context.ip");
+addr=addr1[1];
+print(addr);
+			]]></python>
+	</function>
+
 	<events>		
 		<onevent event="bundleapp.startup">
 			<log level="100">---enter bundleapp.startup		2017.12.15</log>
 			<function name="testPython"/>
 			<function name="testJS"/>
+			<function name="testIP"/>
 		</onevent>
 	</events>
 	

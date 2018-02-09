@@ -31,7 +31,7 @@
 		<set name="clientparams" paramname="category" value="'控制器'"/>
 		<set name="clientparams" paramname="categoryclass" value="''"/>			
 		<set name="clientparams" paramname="id" value="'servicechain'"/>
-		<set name="clientparams" paramname="label" value="'服务链 '"/>
+		<set name="clientparams" paramname="label" value="'主机业务 '"/>
 		<set name="clientparams" paramname="labelclass" value="''"/>			
 		<set name="clientparams" paramname="js" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/servicechain/servicechain.js'"/>
 		<set name="clientparams" paramname="html" value="'/opt/staros.xyz/staroscontroller/starlang/gui/sysgui/apps/servicechain/servicechain.html'"/>
@@ -42,7 +42,34 @@
 	</function>
 
 	<function name="sendservicechainMessage">
-		
+		<string name="name"/>
+		<string name="type"/>		
+		<string name="jsonarray"/>
+		<script><![CDATA[
+			var data = JSON.parse(event.getParam('eventdata').toString())
+			if (data.type == 'remove')
+				context.name.setValue(data.name)
+			context.type.setValue(data.type)						
+		]]></script>
+		<if cond="context.type.toString() == 'remove'">
+			<then>			
+				<function name="deleteConnectivity" class="ConnectivityManager">
+					<parameters>
+						<string name="name" in="context.name.toString()"/>
+					</parameters>
+				</function>
+			</then>
+			<elseif cond="context.type.toString() == 'get'">
+				<function name="getAll2Json" class="ConnectivityManager">
+					<parameters>
+						<string name="json" out="context.jsonarray"/>
+					</parameters>
+				</function>
+				<systemgui name="context.servicechainobj" action="SendMessage">
+					<jsonsrc src="context.jsonarray"/>
+				</systemgui>
+			</elseif>
+		</if>
 	</function>
  
 	<events>		
