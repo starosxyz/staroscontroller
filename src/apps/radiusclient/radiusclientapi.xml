@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		radiusclientapi.xml
+	@brief 		radiusclient's api
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/02/25
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<function name="RegisterHandler_radiusclient">
+		<log level="101">insert RegisterHandler_radiusclient RegisterHandler 28  ---radiusclient.xml</log>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processGetAndPost_radiusclient_Request'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/radiusclient/radiusclient'"/>
+			</parameters>
+		</function>
+		
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processPost_sendmessage_Request'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/radiusclient/sendmessage'"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="UnRegisterHandler_radiusclient">
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/radiusclient/radiusclient'"/>
+			</parameters>
+		</function>
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/radiusclient/sendmessage'"/>
+			</parameters>
+		</function>
+	</function>
+
+	<events>
+		<onevent event="processGetAndPost_radiusclient_Request">
+			<log level="101">enter processGetAndPost_radiusclient_Request  ----radiusclientapi.xml 49</log>
+			<!--处理创建 radiusclient 请求-->
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<log level="100">processGetAndPost_radiusclient_Request  POST ----radiusclientapi.xml 53</log>
+				<!-- 判断jsong格式 start-->
+					<boolean name="isFormatTure" value="true"/>
+					<script><![CDATA[
+						var data=event.getParam('eventdata').toString();
+						try{
+							var jsonObj=JSON.parse(data);
+						}catch(err){
+							context.isFormatTure.setValue(false);
+						}
+					]]></script>
+					<if cond="context.isFormatTure.toBoolean()==false">
+						<then>
+							<function name="jsonFormatErrorResponse"/>
+							<exit/>
+						</then>
+					</if>
+				<!-- 判断jsong格式 end-->
+					<string name="RadiusLocalIP" />
+					<string name="RadiusLocalPort" />
+					<string name="RadiusServerIP" />
+					<string name="RadiusServerPort" />
+					<string name="SharedKey" />
+					<string name="ResponseTimeOut" />
+					<string name="Retransmit" />
+
+					<string name="state" />
+
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						if(info.RadiusLocalIP){
+							context.RadiusLocalIP.setValue(info.RadiusLocalIP);
+						}
+						if(info.RadiusLocalPort){
+							context.RadiusLocalPort.setValue(info.RadiusLocalPort);
+						}
+						if(info.RadiusServerIP){
+							context.RadiusServerIP.setValue(info.RadiusServerIP);
+						}
+						if(info.RadiusServerPort){
+							context.RadiusServerPort.setValue(info.RadiusServerPort);
+						}
+						if(info.SharedKey){
+							context.SharedKey.setValue(info.SharedKey);
+						}
+						if(info.ResponseTimeOut){
+							context.ResponseTimeOut.setValue(info.ResponseTimeOut);
+						}
+						if(info.Retransmit){
+							context.Retransmit.setValue(info.Retransmit);
+						}
+						if(info.state){
+							context.state.setValue(info.state);
+						}
+						/*
+							context.RadiusLocalIP.setValue(info.RadiusLocalIP);
+							context.RadiusLocalPort.setValue(info.RadiusLocalPort);
+							context.RadiusServerIP.setValue(info.RadiusServerIP);
+							context.RadiusServerPort.setValue(info.RadiusServerPort);
+							context.SharedKey.setValue(info.SharedKey);
+							context.ResponseTimeOut.setValue(info.ResponseTimeOut);
+							context.Retransmit.setValue(info.Retransmit);
+							context.state.setValue(info.state);
+						*/
+							context.print("RadiusLocalIP="+info.RadiusLocalIP);
+							context.print("RadiusLocalPort="+info.RadiusLocalPort);
+							context.print("RadiusServerIP="+info.RadiusServerIP);
+							context.print("RadiusServerPort="+info.RadiusServerPort);
+							context.print("SharedKey="+info.SharedKey);
+							context.print("ResponseTimeOut="+info.ResponseTimeOut);
+							context.print("Retransmit="+info.Retransmit);
+							context.print("state="+info.state);
+					]]></script>
+					<if cond="context.state=='active'">
+						<then>
+							<function name="StartRadiusClient">
+								<parameters>
+									<string name="radiusLocalIP" in="context.RadiusLocalIP.toString()"/>
+									<string name="radiusLocalPort"  in="context.RadiusLocalPort.toString()"/>
+									<string name="radiusServerIP"  in="context.RadiusServerIP.toString()"/>
+									<string name="radiusServerPort"  in="context.RadiusServerPort.toString()"/>
+									<string name="sharedKey"  in="context.SharedKey.toString()"/>
+									<string name="responseTimeOut"  in="context.ResponseTimeOut.toString()"/>
+									<string name="retransmit"  in="context.Retransmit.toString()"/>
+									<string name="state"  in="context.state.toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+					<if cond="context.state=='deactive'">
+						<then>
+							<function name="StopRadiusClient">
+								<parameters>
+									<string name="radiusLocalIP" in="context.RadiusLocalIP.toString()"/>
+									<string name="radiusLocalPort"  in="context.RadiusLocalPort.toString()"/>
+									<string name="radiusServerIP"  in="context.RadiusServerIP.toString()"/>
+									<string name="radiusServerPort"  in="context.RadiusServerPort.toString()"/>
+									<string name="sharedKey"  in="context.SharedKey.toString()"/>
+									<string name="responseTimeOut"  in="context.ResponseTimeOut.toString()"/>
+									<string name="retransmit"  in="context.Retransmit.toString()"/>
+									<string name="state"  in="context.state.toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+					<function name="testResponse"/>
+				</then>
+			</if>
+			<!--处理 得到 radiusclient 请求-->
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">processGetAndDelete_AllPolicysRequest  GET  ----radiusclientapi.xml 355</log>
+					<function name="testResponse"/>
+				</then>
+			</if>
+		</onevent>
+		<onevent event="processPost_sendmessage_Request">
+			<log level="100">processPost_sendmessage_Request  POST ----radiusclientapi.xml 53</log>
+			<function name="processPost_sendmessage_Request"/>
+		</onevent>
+	</events>
+
+	
+	<function name="radiusclient_ErrorDataResponse">
+		<parameters>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.code = "-1";
+				one.description = context.description.toString();
+				
+			json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson.setValue(strjson);
+		]]></script>
+		<log level="101"><![CDATA[1173 outjson<%=context.outjson.toString()%> --------radiusclient_ErrorDataResponse]]></log>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<!--qiulei 2018/02/25-->
+	<function name="testResponse">
+		<log level="101">enter testResponse  ----radiusclientapi.xml 217</log>
+		<string name="outjson123"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson123.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson123.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="radiusclient_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		<log level="101">enter radiusclient_successresponse  ----radiusclientapi.xml 629</log>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();					
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.successresponse.setValue(strjson);
+		]]></script>
+
+	</function>
+
+	<function name="jsonFormatErrorResponse">
+		<string name="outjson"/>
+		<reference variable="outjson">
+			<jsonbody><![CDATA[
+				{
+					"result": {
+						"code": "-1",
+						"description": "JSON Format Error"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="processPost_sendmessage_Request">
+		<log level="100">processPost_sendmessage_Request ----radiusclientapi.xml 276</log>
+		<!-- 判断jsong格式 start-->
+			<boolean name="isFormatTure" value="true"/>
+			<string name="strtransportid" value="event.getParam('transportid').toString()"/>
+
+			<script><![CDATA[
+				var data=event.getParam('eventdata').toString();
+				try{
+					var jsonObj=JSON.parse(data);
+				}catch(err){
+					context.isFormatTure.setValue(false);
+				}
+			]]></script>
+			<if cond="context.isFormatTure.toBoolean()==false">
+				<then>
+					<function name="jsonFormatErrorResponse"/>
+					<exit/>
+				</then>
+			</if>
+		<!-- 判断jsong格式 end-->
+
+		<function name="SendRadiusMessage">
+			<parameters>
+				<string name="strjson" in="event.getParam('eventdata').toString()"/>
+			</parameters>
+		</function>
+		
+		<wait event="radiusresponse" timeout="3000" timeoutgoto="timeout_label">
+			<syslog level="INFO"> radius request wait is sucess </syslog>
+			<syslog level="INFO"><![CDATA[radiusresponse event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="outjson123"/>
+			<script><![CDATA[
+				var jsonObj=JSON.parse(event.getParam('eventdata').toString());
+				
+				var one=new Object();
+					one.code = "0";
+					one.description = "ok";
+					one.response=jsonObj;
+				var json = new Object();
+					json.result = one;
+				var strjson=JSON.stringify(json);
+				context.outjson123.setValue(strjson);
+			]]></script>
+			<function name="SendResponse" class="RestfulService">
+				<parameters>
+					<string name="transportid" in="context.strtransportid.toString()"/>
+					<string name="json" in="context.outjson123.toString()"/>
+				</parameters>
+			</function>
+			<goto label="wait_ok_label"/>
+		</wait>
+		<label name="timeout_label"/>
+		<function name="radiusclient_ErrorDataResponse">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="description" in="'Timeout, please try again later.'"/>
+			</parameters>
+		</function>
+		<label name="wait_ok_label"/>
+	</function>
+</starlang>

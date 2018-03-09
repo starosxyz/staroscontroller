@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<starlang xmlns="http://www.staros.xyz/starcore" scope="application">
+	<logconfig dest="stdout"/>
+
+	<function name="test_Try_Catch">
+		
+		<string name="definitioncontent"/>
+		<reference variable="definitioncontent">
+			<jsonbody><![CDATA[
+				
+					"type": "object",
+					"title": "result"
+				}
+			]]></jsonbody>
+		</reference>
+		
+		<script><![CDATA[
+			try{
+			   var jsonObj=JSON.parse(context.definitioncontent.toString());
+			   context.print("title="+jsonObj.title);
+			}catch(err){
+				var txt="代码中存在错误。\n\n";
+				txt+="错误描述：" + err.description + "\n\n";
+				txt+="点击“确定”继续。\n\n";
+				context.print("56 "+txt);
+			}
+		]]></script>
+		<log level="101">execute this row1</log>
+		<log level="101">execute this row2</log>
+	</function>
+
+	<events>		
+		<onevent event="bundleapp.startup">
+			<log level="100">---enter bundleapp.startup		2017.12.15</log>
+			<function name="test_Try_Catch"/>
+		</onevent>
+	</events>
+	
+</starlang>
+
+
+
+
+
+
+
+
+
+

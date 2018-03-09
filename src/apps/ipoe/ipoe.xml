@@ -3,10 +3,10 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		nullapp.xml
-	@brief 		nullapp
+	@file 		ipoe.xml
+	@brief 		ipoe app
 	@version 	1.1.0
-	@auth 		YY
+	@auth 		qiulei
 	@date		2017/08/11
 
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
 	You may obtain a copy of the License at
 
 	http://www.apache.org/licenses/LICENSE-2.0
-
+	
 	Unless required by applicable law or agreed to in writing, software
 	distributed under the License is distributed on an "AS IS" BASIS,
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,10 +22,86 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/ipoe/ipoeapi.xml"/>
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/ipoe/apidocs/IPOEDocsApi.xml"/>
+	
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="hostmanager" value="global.HostManager" reference="true"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="devicemanager" value="global.DeviceManager" reference="true"/>
+	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>
+	<object name="monitormanager" value="global.MonitorManager" reference="true"/>
+	
+	<hashmap name="resourceid_hash" keytype="string" valuetype="string"/>
+	<!--ipoe global object-->
+	<object name="ipoeobject" global="true"/>
+	<ippool name="ippool" ipstart="'10.1.1.1'" ipend="'10.1.1.100'" netmask="'255.255.255.0'"/>
+	<string name="gateway" value="'10.1.1.101'" global="true"/>
+	<string name="primarydns" value="'114.114.114.114'" global="true"/>
+	<string name="secondarydns" value="'114.114.114.114'" global="true"/>
+	<string name="vgateway" value="'10.1.1.210'" global="true"/>
+	<!--
+		@brief		Start DHCP Service
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param ipaddr 	dhcp ip listen address
+	-->
+	<function name="Startdhcpserver">
+		<parameters>
+			<string name="ipaddr"/>
+		</parameters>
+		<params name="ipoeparam"/>
+		<log level="100"> start ipoe </log>
+		<syslog level="INFO">Start dhcp server</syslog>
+		<set name="ipoeparam" paramname="ipaddr" value="context.ipaddr"/>
+		<set name="ipoeparam" paramname="authrequestevent" value="'authrequestevent'"/>
+		<set name="ipoeparam" paramname="clientupevent" value="'clientupevent'"/>
+		<set name="ipoeparam" paramname="clientdownevent" value="'clientdownevent'"/>
+		<set name="ipoeparam" paramname="ignorebroadcastflag" value="'true'"/>
+		<ipoe name="ipoeobject" action="StartDHCP" params="context.ipoeparam"/>
+	</function>
+	<!--
+		@brief		Stop DHCP Service
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param ipaddr 	dhcp ip listen address
+	-->
+	<function name="Stopdhcpserver">
+		<parameters>
+			<string name="ipaddr"/>
+		</parameters>
+		<params name="ipoeparam"/>
+		<log level="100"> stop ipoe </log>
+		<syslog level="INFO">Stop dhcp server</syslog>
+		<set name="ipoeparam" paramname="ipaddr" value="context.ipaddr"/>
+		<set name="ipoeparam" paramname="authrequestevent" value="'authrequestevent'"/>
+		<set name="ipoeparam" paramname="clientupevent" value="'clientupevent'"/>
+		<set name="ipoeparam" paramname="clientdownevent" value="'clientdownevent'"/>
+		<set name="ipoeparam" paramname="ignorebroadcastflag" value="'true'"/>
+		<ipoe name="ipoeobject" action="StopDHCP" params="context.ipoeparam"/>
+	</function>
+	<!--
+		@brief		Send DHCP Alloc Ip Response
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param strjson 	response json message
+	-->
+	<function name="SendDHCPAuthResponse">
+		<parameters>
+			<string name="strjson"/>
+		</parameters>
+		<ipoe name="ipoeobject" action="AuthResponse">
+			<jsonsrc src="context.strjson"/>
+		</ipoe>
+	</function>
 	<events>
-		<onevent event="bundleapp.startup">			
-			<!-- YY 2017-08-21 -->
+		<onevent event="bundleapp.startup">
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'ipoe'"/>
@@ -38,21 +114,168 @@
 					<long name="bundleid" in="context.getCurrentBundleId()"/>					
 				</parameters>
 			</function>			
+		</onevent>	
+
+		<onevent event="authrequestevent">
+			<syslog level="INFO"><![CDATA[authrequestevent event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="responsedata"/>
+			<string name="ipaddr"/>
+			<allocip name="ippool" value="context.ipaddr"/>
+			<log level="100"><![CDATA[ipaddr= <%=context.ipaddr.toString()%>]]> </log>
+			<log level="100"><![CDATA[alloclistsize= <%=context.ippool.alloclistsize().toString()%>]]> </log>
 			
-			
-			<log>null app startup</log>
-		</onevent>			
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				var json = new Object();
+				if(info.sessionid){
+					json['sessionid']=info.sessionid;
+				}
+				if(info.usermac){
+					json['usermac']=info.usermac;
+				}
+				json['subscriberip']=context.ipaddr.toString();	
+				json['subscriberipnetmask']='255.255.255.0';
+				json['gateway']=context.gateway.toString();
+				json['primarydns']=context.primarydns.toString();
+				json['secondarydns']=context.secondarydns.toString();
+				json['leasetime']='3333';
+				context.responsedata.setValue(JSON.stringify(json));
+			]]></script>
+			<function name="SendDHCPAuthResponse">
+				<parameters>
+					<string name="strjson" in="context.responsedata.toString()"/>
+				</parameters>
+			</function>
+		</onevent>
+		<onevent event="clientupevent">
+			<syslog level="INFO"><![CDATA[clientupevent event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="ipaddr"/>
+			<string name="gateway"/>
+			<boolean name="addResult1"/>
+			<boolean name="addResult2"/>
+			<boolean name="vgatewayresult"/>
+			<string name="deviceid"/>
+			<string name="deviceid2"/>
+			<string name="hostport"/>
+			<string name="gatewayport"/>
+			<string name="transportid"/>
+
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				context.ipaddr.setValue(info.ip);
+				context.gateway.setValue(info.gateway);
+			]]></script>
+
+			<function name="Addvgateway" class="context.vgatewaymanager">
+				<parameters>	
+					<string name="ip" in="context.vgateway.toString()"/>	
+					<string name="netmask" in="'255.255.255.0'"/>
+					<string name="vmac" in="'11:12:13:14:15:16'"/>
+					<boolean name="insertResult" out="context.vgatewayresult"/>
+				</parameters>
+			</function>
+
+			<if cond="context.vgatewayresult.toBoolean() != true">
+				<then>
+					<syslog level="INFO">add vGateway is fail</syslog>
+					<exit/>
+				</then>
+			</if>
+
+			<function name="addMonitor" class="context.monitormanager">
+				<parameters>
+					<string name="ip" in="context.gateway.toString()"/>
+					<boolean name="result" out="context.addResult1"/>
+				</parameters>
+			</function>
+			<function name="addMonitor" class="context.monitormanager">
+				<parameters>
+					<string name="ip" in="context.ipaddr.toString()"/>
+					<boolean name="result" out="context.addResult2"/>
+				</parameters>
+			</function>
+
+			<if cond="(context.addResult1.toBoolean() != true) &amp;&amp; (context.addResult2.toBoolean() != true)">
+				<then>
+					<syslog level="INFO">addMonitor is fail</syslog>
+					<exit/>
+				</then>
+			</if>
+			<wait name="waithost" time="10000"/>
+			<function name="GetTPPByIP" class="context.hostmanager">
+				<parameters>
+					<string name="transport" out="context.transportid"/>
+					<string name="port" out="context.hostport"/>
+					<string name="dpid" out="context.deviceid"/>
+					<string name="ip" in="context.ipaddr.toString()"/>
+				</parameters>
+			</function>
+			<function name="GetTPPByIP" class="context.hostmanager">
+				<parameters>
+					<string name="transport" out="context.transportid"/>
+					<string name="port" out="context.gatewayport"/>
+					<string name="dpid" out="context.deviceid2"/>
+					<string name="ip" in="context.gateway.toString()"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceid.size() == 0">
+				<then>
+					<syslog level="INFO">deviceid is null </syslog>
+					<exit/>
+				</then>
+			</if>
+			<function name="InstallIPOEFlow">
+				<parameters>
+					<string name="dpid" in="context.deviceid.toString()"/>
+					<string name="hostport" in="context.hostport.toString()"/>
+					<string name="gatewayport" in="context.gatewayport.toString()"/>
+					<string name="srcip" in="context.ipaddr.toString()"/>
+					<string name="dstip" in="context.gateway.toString()"/>	
+				</parameters>
+			</function>
+		</onevent>
+
+		<onevent event="clientdownevent">
+			<syslog level="INFO"><![CDATA[clientdownevent event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="ipaddr"/>
+			<string name="gateway"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				context.ipaddr.setValue(info.ip);
+				context.gateway.setValue(info.gateway);
+			]]></script>
+
+			<function name="RemoveMonitor" class="MonitorManager">
+				<parameters>
+					<string name="ip" in="context.gateway.toString()"/>
+					<boolean name="result" out="context.addResult1"/>
+				</parameters>
+			</function>
+			<function name="RemoveMonitor" class="MonitorManager">
+				<parameters>
+					<string name="ip" in="context.ipaddr.toString()"/>
+					<boolean name="result" out="context.addResult2"/>
+				</parameters>
+			</function>
+			<function name="UninstallALLFlow"/>
+
+			<freeip name="ippool" value="context.ipaddr"/>
+			<log level="100"><![CDATA[freelistsize= <%=context.ippool.freelistsize().toString()%>]]></log>	
+		</onevent>		
 		
 		<onevent event="bundleapp.active">
-			<log>null app active</log>
+			<function name="AddDocsAPI_ipoe"/>
+			<function name="RegisterHandler_ipoe"/>
 		</onevent>
+		
 		<onevent event="~bundleapp.deactive">
-
+			<function name="RemoveDocsAPI_ipoe"/>
+			<function name="UnRegisterHandler_ipoe"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
-			
+			<function name="RemoveDocsAPI_ipoe"/>
+			<function name="UnRegisterHandler_ipoe"/>
 		</onevent>
 
 		<onevent event="*">
@@ -62,4 +285,167 @@
 			</function>
 		</onevent>
 	</events>
+
+	<function name="InstallIPOEFlow">
+		<parameters>
+			<string name="dpid"/>
+			<string name="hostport"/>
+			<string name="gatewayport"/>
+			<string name="srcip"/>
+			<string name="dstip"/>
+		</parameters>
+		<string name="modstrjson" />
+		<string name="resourceid"  value=""/>
+		<reference variable="modstrjson">
+			<jsonbody><![CDATA[ 
+					{
+						"deviceid":"of:<%=context.dpid.toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"<%=context.hostport.toString()%>"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x0800"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"11",
+										"hasmask":"false",
+										"srcip":"<%=context.srcip.toString()%>"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"12",
+										"hasmask":"false",
+										"dstip":"<%=context.dstip.toString()%>"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"<%=context.gatewayport.toString()%>",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<string name="modstrjson2" />
+		<string name="resourceid2"  value=""/>
+		<reference variable="modstrjson2">
+			<jsonbody><![CDATA[ 
+					{
+						"deviceid":"of:<%=context.dpid.toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"0",
+										"hasmask":"false",
+										"inport":"<%=context.gatewayport.toString()%>"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x0800"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"11",
+										"hasmask":"false",
+										"srcip":"<%=context.dstip.toString()%>"
+									},
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"12",
+										"hasmask":"false",
+										"dstip":"<%=context.srcip.toString()%>"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"<%=context.hostport.toString()%>",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<string name="outflowid" out="context.resourceid"/>
+				<string name="strjson" in="context.modstrjson.toString()"/>
+				<string name="appId" in="'ipoe'"/>
+				<string name="datapathid" in="context.dpid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+		
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<string name="outflowid" out="context.resourceid2"/>
+				<string name="strjson" in="context.modstrjson2.toString()"/>
+				<string name="appId" in="'ipoe'"/>
+				<string name="datapathid" in="context.dpid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+	</function>
+
+	<function name="UninstallALLFlow">
+		<pair name="oneflowid" keytype="string" valuetype="string"/>
+			<for var="context.oneflowid" in="thisclass.resourceid_hash">				
+				<function name="UnInstallFlow" class="context.flowservice">
+					<parameters>
+						<string name="flowid" in="context.oneflowid.first().toString()"/>			
+						<string name="datapathid" in="context.oneflowid.second().toString()"/>
+					</parameters>
+				</function>
+			</for>
+	</function>
 </starlang>

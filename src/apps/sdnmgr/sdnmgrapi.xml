@@ -265,19 +265,13 @@
 	<events>
 		<!-- qiulei -->
 		<onevent event="getflowbyFlowid">
-			<log level="101">enter getflowbyFlowid  ----sdnmgrapi.xml 263</log>
 			<function name="getflowbyFlowid"/>
 		</onevent>
 		
 		<!-- qiulei -->
 		<onevent event="getallflows">
-			<log level="101">enter getallflows  ----sdnmgrapi.xml 269</log>
 			<if cond="event.getParam('method').toString() == 'GET'">
 				<then>
-					<log level="100">getallflows  ----sdnmgrapi.xml 272</log>
-					
-					
-					<log level="100">getflowbyip  ----sdnmgrapi.xml 275</log>
 					<string name="deviceid"/>
 					<object name="deviceobj"/>
 					<object name="flowmgr"/>
@@ -832,6 +826,7 @@
 			<log level="101"><![CDATA[method type=<%=event.getParam('method').toString()%>  ----sdnmgrapi.xml 139]]></log>
 			<if cond="event.getParam('method').toString() == 'DELETE'">
 				<then>
+					<function name="UninstallALLFlow" class="context.sdnpolicymgr"/>
 					<log level="100">processDeleteOnePolicyRequest  ----sdnmgrapi.xml 142</log>
 					<string name="policyid"/>
 					<script><![CDATA[
@@ -935,10 +930,19 @@
 			
 			<if cond="context.hostobj.ptr==null">
 				<then>
-					<function name="sdnmgr_ErrorDataResponse">
+					<script><![CDATA[
+						var onearray = new Object();
+						onearray.ipaddr="0";
+						onearray.port="0";
+					 	onearray.workstate = "deactive";				
+						onearray.sendbandwidth="0";
+						onearray.receive="0";
+						context.jsonstr.setValue(JSON.stringify(onearray));
+					]]></script>
+					<function name="SendResponse" class="RestfulService">
 						<parameters>
 							<string name="transportid" in="event.getParam('transportid').toString()"/>
-							<string name="description" in="'The hostobj is null !'"/>
+							<string name="json" in="context.jsonstr.toString()"/>
 						</parameters>
 					</function>
 					<exit/>
@@ -1050,8 +1054,6 @@
 		
 		<!--处理得到 All ports 请求-->
 		<onevent event="processGetAllPortsOfDeviceRequest">
-			<log level="101">enter processGetAllPortsOfDeviceRequest  ----sdnmgrapi.xml 163</log>
-			<log level="101"><![CDATA[method type=<%=event.getParam('method').toString()%>  ----sdnmgrapi.xml 154]]></log>
 			<if cond="event.getParam('method').toString() == 'GET'">
 				<then>
 					<log level="100">processGetAllPortsOfDeviceRequest  ----sdnmgrapi.xml 166</log>
@@ -1347,9 +1349,12 @@
 	
 	<function name="addAllPolicys">
 		<log level="100">enter addAllPolicys Method  ----sdnmgrapi.xml 456</log>
-		<function name="DeleteAllPolicy" class="context.sdnpolicymgr"/>
-		<function name="UninstallALLFlow"/>
+		<function name="deleteAllPolicys"/>
+		
+		<function name="UninstallALLFlow" class="context.sdnpolicymgr"/>
 		<list name="typelist" valuetype="string"/>
+		<list name="outportlist" valuetype="string"/>
+		<string name="inport"/>
 		<string name="policyid"/>
 		<string name="successresponse"/>
 		<string name="srcdevicetype"/>
@@ -1359,6 +1364,7 @@
 		<string name="priority"/>
 		<object name="oneSDNMGRTypeMgr"/>
 		<boolean name="flow_addResult" value="false"/>
+		<string name="tempport"/>
 		<new name="oneSDNMGRTypeMgr" class="CSDNMGRTypeManager"/>
 		<syslog level="INFO"><![CDATA[addAllPolicys = <%= event.getParam('eventdata').toString()%>]]></syslog>
 		<script><![CDATA[
@@ -1370,9 +1376,9 @@
 			var policyid=json.policyid.toString();
 			var typeArr=json.policy;
 			
-			for(var i=0;i<typeArr.length;i++){
+			for(var i=0;i<typeArr.length;i++)
+			{
 				var oneTypeJsonStr=JSON.stringify(typeArr[i]);
-				context.print("oneTypeJsonStr="+oneTypeJsonStr);
 				context.typelist.addValue(oneTypeJsonStr);
 			}
 			
@@ -1447,6 +1453,20 @@
 				<log level="100"><![CDATA[insert table eventdata <%=event.getParam('eventdata').toString()%>]]></log>
 			</wait>
 			<log level="101"><![CDATA[数据插入完毕]]></log>
+			<!--
+			<if cond="context.policyid.toString()=='6'">
+				<then>
+					<function name="GetportByTR" class="context.sdndevicemgr">
+						<parameters>
+							<string name="port" out="context.tempport"/>
+							<string name="devicetype" in="context.dstdevicetype.toString()"/>
+							<string name="devicerole" in="context.dstdevicerole.toString()"/>
+						</parameters>
+					</function>
+					<insert name="outportlist" value="context.tempport.toString()"/>
+				</then>
+			</if>
+			-->
 			<if cond="(context.policyid.toString()!='5')&amp;&amp;(context.policyid.toString()!='6')">
 				<then>
 					<function name="InstallFlow" class="context.sdnpolicymgr">
@@ -1473,8 +1493,86 @@
 				<object name="sdnmgrTypeMgr" in="context.oneSDNMGRTypeMgr"/>
 			</parameters>
 		</function>
-		<if cond="(context.policyid.toString()=='5')||(context.policyid.toString()=='6')">
+		<if cond="context.policyid.toString()=='6'">
 			<then>
+				<set name="context.temp" value="'1'"/>
+				<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
+					<parameters>
+						<string name="priority" in="'1'"/>
+						<string name="srcdevicetype" out="context.srcdevicetype"/>
+						<string name="srcdevicerole" out="context.srcdevicerole"/>
+						<string name="dstdevicetype" out="context.dstdevicetype"/>
+						<string name="dstdevicerole" out="context.dstdevicerole"/>
+					</parameters>
+				</function>
+				
+				<if cond="context.srcdevicetype.toString()==''">
+					<then>
+						<exit/>
+					</then>
+					<else>
+						<function name="InstallLBFlow" class="context.sdnpolicymgr">
+							<parameters>
+								<string name="srcudp" in="'1122'"/>
+								<string name="srcdevicetype" in="context.srcdevicetype.toString()"/>
+								<string name="srcdevicerole" in="context.srcdevicerole.toString()"/>
+								<string name="dstdevicetype" in="context.dstdevicetype.toString()"/>
+								<string name="dstdevicerole" in="context.dstdevicerole.toString()"/>
+								<boolean name="flow_is" out="context.flow_addResult"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</then>
+		</if>
+		<!--
+		<if cond="context.policyid.toString()=='5'">
+			<then>
+				<string name="outportstr"/>
+				<string name="deviceid"/>
+				<function name="GetportByTR" class="context.sdndevicemgr">
+					<parameters>
+						<string name="port" out="context.inport"/>
+						<string name="devicetype" in="context.srcdevicetype.toString()"/>
+						<string name="devicerole" in="context.srcdevicerole.toString()"/>
+					</parameters>
+				</function>
+				<script><![CDATA[	
+						var json = new Object();
+						var myArray=new Array();
+						
+						var firstoutport = context.outportlist.getFirst();
+						while(firstoutport != null){
+							var str = new Object();
+							str['port']=firstoutport;
+							myArray.push(str);
+							firstoutport = context.outportlist.getNext();
+						}
+					json['Outport']=myArray;
+					var strjson=JSON.stringify(json);
+					context.outportstr.setValue(strjson);
+				]]></script>
+				<syslog level="INFO"><![CDATA[outportstr =<%=context.outportstr.toString()%>]]></syslog>
+				<function name="GetdpidByTR" class="context.sdndevicemgr">
+					<parameters>
+						<string name="dpid" out="context.deviceid"/>
+						<string name="devicetype" in="context.srcdevicetype.toString()"/>
+						<string name="devicerole" in="context.srcdevicetype.toString()"/>
+					</parameters>
+				</function>
+				<function name="InstallGroupFlow" class="context.sdnpolicymgr">
+					<parameters>
+						<string name="inport" in="context.inport.toString()"/>
+						<string name="outportstr" in="context.outportstr.toString()"/>
+						<string name="datapathid" in="context.deviceid.toString()"/>
+					</parameters>
+				</function>
+			</then>
+		</if>
+		-->
+		<if cond="context.policyid.toString()=='5'">
+			<then>
+				<set name="context.apriority" value="'1'"/>
 				<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
 					<parameters>
 						<string name="priority" in="'1'"/>
@@ -1616,51 +1714,29 @@
 				
 				<if cond="context.handledata.toString() != 'null'">
 					<then>
-						<script><![CDATA[
-							var final = new Object();
-							var policyNewArr = new Array();
-							var ptypeArr = new Array();
-							
+						<script><![CDATA[							
+							var myarry = new Array();
+							var policy = new Object();
 							var jsonobj = JSON.parse(context.data.toString());
-							var policyArr=jsonobj.data;
-							for (var i = 0; i < policyArr.length; i++){
-								var policyid = JSON.parse(policyArr[i]).policyid;
-								
-								var ptypeobj = new Object();
-									ptypeobj.srcdevicetype = JSON.parse(policyArr[i]).srcdevicetype;
-									ptypeobj.srcdevicerole = JSON.parse(policyArr[i]).srcdevicerole;
-									ptypeobj.dstdevicetype = JSON.parse(policyArr[i]).dstdevicetype;
-									ptypeobj.dstdevicerole = JSON.parse(policyArr[i]).dstdevicerole;
-									ptypeobj.priority = JSON.parse(policyArr[i]).priority;
-									
-								var myBoolean=new Boolean(true);
-								context.print("981 myBoolean="+myBoolean);
-								for (var j = 0; j < policyNewArr.length; j++){
-									context.print("983 policyNewArr[j].policyid="+policyNewArr[j].policyid+";policyid"+policyid);
-									if(policyNewArr[j].policyid==policyid){
-										(policyNewArr[j].policy).push(ptypeobj);
-										myBoolean=new Boolean(false);
-										context.print("986 myBoolean="+myBoolean);
-										break;
-									}
-								}
-								
-								if(myBoolean==true){
-									ptypeArr.push(ptypeobj);
-								
-									var policyobj = new Object();
-										policyobj.policyid = policyid;
-										policyobj.policy = ptypeArr;
-									
-									policyNewArr.push(policyobj);
-									//ptypeArr =[];
-									ptypeArr.splice(0,ptypeArr.length);//清空数组
-									context.print("1001 清空后的长度 length="+ptypeArr.length);
-								}
-								
+							context.print("data="+JSON.stringify(jsonobj.data));
+							context.print("length="+jsonobj.data.length);
+							for (var i = 0; i < jsonobj.data.length; i++){
+								policy['policyid'] = JSON.parse(jsonobj.data[i]).policyid;							
 							}
-							final['policys'] = policyNewArr;
-							context.detailarray.setValue(JSON.stringify(final));
+							for (var i = 0; i < jsonobj.data.length; i++){
+								var ptypeobj = new Object();
+									ptypeobj.srcdevicetype = JSON.parse(jsonobj.data[i]).srcdevicetype;
+									context.print("srcdtype"+jsonobj.data[i].srcdevicetype);
+									ptypeobj.srcdevicerole = JSON.parse(jsonobj.data[i]).srcdevicerole;
+									ptypeobj.dstdevicetype = JSON.parse(jsonobj.data[i]).dstdevicetype;
+									ptypeobj.dstdevicerole = JSON.parse(jsonobj.data[i]).dstdevicerole;
+									ptypeobj.priority = JSON.parse(jsonobj.data[i]).priority;
+									myarry.push(ptypeobj);								
+							}
+							context.print("myarry="+JSON.stringify(myarry));
+							var str = myarry;
+							policy['policys'] = str;
+							context.detailarray.setValue(JSON.stringify(policy));
 						]]></script>
 						<function name="SendResponse" class="RestfulService">
 							<parameters>
@@ -1897,23 +1973,12 @@
 				</if>		
 			</for>
 	</function>
-	
-	<function name="UninstallALLFlow">
-		<pair name="oneflowid" keytype="string" valuetype="string"/>
-			<for var="context.oneflowid" in="context.resourceid_hash">				
-				<function name="UnInstallFlow" class="context.flowservice">
-					<parameters>
-						<string name="flowid" in="context.oneflowid.first().toString()"/>			
-						<string name="datapathid" in="context.oneflowid.second().toString()"/>
-					</parameters>
-				</function>
-			</for>
-	</function>
+
 	<!--qiulei 20180128-->
 	<function name="deleteAllPolicys">
 		<log level="100">enter deleteAllPolicys Method  ----sdnmgrapi.xml 2020</log>
 		<function name="DeleteAllPolicy" class="context.sdnpolicymgr"/>
-		
+		<function name="UninstallALLFlow" class="context.sdnpolicymgr"/>
 		<database name="m_db_policy" method="ExecSQL">
 			<sql><![CDATA[
 				DELETE from POLICY

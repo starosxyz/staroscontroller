@@ -104,6 +104,16 @@
 								<string name="ip" in="thisclass.m_ip.toString()"/>
 							</parameters>
 						</function>
+						<if cond="context.ISUip.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<if cond="context.nosoftinport.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
 						<syslog level="INFO"><![CDATA[nosoftip = <%=thisclass.m_ip.toString()%>]]></syslog>
 						<syslog level="INFO"><![CDATA[nosoftport = <%=context.nosoftinport.toString()%>]]></syslog>
 						<syslog level="INFO"><![CDATA[dpid = <%=context.nosoftdpid.toString()%>]]></syslog>
@@ -222,7 +232,7 @@
 								"command":"0",
 								"idletimeout":"0",
 								"hardtimeout":"0",
-								"priority":"40000",
+								"priority":"30000",
 								"bufferid":"0xffffffff",
 								"outport":"0xffffffff",
 								"outgroup":"0xffffffff",
@@ -1026,7 +1036,12 @@
 				<object name="deviceobj"/>
 				<pair name="onedevice" keytype="string" valuetype="object"/>
 				<for var="context.onedevice" in="thisclass.sdnmgrdeviceManager">
-					<set name="deviceobj" value="context.onedevice.second()"/>				
+					<set name="deviceobj" value="context.onedevice.second()"/>		
+					<if cond="context.deviceobj.ptr==null">
+						<then>
+							<exit/>
+						</then>
+					</if>		
 					<function name="GetDeviceRole" class="context.deviceobj">
 						<parameters>
 							<string name="devicerole" out="context.drole"/>
@@ -1107,6 +1122,66 @@
 				</if>
 			</function>
 			
+			<function name="GetdpidByTR">
+				<parameters>
+					<string name="dpid" value="''"/>
+					<string name="devicetype"/>
+					<string name="devicerole"/>
+				</parameters>	
+				<string name="location"/>
+				<if cond="context.devicetype=='wired'">
+					<then>
+						<function name="GetLocationByTR">
+							<parameters>
+								<string name="location" out="context.location"/>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="devicerole" in="context.devicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.location.toString()==''">
+							<then>
+								<log>context.location.toString()==''</log>
+								<exit/>
+							</then>
+						</if>
+						<syslog level="INFO"><![CDATA[location<%=context.location.toString()%>]]></syslog>
+						<script><![CDATA[
+							var ltion = context.location.toString();
+							context.dpid.setValue(ltion.split("/")[0]);
+						]]></script>
+					</then>
+					<else>
+						<string name="ip"/>
+						<string name="mac"/>
+						<string name="tport"/>
+						<string name="port"/>
+						<function name="GetIPMACByTR">
+							<parameters>
+								<string name="ip" out="context.ip"/>
+								<string name="mac" out="context.mac"/>
+								<string name="devicetype" in="context.devicetype.toString()"/>
+								<string name="devicerole" in="context.devicerole.toString()"/>
+							</parameters>
+						</function>
+						<if cond="context.ip.toString()==''">
+							<then>
+								<exit/>
+							</then>
+						</if>
+						<function name="GetTPPByIP" class="HostManager">
+							<parameters>
+								<string name="transport" out="context.tport"/>
+								<string name="port" out="context.port"/>
+								<string name="dpid" out="context.dpid"/>
+								<string name="ip" in="context.ip.toString()"/>
+							</parameters>
+						</function>
+					</else>
+				</if>
+			</function>
+			
+			
+			
 			<function name="GetIpByResourceid">
 				<parameters>
 					<string name="resourceid"/>
@@ -1137,6 +1212,11 @@
 				<pair name="onedevice" keytype="string" valuetype="object"/>
 				<for var="context.onedevice" in="thisclass.sdnmgrdeviceManager">
 					<set name="deviceobj" value="context.onedevice.second()"/>
+					<if cond="context.deviceobj.ptr==null">
+						<then>
+							<exit/>
+						</then>
+					</if>
 					<function name="GetDeviceRole" class="context.deviceobj">
 						<parameters>
 							<string name="devicerole" out="context.drole"/>

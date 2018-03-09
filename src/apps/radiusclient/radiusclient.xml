@@ -3,12 +3,12 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		nullapp.xml
-	@brief 		nullapp
+	@file 		radiusclient.xml
+	@brief 		radiusclient
 	@version 	1.1.0
-	@auth 		YY
-	@date		2017/08/11
-
+	@auth 		qiulei
+	@date		2018/02/25
+	
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -22,7 +22,104 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
-	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/radiusclientapi.xml"/>
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/radiusclientDocsApi.xml"/>
+	
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
+	
+	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>	
+	<object name="radiusclient" global="true"/>
+
+	<function name="StartRadiusClient">
+		<parameters>
+			<string name="radiusLocalIP"/>
+			<string name="radiusLocalPort"/>
+			<string name="radiusServerIP"/>
+			<string name="radiusServerPort"/>
+			<string name="sharedKey"/>
+			<string name="responseTimeOut"/>
+			<string name="retransmit"/>
+			<string name="state"/>
+		</parameters>
+		<string name="radiusparam"/>
+		<reference variable="radiusparam">
+			<jsonbody><![CDATA[ 
+				{
+					"RadiusLocalIP":"<%=context.radiusLocalIP.toString()%>",
+					"RadiusLocalPort":"<%=context.radiusLocalPort.toString()%>",
+					"RadiusServerIP":"<%=context.radiusServerIP.toString()%>",
+					"RadiusServerPort":"<%=context.radiusServerPort.toString()%>",
+					"SharedKey":"<%=context.sharedKey.toString()%>",
+					"ResponseTimeOut":"<%=context.responseTimeOut.toString()%>",
+					"Retransmit":"<%=context.retransmit.toString()%>",
+					"state":"<%=context.state.toString()%>"
+				}
+			]]></jsonbody>
+		</reference>
+
+		<radius name="radiusclient" action="StartRadius" params="context.radiusparam" dataevent="'radiusresponse'"/>
+		<log level="101">Start radius Server</log>
+	</function>
+	<function name="StopRadiusClient">
+		<parameters>
+			<string name="radiusLocalIP" />
+			<string name="radiusLocalPort" />
+			<string name="radiusServerIP" />
+			<string name="radiusServerPort" />
+			<string name="sharedKey" />
+			<string name="responseTimeOut" />
+			<string name="retransmit" />
+			<string name="state" />
+		</parameters>
+		<string name="radiusparam"/>
+		<reference variable="radiusparam">
+			<jsonbody><![CDATA[ 
+				{
+					"RadiusLocalIP":"<%=context.radiusLocalIP.toString()%>",
+					"RadiusLocalPort":"<%=context.radiusLocalPort.toString()%>",
+					"RadiusServerIP":"<%=context.radiusServerIP.toString()%>",
+					"RadiusServerPort":"<%=context.radiusServerPort.toString()%>",
+					"SharedKey":"<%=context.sharedKey.toString()%>",
+					"ResponseTimeOut":"<%=context.responseTimeOut.toString()%>",
+					"Retransmit":"<%=context.retransmit.toString()%>",
+					"state":"<%=context.state.toString()%>"
+				}
+			]]></jsonbody>
+		</reference>
+		<log level="101"></log>
+		<radius name="radiusclient" action="StopRadius" params="context.radiusparam" dataevent="'radiusresponse'"/>
+		<log level="101">Stop radius Server</log>
+	</function>
+	<!--
+		@brief		发送Radius消息给radius服务器
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param strjson 	response json message
+			{
+				"messagetype":"1",
+				"attributes":{
+					"username":"testuser",
+					"password":"testpw",
+					"nasip":"192.168.186.138",
+					"nasport":"0",
+					"servicetype":"1"
+				}
+			}
+	-->
+	<function name="SendRadiusMessage">
+		<parameters>
+			<string name="strjson"/>
+		</parameters>
+		<radius name="radiusclient" action="SendMessage">
+			<jsonsrc src="context.strjson"/>
+		</radius>
+	</function>
+
+	
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -42,16 +139,24 @@
 			
 			<log>null app startup</log>
 		</onevent>			
-		
 		<onevent event="bundleapp.active">
-			<log>null app active</log>
+			<function name="AddDocsAPI_radiusclient"/>
+			<function name="RegisterHandler_radiusclient"/>
+			
 		</onevent>
+		<onevent event="radiusresponse">
+			<log level="100"> radiusresponse in</log>
+			<syslog level="INFO"><![CDATA[radiusresponse event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+		</onevent>
+		
 		<onevent event="~bundleapp.deactive">
+			<function name="RemoveDocsAPI_radiusclient"/>
+			<function name="UnRegisterHandler_radiusclient"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
-			
+			<function name="RemoveDocsAPI_radiusclient"/>
+			<function name="UnRegisterHandler_radiusclient"/>
 		</onevent>
 
 		<onevent event="*">

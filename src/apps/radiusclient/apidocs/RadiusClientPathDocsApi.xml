@@ -3,11 +3,11 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		tunnelServicePathDocsApi.xml
+	@file 		radiusclientServicePathDocsApi.xml
 	@brief 		apiUI
 	@version 	1.1.0
 	@auth 		qiulei
-	@date		2018/01/06
+	@date		2018/02/25
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
@@ -23,284 +23,30 @@
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
 
-	<function name="addPath_sdnmgr">
-		<function name="postDevicePanel"/>
-		
-		<function name="getDevicesPanel"/>
-		<function name="postPolicyPanel"/>
-		
-		<function name="getPolicysPanel"/>
-		
-		<function name="deleteDevicePanel"/>
-		<function name="deletePolicyPanel"/>
-		<function name="getPortPanel"/>
-		<function name="getPortsPanel"/>
-		
+	<function name="addPath_radiusclient">
+		<function name="PostAndGet_radiusclient_panel"/>
+		<function name="Post_sendmesage_panel"/>
 	</function>
 
-	<function name="removePath_sdnmgr">
+	<function name="removePath_radiusclient">
 		<function name="removePath" class="APIDocsService">
 			<parameters>
-				<string name="pathname" in="'/sdnmgr/device'"/>			
-			</parameters>
-		</function>
-		
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/devices'"/>			
+				<string name="pathname" in="'/radiusclient/radiusclient'"/>
 			</parameters>
 		</function>
 		
 		
 		<function name="removePath" class="APIDocsService">
 			<parameters>
-				<string name="pathname" in="'/sdnmgr/device/{resourceid}'"/>			
-			</parameters>
-		</function>
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/policy'"/>			
-			</parameters>
-		</function>
-		
-		
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/policys'"/>			
-			</parameters>
-		</function>
-		
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/policy/{policyid}'"/>
-			</parameters>
-		</function>
-		
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/ports/{resourceid}'"/>			
-			</parameters>
-		</function>
-		
-		<function name="removePath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="'/sdnmgr/port/{resourceid}/{port}'"/>			
-			</parameters>
-		</function>
-
-
-	</function>
-	<!--
-		get policys 面板 2018/01/18 qiulei
-	-->	
-	<function name="getPolicysPanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"get": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Return all Policys",
-						"description": "",
-						"parameters": [],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Policys_sdnmgr"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/policys'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-		<!--
-		@brief		get Devices
-		@auth 		qiulei
-		@date		2018/01/16
-		Input:
-		Output:
-	-->	
-	<function name="getDevicesPanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"get": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Returns all devices",
-						"description": "",
-						"parameters": [],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Devices_sdnmgr"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}				
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/devices'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-	
-	<!-- qiulei 20180119 -->
-		<!--
-		@brief		get port
-		@auth 		qiulei
-		@date		2018/01/19
-		Input:
-		Output:
-	-->	
-	<function name="getPortPanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"get": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Returns one Port of device",
-						"description": "",
-						"parameters": [
-							{
-								"name": "resourceid",
-								"in": "path",
-								"type": "string",
-								"description": "get one device by id",
-								"required": "true"
-							},
-							{
-								"name": "port",
-								"in": "path",
-								"type": "string",
-								"description": "get one port by portNo",
-								"required": "true"
-							}
-						],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Port_sdnmgr"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}				
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/port/{resourceid}/{port}'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-	
-	<!--
-		@brief		get Ports
-		@auth 		qiulei
-		@date		2018/01/16
-		Input:
-		Output:
-	-->	
-	<function name="getPortsPanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"get": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Returns all Ports of device",
-						"description": "",
-						"parameters": [
-							{
-								"name": "resourceid",
-								"in": "path",
-								"type": "string",
-								"description": "get all Ports of device",
-								"required": "true"
-							}
-						],
-						"produces": [
-							"application/json"
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Ports"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}				
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/ports/{resourceid}'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
+				<string name="pathname" in="'/radiusclient/sendmessage'"/>
 			</parameters>
 		</function>
 	</function>
 
 	<!--
-		qiulei 2018/01/16 创建 device 面板
+		qiulei 2018/02/25 创建 radiusclient 面板
 	-->	
-	<function name="postDevicePanel">
+	<function name="PostAndGet_radiusclient_panel">
 		<string name="name"/>
 		<string name="pathconntent"/>
 		<reference variable="pathconntent">
@@ -308,19 +54,19 @@
 				{
 					"post": {
 						"tags": [
-							"sdnmgr"
+							"radiusclient"
 						],
-						"summary": "Install a new Device",
+						"summary": "Install a new radiusclient",
 						"description": "",
 						"parameters": [
 							{
 								"name": "stream",
 								"in": "body",
 								"type": "string",
-								"description": "Create a new Device",
+								"description": "Create a new radiusclient",
 								"required": true,
 								"schema": {
-									"$ref": "#/definitions/Device"
+									"$ref": "#/definitions/radiusclient"
 								}					
 							}
 						],
@@ -334,7 +80,30 @@
 							"200": {
 								"description": "successful operation",
 								"schema": {
-									"$ref": "#/definitions/Result_sdnmgr"
+									"$ref": "#/definitions/Result_radiusclient"
+								}
+							},
+							"default": {
+								"description": "Unexpected error"
+							}
+						}
+					},
+					
+					"get": {
+						"tags": [
+							"radiusclient"
+						],
+						"summary": "Return all radiusclient",
+						"description": "",
+						"parameters": [],
+						"produces": [
+							"application/json"
+						],
+						"responses": {
+							"200": {
+								"description": "successful operation",
+								"schema": {
+									"$ref": "#/definitions/radiusclient"
 								}
 							},
 							"default": {
@@ -345,7 +114,7 @@
 				}
 			]]></jsonbody>
 		</reference>
-		<set name="context.name" value="'/sdnmgr/device'"/>
+		<set name="context.name" value="'/radiusclient/radiusclient'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
 				<string name="pathname" in="context.name.toString()"/>
@@ -353,10 +122,11 @@
 			</parameters>
 		</function>
 	</function>
+	
 	<!--
-		创建 policy 面板 2018/01/16 qiulei
+		qiulei 2018/02/25 创建 Post_sendmesage_panel 面板
 	-->	
-	<function name="postPolicyPanel">
+	<function name="Post_sendmesage_panel">
 		<string name="name"/>
 		<string name="pathconntent"/>
 		<reference variable="pathconntent">
@@ -364,19 +134,19 @@
 				{
 					"post": {
 						"tags": [
-							"sdnmgr"
+							"radiusclient"
 						],
-						"summary": "Create a new Policy",
+						"summary": "Install a new sendmessage",
 						"description": "",
 						"parameters": [
 							{
 								"name": "stream",
 								"in": "body",
 								"type": "string",
-								"description": "Create one policy",
+								"description": "Create a new sendmessage",
 								"required": true,
 								"schema": {
-									"$ref": "#/definitions/Policy_sdnmgr"
+									"$ref": "#/definitions/sendmessage"
 								}					
 							}
 						],
@@ -390,7 +160,7 @@
 							"200": {
 								"description": "successful operation",
 								"schema": {
-									"$ref": "#/definitions/Result_sdnmgr"
+									"$ref": "#/definitions/Result_sendmessage"
 								}
 							},
 							"default": {
@@ -401,103 +171,7 @@
 				}
 			]]></jsonbody>
 		</reference>
-		<set name="context.name" value="'/sdnmgr/policy'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-	
-		<!--
-		qiulei 20180116 删除 one device 面板
-	-->	
-	<function name="deleteDevicePanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"delete": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Removes one Device",
-						"description": "",
-						"parameters": [
-							{
-								"name": "resourceid",
-								"in": "path",
-								"type": "string",
-								"description": "Delete one Device by ip",
-								"required": "true"
-							}
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result_sdnmgr"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/device/{resourceid}'"/>
-		<function name="addPath" class="APIDocsService">
-			<parameters>
-				<string name="pathname" in="context.name.toString()"/>
-				<string name="pathconntent" in="context.pathconntent.toString()"/>
-			</parameters>
-		</function>
-	</function>
-	
-		<!--
-		qiulei 20180116 删除 policy 面板
-	-->	
-	<function name="deletePolicyPanel">
-		<string name="name"/>
-		<string name="pathconntent"/>
-		<reference variable="pathconntent">
-			<jsonbody><![CDATA[ 
-				{
-					"delete": {
-						"tags": [
-							"sdnmgr"
-						],
-						"summary": "Removes one Device",
-						"description": "",
-						"parameters": [
-							{
-								"name": "policyid",
-								"in": "path",
-								"type": "string",
-								"description": "Delete one Policy by policyid",
-								"required": "true"
-							}
-						],
-						"responses": {
-							"200": {
-								"description": "successful operation",
-								"schema": {
-									"$ref": "#/definitions/Result_sdnmgr"
-								}
-							},
-							"default": {
-								"description": "Unexpected error"
-							}
-						}
-					}
-				}
-			]]></jsonbody>
-		</reference>
-		<set name="context.name" value="'/sdnmgr/policy/{policyid}'"/>
+		<set name="context.name" value="'/radiusclient/sendmessage'"/>
 		<function name="addPath" class="APIDocsService">
 			<parameters>
 				<string name="pathname" in="context.name.toString()"/>

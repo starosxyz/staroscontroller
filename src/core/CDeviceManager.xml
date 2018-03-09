@@ -1592,12 +1592,12 @@
 								<object name="outflowmgr" out="context.flowobj"/>
 							</parameters>
 						</function>
-								<function name="getflowBydeviceidflowid" class="flowobj">
-									<parameters>
-										<string name="flowid" in="context.flowid.toString()"/>
-										<string name="deviceid" in="context.deviceid.toString()"/>
-										<string name="flowjsonstr" out="context.flowjsonstrs"/>
-									</parameters>
+						<function name="getflowBydeviceidflowid" class="flowobj">
+							<parameters>
+								<string name="flowid" in="context.flowid.toString()"/>
+								<string name="deviceid" in="context.deviceid.toString()"/>
+								<string name="flowjsonstr" out="context.flowjsonstrs"/>
+							</parameters>
 						</function>
 						<set name="flowjsonstr" value="context.flowjsonstrs.toString()"/>
 					</then>
@@ -1946,6 +1946,12 @@
 					</function>
 				</for>
 				<set name="AllDeviceflowCounts" value="context.AllDeviceFlowNumber.toLong()"/>
+			</function>
+			<function name="Gethashmap">
+				<parameters>
+					<hashmap name="devicehash"/>
+				</parameters>
+				<set name="devicehash" value="thisclass.deviceContainer"/>
 			</function>
 		</public>
 

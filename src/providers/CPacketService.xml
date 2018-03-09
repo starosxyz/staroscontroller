@@ -238,8 +238,7 @@
 						<parameters>
 							<long name="packets" in="context.tempmsgblock.getChainedLength()"/>
 						</parameters>						
-					</function>
-					
+					</function>	
 				</for>
 				<function name="HostData">
 					<parameters>

@@ -3,12 +3,12 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		nullapp.xml
-	@brief 		nullapp
+	@file 		portal.xml
+	@brief 		portal app
 	@version 	1.1.0
 	@auth 		YY
 	@date		2017/08/11
-
+	
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -22,10 +22,140 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/portalapi.xml"/>
+	<!--qiulei 20180224 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalDocsApi.xml"/>
+	
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<object name="portalobject" global="true"/>
+	
+	<!--
+		@brief		Start Portal Cloent
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2018/02/26
+		Input:
+			@param PortalClientListenIP 		portal client ip listen address
+			@param PortalClientListenPortal 	portal client listen portal  
+			@param RedirectServerListenIP 		redirect server ip listen address
+			@param RedirectServerListenPort 	redirect server listen port
+			@param PortalServer 				portal server
+			@param PortalServerPort 			portal server port
+			@param key 	       					key
+			@param verison 						version
+			@param url 							url
+			@param detecttimeout 				detect timeout
+			@param state 						state
+	-->
+	<function name="Startportalclient">
+		<parameters>
+			<string name="PortalClientListenIP" />
+			<string name="PortalClientListenPortal" />
+			<string name="RedirectServerListenIP" />
+			<string name="RedirectServerListenPort" />
+			<string name="PortalServer" />
+			<string name="PortalServerPort" />
+			<string name="key" />
+			<string name="verison" />
+			<string name="url" />
+			<string name="detecttimeout" />
+			<string name="state" />
+		</parameters>
+		<string name="strparam"/>
+		<reference variable="strparam">
+			<jsonbody><![CDATA[ 
+				{
+					"PortalClientListenIP":"<%=context.PortalClientListenIP.toString()%>",
+					"PortalClientListenPortal":"<%=context.PortalClientListenPortal.toString()%>",
+					"RedirectServerListenIP":"<%=context.RedirectServerListenIP.toString()%>",
+					"RedirectServerListenPort":"<%=context.RedirectServerListenPort.toString()%>",
+					"PortalServer":"<%=context.PortalServer.toString()%>",
+					"PortalServerPort":"<%=context.PortalServerPort.toString()%>",
+					"key":"<%=context.key.toString()%>",
+					"verison":"<%=context.verison.toString()%>",
+					"url":"<%=context.url.toString()%>",
+					"detecttimeout":"<%=context.detecttimeout.toString()%>",
+					"state":"<%=context.state.toString()%>"
+				}
+			]]></jsonbody>
+		</reference>
+
+		<portal name="portalobject" action="StartPortal" params="context.strparam" authevent="'portalauthrequest'"/>
+		<syslog level="INFO">Start Portal</syslog>
+	</function>
+	
+	<!--
+		@brief		Stop Portal Cloent
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2018/02/26
+		Input:
+			@param PortalClientListenIP 		portal client ip listen address
+			@param PortalClientListenPortal 	portal client listen portal  
+			@param RedirectServerListenIP 		redirect server ip listen address
+			@param RedirectServerListenPort 	redirect server listen port
+			@param PortalServer 				portal server
+			@param PortalServerPort 			portal server port
+			@param key 	       					key
+			@param verison 						version
+			@param url 							url
+			@param detecttimeout 				detect timeout
+			@param state 						state
+	-->
+	<function name="Stopportalclient">
+		<parameters>
+			<string name="PortalClientListenIP" />
+			<string name="PortalClientListenPortal" />
+			<string name="RedirectServerListenIP" />
+			<string name="RedirectServerListenPort" />
+			<string name="PortalServer" />
+			<string name="PortalServerPort" />
+			<string name="key" />
+			<string name="verison" />
+			<string name="url" />
+			<string name="detecttimeout" />
+			<string name="state" />
+		</parameters>
+		<string name="strparam"/>
+		<reference variable="strparam">
+			<jsonbody><![CDATA[ 
+				{
+					"PortalClientListenIP":"<%=context.PortalClientListenIP.toString()%>",
+					"PortalClientListenPortal":"<%=context.PortalClientListenPortal.toString()%>",
+					"RedirectServerListenIP":"<%=context.RedirectServerListenIP.toString()%>",
+					"RedirectServerListenPort":"<%=context.RedirectServerListenPort.toString()%>",
+					"PortalServer":"<%=context.PortalServer.toString()%>",
+					"PortalServerPort":"<%=context.PortalServerPort.toString()%>",
+					"key":"<%=context.key.toString()%>",
+					"verison":"<%=context.verison.toString()%>",
+					"url":"<%=context.url.toString()%>",
+					"detecttimeout":"<%=context.detecttimeout.toString()%>",
+					"state":"<%=context.state.toString()%>"
+				}
+			]]></jsonbody>
+		</reference>
+
+		<portal name="portalobject" action="StopPortal" params="context.strparam" authevent="'portalauthrequest'"/>
+	</function>
+
+	<!--
+		@brief		Send portal Response
+		@auth 		Wang Kang (kingsalone@sina.com)
+		@date		2018/02/26
+		Input:
+			@param strjson 	response json message
+	-->
+	<function name="SendPortalAuthResponse">
+		<parameters>
+			<string name="strjson"/>
+		</parameters>
+		<portal name="portalobject" action="AuthResponse">
+			<jsonsrc src="context.strjson"/>
+		</portal>
+	</function>
+
 	<events>
-		<onevent event="bundleapp.startup">			
-			<!-- YY 2017-08-21 -->
+		<onevent event="bundleapp.startup">
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'portal'"/>
@@ -33,30 +163,114 @@
 					<string name="category" in="'vBNG'"/>
 					<string name="origin" in="'StarOS Inc.'"/>
 					<string name="title" in="'Portal'"/>
-					<string name="desc" in="'2.10.10.0'"/>		
+					<string name="desc" in="'2.10.10.0'"/>
 					<string name="url" in="'192.168.228.128'"/>
-					<long name="bundleid" in="context.getCurrentBundleId()"/>					
+					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
-			</function>			
+			</function>
 			
 			
 			<log>null app startup</log>
-		</onevent>			
+		</onevent>	
+
+		<onevent event="portalauthrequest">
+			<string name="responsedata"/>
+			<string name="tmpeventdata" value="event.getParam('eventdata').toString()"/>
+			<syslog level="INFO"><![CDATA[portalauthrequest event data <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="userip"/>
+			<string name="username"/>
+			<string name="password"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				var json = new Object();
+				if(info.userip){
+					context.userip.setValue(info.userip);
+				}
+				if(info.username){
+					context.username.setValue(info.username);
+				}
+				if(info.password){
+					context.password.setValue(info.password);
+				}
+			]]></script>
+			<radius name="radiusclient" action="SendMessage">
+				<jsonbody>
+					<![CDATA[ 
+						{
+							"messagetype":"1",
+							"attributes":{
+								"username":"<%=context.username.toString()%>",
+								"password":"<%=context.password.toString()%>",
+								"nasip":"<%=context.userip.toString()%>",
+								"nasport":"0",
+								"servicetype":"1"
+							}
+						}
+					]]>
+				</jsonbody>
+			</radius>
+			<syslog level="INFO">SendMessage</syslog>
+			<wait event="radiusresponse" timeout="3000" timeoutgoto="timeout_label">
+				<syslog level="INFO"><![CDATA[portalauthrequest radiusresponse <%=event.getParam('eventdata').toString()%>]]></syslog>
+				<script><![CDATA[
+					var info = JSON.parse(event.getParam('eventdata').toString());
+					var json = new Object();
+					if(info.messagetype == '2'){
+						json['authresult']="0";
+					}else{
+						json['authresult']="3";
+					}
+					
+					var tmp = JSON.parse(context.tmpeventdata.toString());
+					json['userip']=tmp.userip;
+					json['vrf']="0";
+					context.responsedata.setValue(JSON.stringify(json));
+				]]></script>
+				<function name="SendPortalAuthResponse">
+					<parameters>
+						<string name="strjson" in="context.responsedata.toString()"/>
+					</parameters>
+				</function>
+				<goto label="wait_ok_label"/>
+			</wait>
+			<label name="timeout_label"/>
+			<string name="outjson"/>
+			<script><![CDATA[
+				var json = new Object();
+				json['authresult']="3";
+				
+				var tmp = JSON.parse(context.tmpeventdata.toString());
+				json['userip']=tmp.userip;
+				json['vrf']="0";
+				context.responsedata.setValue(JSON.stringify(json));
+			]]></script>
+			<function name="SendPortalAuthResponse">
+				<parameters>
+					<string name="strjson" in="context.responsedata.toString()"/>
+				</parameters>
+			</function>
+			<label name="wait_ok_label"/>
+		</onevent>		
 		
 		<onevent event="bundleapp.active">
-			<log>null app active</log>
+			<function name="AddDocsAPI_portal"/>
+			<function name="RegisterHandler_portal"/>
+			
 		</onevent>
+		
 		<onevent event="~bundleapp.deactive">
+			<function name="RemoveDocsAPI_portal"/>
+			<function name="UnRegisterHandler_portal"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
-			
+			<function name="RemoveDocsAPI_portal"/>
+			<function name="UnRegisterHandler_portal"/>
 		</onevent>
 
 		<onevent event="*">
 			<function>
-			<log level="1"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </log>
+			<syslog level="INFO"><![CDATA[ invalid event <%=event.getName().toString()%>]]> </syslog>
 			<log level="1"><![CDATA[ invalid param <%=event.getParam("eventdata").toString()%>]]> </log>
 			</function>
 		</onevent>

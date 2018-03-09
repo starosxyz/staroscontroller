@@ -49,7 +49,8 @@
 						<insert name="monitormap" key="context.ip.toString()" value="context.ip.toString()"/>
 						<set name="context.result" value="true"/>
 						<log level="101"><![CDATA[context.monitormap.size=<%=thisclass.monitormap.size().toString()%> ----67]]></log>
-						
+						<syslog level="INFO"><![CDATA[monitor ip =<%=context.ip.toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[monitormap.size=<%=thisclass.monitormap.size().toString()%>]]></syslog>
 						<log level="101">add over</log>
 						<exit/>
 					</then>

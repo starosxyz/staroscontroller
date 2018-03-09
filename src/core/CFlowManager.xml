@@ -64,8 +64,7 @@
 			
 			<function name="CFlowEntry">
 				<parameters>
-					<string name="flowId" />k
-					<string name="appId" />
+					<string name="flowId" />					<string name="appId" />
 					<string name="flowjson"/>					
 				</parameters>	
 				<set name="thisclass.m_flowId" value="context.flowId.toString()"/>
@@ -595,7 +594,80 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				<log level="100"><![CDATA[351 outflowid= <%=context.outflowid.toString()%>]]></log>	
 				<log level="100"><![CDATA[353 flowsContainer= <%=context.flowsContainer.size()%>]]></log>	
 			</function>
+			
+			
+			<function name="InstallFlowTableRequest_outxid">
+				<parameters>
+					<string name="outflowid"/>
+					<string name="strjson"/>
+					<string name="appId" />
+					<long name="xid" />
+				</parameters>
+				<log level="100"> in InstallFlowTableRequest</log>
+				<log level="100"><![CDATA[294 flowsContainer= <%=context.flowsContainer.size()%>]]></log>
+				<log level="100"><![CDATA[303 strjson= <%=context.strjson.size()%>]]></log>		
+				<object name="flowentry"/>
+				<string name="sresourceid"/>
+				<string name="transportid"/>
+				<string name="sendjson"/>
+				<set name="sresourceid" value="context.allocResourceId()"/>		
+				<log level="100"><![CDATA[flowid= <%=context.sresourceid.toString()%>]]></log>		
+				<!--qiulei modify 20170807-->							
+				<if cond="context.strjson.toString()==''">
+					<then>
+						<log level="100">strjson is null!!!!!!!!!!!!!!!!!!!!!!!!</log>
+						<exit/>
+					</then>
+				</if>
+				<log level="100">strjson is  not null!!!!!!!!!!!!!!!!!!!!!!!!</log>
+				<script><![CDATA[				
+					var info = JSON.parse(context.strjson.toString());
+					info.cookie=context.sresourceid.toString();
+					var str_json=JSON.stringify(info);
+					context.sendjson.setValue(str_json);
+				]]></script>
+				<new name="flowentry" class="CFlowEntry">
+					<parameters>
+						<string name="flowId"  in="context.sresourceid.toString()"/>
+						<string name="appId"  in="context.appId.toString()"/>
+						<string name="flowjson"  in="context.sendjson.toString()"/>
+					</parameters>
+				</new>									
+				<insert name="flowsContainer" key="context.sresourceid.toString()" value="context.flowentry"/>
+				
+				<!---qiulei 20170831 start-->
+			
+				<string name="BarrierStrJson" />
+				<reference variable="BarrierStrJson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>"
+							}
+					]]></jsonbody>
+				</reference>
+				<set name="context.xid" value="context.openflowserverobj.ptr.getIncreaseXID()"/>
+				<!--openflow_api中的方法-->
+				<log level="100"><![CDATA[393 thisclass.m_transportid= <%=thisclass.m_transportid.toString()%>]]></log>		
+				<function name="Send_OFPT13_BARRIER_REQUEST">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson" in="context.BarrierStrJson.toString()"/>
+					</parameters>
+                </function>
+				<!---qiulei 20170831 end-->
 
+				<function name="Send_OFPT13_FLOW_MOD">
+					<parameters>
+						<string name="transportid"  in="thisclass.m_transportid.toString()"/>
+						<string name="strjson"  in="context.sendjson.toString()"/>
+					</parameters>
+				</function>
+				<log level="100"><![CDATA[349 flowid= <%=context.sresourceid.toString()%>]]></log>		
+				<set name="outflowid" value="context.sresourceid.toString()"/>
+				<log level="100"><![CDATA[351 outflowid= <%=context.outflowid.toString()%>]]></log>	
+				<log level="100"><![CDATA[353 flowsContainer= <%=context.flowsContainer.size()%>]]></log>	
+			</function>
+			
 			<!--
 			@brief		通过appid获得流表
 			@auth 		hu peng (hupeng@staros.xyz)
@@ -882,6 +954,8 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 										
 												
 
+<!---qiulei 20170831 start2-->
+										<string name="BarrierStrJson" />
 										<reference variable="BarrierStrJson">
 											<jsonbody><![CDATA[ 
 													{
@@ -1466,6 +1540,64 @@ libstarlang.setValueULongLong("thisclass.m_currenttime",starttime2);
 				</function>
 			</function>
 			
+<function name="InstallControllerdropFlow">
+				<string name="modstrjson" />
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"xid":"<%=context.openflowserverobj.ptr.getIncreaseXID().toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"0",
+								"hardtimeout":"0",
+								"priority":"40000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"10",
+												"hasmask":"false",
+												"ipproto":"6"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"14",
+												"hasmask":"false",
+												"tcpdst":"6633"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				<function name="InstallFlowTableRequest">
+					<parameters>
+						<string name="outflowid"  out="thisclass.m_6633dropflowid"/>
+						<string name="strjson"  in="context.modstrjson.toString()"/>
+						<string name="appId"  in="'core'"/>
+					</parameters>
+				</function>
+			</function>
 			<!--
 				@brief		Find flowentry object from flowsContainer
 				@auth 		Wang Kang (kingsalone@sina.com)

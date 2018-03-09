@@ -3,13 +3,13 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		tunnelServiceDocsApi.xml
-	@brief 		tunnelapp's api
+	@file 		ipoeServiceDocsApi.xml
+	@brief 		ipoeapp's api
 	@version 	1.1.0
 	@auth 		qiulei
 	@date		2017/09/15
 
-	Licensed under the Apache License, Version 2.0 (the "License");
+	Licensed under the Apache License, Version 2.0 (the "License"); IPOE
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
 
@@ -22,8 +22,8 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/apidocs/sdnmgrAPIDefinitionDocs.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/apidocs/sdnmgrPathDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/ipoe/apidocs/IPOEAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/ipoe/apidocs/IPOEPathDocsApi.xml"/>
 	<!--
 		Author:
 				qiulei
@@ -34,19 +34,19 @@
 	-->	
 	
 	<!--
-		@brief		添加 sdnmgr Tag
+		@brief		添加 ipoe Tag
 		@auth 		qiulei
 		@date		2017/09/15
 		Input:
 		Output: 
 	-->
-	<function name="AddDocsAPI_sdnmgr">
+	<function name="AddDocsAPI_ipoe">
 		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[ 
 				{
-					"name": "sdnmgr",
-					"description": "Query and Manage sdnmgr"
+					"name": "ipoe",
+					"description": "Query and Manage ipoe"
 				}
 			]]></jsonbody>
 		</reference>
@@ -56,26 +56,26 @@
 			</parameters>
 		</function>
 	
-		<function name="RegistDefinition_sdnmgr"/>
+		<function name="RegistDefinition_ipoe"/>
 		
-		<function name="addPath_sdnmgr"/>
+		<function name="addPath_ipoe"/>
 	</function>
 	
 	<!--
-		@brief		删除tunnel Tag
+		@brief		删除 ipoe Tag
 		@auth 		qiulei
 		@date		2017/09/15
 		Input:
 		Output: 
 	-->
-	<function name="RemoveDocsAPI_sdnmgr">
+	<function name="RemoveDocsAPI_ipoe">
 	
 		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[ 
 				{
-					"name": "sdnmgr",
-					"description": "Query and Manage sdnmgr"
+					"name": "ipoe",
+					"description": "Query and Manage ipoe"
 				}
 			]]></jsonbody>
 		</reference>
@@ -85,8 +85,8 @@
 			</parameters>
 		</function>
 	
-		<function name="DestroyDefinition_sdnmgr"/>
+		<function name="DestroyDefinition_ipoe"/>
 		
-		<function name="removePath_sdnmgr"/>
+		<function name="removePath_ipoe"/>
 	</function>
 </starlang>

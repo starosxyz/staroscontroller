@@ -47,7 +47,12 @@
 			<string name="dstport"/>
 			<string name="srcport"/>
 		</parameters>
-		<string name="modstrjson"/>
+		<if cond="context.inport.toString()==context.outport.toString()">
+			<then>
+				<exit/>
+			</then>
+		</if>
+		<string name="modstrjson" value="''"/>
 		<log level="1"><![CDATA[installflow dpid = <%=context.dpid.toString()%>]]></log>
 		<log level="1"><![CDATA[installflow outport = <%=context.outport.toString()%>]]></log>
 		<log level="1"><![CDATA[installflow inport = <%=context.inport.toString()%>]]></log>
@@ -56,6 +61,8 @@
 				<exit/>
 			</then>
 		</if>
+		
+		<!--
 		<if cond="context.protocol.toString()=='1'">
 			<then>
 				<reference variable="modstrjson">
@@ -66,7 +73,7 @@
 								"cookiemask":"0",
 								"tableid":"0",
 								"command":"0",
-								"idletimeout":"10",
+								"idletimeout":"30",
 								"hardtimeout":"0",
 								"priority":"50000",
 								"bufferid":"0xffffffff",
@@ -147,7 +154,7 @@
 								"cookiemask":"0",
 								"tableid":"0",
 								"command":"0",
-								"idletimeout":"10",
+								"idletimeout":"0",
 								"hardtimeout":"0",
 								"priority":"50000",
 								"bufferid":"0xffffffff",
@@ -226,7 +233,7 @@
 								"cookiemask":"0",
 								"tableid":"0",
 								"command":"0",
-								"idletimeout":"10",
+								"idletimeout":"0",
 								"hardtimeout":"0",
 								"priority":"50000",
 								"bufferid":"0xffffffff",
@@ -309,11 +316,86 @@
 				</reference>
 
 			</elseif>
-		</if>
+		</if>		
+		-->
+		<syslog level="INFO"><![CDATA[srcport = <%=context.srcport.toString()%>]]></syslog>
+		<syslog level="INFO"><![CDATA[dstport = <%=context.dstport.toString()%>]]></syslog>
+		
+		<if cond="(context.srcport.toString()=='161')||(context.srcport.toString()=='162')||(context.dstport.toString()=='161')||(context.dstport.toString()=='162')">
+			<then>
+			
+				<reference variable="modstrjson">
+					<jsonbody><![CDATA[ 
+							{
+								"deviceid":"of:<%=context.dpid.toString()%>",
+								"cookie":"0",
+								"cookiemask":"0",
+								"tableid":"0",
+								"command":"0",
+								"idletimeout":"60",
+								"hardtimeout":"0",
+								"priority":"30000",
+								"bufferid":"0xffffffff",
+								"outport":"0xffffffff",
+								"outgroup":"0xffffffff",
+								"flags":"1",
+								"match":{
+										"type":"1",
+										"matchfieldlist":[
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"0",
+												"hasmask":"false",
+												"inport":"<%=context.inport.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"5",
+												"hasmask":"false",
+												"ethtype":"0x0800"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"11",
+												"hasmask":"false",
+												"srcip":"<%=context.srcip.toString()%>"
+											},
+											{
+												"oxmclass":"0x8000",
+												"oxmfield":"12",
+												"hasmask":"false",
+												"dstip":"<%=context.dstip.toString()%>"
+											}
+										]
+									},
+								"instructionlist":[
+									{
+										"type":"4",
+										"actionlist":[
+											{
+												"type":"0",
+												"outport":"<%=context.outport.toString()%>",
+												"maxlen":"0xffff"
+											}
+										]
+									}
+								]
+							}
+					]]></jsonbody>
+				</reference>
+				
+			</then>
+		</if>	
+		
 		<string name="resourceid"/>
 		<if cond="context.flowservice==null">
 			<then>
 				<log>flowservice is null</log>
+			</then>
+		</if>
+		<if cond="context.modstrjson.toString()==''">
+			<then>
+				<exit/>
 			</then>
 		</if>
 		<function name="InstallFlow" class="context.flowservice">
@@ -324,6 +406,7 @@
 				<string name="datapathid" in="context.dpid.toString()"/>
 			</parameters>
 		</function>
+		
 		<insert name="resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
 	</function>
 	
@@ -333,7 +416,7 @@
 				<parameters>
 					<string name="id" in="'forwarding'"/>
 					<string name="version" in="'1.0.0'"/>
-					<string name="category" in="'Traffic'"/>
+					<string name="category" in="'forwarding'"/>
 					<string name="origin" in="'StarOS Inc.'"/>
 					<string name="title" in="'app for forwarding'"/>
 					<string name="desc" in="'2.10.10.0'"/>		
@@ -449,13 +532,30 @@
 					<object name="hostobj" out="hostobj"/>
 				</parameters>
 			</function>
-			<if cond="context.hostobj.ptr == null">
+			<!--
+			<if cond="context.dstmac.toString()=='01:80:c2:00:00:00'">
 				<then>
-					<flood name="global.openflowserverobj" msgblk="context.packetmsgblock" inlocation="context.datapathid.toString()+'/'+context.inportid.toString()"/>
 					<exit/>
 				</then>
 			</if>
-			<function name="getinfo" class="hostobj">
+			<if cond="context.srcmac.toString()=='01:80:c2:00:00:00'">
+				<then>
+					<exit/>
+				</then>
+			</if>
+			-->
+			<if cond="context.dstmac.toString() == '00:00:00:00:00:05'">
+				<then>
+					<exit/>
+				</then>		
+			</if>
+			<if cond="context.hostobj.ptr == null">
+				<then>
+					<flood name="global.openflowserverobj" msgblk="context.packetmsgblock" inlocation="context.datapathid.toString()+'/'+context.inportid.toString()"/>										
+					<exit/>
+				</then>		
+			</if>
+			<function name="getinfo" class="context.hostobj">
 				<parameters>	
 					<string name="ip" out="hostip"/>	
 					<string name="deviceid" out="hostdeviceid"/>	

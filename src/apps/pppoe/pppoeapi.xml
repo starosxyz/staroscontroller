@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		pppoeapi.xml
+	@brief 		pppoe's api
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		pppoe
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<function name="RegisterHandler_pppoe">
+		<log level="101">insert RegisterHandler_pppoe RegisterHandler 28  ---pppoe.xml</log>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processGetAndPost_pppoe_Request'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/pppoe/pppoe'"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="UnRegisterHandler_pppoe">
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/pppoe/pppoe'"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<events>
+		<onevent event="processGetAndPost_pppoe_Request">
+			<log level="101">enter processGetAndPost_pppoe_Request  ----pppoeapi.xml 49</log>
+			<!--处理创建 pppoe 请求-->
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<log level="100">processGetAndPost_pppoe_Request  POST ----pppoeapi.xml 53</log>
+				<!-- 判断jsong格式 start-->
+					<boolean name="isFormatTure" value="true"/>
+					<script><![CDATA[
+						var data=event.getParam('eventdata').toString();
+						try{
+							var jsonObj=JSON.parse(data);
+						}catch(err){
+							context.isFormatTure.setValue(false);
+						}
+					]]></script>
+					<if cond="context.isFormatTure.toBoolean()==false">
+						<then>
+							<function name="jsonFormatErrorResponse"/>
+							<exit/>
+						</then>
+					</if>
+				<!-- 判断jsong格式 end-->
+
+					<string name="ifname" />
+					<string name="localipaddr" />
+					<string name="state" />
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						if(info.ifname){
+							context.ifname.setValue(info.ifname);
+						}
+						if(info.localipaddr){
+							context.localipaddr.setValue(info.localipaddr);
+						}
+						if(info.state){
+							context.state.setValue(info.state);
+						}
+						/*
+							context.ifname.setValue(info.ifname);
+							context.localipaddr.setValue(info.localipaddr);
+							context.state.setValue(info.state);
+						*/
+							context.print("ifname="+info.ifname);
+							context.print("localipaddr="+info.localipaddr);
+							context.print("localipaddr="+info.localipaddr);
+					]]></script>
+					<if cond="context.state=='active'">
+						<then>
+							<function name="Startpppoeserver">
+								<parameters>
+									<string name="ifname" in="context.ifname.toString()"/>
+									<string name="localipaddr" in="context.localipaddr.toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+					<if cond="context.state=='deactive'">
+						<then>
+							<function name="Stoppppoeserver">
+								<parameters>
+									<string name="ifname" in="context.ifname.toString()"/>
+									<string name="localipaddr" in="context.localipaddr.toString()"/>
+								</parameters>
+							</function>
+						</then>
+					</if>
+					<function name="testResponse"/>
+				</then>
+			</if>
+			<!--处理 得到 pppoe 请求-->
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">processGetAndDelete_AllPolicysRequest  GET  ----pppoeapi.xml 355</log>
+					<function name="testResponse"/>
+				</then>
+			</if>
+		</onevent>
+
+	</events>
+
+	
+	<function name="pppoe_ErrorDataResponse">
+		<parameters>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.code = "-1";
+				one.description = context.description.toString();
+				
+			json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson.setValue(strjson);
+		]]></script>
+		<log level="101"><![CDATA[1173 outjson<%=context.outjson.toString()%> --------pppoe_ErrorDataResponse]]></log>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<!--qiulei-->
+	<function name="testResponse">
+		<log level="101">enter testResponse  ----pppoeapi.xml 217</log>
+		<string name="outjson123"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson123.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson123.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="pppoe_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		<log level="101">enter pppoe_successresponse  ----pppoeapi.xml 629</log>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();					
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.successresponse.setValue(strjson);
+		]]></script>
+
+	</function>
+
+	<function name="jsonFormatErrorResponse">
+		<string name="outjson"/>
+		<reference variable="outjson">
+			<jsonbody><![CDATA[
+				{
+					"result": {
+						"code": "-1",
+						"description": "JSON Format Error"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+</starlang>

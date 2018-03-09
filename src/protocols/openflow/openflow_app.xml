@@ -264,10 +264,10 @@
 		  </function>
 		</onevent>
 		<!-- 1 -->
-		<onevent event="openflow.OFPT13_ERROR">			
+		<onevent event="openflow.OFPT13_ERROR">		
+			<syslog level="INFO">Get OFPT13_ERROR Message</syslog>	
 			<string name="messagetype"/>
-			<function>
-				<log>Get a Error Message</log>
+			<function>				
 				<log>####################################</log>
 				<log><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>
 				<log>####################################</log>
@@ -396,7 +396,7 @@
 			<log>Get a PacketIn Message</log>
 			<!--<log level="100"><![CDATA[transportid=<%=event.getParam('transportid').toString()%>]]></log>-->
 			<!--<log level="100"><![CDATA[eventdata=<%=event.getParam('eventdata').toString()%>]]></log>-->
-
+			<syslog level="INFO">Get a PacketIn Message</syslog>
 			<function name="HandleARPRequest" class="vGatewayManager"/>
 
 			

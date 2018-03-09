@@ -46,15 +46,6 @@
 				</parameters>
 					<set name="thisclass.m_mac" value="context.mac.toString()"/>
 					<set name="thisclass.m_ip" value="context.ip.toString()"/>
-					<if cond="context.vlan.toString() == '' || context.vlan.toString() == null">
-						<then>
-							<set name="thisclass.m_vlan" value="'None'"/>
-						</then>
-						<else>
-							<set name="thisclass.m_vlan" value="context.vlan.toString()"/>
-						</else>
-					</if>
-					
 					<set name="thisclass.m_deviceid" value="context.deviceid.toString()"/>
 					<set name="thisclass.m_port" value="context.port.toString()"/>
 				
@@ -105,6 +96,15 @@
 					<string name="ip" />			
 				</parameters>
 				<set name="context.ip" value="thisclass.m_ip"/>
+			</function>
+
+			<function name="GetHostLocation">
+				<parameters>		
+					<string name="deviceid"/>	
+					<string name="port"/>			
+				</parameters>
+					<set name="context.deviceid" value="thisclass.m_deviceid.toString()"/>
+					<set name="context.port" value="thisclass.m_port.toString()"/>
 			</function>
 			
 			<!--
@@ -196,34 +196,34 @@
 					</then>
 					<else>
 						<reference variable="addhostjson2">
-								<jsonbody>
-									<![CDATA[
+							<jsonbody>
+								<![CDATA[
+									{
+										"event":"addHost",
+										"payload":
 										{
-											"event":"addHost",
-											"payload":
+											"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
+											"type":"endstation",
+											"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
+											"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
+											"cp":
 											{
-												"id":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()%>",
-												"type":"endstation",
-												"ingress":"<%=thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()%>",
-												"egress":"<%=thisclass.m_deviceid.toString()+"/"+thisclass.m_port.toString()+"-"+thisclass.m_mac.toString()+"/"+thisclass.m_vlan.toString()+"/"+thisclass.m_port.toString()%>",
-												"cp":
-												{
-													"device":"<%=thisclass.m_deviceid.toString()%>",
-													"port":"<%=thisclass.m_port.toString()%>"
-												},
-												"labels":
-													[
-														"<%=thisclass.m_ip.toString()%>",
-														"<%=thisclass.m_mac.toString()%>"
-													],
-												"props":{},
-												"metaUi":<%=context.memento.toString()%>
-											}
-										}	
-									]]>
-								</jsonbody>
-							</reference>
-							<set name="strjson" value="context.addhostjson2.toString()"/>	
+												"device":"<%=thisclass.m_deviceid.toString()%>",
+												"port":"<%=thisclass.m_port.toString()%>"
+											},
+											"labels":
+												[
+													"<%=thisclass.m_ip.toString()%>",
+													"<%=thisclass.m_mac.toString()%>"
+												],
+											"props":{},
+											"metaUi":<%=context.memento.toString()%>
+										}
+									}	
+								]]>
+							</jsonbody>
+						</reference>
+						<set name="strjson" value="context.addhostjson2.toString()"/>	
 					</else>
 				</if>		
 			</function>
@@ -443,6 +443,12 @@ else:
 				</parameters>
 				<set name="port" value="thisclass.m_port.toString()"/>
 			</function>
+		<function name="UpdateHostIp">
+				<parameters>
+					<string name="ip"/>
+				</parameters>
+				<set name="thisclass.m_ip" value="context.ip.toString()"/>
+			</function>
 		</public>
 	</class>
 	<class name="CHostManager" extends="CListenerBase">
@@ -476,7 +482,8 @@ else:
 					<string name="payload" />	
 					<string name="transportid"/>		
 				</parameters>
-
+				<syslog level="INFO">========== CHostManager addHost =============</syslog>
+				<syslog level="INFO"><![CDATA[host ip = <%=context.ip.toString()%>]]></syslog>
 				<object name="hostobj"/>	
 				<object name="host"/>
 				<if cond="context.ip.toString()=='0.0.0.0'">
@@ -491,7 +498,17 @@ else:
 				</if>
 				<if cond="context.hostContainer.hasValue(context.mac.toString()+'/'+context.vlan.toString())">
 					<then>					
+						<syslog level="INFO">   </syslog>	
+						<syslog level="INFO"><![CDATA[ip = <%=context.ip.toString()%>]]></syslog>		
+						<syslog level="INFO"><![CDATA[mac = <%=context.mac.toString()%>]]></syslog>	
+						<syslog level="INFO"><![CDATA[vlan = <%=context.vlan.toString()%>]]></syslog>
+						<syslog level="INFO">   </syslog>	
 						<lookup name="thisclass.hostContainer" key="context.mac.toString()+'/'+context.vlan.toString()" output="context.host"/>
+						<function name="UpdateHostIp" class="host">
+							<parameters>
+								<string name="ip" in="context.ip.toString()"/>
+							</parameters>
+						</function>
 						<function name="Setcurrenttime" class="host"/>
 						<exit/>				
 					</then>
@@ -902,7 +919,7 @@ else:
 							<function callback="functionname">
 								<parameters>
 									<string name="type" in="'remove'"/>
-									<object name="hostobject" in="context.toremoveobj"/>						
+									<object name="hostobject" in="context.toremoveobj"/>		
 								</parameters>
 							</function>		
 						</for>
@@ -911,7 +928,10 @@ else:
 								<string name="hostid" out="context.hostid"/>
 							</parameters>
 						</function>
+						<syslog level="INFO"><![CDATA[thisclass hostContainer.size = <%=thisclass.hostContainer.size().toString()%>]]></syslog>
+						<syslog level="INFO"><![CDATA[hostid = <%=context.hostid.toString()%>]]></syslog>
 						<remove name="thisclass.hostContainer" key="context.hostid.toString()"/>
+					<syslog level="INFO"><![CDATA[thisclass hostContainer.size = <%=thisclass.hostContainer.size().toString()%>]]></syslog>
 					</function>
 				</for>
 			</function>
@@ -956,6 +976,7 @@ else:
 					<string name="dpid" value="''"/>
 					<string name="ip"/>
 				</parameters>
+				<syslog level="INFO">CHosManager GetTPPByIP </syslog>
 				<string name="hostip"/>
 				<string name="deviceid"/>
 				<object name="hostobj"/>
@@ -988,10 +1009,13 @@ else:
 								var datapathid = context.deviceid.toString();
 								context.dpid.setValue(datapathid.split(":")[1]);
 							]]></script>
+							<syslog level="INFO"><![CDATA[deviceid <%=context.dpid.toString()%>]]></syslog>
+							<syslog level="INFO"><![CDATA[port <%=context.port.toString()%>]]></syslog>
 						</then>
 					</if>
 				</for>
 			</function>
+
 			<function name="is_HaveKey">
 				<parameters>
 					<string name="keyvalue"/>
@@ -1036,17 +1060,6 @@ else:
 					</if>
 				</for>	
 			</function>
-
-			<function name="getHostByIP">
-				<parameters>
-					<string name="hostip"/>	
-					<object name="hostobj"/>
-				</parameters>				
-				<set name="context.hostobj" value="thisclass.hostContainer.getValue(context.hostip.toString())"/>				
-			</function>
-
-		
-
 		</public>
 	</class>
 </starlang>

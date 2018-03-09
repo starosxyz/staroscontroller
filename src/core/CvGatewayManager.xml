@@ -142,6 +142,8 @@
 					<string name="vmac"/>
 					<boolean name="insertResult" value="false"/>
 				</parameters>
+				<syslog level="INFO">###### CvGatewayManager Addvgateway #######</syslog>
+				<syslog level="INFO"><![CDATA[vGateway ip=<%=context.ip.toString()%>]]></syslog>
 				<log level="100">###### CvGatewayManager Addvgateway #######</log>	
 				<log level="101"><![CDATA[ip=<%=context.ip.toString()%>]]></log>
 				<log level="101"><![CDATA[netmask=<%=context.netmask.toString()%>]]></log>
@@ -230,7 +232,7 @@
 			<function name="Is_HaveGateway">
 				<parameters>
 					<string name="ip" />
-					<boolean name="is_have" />
+					<boolean name="is_have" value="false"/>
 					<string name="outvmac" />
 					<string name="outip" />
 				</parameters>
@@ -251,7 +253,17 @@
 							<string name="netmask" out="context.netmask"/>
 						</parameters>
 					</function>
+					<if cond="(context.ip.toString()=='')||(context.VGW.toString()=='')||(context.netmask.toString()=='')">
+						<then>
+							<exit/>
+						</then>
+					</if>
+					<syslog level="INFO"><![CDATA[ip = <%=context.ip.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[VGW = <%=context.VGW.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[netmask = <%=context.netmask.toString()%>]]></syslog>
 					<python><![CDATA[
+import os;
+import libstarlang;
 addr1=libstarlang.getValueString("context.ip");
 addr2=libstarlang.getValueString("context.VGW");
 mask=libstarlang.getValueString("context.netmask");
@@ -265,13 +277,13 @@ res2 = [];
 
 ilen = len(addr1);
 for i in range(len(addr1)):
-	res1.append(int(addr1[i]) & int(mask[i]));
-	res2.append(int(addr2[i]) & int(mask[i])); 
+	res1.append((int(addr1[i],10)) & (int(mask[i],10)));
+	res2.append((int(addr2[i],10)) & (int(mask[i],10))); 
 
-print(res1);
-print(res2);
 if res1 == res2:
 	libstarlang.setValueBool("context.is_have",True);				
+else:
+	libstarlang.setValueBool("context.is_have",False);	
 					]]></python>
 					<syslog level="INFO"><![CDATA[is_have = <%=context.is_have.toBoolean()%>]]></syslog>
 					<if cond="context.is_have.toBoolean() == true">
@@ -349,7 +361,7 @@ if res1 == res2:
 				<string name="vGatewayStr"/>
 				<if cond="thisclass.vGatewayContainer.hasValue(context.ip.toString())">
 					<then>
-						<lookup name="thisclass.vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
+												<lookup name="thisclass.vGatewayContainer" key="context.ip.toString()" output="context.vGatewayObj"/>
 
 						<log level="101">enter 226      ----CvGatewayManager.xml</log>
 
@@ -535,7 +547,7 @@ if res1 == res2:
 						<exit/>
 					</then>
 				</if>
-				<function name="getHostByIP" class="HostManager">
+				<function name="Gethostbyip" class="HostManager">
 					<parameters>
 						<string name="hostip" in="context.targetip.toString()"/>
 						<object name="hostobj" out="context.host"/>

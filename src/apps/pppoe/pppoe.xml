@@ -3,12 +3,12 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		nullapp.xml
-	@brief 		nullapp
+	@file 		pppoe.xml
+	@brief 		pppoe app
 	@version 	1.1.0
-	@auth 		YY
-	@date		2017/08/11
-
+	@auth 		qiulei
+	@date		2018/02/25
+	
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -20,9 +20,203 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
+	F:\staros-controller-1.2.0\src\apps\pppoe\apidocs\pppoeDocsApi.xml
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
+	<!--qiulei 20180225 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/pppoeapi.xml"/>
+	<!--qiulei 20180225 Saturday pm-->
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/pppoeDocsApi.xml"/>
+	<object name="flowservice" value="global.FlowService" reference="true"/>
+	<object name="devicemanager" value="global.DeviceManager" reference="true"/>
+	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<!--pppoe global object-->
+	<object name="pppoeobject" global="true"/>
+	<hashmap name="resourceid_hash" keytype="string" valuetype="string"/>
+	<hashmap name="deviceContainer" keytype="string" valuetype="object"/>
+	<ippool name="ippool" ipstart="'10.1.1.1'" ipend="'10.1.1.100'" netmask="'255.255.255.0'"/>
+	<string name="primarydns" value="'10.1.1.3'" global="true"/>
+	<string name="secondarydns" value="'10.1.1.4'" global="true"/>
+	
+	<function name="InstallPPPOEFlow">
+		<parameters>
+			<string name="dpid"/>
+		</parameters>
+		<string name="modstrjson" />
+		<string name="resourceid"  value=""/>
+		<reference variable="modstrjson">
+			<jsonbody><![CDATA[ 
+					{
+						"deviceid":"of:<%=context.dpid.toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x8863"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"0xfffffffd",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<string name="modstrjson2" />
+		<string name="resourceid2"  value=""/>
+		<reference variable="modstrjson2">
+			<jsonbody><![CDATA[ 
+					{
+						"deviceid":"of:<%=context.dpid.toString()%>",
+						"cookie":"0",
+						"cookiemask":"0",
+						"tableid":"0",
+						"command":"0",
+						"idletimeout":"0",
+						"hardtimeout":"0",
+						"priority":"40000",
+						"bufferid":"0xffffffff",
+						"outport":"0xffffffff",
+						"outgroup":"0xffffffff",
+						"flags":"1",
+						"match":{
+								"type":"1",
+								"matchfieldlist":[
+									{
+										"oxmclass":"0x8000",
+										"oxmfield":"5",
+										"hasmask":"false",
+										"ethtype":"0x8864"
+									}
+								]
+							},
+						"instructionlist":[
+							{
+								"type":"4",
+								"actionlist":[
+									{
+										"type":"0",
+										"outport":"0xfffffffd",
+										"maxlen":"0xffff"
+									}
+								]
+							}
+						]
+					}
+			]]></jsonbody>
+		</reference>
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<string name="outflowid" out="context.resourceid"/>
+				<string name="strjson" in="context.modstrjson.toString()"/>
+				<string name="appId" in="'pppoe'"/>
+				<string name="datapathid" in="context.dpid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_hash" key="context.resourceid.toString()" value="context.dpid.toString()"/>
+		
+		<function name="InstallFlow" class="context.flowservice">
+			<parameters>
+				<string name="outflowid" out="context.resourceid2"/>
+				<string name="strjson" in="context.modstrjson2.toString()"/>
+				<string name="appId" in="'pppoe'"/>
+				<string name="datapathid" in="context.dpid.toString()"/>
+			</parameters>
+		</function>
+		<insert name="resourceid_hash" key="context.resourceid2.toString()" value="context.dpid.toString()"/>
+	</function>
+	<function name="UninstallALLFlow">
+		<pair name="oneflowid" keytype="string" valuetype="string"/>
+			<for var="context.oneflowid" in="thisclass.resourceid_hash">				
+				<function name="UnInstallFlow" class="FlowService">
+					<parameters>
+						<string name="flowid" in="context.oneflowid.first().toString()"/>			
+						<string name="datapathid" in="context.oneflowid.second().toString()"/>
+					</parameters>
+				</function>
+			</for>
+	</function>
+	<!--
+		@brief		Start PPPOE Service
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param ifname 	接口名
+			@param localipaddr 	和对方协商地址的时候，本地地址
+	-->
+	<function name="Startpppoeserver">
+		<parameters>
+			<string name="ifname"/>
+			<string name="localipaddr"/>
+		</parameters>
+		<params name="pppoeparam"/>
+		<set name="pppoeparam" paramname="ifname" value="context.ifname"/>
+		<set name="pppoeparam" paramname="authrequestevent" value="'authrequestevent'"/>
+		<set name="pppoeparam" paramname="clientupevent" value="'clientupevent'"/>
+		<set name="pppoeparam" paramname="clientdownevent" value="'clientdownevent'"/>
+		<set name="pppoeparam" paramname="localipaddr" value="context.localipaddr"/>
+		<pppoe name="pppoeobject" action="StartPPPOE" params="context.pppoeparam"/>
+	</function>
+	<!--
+		@brief		发送认证回应
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param strjson 	json消息体
+	-->
+	<function name="SendPPPOEAuthResponse">
+		<parameters>
+			<string name="strjson"/>
+		</parameters>
+		<pppoe name="pppoeobject" action="AuthResponse">
+			<jsonsrc src="context.strjson"/>
+		</pppoe>
+	</function>
+	<!--
+		@brief		Stop PPPOE Service
+		@auth 		yijian (yijian@staros.xyz)
+		@date		2018/02/26
+		Input:
+			@param ifname 	接口名
+			@param localipaddr 	和对方协商地址的时候，本地地址
+	-->
+	<function name="Stoppppoeserver">
+		<parameters>
+			<string name="ifname"/>
+			<string name="localipaddr"/>
+		</parameters>
+		<params name="pppoeparam"/>
+		<set name="pppoeparam" paramname="ifname" value="context.ifname"/>
+		<set name="pppoeparam" paramname="authrequestevent" value="'authrequestevent'"/>
+		<set name="pppoeparam" paramname="clientupevent" value="'clientupevent'"/>
+		<set name="pppoeparam" paramname="clientdownevent" value="'clientdownevent'"/>
+		<set name="pppoeparam" paramname="localipaddr" value="context.localipaddr"/>
+		<pppoe name="pppoeobject" action="StopPPPOE" params="context.pppoeparam"/>
+	</function>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->
@@ -44,14 +238,174 @@
 		</onevent>			
 		
 		<onevent event="bundleapp.active">
-			<log>null app active</log>
+			<function name="AddDocsAPI_pppoe"/>
+			<function name="RegisterHandler_pppoe"/>
+			<object name="deviceinfo"/>
+			<string name="dpid"/>
+			<label name="waitdevice"/>
+			<function name="Gethashmap" class="context.devicemanager">
+				<parameters>
+					<hashmap name="devicehash" out="context.deviceContainer"/>
+				</parameters>
+			</function>
+			<if cond="context.deviceContainer.size()==0">
+				<then>
+					<wait name="NoneEvent" time="5000"/>
+					<goto label="waitdevice"/>
+				</then>
+			</if>
+			<pair name="oneapppair" keytype="string" valuetype="object"/>
+			<for var="oneapppair" in="context.deviceContainer">				
+				<set name="deviceinfo" value="context.oneapppair.second()"/>
+				<function name="GetDatapathId" class="context.deviceinfo">
+					<parameters>
+						<string name="outdatapathid" out="context.dpid"/>
+					</parameters>
+				</function>
+				<syslog level="INFO"><![CDATA[dpid = <%=context.dpid.toString()%>]]></syslog>
+				<function name="InstallPPPOEFlow">
+					<parameters>
+						<string name="dpid" in="context.dpid"/>
+					</parameters>
+				</function>				
+			</for>
 		</onevent>
+		
+		<onevent event="authrequestevent">
+			<string name="sessionid"/>
+			<string name="mac"/>
+			<syslog level="INFO"><![CDATA[pppoe authrequestevent  <%=event.getParam('eventdata').toString()%>]]></syslog>
+			<string name="username"/>
+			<string name="userpw"/>
+			<string name="authtype"/>
+			<string name="responsedata"/>
+			<string name="ipaddr" value="'0'"/>
+			<string name="netmask"/>
+			<string name="ipresult"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				context.sessionid.setValue(info.sessionid);
+				context.mac.setValue(info.usermac);
+				context.username.setValue(info.username);
+				context.userpw.setValue(info.userpasswd);
+			]]></script>
+			<radius name="radiusclient" action="SendMessage">
+				<jsonbody>
+					<![CDATA[ 
+						{
+							"messagetype":"1",
+							"attributes":{
+								"username":"<%=context.username.toString()%>",
+								"password":"<%=context.userpw.toString()%>",
+								"nasip":"0",
+								"nasport":"0",
+								"servicetype":"1"
+							}
+						}
+					]]>
+				</jsonbody>
+			</radius>
+			<wait event="radiusresponse" timeout="3000" timeoutgoto="timeout_label">
+				<syslog level="INFO"><![CDATA[portalauthrequest radiusresponse <%=event.getParam('eventdata').toString()%>]]></syslog>
+				<script><![CDATA[
+					var info = JSON.parse(event.getParam('eventdata').toString());
+					var json = new Object();
+					context.authtype.setValue(info.messagetype.toString());
+					if (info.attributes.framed_ip_address != null)
+					{
+						context.ipaddr.setValue(info.attributes.framed_ip_address.toString());
+						context.netmask.setValue(info.attributes.framed_ip_netmask.toString());
+					}
+				]]></script>
+				<if cond="(context.authtype.toString()=='2')&amp;&amp;(context.ipaddr.toString()=='0')">
+					<then>
+						<allocip name="ippool" value="context.ipaddr"/>
+						<script><![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							var json = new Object();
+							json['sessionid']=context.sessionid.toString();
+							json['usermac']=context.mac.toString();
+							json['subscriberip']=context.ipaddr.toString();	
+							json['subscriberipnetmask']='255.255.255.0';
+							json['primarydns']=context.primarydns.toString();
+							json['secondarydns']=context.secondarydns.toString();
+							json['authresult']='0';
+							json['authresultdesc']='ok';
+							context.responsedata.setValue(JSON.stringify(json));
+						]]></script>
+						<function name="SendPPPOEAuthResponse">
+							<parameters>
+								<string name="strjson" in="context.responsedata.toString()"/>
+							</parameters>
+						</function>
+					</then>
+					<elseif cond="(context.authtype.toString()=='2')&amp;&amp;(context.ipaddr.toString()!='0')">
+						<script><![CDATA[
+							var info = JSON.parse(event.getParam('eventdata').toString());
+							var json = new Object();
+							json['sessionid']=context.sessionid.toString();
+							json['usermac']=context.mac.toString();
+							json['subscriberip']=context.ipaddr.toString();	
+							json['subscriberipnetmask']=context.netmask.toString();
+							json['primarydns']=context.primarydns.toString();
+							json['secondarydns']=context.secondarydns.toString();
+							json['authresult']='0';
+							json['authresultdesc']='ok';
+							context.responsedata.setValue(JSON.stringify(json));
+						]]></script>
+						<function name="SendPPPOEAuthResponse">
+							<parameters>
+								<string name="strjson" in="context.responsedata.toString()"/>
+							</parameters>
+						</function>
+					</elseif>
+					<elseif cond="context.authtype.toString()!='2'">
+						<goto label="timeout_label"/>
+					</elseif>
+				</if>						
+				<goto label="wait_ok_label"/>
+			</wait>
+			<label name="timeout_label"/>
+			<string name="outjson"/>
+			<script><![CDATA[
+				var json = new Object();
+				json['sessionid']=context.sessionid.toString();
+				json['authresult']="3";				
+				json['vrf']="0";
+				context.responsedata.setValue(JSON.stringify(json));
+			]]></script>
+			<function name="SendPPPOEAuthResponse">
+				<parameters>
+					<string name="strjson" in="context.responsedata.toString()"/>
+				</parameters>
+			</function>
+			<label name="wait_ok_label"/>		
+		</onevent>
+		
+		<onevent event="clientupevent">
+			<log level="101"><![CDATA[clientupevent event data <%=event.getParam('eventdata').toString()%>]]></log>
+		</onevent>
+		
+		<onevent event="clientdownevent">
+			<log level="101"><![CDATA[clientupevent event data <%=event.getParam('eventdata').toString()%>]]></log>
+			<string name="ipaddr"/>
+			<script><![CDATA[
+				var info = JSON.parse(event.getParam('eventdata').toString());
+				context.ipaddr.setValue(info.subscriberip);
+			]]></script>
+			<freeip name="ippool" value="context.ipaddr"/>
+			<log level="100"><![CDATA[freelistsize= <%=context.ippool.freelistsize().toString()%>]]> </log>
+		</onevent>		
+		
 		<onevent event="~bundleapp.deactive">
+			<function name="RemoveDocsAPI_pppoe"/>
+			<function name="UnRegisterHandler_pppoe"/>
+			<function name="UninstallALLFlow"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.shutdown">
-			<!-- YY 2017-08-21 -->
-			
+			<function name="RemoveDocsAPI_pppoe"/>
+			<function name="UnRegisterHandler_pppoe"/>
 		</onevent>
 
 		

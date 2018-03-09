@@ -1,0 +1,42 @@
+/staroscontroller/v1/api/ipoe
+POST/GET
+{
+"ipaddr" value="'192.168.111.130'"/>
+}
+
+
+/staroscontroller/v1/api/portal
+
+GET/POST
+				{
+					"PortalClientListenIP":"192.168.4.206",
+					"PortalClientListenPortal":"2000",
+					"RedirectServerListenIP":"192.168.4.206",
+					"RedirectServerListenPort":"8000",
+					"PortalServer":"192.168.4.188",
+					"PortalServerPort":"50100",
+					"key":"testing123",
+					"verison":"2",
+					"url":"http://192.168.4.188",
+					"detecttimeout":"33"
+				}
+
+
+/staroscontroller/v1/api/pppoe
+POST/GET
+{
+"ifname" value="'ens37'"/>
+"localipaddr" value="'192.168.111.130'"
+}
+
+/staroscontroller/v1/api/radiusclient
+POST/GET
+					{
+					"RadiusLocalIP":"192.168.186.138",
+					"RadiusLocalPort":"23222",
+					"RadiusServerIP":"192.168.186.1",
+					"RadiusServerPort":"1812",
+					"SharedKey":"testing123",
+					"ResponseTimeOut":"22",
+					"Retransmit":"33"
+				}

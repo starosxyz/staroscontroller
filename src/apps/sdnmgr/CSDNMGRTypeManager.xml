@@ -254,14 +254,13 @@
 				<log level="101"><![CDATA[typeContainer size=<%=thisclass.typeContainer.size().toString()%> ----241]]></log>
 				
 				<object name="typeobj"/>
-				<object name="onetype"/>
 				<string name="onetypejson"/>
 				<string name="strjson"/>
 				<list name="typelist" valuetype="string"/>
 				
 				<for var="typeobj" in="thisclass.typeContainer">
-					<set name="context.onetype" value="context.typeobj.value()"/>
-					<function name="GetOneTypeObjJsonStr" class="context.onetype">
+				
+					<function name="GetOneTypeObjJsonStr" class="typeobj">
 						<parameters>
 							<string name="typeObjJsonStr" out="context.onetypejson"/>
 						</parameters>
@@ -320,7 +319,7 @@
 									<string name="dstdevicerole" out="context.dstdevicerole"/>
 									<string name="priority" out="tempstr"/>
 								</parameters>
-							</function>s
+							</function>
 						</then>
 					</if>
 				</for>

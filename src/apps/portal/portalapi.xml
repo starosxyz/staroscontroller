@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		portalapi.xml
+	@brief 		portal's api
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/02/25
+
+	Licensed under the Apache License, Version 2.0 (the "License");
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+
+	<function name="RegisterHandler_portal">
+		<log level="101">insert RegisterHandler_portal RegisterHandler 28  ---portal.xml</log>
+		<function name="RegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<long name="bundleid" in="context.getCurrentBundleId()"/>			
+				<string name="handleevent" in="'processGetAndPost_portal_Request'"/>
+				<string name="requestpathtest" in="'/staroscontroller/v1/portal/portal'"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<function name="UnRegisterHandler_portal">
+		<function name="UnRegisterAPIHandler" class="restfulservice">
+			<parameters>
+				<string name="requestpath" in="'/staroscontroller/v1/portal/portal'"/>
+			</parameters>
+		</function>
+	</function>
+	
+	<events>
+		<onevent event="processGetAndPost_portal_Request">
+			<log level="101">enter processGetAndPost_portal_Request  ----portalapi.xml 49</log>
+			<!--处理创建 portal 请求-->
+			<if cond="event.getParam('method').toString() == 'POST'">
+				<then>
+					<log level="100">processGetAndPost_portal_Request  POST ----portalapi.xml 53</log>
+				<!-- 判断jsong格式 start-->
+					<boolean name="isFormatTure" value="true"/>
+					<script><![CDATA[
+						var data=event.getParam('eventdata').toString();
+						try{
+							var jsonObj=JSON.parse(data);
+						}catch(err){
+							context.isFormatTure.setValue(false);
+						}
+					]]></script>
+					<if cond="context.isFormatTure.toBoolean()==false">
+						<then>
+							<function name="jsonFormatErrorResponse"/>
+							<exit/>
+						</then>
+					</if>
+				<!-- 判断jsong格式 end-->
+
+					<string name="PortalClientListenIP" />
+					<string name="PortalClientListenPortal" />
+					<string name="RedirectServerListenIP" />
+					<string name="RedirectServerListenPort" />
+					<string name="PortalServer" />
+					<string name="PortalServerPort" />
+					<string name="key" />
+					<string name="verison" />
+					<string name="url" />
+					<string name="detecttimeout" />
+					<string name="state" />
+
+					<script><![CDATA[
+						var info = JSON.parse(event.getParam('eventdata').toString());
+						if(info.PortalClientListenIP){
+							context.PortalClientListenIP.setValue(info.PortalClientListenIP);
+						}
+						if(info.PortalClientListenPortal){
+							context.PortalClientListenPortal.setValue(info.PortalClientListenPortal);
+						}
+						if(info.RedirectServerListenIP){
+							context.RedirectServerListenIP.setValue(info.RedirectServerListenIP);
+						}
+						if(info.RedirectServerListenPort){
+							context.RedirectServerListenPort.setValue(info.RedirectServerListenPort);
+						}
+						if(info.PortalServer){
+							context.PortalServer.setValue(info.PortalServer);
+						}
+						if(info.PortalServerPort){
+							context.PortalServerPort.setValue(info.PortalServerPort);
+						}
+						if(info.key){
+							context.key.setValue(info.key);
+						}
+						if(info.verison){
+							context.verison.setValue(info.verison);
+						}
+						if(info.url){
+							context.url.setValue(info.url);
+						}
+						if(info.detecttimeout){
+							context.detecttimeout.setValue(info.detecttimeout);
+						}
+						if(info.state){
+							context.state.setValue(info.state);
+						}
+						context.print("PortalClientListenPortal="+info.PortalClientListenPortal);
+						context.print("RedirectServerListenIP="+info.RedirectServerListenIP);
+						context.print("RedirectServerListenPort="+info.RedirectServerListenPort);
+						context.print("PortalServer="+info.PortalServer);
+						context.print("PortalServerPort="+info.PortalServerPort);
+						context.print("key="+info.key);
+						context.print("verison="+info.verison);
+						context.print("url="+info.url);
+						context.print("detecttimeout="+info.detecttimeout);
+						context.print("state="+info.state);
+					]]></script>
+					
+					<if cond="context.state.toString() == 'active'">
+						<then>
+							<function name="Startportalclient">
+								<parameters>
+									<string name="PortalClientListenIP" in="context.PortalClientListenIP.toString()"/>
+									<string name="PortalClientListenPortal" in="context.PortalClientListenPortal.toString()"/>
+									<string name="RedirectServerListenIP" in="context.RedirectServerListenIP.toString()"/>
+									<string name="RedirectServerListenPort" in="context.RedirectServerListenPort.toString()"/>
+									<string name="PortalServer" in="context.PortalServer.toString()"/>
+									<string name="PortalServerPort" in="context.PortalServerPort.toString()"/>
+									<string name="key" in="context.key.toString()"/>
+									<string name="verison" in="context.verison.toString()"/>
+									<string name="url" in="context.url.toString()"/>
+									<string name="detecttimeout" in="context.detecttimeout.toString()"/>
+									<string name="state" in="context.state.toString()"/>
+								</parameters>
+							</function>
+						</then>
+						<elseif cond="context.state.toString() == 'deactive'">
+							<function name="Stopportalclient">
+								<parameters>
+									<string name="PortalClientListenIP" in="context.PortalClientListenIP.toString()"/>
+									<string name="PortalClientListenPortal" in="context.PortalClientListenPortal.toString()"/>
+									<string name="RedirectServerListenIP" in="context.RedirectServerListenIP.toString()"/>
+									<string name="RedirectServerListenPort" in="context.RedirectServerListenPort.toString()"/>
+									<string name="PortalServer" in="context.PortalServer.toString()"/>
+									<string name="PortalServerPort" in="context.PortalServerPort.toString()"/>
+									<string name="key" in="context.key.toString()"/>
+									<string name="verison" in="context.verison.toString()"/>
+									<string name="url" in="context.url.toString()"/>
+									<string name="detecttimeout" in="context.detecttimeout.toString()"/>
+									<string name="state" in="context.state.toString()"/>
+								</parameters>
+							</function>
+						</elseif>
+					</if>
+					<function name="testResponse"/>
+				</then>
+			</if>
+			<!--处理 得到 portal 请求-->
+			<if cond="event.getParam('method').toString() == 'GET'">
+				<then>
+					<log level="100">processGetAndDelete_AllPolicysRequest  GET  ----portalapi.xml 355</log>
+					<function name="testResponse"/>
+				</then>
+			</if>
+		</onevent>
+
+	</events>
+
+	
+	<function name="portal_ErrorDataResponse">
+		<parameters>
+			<string name="transportid"/>
+			<string name="description"/>
+		</parameters>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var json = new Object();
+			var one = new Object();
+				one.code = "-1";
+				one.description = context.description.toString();
+				
+			json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson.setValue(strjson);
+		]]></script>
+		<log level="101"><![CDATA[1173 outjson<%=context.outjson.toString()%> --------portal_ErrorDataResponse]]></log>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+	
+	
+	<!--qiulei-->
+	<function name="testResponse">
+		<log level="101">enter testResponse  ----portalapi.xml 217</log>
+		<string name="outjson123"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);
+			context.outjson123.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson123.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+	<function name="portal_successresponse">
+		<parameters>
+			<string name="successresponse"/>
+		</parameters>
+		<log level="101">enter portal_successresponse  ----portalapi.xml 629</log>
+		<string name="outjson"/>
+		<script><![CDATA[
+			var one=new Object();
+				one.code = "0";
+				one.description = "ok";
+				
+			var json = new Object();					
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.successresponse.setValue(strjson);
+		]]></script>
+
+	</function>
+
+	<function name="jsonFormatErrorResponse">
+		<string name="outjson"/>
+		<reference variable="outjson">
+			<jsonbody><![CDATA[
+				{
+					"result": {
+						"code": "-1",
+						"description": "JSON Format Error"
+					}
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="event.getParam('transportid').toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
+	</function>
+
+</starlang>

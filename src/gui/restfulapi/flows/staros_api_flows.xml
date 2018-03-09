@@ -645,6 +645,8 @@
 		<object name="flowobj"/>
 		<string name="oneflowjson"/>
 		<string name="flowid"/>
+		<long name="xid"/>
+		<string name="tpid"/>
 		<script><![CDATA[				
 				var str = event.getParam('requestpath').toString();
 				var array = str.split("/");
@@ -680,6 +682,12 @@
 							<string name="datapathid" in="context.onedeviceid.toString()"/>
 						</parameters>
 					</function>
+					<function name="GetTransportIdFromDevice" class="DeviceManager">
+						<parameters>
+							<string name="datapathid" in="context.onedeviceid.toString()"/>
+							<string name="transportid" out="context.tpid"/>
+						</parameters>
+					</function>
 					<if cond="context.deviceobj.ptr!=null">
 						<then>
 							<function name="GetFlowManager" class="context.deviceobj">
@@ -689,13 +697,23 @@
 							</function>
 							<if cond="context.flowobj.ptr!=null">
 								<then>
-									<function name="InstallFlowTableRequest" class="context.flowobj">
+									<function name="InstallFlowTableRequest_outxid" class="context.flowobj">
 										<parameters>
 											<string name="outflowid" out="context.flowid"/>
 											<string name="strjson" in="context.oneflowjson.toString()" />
 											<string name="appId" in="context.appid.toString()" />
+											<long name="xid" out="context.xid"/>
 										</parameters>
 									</function>
+									<wait event="openflow.OFPT13_ERROR" timeout="3000" transportid="context.tpid.toString()" xid="context.xid.toLong()">		
+										<assert/>																		
+										<function name="error">
+											<parameters>
+												<string name="transportid" in="event.getParam('transportid').toString()"/>
+											</parameters>
+										</function>
+										<goto label="Exit"/>
+									</wait>
 								</then>
 								<else>
 									<function name="ErrorDataResponse">
@@ -724,12 +742,13 @@
 						<string name="json" out="context.json"/>
 					</parameters>
 				</function>
+				
 				<function name="SendResponse" class="RestfulService">
 					<parameters>
 						<string name="transportid" in="event.getParam('transportid').toString()"/>
 						<string name="json" in="context.json.toString()"/>
 					</parameters>
-				</function>
+				</function>				
 			</then>
 			<else>
 				<function name="ErrorDataResponse">
@@ -740,6 +759,8 @@
 				</function>
 			</else>
 		</if>	
+		
+		<label name="Exit"/>
 	</function>
 	
 	<!--
@@ -944,5 +965,30 @@
 			context.outjson.setValue(strjson);
 		]]></script>
 		<set name="json" value="context.outjson.toString()"/>
+	</function>
+	
+	<function name="error">
+		<parameters>
+			<string name="transportid"/>
+		</parameters>
+		<string name="outjson"/>
+		
+		<script><![CDATA[
+			
+			var one = new Object();
+				one.code = "1";
+				one.description = "error";
+			
+			var json = new Object();
+				json.result = one;
+			var strjson=JSON.stringify(json);												
+			context.outjson.setValue(strjson);
+		]]></script>
+		<function name="SendResponse" class="RestfulService">
+			<parameters>
+				<string name="transportid" in="context.transportid.toString()"/>
+				<string name="json" in="context.outjson.toString()"/>
+			</parameters>
+		</function>
 	</function>
 </starlang>

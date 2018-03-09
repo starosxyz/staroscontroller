@@ -23,6 +23,7 @@
 -->
 <starlang xmlns="http://www.staros.xyz/staros" scope="application">
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
+	<string name="nullapp_id" value="'nullapp的全局变量在别的app中可以调用'" global="true"/>
 	<events>
 		<onevent event="bundleapp.startup">			
 			<!-- YY 2017-08-21 -->

@@ -55,6 +55,7 @@
 				<if cond="context.deviceobj.ptr==null">
 					<then>
 						<log level="100">deviceobj is null</log>
+						<exit/>
 					</then>
 				</if>
 				<function name="GetFlowManager" class="context.deviceobj">
@@ -66,6 +67,7 @@
 				<if cond="context.flowmgrobj.ptr==null">
 					<then>
 						<log level="100">deviceobj is null</log>
+						<exit/>
 					</then>
 				</if>								
 				<function name="InstallFlowTableRequest" class="context.flowmgrobj">

@@ -3,13 +3,13 @@
 	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
 	All rights reserved.
 	
-	@file 		tunnelServiceDocsApi.xml
-	@brief 		tunnelapp's api
+	@file 		portalServiceDocsApi.xml
+	@brief 		portalapp's api
 	@version 	1.1.0
 	@auth 		qiulei
-	@date		2017/09/15
+	@date		2018/02/25
 
-	Licensed under the Apache License, Version 2.0 (the "License");
+	Licensed under the Apache License, Version 2.0 (the "License"); portal
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
 
@@ -22,31 +22,23 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/apidocs/sdnmgrAPIDefinitionDocs.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/apidocs/sdnmgrPathDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalPathDocsApi.xml"/>
+
 	<!--
-		Author:
-				qiulei
-		Date:
-				2017-09-15
-		Copyright: 
-				Nanjing StarOS Inc. All rights reserved.
-	-->	
-	
-	<!--
-		@brief		添加 sdnmgr Tag
+		@brief		添加 portal Tag
 		@auth 		qiulei
-		@date		2017/09/15
+		@date		2018/02/25
 		Input:
 		Output: 
 	-->
-	<function name="AddDocsAPI_sdnmgr">
+	<function name="AddDocsAPI_portal">
 		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[ 
 				{
-					"name": "sdnmgr",
-					"description": "Query and Manage sdnmgr"
+					"name": "portal",
+					"description": "Query and Manage portal"
 				}
 			]]></jsonbody>
 		</reference>
@@ -56,26 +48,26 @@
 			</parameters>
 		</function>
 	
-		<function name="RegistDefinition_sdnmgr"/>
+		<function name="RegistDefinition_portal"/>
 		
-		<function name="addPath_sdnmgr"/>
+		<function name="addPath_portal"/>
 	</function>
 	
 	<!--
-		@brief		删除tunnel Tag
+		@brief		删除 portal Tag
 		@auth 		qiulei
-		@date		2017/09/15
+		@date		2018/02/25
 		Input:
 		Output: 
 	-->
-	<function name="RemoveDocsAPI_sdnmgr">
+	<function name="RemoveDocsAPI_portal">
 	
 		<string name="tag"/>
 		<reference variable="tag">
 			<jsonbody><![CDATA[ 
 				{
-					"name": "sdnmgr",
-					"description": "Query and Manage sdnmgr"
+					"name": "portal",
+					"description": "Query and Manage portal"
 				}
 			]]></jsonbody>
 		</reference>
@@ -85,8 +77,8 @@
 			</parameters>
 		</function>
 	
-		<function name="DestroyDefinition_sdnmgr"/>
+		<function name="DestroyDefinition_portal"/>
 		
-		<function name="removePath_sdnmgr"/>
+		<function name="removePath_portal"/>
 	</function>
 </starlang>

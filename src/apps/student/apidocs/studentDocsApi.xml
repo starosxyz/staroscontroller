@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Copyright (C) 2013-2016 Nanjing StarOS Technology Co., Ltd
+	All rights reserved.
+	
+	@file 		studentServiceDocsApi.xml
+	@brief 		studentapp's api
+	@version 	1.1.0
+	@auth 		qiulei
+	@date		2018/02/25
+
+	Licensed under the Apache License, Version 2.0 (the "License"); student
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+-->
+<starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/student/apidocs/studentAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/student/apidocs/studentPathDocsApi.xml"/>
+
+	<!--
+		@brief		添加 student Tag
+		@auth 		qiulei
+		@date		2018/02/25
+		Input:
+		Output: 
+	-->
+	<function name="AddDocsAPI_student">
+		<string name="tag"/>
+		<reference variable="tag">
+			<jsonbody><![CDATA[ 
+				{
+					"name": "student",
+					"description": "Query and Manage student"
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="addTag" class="APIDocsService">
+			<parameters>
+				<string name="tag" in="context.tag.toString()"/>
+			</parameters>
+		</function>
+	
+		<function name="RegistDefinition_student"/>
+		
+		<function name="addPath_student"/>
+	</function>
+	
+	<!--
+		@brief		删除 student Tag
+		@auth 		qiulei
+		@date		2018/02/25
+		Input:
+		Output: 
+	-->
+	<function name="RemoveDocsAPI_student">
+	
+		<string name="tag"/>
+		<reference variable="tag">
+			<jsonbody><![CDATA[ 
+				{
+					"name": "student",
+					"description": "Query and Manage student"
+				}
+			]]></jsonbody>
+		</reference>
+		<function name="removeTag" class="APIDocsService">
+			<parameters>
+				<string name="tag" in="context.tag.toString()"/>
+			</parameters>
+		</function>
+	
+		<function name="DestroyDefinition_student"/>
+		
+		<function name="removePath_student"/>
+	</function>
+</starlang>

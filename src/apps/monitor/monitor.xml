@@ -58,27 +58,7 @@
 		<messageblock name="msgblock"/>		
 		<syslog level="INFO">1</syslog>
 		
-		<function name="Container_Is_Have" class="context.vgatewaymanager">
-			<parameters>
-				<boolean name="is_null" out="context.is_have"/>
-			</parameters>
-		</function>
-		<syslog level="INFO">1-5</syslog>
-		<syslog level="INFO"><![CDATA[is_have= <%=context.is_have.toString()%>]]></syslog>
 		
-		<syslog level="INFO">2</syslog>
-		<function name="Container_Is_Have" class="context.monitormanager">
-			<parameters>
-				<boolean name="is_null" out="context.is_have"/>
-			</parameters>
-		</function>
-		<syslog level="INFO">2-5</syslog>
-		<syslog level="INFO"><![CDATA[is_have= <%=context.is_have.toString()%>]]></syslog>
-		<if cond="context.is_have.toBoolean()==false">
-			<then>
-				<exit/>
-			</then>
-		</if>
 		<syslog level="INFO">3</syslog>
 		<function name="Gethashmap" class="context.monitormanager">
 			<parameters>
@@ -92,12 +72,25 @@
 				<hashmap name="vhashmap" out="context.vgwhashmap" reference="true"/>
 			</parameters>
 		</function>
+		
+		<if cond="context.vgwhashmap.size()==0">
+			<then>
+				<exit/>
+			</then>
+		</if>
+		<if cond="context.hosthashmap.size()==0">
+			<then>
+				<exit/>
+			</then>
+		</if>
 		<pair name="onehost" keytype="string" valuetype="string"/>
 		<pair name="onevgw" keytype="string" valuetype="object"/>
 		<for var="context.onehost" in="context.hosthashmap">
 			<set name="context.monitorip" value="context.onehost.second().toString()"/>
+			<!--
 			<for var="context.onevgw" in="context.vgwhashmap">
 				<set name="context.vgwobj" value="context.onevgw.second()"/>
+			-->
 				<function name="Is_HaveGateway" class="context.vgatewaymanager">
 					<parameters>
 						<string name="ip" in="context.monitorip.toString()"/>
@@ -143,7 +136,9 @@
 						<exit/>
 					</else>
 				</if>
+				<!--
 			</for>	
+			-->
 		</for>
 	</function>
 	<events>
@@ -186,7 +181,7 @@
 			<!--启动SendARP定时器-->
 			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="2000"/>
 		</onevent>
-		
+		s
 		<onevent event="~bundleapp.deactive">
 			<function name="removeProcessor" class="PacketService">				
 				<parameters>

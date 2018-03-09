@@ -28,7 +28,8 @@
 	<object name="meterservice" value="global.MeterService" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="toposervice" value="global.TopoService" reference="true"/>
-	<object name="deviceservice" value="global.DeviceService" reference="true"/>	
+	<object name="deviceservice" value="global.DeviceService" reference="true"/>
+	<object name="vgatewaymanager" value="global.vGatewayManager" reference="true"/>	
 	<object name="hostmanager" value="global.HostManager" reference="true"/>
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/sdnmgr/sdnmgrapi.xml"/>
 	<!--qiulei 20180116 Tuesday pm-->
@@ -44,9 +45,74 @@
 	<object name="globaltimer2"/>
 	<string name="portDEAorA" value="'deactive'"/>
 	<boolean name="bandwidth_bool" value="false"/>
+	<boolean name="bandwidth_bool2" value="false"/>
 	<string name="apriority" value="'1'"/>
+	<string name="temp" value="'1'"/>
 	<string name="policynum" value="'0'"/>
 	<string name="policycounts" value="'0'"/>
+	<string name="tempudpsrc"/>	
+	<boolean name="flowis" value="false"/>
+	<boolean name="flowis2" value="false"/>
+	<boolean name="flowis3" value="false"/>
+	<string name="eventnum" value="'0'"/>
+	<function name="StartPolicyEvent">		
+		<syslog level="INFO"> OK START</syslog>						
+		<timer name="context.globaltimer2" method="StartTimer" event="'PolicyEvent'" timeout="100"/>
+	</function>
+	
+	<function name="GetNextPolicy">	
+		<string name="port"/>	
+		<string name="temp2"/>
+		<string name="temp1"/>
+		<string name="dtype"/>
+		<string name="drole"/>
+		<syslog level="INFO">callback</syslog>
+		<boolean name="isstop" value="true"/>
+   		<while cond="context.isstop.toBoolean()==true">
+   			<syslog level="INFO">while start</syslog>
+   			<wait name="NoneEvent" time="5"/>
+			<if cond="context.apriority.toString()==context.policycounts.toString()">
+				<then>
+					<set name="context.apriority" value="'1'"/>
+				</then>
+				<else>									
+					<python><![CDATA[
+import os;
+import libstarlang;
+
+now = libstarlang.getValueString("context.apriority");
+intnow = int(now,10);
+bigoneintnow = intnow+1;
+strbigoneintnow = str(bigoneintnow);
+libstarlang.setValueString("context.apriority",strbigoneintnow);
+					]]></python>
+				</else>
+			</if>		
+			<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
+				<parameters>
+					<string name="priority" in="context.apriority.toString()"/>
+					<string name="srcdevicetype" out="context.temp1"/>
+					<string name="srcdevicerole" out="context.temp2"/>
+					<string name="dstdevicetype" out="context.dtype"/>
+					<string name="dstdevicerole" out="context.drole"/>
+				</parameters>
+			</function>
+			
+			<function name="GetportByTR" class="context.sdndevicemgr">
+				<parameters>
+					<string name="port" out="context.port"/>
+					<string name="devicetype" in="context.dtype.toString()"/>
+					<string name="devicerole" in="context.drole.toString()"/>
+				</parameters>
+			</function>
+			<if cond="context.port.toString()!=''">
+				<then>
+					<exit/>
+				</then>
+			</if>
+		</while>
+	</function>
+	
 	<events>
 		<onevent event="bundleapp.startup">
 			<log level="101">sdnmgr app startup   ----sdnmgr.xml 38</log>
@@ -80,29 +146,27 @@
 				<parameters>
 					<string name="app_name" in="'sdnmgr'"/>
 					<string name="event_name" in="'PacketInEvent'"/>					
-					<string name="eth_type" in="'0x0806'"/>					
+					<string name="eth_type" in="'0x0800'"/>					
 				</parameters>
 			</function>	
-			
-			
-			<function name="addPortListener" class="PortService">				
-				<parameters>
-					<string name="appid" in="'sdnmgr'"/>
-					<string name="add_eventname" in="'PortInEvent'"/>
+			<boolean name="temp"/>
+			<function name="Addvgateway" class="context.vgatewaymanager">
+				<parameters>	
+					<string name="ip" in="'191.168.1.178'"/>	
+					<string name="netmask" in="'255.255.0.0'"/>
+					<string name="vmac" in="'00:00:00:00:00:05'"/>
+					<boolean name="insertResult" out="context.temp"/>
 				</parameters>
 			</function>
-			
-			
-
 			<string name="eventname"/>
-			<set name="eventname"  value="'TimeOutEvent'"/>
+			<set name="eventname"  value="'ISUEvent'"/>
 			<!--启动SendARP定时器-->
-			<timer name="context.globaltimer" method="StartTimer" event="'TimeOutEvent'" timeout="3000"/>
+			<timer name="context.globaltimer" method="StartTimer" event="'ISUEvent'" timeout="3000"/>
 			
 			<string name="eventname2"/>
 			<set name="eventname2"  value="'PolicyEvent'"/>
 			<!--启动SendARP定时器-->
-			<timer name="context.globaltimer2" method="StartTimer" event="'PolicyEvent'" timeout="2000"/>
+			<timer name="context.globaltimer2" method="StartTimer" event="'PolicyEvent'" timeout="1000"/>
 		</onevent>
 		
 		<onevent event="~bundleapp.deactive">
@@ -114,20 +178,10 @@
 					<string name="app_name" in="'sdnmgr'"/>									
 				</parameters>
 			</function>
-			<function name="removePortListener" class="PortService">
-				<parameters>
-					<string name="appid" in="'sdnmgr'"/>
-				</parameters>
-			</function>
+			<timer name="context.globaltimer" method="StopTimer"/>
+			<set name="context.eventnum" value="'1'"/>
+			<timer name="context.globaltimer2" method="StopTimer"/>
 		</onevent>
-		
-		
-		<onevent event="PortInEvent">
-			<log level="100"><![CDATA[sdnmgr.xml 127 eventdata = <%= event.getParam('eventdata').toString()%>]]></log>
-			<log level="100"><![CDATA[sdnmgr.xml 128 datapathid = <%= event.getParam('datapathid').toString()%>]]></log>
-		</onevent>
-		
-		
 		<onevent event="PacketInEvent">
 			<object name="openflowdevice"/>
 			<string name="local_vlan"/>	
@@ -139,6 +193,7 @@
 			<string name="inportid"/>
 			<string name="outport"/>
 			<boolean name="is_havehost" value="false"/>
+			<syslog level="INFO"><![CDATA[sdnmgr PacketIn = <%=event.getParam('eventdata').toString()%>]]></syslog>
 			<script><![CDATA[
 				var info = JSON.parse(event.getParam('eventdata').toString());
 				if (info.match != null) {
@@ -170,7 +225,7 @@
 									<exit/>
 								</then>
 							</if>						
-							<flood name="global.openflowserverobj" strjson="context.pkoutjson.toString()" inlocation="context.datapathid.toString()+'/'+context.inportid.toString()"/>
+							<flood name="global.openflowserverobj" strjson="context.pkoutjson.toString()" inlocation="event.getParam('datapathid').toString()+'/'+context.inportid.toString()"/>
 						</then>
 						<else>
 							<function name="is_HaveKey" class="context.hostmanager">
@@ -201,24 +256,249 @@
 							</function>
 							<syslog level="INFO"><![CDATA[pkoutjson = <%= context.pkoutjson.toString()%>]]></syslog>
 							<syslog level="INFO"><![CDATA[outport = <%= context.outport.toString()%>]]></syslog>
-							<getdevice name="global.openflowserverobj" deviceid="context.datapathid.toString()" output="context.openflowdevice"/>
-							<packetout name="openflowdevice" strjson="context.pkoutjson.toString()"  outport="context.outport.toString()"/>
+							<syslog level="INFO"><![CDATA[datapathid = <%= context.datapathid.toString()%>]]></syslog>
+							<!--getdevice name="global.openflowserverobj" deviceid="context.datapathid.toString()" output="context.openflowdevice"/-->
+							<!--packetout name="context.openflowdevice" strjson="context.pkoutjson.toString()"  outport="context.outport.toString()"/-->
+							<packetout name="context.openflowserverobj" deviceid="context.datapathid.toString()" strjson="context.pkoutjson.toString()" outport="context.outport.toString()"/>
 						</else>
 					</if>
 				</then>
 			</if>
+			<messageblock name="packetmsgblock"/>
+			<string name="plid"/>
+			<string name="ipprotocol"/>
+			<string name="ipsrcport"/>
+			<string name="policyport"/>
+			<string name="policydpid"/>
+			<object name="deviceobj"/>
+			<object name="portmgr"/>
+			<string name="result2"/>
+			<string name="speed2"/>
+			<string name="maxspeed2"/>
+			<string name="stype"/>
+			<string name="srole"/>
+			<string name="dtype"/>
+			<string name="drole"/>
+			<if cond="context.ethtype.toString()=='2048'">
+				<then>
+					<syslog level="INFO"><![CDATA[2048 pkoutjson = <%=context.pkoutjson.toString()%>]]></syslog>
+					<script><![CDATA[
+						var jsonpayload=JSON.parse(context.pkoutjson.toString());
+						var protocol = jsonpayload.ethernetpayload.protocol;
+						context.ipprotocol.setValue(protocol);
+					]]></script>
+					
+										
+					<if cond="context.ipprotocol.toString()=='17'">
+						<then>
+							<set name="packetmsgblock" value="event.getMessageBlock()"/>	
+							<script><![CDATA[
+								var jsonpayload=JSON.parse(context.pkoutjson.toString());
+								var srcport = jsonpayload.ethernetpayload.ippayload.sourceport;
+								context.ipsrcport.setValue(srcport);
+							]]></script>
+							
+							<if cond="context.ipsrcport.toString()=='67'">
+								<then>
+									<syslog level="INFO">"context.openflowserverobj"</syslog>
+									<syslog level="INFO"><![CDATA[2048 67 datapathid = <%=event.getParam('datapathid').toString()%>]]></syslog>
+									<!--flood name="global.openflowserverobj" msgblk="context.packetmsgblock" inlocation="event.getParam('datapathid').toString()+'/'+context.inportid.toString()"/-->
+								</then>						
+							</if>
+							<if cond="context.ipsrcport.toString()=='68'">
+								<then>
+									<syslog level="INFO">"context.openflowserverobj"</syslog>
+									<syslog level="INFO"><![CDATA[2048 datapathid = <%=event.getParam('datapathid').toString()%>]]></syslog>
+									<!--flood name="global.openflowserverobj" msgblk="context.packetmsgblock" inlocation="event.getParam('datapathid').toString()+'/'+context.inportid.toString()"/-->
+								</then>
+							</if>
+							<if cond="context.ipsrcport.toString()=='68'">
+								<then>
+									<exit/>
+								</then>
+							</if>
+							<if cond="context.ipsrcport.toString()=='67'">
+								<then>
+									<exit/>
+								</then>
+							</if>
+						</then>
+					</if>
+					<syslog level="INFO"><![CDATA[2048 ipprotocol = <%=context.ipprotocol.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[2048 ipsrcport = <%=context.ipsrcport.toString()%>]]></syslog>
+					<if cond="(context.ipprotocol.toString()=='17')&amp;&amp;(context.ipsrcport.toString()!='68')">
+						<then>
+							<if cond="(context.ipprotocol.toString()=='17')&amp;&amp;(context.ipsrcport.toString()!='67')">
+								<then>
+									<function name="getpolicyid" class="context.sdnpolicymgr">
+										<parameters>
+											<string name="plid" out="context.plid"/>
+										</parameters>
+									</function>
+									<if cond="context.plid.toString() == '0'">
+										<then>
+											<syslog level="INFO">plid==0</syslog>
+											<exit/>
+										</then>
+									</if>
+									<function name="getpolicyport" class="context.sdnpolicymgr">
+										<parameters>
+											<string name="port" out="context.policyport"/>
+											<string name="deviceid" out="context.policydpid"/>
+										</parameters>
+									</function>	
+									<syslog level="INFO"><![CDATA[2048 policyport = <%=context.policyport.toString()%>]]></syslog>	
+									<syslog level="INFO"><![CDATA[2048 policydpid = <%=context.policydpid.toString()%>]]></syslog>
+									<function name="getDevice" class="DeviceManager">
+										<parameters>
+											<object name="outdevice" out="context.deviceobj"/>
+											<string name="datapathid" in="context.policydpid.toString()"/>
+										</parameters>
+									</function>
+									
+									<if cond="context.deviceobj.ptr != null">
+										<then>
+											<function name="GetPortManager" class="context.deviceobj">
+												<parameters>
+													<object name="outportmgr" out="context.portmgr"/>
+												</parameters>
+											</function>
+											<if cond="context.portmgr.ptr != null">
+												<then>
+													<function name="GetAppointedPortInfo" class="context.portmgr">
+														<parameters>
+															<string name="portno" in="context.policyport.toString()"/>
+															<string name="outjson" out="context.result2"/>
+														</parameters>
+													</function>								
+												</then>
+											</if>
+										</then>
+									</if>	
+									<if cond="context.result2.toString()==''">
+										<then>
+											<syslog level="INFO">result2=0</syslog>
+											<exit/>
+										</then>
+									</if>
+									<syslog level="INFO"><![CDATA[result 3478= <%=context.result2.toString()%>]]></syslog>
+									<script><![CDATA[
+										var str = JSON.parse(context.result2.toString());
+										context.speed2.setValue(str.sendbandwidth);
+										context.maxspeed2.setValue(str.maxbandwidth);
+									]]></script>
+									<syslog level="INFO"><![CDATA[speed2 = <%= context.speed2.toString()%>]]></syslog>
+									<syslog level="INFO"><![CDATA[maxspeed2 = <%= context.maxspeed2.toString()%>]]></syslog>
+									<python><![CDATA[
+import os;
+import libstarlang;
+
+runing=libstarlang.getValueString("context.speed2");
+Max=libstarlang.getValueString("context.maxspeed2");
+a = int(runing,10);
+b = int(Max,10);
+if a<b*0.05:
+	libstarlang.setValueBool("context.bandwidth_bool2",True);
+else:
+	libstarlang.setValueBool("context.bandwidth_bool2",False);
+									]]></python>
+									<syslog level="INFO"><![CDATA[2048 bandwidth_bool2 = <%= context.bandwidth_bool2.toString()%>]]></syslog>
+									<syslog level="INFO"><![CDATA[2048 plid = <%= context.plid.toString()%>]]></syslog>
+									<if cond="(context.bandwidth_bool2.toBoolean()==true)&amp;&amp;(context.plid.toString()=='6')&amp;&amp;(context.ipsrcport.toString()=='1000')">
+										<then>
+											<syslog level="INFO">#####true 5###</syslog>
+											
+											<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
+												<parameters>
+													<string name="priority" in="'1'"/>
+													<string name="srcdevicetype" out="context.stype"/>
+													<string name="srcdevicerole" out="context.srole"/>
+													<string name="dstdevicetype" out="context.dtype"/>
+													<string name="dstdevicerole" out="context.drole"/>
+												</parameters>
+											</function>
+											<set name="tempudpsrc" value="context.ipsrcport.toString()"/>
+											<syslog level="INFO"><![CDATA[ipsrcport = <%= context.ipsrcport.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[stype = <%= context.stype.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[srole = <%= context.srole.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[dtype = <%= context.dtype.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[drole = <%= context.drole.toString()%>]]></syslog>
+											<if cond="(context.flowis.toBoolean()==false)&amp;&amp;(context.ipsrcport.toString()=='1000')">
+												<then>
+													<function name="InstallLBFlow" class="context.sdnpolicymgr">
+														<parameters>
+															<string name="srcudp" in="'1000'"/>
+															<string name="srcdevicetype" in="context.stype.toString()"/>
+															<string name="srcdevicerole" in="context.srole.toString()"/>
+															<string name="dstdevicetype" in="context.dtype.toString()"/>
+															<string name="dstdevicerole" in="context.drole.toString()"/>
+															<boolean name="flow_is" out="context.flowis"/>
+														</parameters>
+													</function>		
+												</then>
+											</if>				
+											<set name="context.temp" value="'2'"/>
+											<syslog level="INFO">##temp==2#</syslog>
+										</then>
+										<elseif cond="(context.bandwidth_bool2.toBoolean()==false)&amp;&amp;(context.plid.toString()=='6')">
+											<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
+												<parameters>
+													<string name="priority" in="'2'"/>
+													<string name="srcdevicetype" out="context.stype"/>
+													<string name="srcdevicerole" out="context.srole"/>
+													<string name="dstdevicetype" out="context.dtype"/>
+													<string name="dstdevicerole" out="context.drole"/>
+												</parameters>
+											</function>
+											<syslog level="INFO"><![CDATA[2ipsrcport = <%= context.ipsrcport.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[2stype = <%= context.stype.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[2srole = <%= context.srole.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[2dtype = <%= context.dtype.toString()%>]]></syslog>
+											<syslog level="INFO"><![CDATA[2drole = <%= context.drole.toString()%>]]></syslog>
+											<if cond="(context.flowis2.toBoolean()==false)&amp;&amp;(context.ipsrcport.toString()=='1000')">
+												<then>												
+													<function name="InstallLBFlow" class="context.sdnpolicymgr">
+														<parameters>
+															<string name="srcudp" in="'1000'"/>
+															<string name="srcdevicetype" in="context.stype.toString()"/>
+															<string name="srcdevicerole" in="context.srole.toString()"/>
+															<string name="dstdevicetype" in="context.dtype.toString()"/>
+															<string name="dstdevicerole" in="context.drole.toString()"/>
+															<boolean name="flow_is" out="context.flowis2"/>
+														</parameters>
+													</function>
+												</then>
+											</if>											
+										</elseif>
+									</if>
+								</then>									
+							</if>
+						</then>
+					</if>								
+				</then>			
+			</if>
 		</onevent>
-		<onevent event="TimeOutEvent">
+		
+		<onevent event="ISUEvent">
 			<function name="InstallisuFlow" class="context.sdndevicemgr"/>
 		</onevent>	
 		
 		<onevent event="PolicyEvent">
+			<if cond="context.eventnum.toString()=='1'">
+				<then>
+					<timer name="context.globaltimer2" method="StopTimer"/>
+					<exit/>
+				</then>
+			</if>
+			<syslog level="INFO">PolicyEvent Start</syslog>
+			<timer name="context.globaltimer2" method="StopTimer"/>
 			<string name="policyport"/>
+			<string name="port"/>
 			<string name="policydpid"/>
 			<string name="result"/>
 			<object name="portmgr"/>
 			<object name="deviceobj"/>
-			<string name="stype"/>
+			<string name="stype" value="''"/>
 			<string name="srole"/>
 			<string name="dtype"/>
 			<string name="drole"/>
@@ -240,10 +520,12 @@
 			<if cond="context.policynum.toString()=='0'">
 				<then>
 					<set name="context.apriority" value="'1'"/>
+					<function name="StartPolicyEvent"/>		
 					<exit/>
 				</then>
 			</if>
-			<if cond="context.policynum.toString() == '6'">
+			<syslog level="INFO"><![CDATA[context.policynum = <%=context.policynum.toString()%>]]></syslog>
+			<if cond="context.policynum.toString() == '5'">
 				<then>
 					<function name="getpolicyport" class="context.sdnpolicymgr">
 						<parameters>
@@ -251,7 +533,7 @@
 							<string name="deviceid" out="context.policydpid"/>
 						</parameters>
 					</function>
-					<syslog level="INFO"><![CDATA[6 policyport<%=context.policyport.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[5 policyeventport<%=context.policyport.toString()%>]]></syslog>
 					<function name="getDevice" class="DeviceManager">
 						<parameters>
 							<object name="outdevice" out="context.deviceobj"/>
@@ -280,35 +562,17 @@
 					</if>
 					<if cond="context.result.toString()==''">
 						<then>
+							<function name="StartPolicyEvent"/>		
 							<exit/>
 						</then>
 					</if>
-					<syslog level="INFO"><![CDATA[result = <%=context.result.toString()%>]]></syslog>
 					<script><![CDATA[
 						var str = JSON.parse(context.result.toString());
 						context.portDEAorA.setValue(str.workstate);
 					]]></script>
 					<if cond="context.portDEAorA.toString()=='deactive'">
-						<then>						
-							<syslog level="INFO"><![CDATA[priority = <%= context.apriority.toString()%>]]></syslog>
-							<if cond="context.apriority.toString()==context.policycounts.toString()">
-								<then>
-									<set name="context.apriority" value="'1'"/>
-								</then>
-								<else>									
-									<python><![CDATA[
-import os;
-import libstarlang;
-
-now = libstarlang.getValueString("context.apriority");
-intnow = int(now,10);
-bigoneintnow = intnow+1;
-strbigoneintnow = str(bigoneintnow);
-libstarlang.setValueString("context.apriority",strbigoneintnow);
-									]]></python>
-								</else>
-							</if>		
-							<syslog level="INFO"><![CDATA[apriority = <%=context.apriority.toString()%>]]></syslog>	
+						<then>	
+							<function name="GetNextPolicy"/>					
 							<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
 								<parameters>
 									<string name="priority" in="context.apriority.toString()"/>
@@ -318,42 +582,24 @@ libstarlang.setValueString("context.apriority",strbigoneintnow);
 									<string name="dstdevicerole" out="context.drole"/>
 								</parameters>
 							</function>
+							<if cond="context.stype.toString()!=''">
+								<then>
+									<function name="InstallFlow" class="context.sdnpolicymgr">
+										<parameters>
+											<string name="srcdevicetype" in="context.stype.toString()"/>
+											<string name="srcdevicerole" in="context.srole.toString()" />
+											<string name="dstdevicetype" in="context.dtype.toString()"/>
+											<string name="dstdevicerole" in="context.drole.toString()"/>
+											<boolean name="flow_is" out="context.flow_is"/>
+										</parameters>
+									</function>
+								</then>					
+							</if>
 						</then>	
-					</if>
-					<syslog level="INFO"><![CDATA[stype = <%= context.stype.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[srole = <%= context.srole.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[dtype = <%= context.dtype.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[drole = <%= context.drole.toString()%>]]></syslog>
-					<function name="GetportByTR" class="context.sdndevicemgr">
-						<parameters>
-							<string name="port" out="policyport"/>
-							<string name="devicetype" in="context.dtype.toString()"/>
-							<string name="devicerole" in="context.drole.toString()"/>
-						</parameters>
-					</function>
-					<if cond="context.stype.toString()==''">
-						<then>
-							<function name="setis_policyport" class="context.sdnpolicymgr">
-								<parameters>
-									<string name="port" in="context.policyport.toString()"/>
-								</parameters>
-							</function>
-							<exit/>
-						</then>
-						<else>
-							<function name="InstallFlow" class="context.sdnpolicymgr">
-								<parameters>
-									<string name="srcdevicetype" in="context.stype.toString()"/>
-									<string name="srcdevicerole" in="context.srole.toString()" />
-									<string name="dstdevicetype" in="context.dtype.toString()"/>
-									<string name="dstdevicerole" in="context.drole.toString()"/>
-									<boolean name="flow_is" out="context.flow_is"/>
-								</parameters>
-							</function>
-						</else>
-					</if>
+					</if>		
+					<function name="StartPolicyEvent"/>									
 				</then>
-				<elseif cond="context.policynum.toString() == '5'">
+				<elseif cond="context.policynum.toString() == '6'">
 					<function name="getpolicyport" class="context.sdnpolicymgr">
 						<parameters>
 							<string name="port" out="context.policyport"/>
@@ -381,7 +627,8 @@ libstarlang.setValueString("context.apriority",strbigoneintnow);
 											<string name="portno" in="context.policyport.toString()"/>
 											<string name="outjson" out="context.result"/>
 										</parameters>
-									</function>								
+									</function>		
+									<log level="101"><![CDATA[policyport = <%= context.policyport.toString()%>]]></log>						
 								</then>
 							</if>
 						</then>
@@ -405,81 +652,41 @@ import libstarlang;
 
 runing=libstarlang.getValueString("context.speed");
 Max=libstarlang.getValueString("context.maxspeed");
-print(runing);
-print(Max);
 a = int(runing,10);
 b = int(Max,10);
-if b-a<a:
+if a>b*0.1:
 	libstarlang.setValueBool("context.bandwidth_bool",True);
 else:
 	libstarlang.setValueBool("context.bandwidth_bool",False);
 					]]></python>
-					<if cond="context.bandwidth_bool.toBoolean()==true">
+					<syslog level="INFO"><![CDATA[bandwidth_bool = <%=context.bandwidth_bool.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[temp = <%=context.temp.toString()%>]]></syslog>
+					<syslog level="INFO"><![CDATA[apriority = <%=context.apriority.toString()%>]]></syslog>
+					<if cond="(context.bandwidth_bool.toBoolean()==true)&amp;&amp;(context.temp.toString()=='2')">
 						<then>
-							<if cond="context.apriority.toString()==context.policycounts.toString()">
-								<then>
-									<set name="context.apriority" value="'1'"/>
-								</then>
-								<else>	
-									<python><![CDATA[
-import os;
-import libstarlang;
-
-now = libstarlang.getValueString("context.apriority");
-intnow = int(now,10);
-bigoneintnow = intnow+1;
-strbigoneintnow = str(bigoneintnow);
-libstarlang.setValueString("context.apriority",strbigoneintnow);
-									]]></python>									
-								</else>
-							</if>	
-											
-							<syslog level="INFO"><![CDATA[apriority = <%=context.apriority.toString()%>]]></syslog>		
+							<syslog level="INFO">#####true   2#####</syslog>
+							<function name="UninstallLB2Flow" class="context.sdnpolicymgr"/>
 							<function name="getpolicystrbypriority" class="context.sdnpolicymgr">
 								<parameters>
-									<string name="priority" in="context.apriority.toString()"/>
+									<string name="priority" in="'2'"/>
 									<string name="srcdevicetype" out="context.stype"/>
 									<string name="srcdevicerole" out="context.srole"/>
 									<string name="dstdevicetype" out="context.dtype"/>
 									<string name="dstdevicerole" out="context.drole"/>
 								</parameters>
 							</function>
-						</then>
-						<else>
-							<exit/>
-						</else>
-					</if>
-					<syslog level="INFO"><![CDATA[stype = <%= context.stype.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[srole = <%= context.srole.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[dtype = <%= context.dtype.toString()%>]]></syslog>
-					<syslog level="INFO"><![CDATA[drole = <%= context.drole.toString()%>]]></syslog>
-					<function name="GetportByTR" class="context.sdndevicemgr">
-						<parameters>
-							<string name="port" out="policyport"/>
-							<string name="devicetype" in="context.dtype.toString()"/>
-							<string name="devicerole" in="context.drole.toString()"/>
-						</parameters>
-					</function>
-					<if cond="context.stype.toString()==''">
-						<then>			
-							<function name="setis_policyport" class="context.sdnpolicymgr">
+							<function name="InstallLBFlow" class="context.sdnpolicymgr">
 								<parameters>
-									<string name="port" in="context.policyport.toString()"/>
-								</parameters>
-							</function>				
-							<exit/>
-						</then>
-						<else>
-							<function name="InstallFlow" class="context.sdnpolicymgr">
-								<parameters>
+									<string name="srcudp" in="'1000'"/>
 									<string name="srcdevicetype" in="context.stype.toString()"/>
-									<string name="srcdevicerole" in="context.srole.toString()" />
+									<string name="srcdevicerole" in="context.srole.toString()"/>
 									<string name="dstdevicetype" in="context.dtype.toString()"/>
 									<string name="dstdevicerole" in="context.drole.toString()"/>
-									<boolean name="flow_is" out="context.flow_is"/>
+									<boolean name="flow_is" out="context.flowis3"/>
 								</parameters>
-							</function>
-						</else>
+							</function>						
+							<set name="context.temp" value="'3'"/>
+						</then>
 					</if>
 				</elseif>
 			</if>	
