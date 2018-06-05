@@ -26,7 +26,7 @@
 	<!--qiulei 20180225 Saturday pm-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/pppoeapi.xml"/>
 	<!--qiulei 20180225 Saturday pm-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/pppoeDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/PPPOEDocsApi.xml"/>
 	<object name="flowservice" value="global.FlowService" reference="true"/>
 	<object name="devicemanager" value="global.DeviceManager" reference="true"/>
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>

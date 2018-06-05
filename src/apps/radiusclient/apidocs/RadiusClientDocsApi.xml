@@ -22,8 +22,8 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/radiusclientAPIDefinitionDocs.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/radiusclientPathDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/RadiusClientAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/RadiusClientPathDocsApi.xml"/>
 
 	<!--
 		@brief		添加 radiusclient Tag

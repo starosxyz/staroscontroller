@@ -22,8 +22,8 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/pppoeAPIDefinitionDocs.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/pppoePathDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/PPPOEAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/pppoe/apidocs/PPPOEPathDocsApi.xml"/>
 
 	<!--
 		@brief		添加 pppoe Tag

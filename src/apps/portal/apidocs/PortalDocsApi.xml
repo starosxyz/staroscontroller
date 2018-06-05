@@ -22,8 +22,8 @@
 	limitations under the License.
 -->
 <starlang xmlns="http://www.staros.xyz/starcore/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" scope="application">
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalAPIDefinitionDocs.xml"/>
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalPathDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/PortalAPIDefinitionDocs.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/PortalPathDocsApi.xml"/>
 
 	<!--
 		@brief		添加 portal Tag

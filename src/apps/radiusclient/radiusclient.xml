@@ -26,7 +26,7 @@
 	<!--qiulei 20180224 Saturday pm-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/radiusclientapi.xml"/>
 	<!--qiulei 20180224 Saturday pm-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/radiusclientDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/radiusclient/apidocs/RadiusClientDocsApi.xml"/>
 	
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	

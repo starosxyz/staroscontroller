@@ -25,7 +25,7 @@
 	<!--qiulei 20180224 Saturday pm-->
 	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/portalapi.xml"/>
 	<!--qiulei 20180224 Saturday pm-->
-	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/portalDocsApi.xml"/>
+	<include src="/opt/staros.xyz/staroscontroller/starlang/apps/portal/apidocs/PortalDocsApi.xml"/>
 	
 	<object name="restfulservice" value="global.RestfulService" reference="true"/>
 	<object name="applicationmgr" value="global.ApplicationManager" reference="true"/>
@@ -156,6 +156,7 @@
 
 	<events>
 		<onevent event="bundleapp.startup">
+			
 			<function name="RegistApplication" class="context.applicationmgr">
 				<parameters>
 					<string name="id" in="'portal'"/>
@@ -168,7 +169,6 @@
 					<long name="bundleid" in="context.getCurrentBundleId()"/>
 				</parameters>
 			</function>
-			
 			
 			<log>null app startup</log>
 		</onevent>	
